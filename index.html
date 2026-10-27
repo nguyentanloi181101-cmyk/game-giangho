@@ -1,115 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Mộng Huyễn Giang Hồ - Combat</title>
-    <!-- Gọi file CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mộng Huyễn Giang Hồ</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="app">
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="top-info">
-      <div class="user-info"><span style="background:#ffd700;color:#000;padding:2px 5px;border-radius:3px;">V1</span> Cấp 74</div>
-      <div class="user-info"><span style="color: var(--gold);">Long Hầu</span></div>
-    </div>
-    <div class="resources">
-      <div class="res-box">🪙 <span id="top-gold">0</span></div>
-      <div class="res-box" style="margin-left:auto">💠 <span id="top-gems">0</span></div>
-    </div>
-    <div class="stamina-bar"><div class="stamina-fill"></div><span class="stamina-text">Thể Lực Đầy 221/200</span></div>
-    <div class="power-badge">⚔️ <span id="top-power">0</span></div>
-  </div>
+  <div id="app">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <!-- Cảnh báo 18+ -->
+      <div class="banner-18">
+        <strong>18+</strong> TRÒ CHƠI DÀNH CHO NGƯỜI CHƠI TỪ 18 TUỔI TRỞ LÊN<br>
+        <span>Chơi quá 180 phút một ngày sẽ ảnh hưởng xấu đến sức khỏe</span>
+      </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
-    
-    <!-- SCREEN: HOME -->
-    <div class="screen active" id="screen-home">
-      <div class="home-menu">
-        <div class="home-top-slots" id="home-team-slots"></div>
-        <div class="home-actions">
-          <div class="btn-giangho" onclick="switchTab('map', null)">GIANG<br>HỒ</div>
+      <!-- Khung VIP, Level, Name, Server -->
+      <div class="user-header">
+        <div class="vip-tag">V1</div>
+        <div class="user-level">Cấp74</div>
+        <div class="user-name">Long Hầu</div>
+        <div class="server-tag">Văn Lang</div>
+      </div>
+
+      <!-- Thể lực & Lực chiến -->
+      <div class="stamina-section">
+        <div class="stamina-title">Thể Lực Đầy</div>
+        <div class="stamina-badge">221/200</div>
+        <div class="power-total">537647</div>
+      </div>
+
+      <!-- Tài nguyên 2 bên -->
+      <div class="res-bar">
+        <div class="res-col">
+          <div class="res-item">🪙 21873054</div>
+          <div class="res-item">📜 2549836</div>
+        </div>
+        <div class="res-col res-right">
+          <div class="res-item">🪙 2291</div>
+          <div class="res-item">🧧 Còn 30</div>
         </div>
       </div>
     </div>
 
-    <!-- SCREEN: MAP -->
-    <div class="screen" id="screen-map">
-      <div class="map-bg">
-        <button class="btn-back-map" onclick="switchTab('home', document.querySelector('.nav-item[data-tab=home]'))">Trở Về</button>
-        
-        <div class="map-node" style="top: 20%; left: 20%;" onclick="startBattle()">
-          <div class="map-chest">🎁</div>
-          <div class="map-label">Minh Giáo<br>36/36</div>
-        </div>
-        <div class="map-node" style="top: 40%; right: 20%;" onclick="startBattle()">
-          <div class="map-chest">🎁</div>
-          <div class="map-label">Hành Hiệp<br>36/36</div>
-        </div>
-        <div class="map-node" style="top: 60%; left: 30%;" onclick="startBattle()">
-          <div class="map-chest">🎁</div>
-          <div class="map-label">Vạn Kiếm Các<br>36/36</div>
-        </div>
-        <div class="map-node" style="top: 75%; right: 15%;" onclick="startBattle()">
-          <div class="map-chest">🎁</div>
-          <div class="map-label">Đại Lý<br>36/36</div>
-        </div>
-        <div style="position:absolute; bottom: 20px; width: 100%; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px #000;">Quần Hùng Quật Khởi</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav">
-    <div class="nav-item active" data-tab="home" onclick="switchTab('home', this)"><div class="nav-icon">🏯</div><div class="nav-text">TRANG CHỦ</div></div>
-    <div class="nav-item" onclick="alert('Võ Hiệp')"><div class="nav-icon">⚔️</div><div class="nav-text">VÕ HIỆP</div></div>
-    <div class="nav-item" onclick="alert('Chiêu Mộ')"><div class="nav-icon">🎴</div><div class="nav-text">CHIÊU MỘ</div></div>
-  </div>
-
-  <!-- ============ COMBAT SCREEN (Giống ảnh) ============ -->
-  <div id="boss-screen">
-    <div class="battle-top">
-      <div>Trận <span id="battle-round" style="color:#ffd700">1</span> - Màn <span id="stage-indicator" style="color:#00ff66">1</span></div>
-      <div style="display:flex; align-items:center; gap:5px;">
-         <input type="checkbox" id="auto-toggle" style="width:20px; height:20px;" onchange="toggleAuto()">
-         <label for="auto-toggle" style="font-size:14px; color:#fff; text-shadow:1px 1px 1px #000;">Auto (Treo)</label>
-      </div>
-    </div>
-    
-    <!-- Sân đấu -->
-    <div class="battle-arena" id="battle-arena">
-      <!-- Tướng ta & Quái sẽ được render bằng JS -->
-    </div>
-
-    <!-- Bottom HUD -->
-    <div class="bottom-hud">
-      <button class="auto-btn-hud" id="hud-treo-btn" onclick="toggleAuto()">Treo</button>
+    <!-- MAIN CONTENT AREA -->
+    <div class="main-content">
       
-      <!-- Hàng 1: Chân dung & Lực chiến -->
-      <div class="hud-portraits" id="hud-portraits"></div>
-      
-      <!-- Hàng 2: Thanh máu & MP -->
-      <div class="hud-bars" id="hud-bars"></div>
+      <!-- SCREEN: HOME -->
+      <div class="screen active" id="screen-home">
+        <!-- Đội hình 5 tướng chính -->
+        <div class="hero-cards-container" id="home-team-slots">
+          <!-- Render bằng JS -->
+        </div>
 
-      <!-- Hàng 3: Kỹ năng & Hành động -->
-      <div class="hud-controls">
-        <div class="skill-circle" onclick="playerNormalAttack()">🗡️</div>
-        <div class="skill-circle" id="hud-ult-btn" onclick="playerUltimate()">💥</div>
-        <div class="skill-circle" onclick="exitBattle()" style="background:radial-gradient(circle, #d32f2f, #b71c1c); border-color:#ff9999;">🏃</div>
-      </div>
-    </div>
-  </div>
+        <!-- Hàng tính năng 1 -->
+        <div class="feature-row row-top">
+          <div class="feat-btn"><div class="feat-icon">📜</div><div class="feat-label">Nhiệm Vụ</div></div>
+          <div class="feat-btn"><div class="feat-icon">✉️</div><div class="feat-label">Hộp Thư</div></div>
+          <div class="feat-btn"><div class="feat-icon">🏆<span class="badge">6</span></div><div class="feat-label">Sự Kiện</div></div>
+          <div class="feat-btn"><div class="feat-icon">💬</div><div class="feat-label">Thẻ Tháng</div></div>
+          <div class="feat-btn"><div class="feat-icon">🎁</div><div class="feat-label">Ưu Đãi</div></div>
+        </div>
 
-  <div id="heart-overlay"></div>
-
-</div>
-
-<!-- Gọi file JS -->
-<script src="game.js"></script>
-</body>
-</html>
+        <!-- Các
