@@ -379,6 +379,7 @@
     .bf-ember{position:absolute;font-size:22px;transform:translate(-50%,-50%);pointer-events:none;z-index:70;animation:bfEmber .45s ease-out forwards}
     @keyframes bfEmber{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.4)}}
     .bf-bleed{position:absolute;top:-42px;left:4px;font-size:16px;z-index:25;animation:bfPulse .8s infinite}
+    .bf-dbf{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:11px;line-height:1;white-space:nowrap;z-index:25;pointer-events:none;text-shadow:0 0 3px #000,0 0 3px #000}
 
     .bf-lbghost{position:absolute;font-size:44px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:93;filter:drop-shadow(0 0 8px #67e8f9) drop-shadow(0 0 16px #22d3ee) hue-rotate(-20deg) saturate(1.4);opacity:.85}
     .bf-lbghost .bf-sprite,.bf-lbghost .hero-img{width:56px;height:56px}
@@ -994,7 +995,7 @@
       else if (id === 2) ult = `KHÔNG TỐN NỘ – lượt nào cũng tung được. Trăng khuyết hiện lên, ánh sáng chiếu xuống toàn đội cùng vô số hạt sáng lấp lánh: GIẢI TẤT CẢ hiệu ứng bất lợi (chảy máu, choáng) của phe ta và dựng KHIÊN TRĂNG KHUYẾT: PHẢN ${pct(MOON_REFLECT)}% sát thương nhận vào về cho địch, đồng đội chỉ chịu ${pct(MOON_TAKE)}% sát thương. Khiên duy trì ${MOON_TURNS} hiệp.`;
       else if (id === 8) ult = `KHÔNG TỐN NỘ – lượt nào cũng tung được. Gọi sóng nước hộ thể cho ${LLQ_TARGETS} đồng đội còn sống ngẫu nhiên: +${LLQ_RAGE} nộ và cộng ${pct(LLQ_DEF_MULT * sk)}% Thủ của bản thân (≈ +${fmtN(st.def * LLQ_DEF_MULT * sk)} Thủ) trong 1 hiệp.`;
       else if (id === 7) ult = `Nhảy qua đầu tướng địch, tung 2 hỏa long quấn chéo nhau 2 vòng, giáng ${DRAGON_TIERS} tầng sát thương lên TOÀN BỘ địch: tổng ${pct(DRAGON_MULT * sk)}% Công (≈ ${fmtN(st.atk * DRAGON_MULT * sk)}, mỗi tầng ≈ ${fmtN(st.atk * DRAGON_MULT * sk / DRAGON_TIERS)}). Địch trúng chiêu bị CHẢY MÁU ${BLEED_TURNS} hiệp, mỗi hiệp mất ${pct(BLEED_PCT)}% HP hiện tại.`;
-      else if (id === 6) ult = `KHÔNG TỐN NỘ – lượt nào cũng tung được. 3 con bướm, mỗi con 1 màu ngẫu nhiên, xoay quanh thân rồi lần lượt bay lên trời; sau đó từng con từ từ rơi xuống, mỗi con gây ${pct(BFLY_MULT * sk)}% Công (≈ ${fmtN(st.atk * BFLY_MULT * sk)}) lên TOÀN BỘ địch. Cuối chiêu, TOÀN ĐỘI được +${pct(BFLY_ATK_BUFF)}% Công (không cộng dồn, kéo dài hết trận).`;
+      else if (id === 6) ult = `KHÔNG TỐN NỘ – lượt nào cũng tung được. 3 con bướm, mỗi con 1 màu ngẫu nhiên, xoay quanh thân rồi lần lượt bay lên trời; sau đó từng con từ từ rơi xuống, mỗi con gây ${pct(BFLY_MULT * sk)}% Công (≈ ${fmtN(st.atk * BFLY_MULT * sk)}) lên TOÀN BỘ địch, kèm hiệu ứng theo màu bướm (đều ${pct(BF_PCT)}%, kéo dài ${BF_TURNS} hiệp): 🔴 Đỏ chảy máu • 🟠 Cam giảm sát thương • 🟡 Vàng giảm Thủ • 🟢 Lục giảm hồi máu • 🔵 Lam giảm nộ • 🟣 Chàm choáng ${BF_STUN_TARGETS} địch ngẫu nhiên ${BF_STUN_TURNS} hiệp • 💜 Tím trúng độc + câm lặng (không thể dùng tuyệt kỹ). Cuối chiêu, TOÀN ĐỘI được +${pct(BFLY_ATK_BUFF)}% Công (không cộng dồn, kéo dài hết trận).`;
       else if (id === 5) ult = `Nâng hoa sen nở rộ, hồi ${pct(HEAL_MULT * sk)}% (Công + Thủ) ≈ ${fmtN(HEAL_MULT * sk * (st.atk + st.def))} máu cho toàn bộ đồng đội còn sống.`;
       else if (id === 9) ult = `KHÔNG TỐN NỘ – lượt nào cũng tung được. Chém ra ${HTT_LINES} đường lửa cùng lúc, chồng chéo như tơ nhện lên TOÀN BỘ địch: mỗi địch chịu ${fmtN(HTT_FLAT * sk)} sát thương chuẩn cộng Công bản thân (≈ ${fmtN(HTT_FLAT * sk + st.atk)}), BỎ QUA TẤT CẢ GIÁP, và bị giảm thêm ${pct(HTT_HP_PCT)}% HP hiện tại.`;
       else ult = `Lao vào địch, đánh ${ULT_HITS} đòn liên tiếp, mỗi đòn ${pct(ULT_MULT * sk)}% Công (≈ ${fmtN(st.atk * ULT_MULT * sk)} mỗi đòn). Cần đầy 100 nộ.`;
@@ -1251,7 +1252,8 @@
     function cleanse(units) {
       units.filter(a => a.alive).forEach(a => {
         let had = false;
-        if (a.bleed > 0) { a.bleed = 0; const ic = a.el.querySelector('.bf-bleed'); if (ic) ic.remove(); had = true; }
+        if (a.bleed > 0) { a.bleed = 0; a.bleedPct = 0; const ic = a.el.querySelector('.bf-bleed'); if (ic) ic.remove(); had = true; }
+        if (a.dn && ['atk', 'def', 'heal', 'rage', 'silence', 'poison'].some(k => a.dn[k] > 0)) { clearDebuffs(a); had = true; }
         if (a.stun > 0) { a.stun = 0; a.el.classList.remove('stunned'); const ic = a.el.querySelector('.bf-stun'); if (ic) ic.remove(); had = true; }
         if (had) floatText(a, '✨ GIẢI HIỆU ỨNG');
       });
@@ -1274,7 +1276,7 @@
       u.el.appendChild(fx); setTimeout(() => fx.remove(), 350);
       u.el.classList.add('hurt'); setTimeout(() => u.el.classList.remove('hurt'), 180);
       if (u.hp <= 0) { u.alive = false; u.el.classList.add('dead'); u.stun = 0; if (u.moon) removeMoon(u); const ic = u.el.querySelector('.bf-stun'); if (ic) ic.remove(); }
-      else if (u.rage != null && !noRage) u.rage = Math.min(100, u.rage + 20);
+      else if (u.rage != null && !noRage) gainRage(u, 20);
       if (u.side === 'hero') refreshPanel();
       if (refl > 0) {
         const tgt = (src && src.alive && src.side !== u.side) ? src : rand(foesOf(u).filter(x => x.alive));
@@ -1321,13 +1323,84 @@
     async function tickBleed(units) {
       let bled = false;
       units.filter(u => u.alive).forEach(u => {
-        if (!(u.bleed > 0)) return;
-        const d = Math.round(u.hp * BLEED_PCT);
-        if (d >= 1) { hit(u, d, true); bled = true; }
-        u.bleed--;
-        if (u.bleed === 0) { const ic = u.el.querySelector('.bf-bleed'); if (ic) ic.remove(); }
+        if (u.bleed > 0) {
+          const d = Math.round(u.hp * (u.bleedPct || BLEED_PCT));
+          if (d >= 1) { hit(u, d, true); bled = true; }
+          u.bleed--;
+          if (u.bleed === 0) { u.bleedPct = 0; const ic = u.el.querySelector('.bf-bleed'); if (ic) ic.remove(); }
+        }
+        // Trúng độc (bướm Tím): mỗi hiệp mất 25% HP hiện tại
+        if (u.alive && u.dn && u.dn.poison > 0) {
+          const d = Math.round(u.hp * BF_POISON_PCT);
+          if (d >= 1) { hit(u, d, true); bled = true; }
+          u.dn.poison--; refreshDbf(u);
+        }
       });
       return bled;
+    }
+    // ---- Hiệu ứng bất lợi của bướm Hoa Mãn Lâu (lưu trong u.dn: số hiệp còn lại theo từng loại) ----
+    const BF_DN_ICON = { atk: '⚔️↓', def: '🛡️↓', heal: '💔', rage: '⚡↓', silence: '🤐', poison: '☠️' };
+    function refreshDbf(u) {
+      let ic = u.el.querySelector('.bf-dbf');
+      const s = u.dn ? Object.keys(BF_DN_ICON).filter(k => u.dn[k] > 0).map(k => BF_DN_ICON[k]).join('') : '';
+      if (!s) { if (ic) ic.remove(); return; }
+      if (!ic) { ic = document.createElement('div'); ic.className = 'bf-dbf'; u.el.appendChild(ic); }
+      ic.textContent = s;
+    }
+    const isSilenced = u => !!(u.dn && u.dn.silence > 0);
+    function gainRage(u, n) {                                  // Lam: nhận nộ ít hơn 25%
+      if (u.dn && u.dn.rage > 0) n = Math.round(n * (1 - BF_PCT));
+      u.rage = Math.min(100, u.rage + n);
+    }
+    function endDebuff(u, k) {
+      const d = u.dn; if (!d) return;
+      if (k === 'atk') { u.atk += d.atkV || 0; d.atkV = 0; }
+      if (k === 'def') { u.def = (u.def || 0) + (d.defV || 0); d.defV = 0; }
+      d[k] = 0;
+    }
+    function tickDebuffs(units) {                              // giảm 1 hiệp các hiệu ứng (độc do tickBleed xử lý)
+      units.forEach(u => {
+        const d = u.dn; if (!d) return;
+        ['atk', 'def', 'heal', 'rage', 'silence'].forEach(k => { if (d[k] > 0 && --d[k] <= 0) endDebuff(u, k); });
+        refreshDbf(u);
+      });
+    }
+    function clearDebuffs(u) {
+      if (!u.dn) return;
+      ['atk', 'def', 'heal', 'rage', 'silence', 'poison'].forEach(k => endDebuff(u, k));
+      refreshDbf(u);
+    }
+    // Hiệu ứng của 1 con bướm đáp xuống: targets = toàn bộ địch
+    function bflyEffect(c, targets) {
+      const alive = targets.filter(e => e.alive);
+      const say = (e, t) => setTimeout(() => { if (e.el.isConnected) floatText(e, t); }, 350);
+      if (c.k === 'indigo') {                                   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
+        alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_STUN_TARGETS).forEach(e => {
+          stunEnemy(e, Math.max(BF_STUN_TURNS, e.stun || 0)); say(e, '💫 CHOÁNG ' + BF_STUN_TURNS + ' HIỆP');
+        });
+        return;
+      }
+      alive.forEach(e => {
+        const d = e.dn || (e.dn = {});
+        if (c.k === 'red') {
+          e.bleed = Math.max(e.bleed || 0, BF_TURNS); e.bleedPct = BF_PCT;
+          if (!e.el.querySelector('.bf-bleed')) { const ic = document.createElement('div'); ic.className = 'bf-bleed'; ic.textContent = '🩸'; e.el.appendChild(ic); }
+          say(e, '🩸 CHẢY MÁU');
+        } else if (c.k === 'orange') {
+          if (!(d.atk > 0)) { d.atkV = Math.min(e.atk - 1, Math.round(e.atk * BF_PCT)); e.atk -= d.atkV; }
+          d.atk = BF_TURNS; say(e, '⚔️ GIẢM SÁT THƯƠNG ' + Math.round(BF_PCT * 100) + '%');
+        } else if (c.k === 'yellow') {
+          if (!(d.def > 0)) { d.defV = Math.round((e.def || 0) * BF_PCT); e.def = (e.def || 0) - d.defV; }
+          d.def = BF_TURNS; say(e, '🛡️ GIẢM THỦ ' + Math.round(BF_PCT * 100) + '%');
+        } else if (c.k === 'green') {
+          d.heal = BF_TURNS; say(e, '💔 GIẢM HỒI MÁU ' + Math.round(BF_PCT * 100) + '%');
+        } else if (c.k === 'blue') {
+          d.rage = BF_TURNS; say(e, '⚡ GIẢM NỘ ' + Math.round(BF_PCT * 100) + '%');
+        } else if (c.k === 'purple') {
+          d.poison = BF_TURNS; d.silence = BF_TURNS; say(e, '☠️ ĐỘC + 🤐 CÂM LẶNG');
+        }
+        refreshDbf(e);
+      });
     }
     function stunEnemy(e, turns) {
       e.stun = turns;
@@ -1379,6 +1452,7 @@
 
     function heal(u, amt) {
       if (!u.alive) return;
+      if (u.dn && u.dn.heal > 0) amt = Math.round(amt * (1 - BF_PCT));   // bướm Lục: giảm hồi máu 25%
       const before = u.hp;
       u.hp = Math.min(u.max, u.hp + amt);
       setHpBar(u);
@@ -1708,11 +1782,11 @@
       const mk = (cls, txt, x, y) => { const d = document.createElement('div'); d.className = cls; d.textContent = txt; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
       try {
         // 1. Ba con bướm, mỗi con 1 màu ngẫu nhiên (khác nhau), xoay quanh thân
-        const hues = [0, 60, 110, 150, 190, 270].sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
-        const flies = hues.map((hue, i) => {
+        const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);   // 3 màu khác nhau trong 7 màu
+        const flies = picks.map((c, i) => {
           const b = mk('bf-bfly', '🦋', u.x, u.y - 4);
-          b.style.filter = `hue-rotate(${hue}deg) drop-shadow(0 0 8px hsl(${(210 + hue) % 360},100%,65%))`;
-          return { b, hue, off: i * (Math.PI * 2 / BFLY_HITS), px: 0, py: 0 };
+          b.style.filter = `hue-rotate(${c.hue}deg) saturate(1.6) drop-shadow(0 0 8px ${c.css})`;
+          return { b, c, hue: c.hue, off: i * (Math.PI * 2 / BFLY_HITS), px: 0, py: 0 };
         });
         const t0 = performance.now(), ORBIT = 1000;
         await new Promise(res => {
@@ -1762,13 +1836,14 @@
           await sleep(760); if (tok !== battleToken) return;
           sfxBell();
           const es = alive(); if (!es.length) { fl.b.remove(); break; }
-          const col = `hsl(${(210 + fl.hue) % 360},100%,62%)`;
+          const col = fl.c.css;
           es.forEach(e => {
             skillHit(e, dmg);
             const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = e.x + '%'; w.style.top = e.y + '%';
             w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
             box.appendChild(w); setTimeout(() => w.remove(), 650);
           });
+          bflyEffect(fl.c, es);                                   // hiệu ứng theo màu bướm
           f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
           anim(fl.b, [{ opacity: 1 }, { opacity: 0 }], 250);
           await sleep(300); if (tok !== battleToken) return;
@@ -1949,7 +2024,7 @@
           wv.animate([{ transform: base + ' scale(.6)' }, { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(1.4)` }], { duration: 450, easing: 'ease-in', fill: 'forwards' });
           await sleep(460); if (tok !== battleToken) return;
           wv.remove(); ring(a.x, a.y);
-          if (a.rage != null) a.rage = Math.min(100, a.rage + LLQ_RAGE);
+          if (a.rage != null) gainRage(a, LLQ_RAGE);
           a.def += bonus; a.defBuff = (a.defBuff || 0) + bonus;
           if (!a.el.querySelector('.bf-shield')) { const ic = document.createElement('div'); ic.className = 'bf-shield'; ic.textContent = '🛡️'; a.el.appendChild(ic); }
           if (a.rage != null) floatText(a, '+' + LLQ_RAGE + ' NỘ'); setTimeout(() => floatText(a, 'THỦ +' + fmtN(bonus)), 250);
@@ -2040,7 +2115,19 @@
     const MOON_TURNS = 2, MOON_REFLECT = 0.5, MOON_TAKE = 0.3;   // Tiểu Long Nữ: khiên 2 hiệp, phản 50% sát thương cho địch, đồng đội chỉ nhận 30%
     const ULT_HITS = 3, ULT_MULT = 1.2, TAICHI_MULT = 1.5, HEAL_MULT = 1.5, RAGE_ATK = 34;
     const HTT_FLAT = 33333, HTT_LINES = 18, HTT_HP_PCT = 0.5;   // Hỏa Thiên Tướng: 33333 chuẩn (bỏ qua giáp) + Công bản thân, 18 đường lửa, giảm 50% HP hiện tại của địch
-    const BFLY_HITS = 3, BFLY_MULT = 1.0, BFLY_ATK_BUFF = 0.5;   // Hoa Mãn Lâu: 3 bướm, mỗi con rơi gây 100% Công lên TOÀN địch; +50% Công toàn đội
+    const BFLY_HITS = 3, BFLY_MULT = 1.0, BFLY_ATK_BUFF = 0.5;
+    // Hoa Mãn Lâu: mỗi màu bướm kèm 1 hiệu ứng lên địch. Mọi hiệu ứng 25%, kéo dài 2 hiệp (Chàm: choáng 2 địch ngẫu nhiên 1 hiệp)
+    const BF_PCT = 0.25, BF_TURNS = 2, BF_STUN_TURNS = 1, BF_STUN_TARGETS = 2, BF_POISON_PCT = 0.25;
+    // hue = độ xoay màu so với 🦋 gốc (xanh lam ~210°); css = màu hào quang/sóng
+    const BFLY_COLORS = [
+      { k: 'red',    hue: 150, css: '#ef4444' },   // Đỏ: chảy máu
+      { k: 'orange', hue: 178, css: '#f97316' },   // Cam: giảm sát thương
+      { k: 'yellow', hue: 202, css: '#facc15' },   // Vàng: giảm Thủ
+      { k: 'green',  hue: 270, css: '#22c55e' },   // Lục: giảm hồi máu
+      { k: 'blue',   hue: 0,   css: '#38bdf8' },   // Lam: giảm nộ
+      { k: 'indigo', hue: 45,  css: '#6366f1' },   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
+      { k: 'purple', hue: 80,  css: '#a855f7' }    // Tím: trúng độc + câm lặng (không dùng được tuyệt kỹ)
+    ];   // Hoa Mãn Lâu: 3 bướm, mỗi con rơi gây 100% Công lên TOÀN địch; +50% Công toàn đội
     const DRAGON_MULT = 3.5, DRAGON_TIERS = 3, BLEED_TURNS = 3, BLEED_PCT = 0.2, TAICHI_BLEED_TURNS = 2;
     const LB_TURNS = 3, LB_DODGE_MULT = 3.0, LB_SPD_MULT = 1.5, LB_HEAL_MULT = 3.0, LB_GHOSTS = 18;   // Đoàn Dự: 3 hiệp, +300% Né, +150% Tốc, hồi 300% Máu (theo chỉ số của Đoàn Dự), 18 tàn ảnh
     const LLQ_RAGE = 50, LLQ_DEF_MULT = 3.0, LLQ_TARGETS = 2;   // Lạc Long Quân: +50 nộ & +300% Thủ bản thân cho 2 đồng đội ngẫu nhiên trong 1 hiệp   // Kiều Phong: tổng 350% Công / 3 tầng; chảy máu 3 hiệp, 20% HP hiện tại   // Hoa Mãn Lâu: 7 đòn, mỗi đòn 100% Công
@@ -2064,7 +2151,7 @@
       setTimeout(() => {
         if (!autoMode || tok !== battleToken || !isPlayerTurn || busy) return;
         const hs = waveUnits.heroes;
-        if (hs.some(h => h.alive && !h.acted && h.rage >= 100)) { castAll(); return; }   // tung chiêu đồng loạt
+        if (hs.some(h => h.alive && !h.acted && h.rage >= 100 && !isSilenced(h))) { castAll(); return; }   // tung chiêu đồng loạt
         const i = hs.findIndex(h => h.alive && !h.acted);
         if (i >= 0) heroAct(i, 'normal');                                                  // còn lại đánh thường
         else endTurn();
@@ -2078,10 +2165,10 @@
         const u = hs[i];
         if (!u) { cards += '<div class="bf-card empty"></div>'; orbs += '<div class="bf-orb empty"></div>'; continue; }
         const can = isPlayerTurn && !busy && u.alive && !u.acted;
-        const ready = u.rage >= 100;
+        const silenced = isSilenced(u), ready = u.rage >= 100 && !silenced;
         if (can && ready) readyCount++;
         cards += `<div class="bf-card ${u.alive ? '' : 'dead'} ${u.acted ? 'acted' : ''} ${can ? 'can' : ''}" onclick="heroAct(${i},'normal')"><div class="e">${u.emoji}</div><div class="b hpb"><i style="width:${u.hp / u.max * 100}%"></i></div><div class="b rgb"><i style="width:${u.rage}%"></i></div></div>`;
-        orbs += `<div class="bf-orb ${ready && can ? 'ready' : ''} ${u.alive ? '' : 'dead'}" onclick="heroAct(${i},'ult')">${ready ? 'TUNG' : Math.floor(u.rage) + '%'}</div>`;
+        orbs += `<div class="bf-orb ${ready && can ? 'ready' : ''} ${u.alive ? '' : 'dead'}" onclick="heroAct(${i},'ult')">${ready ? 'TUNG' : silenced ? '🤐' : Math.floor(u.rage) + '%'}</div>`;
       }
       document.getElementById('bf-cards').innerHTML = cards;
       document.getElementById('bf-orbs').innerHTML = orbs;
@@ -2237,7 +2324,7 @@
         return u;
       });
       waveUnits.heroes.forEach(h => {
-        h.acted = false; h.stun = 0; h.bleed = 0; h.el.classList.remove('stunned');
+        h.acted = false; h.stun = 0; h.bleed = 0; h.bleedPct = 0; clearDebuffs(h); h.el.classList.remove('stunned');
         h.el.querySelectorAll('.bf-stun, .bf-bleed').forEach(ic => ic.remove());
       });
       clearDefBuff(waveUnits.heroes);
@@ -2264,7 +2351,7 @@
       while (tok === battleToken) {
         if (++pvpRound > PVP_MAX_ROUNDS) { pvpTimeout(); return; }
         document.getElementById('ui-wave-title').innerText = `Lượt ${pvpRound}/${PVP_MAX_ROUNDS}`;
-        clearDefBuff(H); clearDefBuff(E); tickMoon(H); tickMoon(E); tickLB(H); tickLB(E);
+        clearDefBuff(H); clearDefBuff(E); tickMoon(H); tickMoon(E); tickLB(H); tickLB(E); tickDebuffs(H); tickDebuffs(E);
         const bl = (await tickBleed(E)) | (await tickBleed(H));
         if (tok !== battleToken) return;
         if (bl) { await sleep(500); if (tok !== battleToken) return; }
@@ -2278,8 +2365,8 @@
             if (u.stun === 0) { const ic = u.el.querySelector('.bf-stun'); if (ic) ic.remove(); u.el.classList.remove('stunned'); }
             await sleep(300); continue;
           }
-          if (u.alwaysUlt || u.rage >= 100) { u.rage = u.alwaysUlt ? 100 : 0; await ultimate(u, tok); }
-          else { u.rage = Math.min(100, u.rage + RAGE_ATK); await attack(u, foes, 1, u.atk, tok); }
+          if ((u.alwaysUlt || u.rage >= 100) && !isSilenced(u)) { u.rage = u.alwaysUlt ? 100 : 0; await ultimate(u, tok); }
+          else { gainRage(u, RAGE_ATK); await attack(u, foes, 1, u.atk, tok); }
           if (tok !== battleToken) return;
           refreshPanel();
           await sleep(250); if (tok !== battleToken) return;
@@ -2380,7 +2467,7 @@
       }
       // Quân ta đánh trước: sang trận mới thì hồi lại lượt cho cả đội, xóa choáng / chảy máu / buff cũ
       waveUnits.heroes.forEach(h => {
-        h.acted = false; h.stun = 0; h.bleed = 0;
+        h.acted = false; h.stun = 0; h.bleed = 0; h.bleedPct = 0; clearDebuffs(h);
         h.el.classList.remove('stunned');
         h.el.querySelectorAll('.bf-stun, .bf-bleed').forEach(ic => ic.remove());
       });
@@ -2400,6 +2487,7 @@
       clearDefBuff(waveUnits.enemies);                       // buff Thủ của Lạc Long Quân địch chỉ kéo dài 1 hiệp
       tickMoon(waveUnits.enemies);                           // khiên Trăng Khuyết của địch giảm 1 hiệp
       tickLB(waveUnits.enemies);
+      tickDebuffs(waveUnits.heroes);                         // hiệu ứng bướm trên tướng ta giảm 1 hiệp
       // Chảy máu: đầu mỗi hiệp địch, mỗi địch đang chảy máu mất 20% HP hiện tại
       if (await tickBleed(waveUnits.enemies)) { await sleep(500); if (tok !== battleToken) return; }
       const es = waveUnits.enemies.filter(e => e.alive);
@@ -2414,13 +2502,14 @@
         if (!waveUnits.heroes.some(h => h.alive)) return;
         if (e.isHero) {
           // Tướng địch: đủ nộ (hoặc alwaysUlt) thì tung tuyệt kỹ giống hệt tướng của ta, còn lại đánh thường (+nộ)
-          if (e.alwaysUlt || e.rage >= 100) { e.rage = e.alwaysUlt ? 100 : 0; await ultimate(e, tok); }
-          else { e.rage = Math.min(100, e.rage + RAGE_ATK); await attack(e, waveUnits.heroes, 1, e.atk, tok); }
+          if ((e.alwaysUlt || e.rage >= 100) && !isSilenced(e)) { e.rage = e.alwaysUlt ? 100 : 0; await ultimate(e, tok); }
+          else { gainRage(e, RAGE_ATK); await attack(e, waveUnits.heroes, 1, e.atk, tok); }
         } else {
           await attack(e, waveUnits.heroes, 1, e.atk, tok);
         }
       }));
       if (tok !== battleToken) return;
+      tickDebuffs(waveUnits.enemies);                        // hiệu ứng bướm trên địch giảm 1 hiệp (sau khi địch đã ra đòn)
       // Hết 1 hiệp: gỡ buff Thủ của Lạc Long Quân bên ta
       clearDefBuff(waveUnits.heroes);
       tickMoon(waveUnits.heroes);                            // khiên Trăng Khuyết bên ta giảm 1 hiệp
@@ -2452,10 +2541,10 @@
     async function heroAct(i, type) {
       const u = waveUnits.heroes[i];
       if (!u || !isPlayerTurn || busy || !u.alive || u.acted) return;
-      if (type === 'ult' && u.rage < 100) return;
+      if (type === 'ult' && (u.rage < 100 || isSilenced(u))) return;
       busy = true; u.acted = true;
       const tok = battleToken;
-      if (type === 'ult') u.rage = u.alwaysUlt ? 100 : 0; else u.rage = Math.min(100, u.rage + RAGE_ATK);
+      if (type === 'ult') u.rage = u.alwaysUlt ? 100 : 0; else gainRage(u, RAGE_ATK);
       refreshPanel();
       if (type === 'ult') await ultimate(u, tok);
       else await attack(u, waveUnits.enemies, 1, u.atk, tok);
@@ -2465,7 +2554,7 @@
     // Tung chiêu cùng lúc cho mọi tướng đã đầy nộ
     async function castAll() {
       if (!isPlayerTurn || busy) return;
-      const rs = waveUnits.heroes.filter(h => h.alive && !h.acted && h.rage >= 100).sort((a, b) => b.spd - a.spd);
+      const rs = waveUnits.heroes.filter(h => h.alive && !h.acted && h.rage >= 100 && !isSilenced(h)).sort((a, b) => b.spd - a.spd);
       if (!rs.length) return;
       busy = true;
       const tok = battleToken;
