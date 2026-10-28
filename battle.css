@@ -1,0 +1,63 @@
+#battle-overlay {
+  display: none; position: fixed; inset: 0;
+  background: radial-gradient(circle at center, rgba(30, 15, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+  z-index: 9999; flex-direction: column; justify-content: space-between; overflow: hidden;
+}
+
+.battle-header-info { display: flex; justify-content: space-between; width: 100%; padding: 15px 20px; color: #fde047; font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(253, 224, 71, 0.3); }
+
+.battle-arena { flex: 1; display: flex; flex-direction: column; justify-content: space-between; position: relative; perspective: 1000px; overflow: hidden; padding-bottom: 20px;}
+
+/* ĐỊCH */
+.enemy-side { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; margin-top: 20px; }
+.enemy-name-tag { color: #ff4444; font-size: 18px; font-weight: 900; text-shadow: 1px 1px 3px #000, 0 0 10px #ff0000; margin-bottom: 5px; letter-spacing: 1px; }
+.enemy-3d-wrapper { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; }
+.enemy-platform { position: absolute; bottom: 0; width: 120px; height: 40px; background: radial-gradient(ellipse, rgba(255,0,0,0.6) 0%, transparent 70%); border-radius: 50%; border: 2px solid #ff4444; transform: rotateX(70deg) translateZ(-20px); box-shadow: 0 0 20px #ff0000, inset 0 0 10px #ff0000; animation: spinPlatform 4s linear infinite; }
+@keyframes spinPlatform { 0% { transform: rotateX(70deg) rotateZ(0deg) translateZ(-20px); } 100% { transform: rotateX(70deg) rotateZ(360deg) translateZ(-20px); } }
+.enemy-avatar-3d { font-size: 80px; position: relative; filter: drop-shadow(0 15px 10px rgba(0,0,0,0.8)) drop-shadow(0 0 15px rgba(255,0,0,0.6)); transform-style: preserve-3d; transition: transform 0.2s; z-index: 2; animation: floatEnemy 2s ease-in-out infinite; }
+@keyframes floatEnemy { 0%, 100% { transform: translateY(0) translateZ(20px); } 50% { transform: translateY(-15px) translateZ(30px); } }
+
+/* HOẠT ẢNH ĐỊCH TẤN CÔNG */
+.enemy-attack-anim { animation: enemyLunge 0.6s cubic-bezier(0.5, 0, 1, 0.5) !important; }
+@keyframes enemyLunge {
+  0% { transform: translateY(0) scale(1) translateZ(20px); }
+  30% { transform: translateY(150px) scale(1.2) translateZ(80px); filter: brightness(1.5) drop-shadow(0 0 30px red); }
+  60% { transform: translateY(150px) scale(1.2) translateZ(80px); }
+  100% { transform: translateY(0) scale(1) translateZ(20px); }
+}
+.hero-hurt-anim { animation: heroHurt 0.4s ease-in-out; }
+@keyframes heroHurt { 0%, 100% { transform: translateX(0); filter: none; } 25% { transform: translateX(15px) rotateZ(5deg); filter: brightness(2) sepia(1) hue-rotate(-50deg); } 50% { transform: translateX(-15px) rotateZ(-5deg); filter: brightness(2) sepia(1) hue-rotate(-50deg); } 75% { transform: translateX(10px); } }
+
+/* THANH MÁU */
+.hp-bar-container { width: 80%; height: 16px; background: #222; border: 2px solid #fde047; border-radius: 10px; position: relative; overflow: hidden; margin: 5px 0; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+.hp-fill { height: 100%; transition: width 0.3s ease; }
+.enemy-hp { background: linear-gradient(90deg, #b91c1c, #ef4444); }
+.hero-hp { background: linear-gradient(90deg, #15803d, #22c55e); }
+.hp-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000; line-height: 14px; }
+
+.enemy-stats-box { background: rgba(0, 0, 0, 0.7); border: 1px solid #fde047; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #e2e8f0; margin: 5px auto; display: inline-block; line-height: 1.4; }
+
+.hero-side { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; height: 350px; z-index: 5; }
+.hero-hp-container { position: absolute; bottom: 10px; z-index: 20; }
+
+/* NÚT ĐIỀU KHIỂN */
+.battle-controls { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; z-index: 100; }
+.btn-attack { background: linear-gradient(180deg, #ea580c, #9a3412); border: 2px solid #fde047; color: #fff; font-size: 16px; font-weight: 900; padding: 10px 30px; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.8); text-shadow: 1px 1px 2px #000; transition: 0.2s; }
+.btn-attack:active { transform: scale(0.95); }
+.btn-attack:disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.7; }
+.btn-close-battle { background: linear-gradient(180deg, #4b5563 0%, #1f2937 100%); border: 2px solid #9ca3af; color: #fff; font-size: 16px; font-weight: bold; padding: 10px 24px; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.8); }
+
+/* HIỆU ỨNG SÁT THƯƠNG & LỐC XOÁY */
+.boss-hit { animation: shakeBoss 0.2s ease-in-out; }
+@keyframes shakeBoss { 0%, 100% { transform: translateX(0); filter: brightness(1); } 25% { transform: translateX(-15px); filter: brightness(2) drop-shadow(0 0 10px red); } 50% { transform: translateX(15px); filter: brightness(2) drop-shadow(0 0 10px red); } 75% { transform: translateX(-5px); } }
+.boss-stunned { filter: grayscale(80%) sepia(50%); }
+#battle-stun-effect { display: none; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 26px; animation: spin 1s linear infinite; text-shadow: 0 0 10px #fde047; }
+@keyframes spin { 0% { transform: translateX(-50%) rotate(0deg); } 100% { transform: translateX(-50%) rotate(360deg); } }
+
+.damage-number { position: absolute; font-size: 26px; font-weight: 900; font-style: italic; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; animation: floatDamage 0.8s ease-out forwards; pointer-events: none; z-index: 10000; }
+@keyframes floatDamage { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -80px) scale(1.5); } }
+
+.tornado-effect { position: fixed; top: 50%; left: 50%; width: 100px; height: 200px; margin-left: -50px; margin-top: -100px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 255, 255, 0.8) 90deg, transparent 180deg, rgba(255, 215, 0, 0.8) 270deg, transparent 360deg); filter: blur(6px); opacity: 0; pointer-events: none; z-index: 150; transform-style: preserve-3d; }
+.tornado-effect.active { animation: spinTornado 0.3s linear infinite, flyToBoss 1s cubic-bezier(0.5, 0, 1, 0.5) forwards; }
+@keyframes spinTornado { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes flyToBoss { 0% { top: 80%; left: 50%; opacity: 1; transform: scale(0.5); } 80% { top: 30%; left: 50%; opacity: 1; transform: scale(1.5) rotate(720deg); } 100% { top: 25%; left: 50%; opacity: 0; transform: scale(2) rotate(1080deg); } }

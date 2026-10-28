@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Quản Lý Võ Hiệp - Mộng Huyễn Giang Hồ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="vohiep.css">
+</head>
+<body>
+
+  <div id="app">
+    <!-- MÀN HÌNH QUẢN LÝ VÕ HIỆP -->
+    <div class="vohiep-content" style="position: relative; height: 100vh;">
+      
+      <!-- Thanh Tiêu Đề & Nút Trở Về Trang Chủ -->
+      <div class="vohiep-header">
+        <!-- Đã gắn hàm goToHome() để bấm về index.html mượt mà -->
+        <button class="btn-back" onclick="goToHome()">Trở về</button>
+        <h2 class="vohiep-title">Quản lý Võ Hiệp</h2>
+      </div>
+
+      <!-- Grid 8 Nút Tính Năng -->
+      <div class="vohiep-grid">
+        <div class="vh-card" onclick="alert('Mảnh Võ Hiệp')">
+          <div class="vh-icon-circle"><div class="vh-icon-img">🛍️</div></div>
+          <div class="vh-btn-pill"><span>Mảnh<br>Võ Hiệp</span></div>
+        </div>
+
+        <div class="vh-card" onclick="alert('Ghép Mảnh')">
+          <div class="vh-icon-circle">
+            <div class="vh-icon-img">🎴</div>
+            <span class="badge-red">4</span>
+          </div>
+          <div class="vh-

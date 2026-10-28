@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PVP - Mộng Huyễn Giang Hồ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pvp.css">
+  <link rel="stylesheet" href="battle.css">
+</head>
+<body>
+  <div id="app">
+    <div class="pvp-container">
+      <div class="pvp-header">
+        <button class="btn-back" onclick="window.location.href='index.html'">Trở về</button>
+        <div class="pvp-title-badge">⚔️ PVP ĐẤU TRƯỜNG</div>
+      </div>
+
+      <div class="pvp-list">
+        <!-- Đổi onclick để gọi startBattle -->
+        <div class="pvp-banner-card" onclick="startBattle('Tỷ Võ Liên Server')">
+          <div class="pvp-banner-title">Tỷ Võ<br>Liên<br>Server</div>
+          <div class="pvp-banner-content"><span class="pvp-desc">Đỉnh phong cao thủ, tỷ thí tranh tài</span></div>
+        </div>
+
+        <div class="pvp-banner-card" onclick="startBattle('Lôi Đài')">
+          <div class="pvp-banner-title">Lôi<br>Đài</div>
+          <div class="pvp-banner-content"><span class="pvp-desc">Tỷ thí đoạt thưởng</span></div>
+        </div>
+
+        <div class="pvp-banner-card" onclick="startBattle('Tỷ Võ')">
+          <div class="pvp-banner-title">Tỷ<br>Võ</div>
+          <div class="pvp-banner-content"><span class="pvp-desc">Khiêu chiến tranh hạng</span></div>
+        </div>
+
+        <div class="pvp-banner-card" onclick="startBattle('Công Thành Chiến')">
+          <div class="pvp-banner-title">Công<br>Thành<br>Chiến</div>
+          <div class="pvp-banner-content"><span class="pvp-desc">Thất Thành đại chiến</span></div>
+        </div>
+
+        <div class="pvp-banner-card" onclick="startBattle('Đấu Trường Ban-Pick')">
+          <div class="pvp-banner-title">Đấu<br>Trường<br>Ban-Pick</div>
+          <div class="pvp-banner-content"><span class="pvp-desc">Thi đấu Real-time</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN TRẬN ĐẤU ẨN -->
+  <div id="battle-overlay">
+    <div class="battle-boss-area">
+      <div class="battle-boss-name">BOSS</div>
+      <div class="battle-boss-avatar" id="battle-boss-avatar">
+        👹
+        <div id="battle-stun-effect">💫</div>
+      </div>
+      <div class="battle-hp-bar-container">
+        <div id="battle-boss-hp"></div>
+      </div>
+    </div>
+
+    <div id="battle-hero-container"></div>
+
+    <button class="btn-close-battle" onclick="closeBattle()">Thoát Trận</button>
+  </div>
+
+  <script src="heroes_3d/hero_animator.js"></script>
+  <script src="battle.js"></script>
+</body>
+</html>

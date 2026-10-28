@@ -1,0 +1,32 @@
+.giangho-container, .pvp-container {
+  width: 100%; height: 100vh;
+  background: radial-gradient(circle, #3b2314 0%, #120904 100%);
+  padding: 10px; display: flex; flex-direction: column; overflow-y: auto;
+}
+.gh-header, .pvp-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+.gh-title-badge, .pvp-title-badge {
+  font-size: 16px; font-weight: 900; color: #fde047; text-shadow: 1px 1px 3px #000;
+}
+.gh-list, .pvp-list {
+  display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px;
+}
+.gh-banner-card, .pvp-banner-card {
+  background: linear-gradient(90deg, #4d2d14 0%, #29170a 100%);
+  border: 2px solid #fde047; border-radius: 8px;
+  height: 75px; display: flex; align-items: center; padding: 0 10px;
+  cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+}
+.gh-banner-card:active, .pvp-banner-card:active { transform: scale(0.98); }
+.gh-banner-title, .pvp-banner-title {
+  width: 75px; font-size: 13px; font-weight: 900; color: #fde047; text-align: center; line-height: 1.1;
+  text-shadow: 1px 1px 2px #000; border-right: 1px dashed rgba(253,224,71,0.4); padding-right: 5px;
+}
+.gh-banner-content, .pvp-banner-content {
+  flex: 1; padding-left: 12px; display: flex; flex-direction: column; justify-content: center;
+}
+.gh-desc, .pvp-desc {
+  font-size: 12px; font-weight: bold; color: #e2e8f0; text-shadow: 1px 1px 2px #000;
+}
+.gh-sub { font-size: 10px; color: #4ade80; font-weight: bold; margin-bottom: 2px; }

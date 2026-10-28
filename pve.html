@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PVE - Mộng Huyễn Giang Hồ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pve.css">
+  <link rel="stylesheet" href="battle.css">
+</head>
+<body>
+  <div id="app">
+    <!-- MÀN HÌNH CHỌN ẢI -->
+    <div id="pve-stage-screen" class="pve-screen active">
+      <div class="pve-header">
+        <button class="btn-back" onclick="window.location.href='index.html'">Trở về</button>
+        <h2 class="pve-title">Chọn Ải (1 - 100)</h2>
+      </div>
+      <div class="pve-scroll-area" id="stage-list-container"></div>
+    </div>
+
+    <!-- MÀN HÌNH CHỌN BÀN -->
+    <div id="pve-battle-screen" class="pve-screen">
+      <div class="pve-header">
+        <button class="btn-back" onclick="backToStages()">Trở về</button>
+        <h2 class="pve-title" id="ui-selected-stage">Ải 1</h2>
+      </div>
+      <div class="pve-scroll-area" id="battle-list-container"></div>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN TRẬN ĐẤU -->
+  <div id="battle-overlay">
+    <div class="battle-header-info">
+      <span id="ui-stage-title">Ải 1 - Bàn 1</span>
+      <span id="ui-wave-title">Trận 1/4</span>
+    </div>
+
+    <div class="battle-arena" id="battle-arena">
+      <!-- BÊN ĐỊCH -->
+      <div class="enemy-side">
+        <div class="enemy-name-tag" id="ui-enemy-name">5 VIRUS CORONA</div>
+        <div class="enemy-3d-wrapper">
+          <div class="enemy-platform"></div>
+          <div class="enemy-avatar-3d" id="battle-boss-avatar">
+            <span id="battle-boss-emoji">🦠</span>
+            <div id="battle-stun-effect">💫</div>
+          </div>
+        </div>
+        <div class="hp-bar-container">
+          <div id="battle-boss-hp" class="hp-fill enemy-hp" style="width: 100%;"></div>
+          <span class="hp-text" id="ui-enemy-hp-text">1000/1000</span>
+        </div>
+        <div class="enemy-stats-box">
+          <span id="ui-enemy-atk">Công: 200</span>
+        </div>
+      </div>
+
+      <!-- BÊN TA -->
+      <div class="hero-side">
+        <div class="hp-bar-container hero-hp-container">
+          <div id="hero-hp" class="hp-fill hero-hp" style="width: 100%;"></div>
+          <span class="hp-text" id="ui-hero-hp-text">500000/500000</span>
+        </div>
+        <div id="battle-hero-container"></div>
+      </div>
+    </div>
+
+    <!-- NÚT ĐIỀU KHIỂN -->
+    <div class="battle-controls">
+      <button id="btn-player-attack" class="btn-attack" onclick="executeUltimate()" disabled>Tung Chiêu</button>
+      <button class="btn-close-battle" onclick="closeBattle()">Thoát</button>
+    </div>
+  </div>
+
+  <script src="heroes_3d/hero_animator.js"></script>
+  <script src="pve.js"></script>
+  <script src="battle.js"></script>
+</body>
+</html>
