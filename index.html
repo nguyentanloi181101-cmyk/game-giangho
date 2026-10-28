@@ -420,6 +420,12 @@
     .bf-moonshield b{position:absolute;top:-8px;right:-4px;font-size:11px;background:#1e293b;border:1px solid #fde047;border-radius:8px;padding:0 4px;color:#fef08a}
     @keyframes moonPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
     .bf-shield{position:absolute;top:-42px;right:2px;font-size:16px;z-index:25;filter:drop-shadow(0 0 6px #38bdf8)}
+  
+    .pill-box { margin: 6px 8px; padding: 8px 10px; border: 1px solid var(--gold-border); border-radius: 8px; background: rgba(0,0,0,0.35); display: flex; align-items: center; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+    .pill-box .pb-info { flex: 1; min-width: 150px; }
+    .pill-box b { color: #4ade80; }
+    .pill-box button { background: linear-gradient(180deg,#22c55e,#15803d); border: 1px solid #86efac; color: #fff; font-weight: 800; font-size: 12px; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+    .pill-box button:disabled { opacity: .4; cursor: default; }
   </style>
 </head>
 <body>
@@ -436,7 +442,7 @@
         <div class="vip-badge">V1</div><div class="user-level">Cấp<span id="acc-level">74</span></div><button class="lock-btn" id="lock-btn" onclick="unlockTier()" title="Dùng 1 🔑 để mở thêm 10 cấp">🔒</button><div class="user-name">Long Hầu</div><div class="server-badge">Văn Lang</div>
       </div>
       <div class="stamina-power-container">
-        <div class="stamina-box"><div class="stamina-title">Thể Lực Đầy</div><div class="stamina-val">221/200</div></div>
+        <div class="stamina-box" onclick="openEquip()" style="cursor:pointer" title="Bấm để dùng Viên Thể Lực"><div class="stamina-title" id="sta-title">Thể Lực Đầy</div><div class="stamina-val" id="sta-val">200/200</div></div>
         <div class="power-total">537647</div>
       </div>
       <div class="resources-row">
@@ -578,6 +584,7 @@
   <div id="equip-modal" class="md-wrap" onclick="if(event.target===this)closeEquip()"><div class="md-box">
     <div class="hd-head"><div class="hd-info"><div class="hd-name">🎒 Trang Bị</div><div class="hd-sub" id="eq-sub"></div></div><button class="md-x" onclick="closeEquip()">✕</button></div>
     <div class="eq-tabs" id="eq-tabs"></div>
+    <div id="eq-pills"></div>
     <div id="eq-body"></div>
     <div class="md-acts"><button class="btn-attack" onclick="closeEquip()">Xong</button></div>
   </div></div>
@@ -715,7 +722,7 @@
           <div class="battle-item ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `startBattleSequence(${stageNum}, ${i})`}">
             <div>
               <div class="battle-item-title">Bàn ${i} ${isLocked ? '🔒' : ''}</div>
-              <div class="battle-item-desc">4 Trận: 5 Con Giáp -> Khủng Long -> 5 Con Giáp -> Boss (3 Tướng + Khủng Long + Con Giáp)${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
+              <div class="battle-item-desc">4 Trận: 5 Con Giáp -> Khủng Long -> 5 Con Giáp -> Boss (3 Tướng + Khủng Long + Con Giáp)<br>⚡ Tốn ${STA_WAVES * STA_PER_WAVE} thể lực • 💊 Thưởng ${PILL_PER_CLEAR} viên thể lực${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
             </div>
             ${isLocked ? '<div class="battle-item-btn disabled">Chưa mở</div>' : '<div class="battle-item-btn">Đánh ▶</div>'}
           </div>
@@ -807,7 +814,7 @@
     function closeTeam() { document.getElementById('team-modal').style.display = 'none'; renderHomeTeam(); }
 
     // ================= CHỈ SỐ TƯỚNG • CẤP / SAO / KỸ NĂNG • CÀI ĐẶT =================
-    const LV_MAX = 100, STAR_MAX = 6, SKILL_MAX = 10;          // giới hạn nâng cấp
+    const LV_MAX = 1000, STAR_MAX = 6, SKILL_MAX = 10;          // giới hạn nâng cấp
     const LV_GROWTH = 0.02, STAR_GROWTH = 0.10, SKILL_GROWTH = 0.10;  // +2%/cấp, +10%/sao (HP/Công/Thủ), +10%/cấp kỹ năng
     // Cấp & sao ban đầu của từng tướng (chỉ số cơ bản trong HEROES tương ứng với mức này)
     const START_PROG = { 0:{lv:70,star:5}, 1:{lv:73,star:5}, 2:{lv:70,star:5}, 3:{lv:70,star:4}, 4:{lv:73,star:3}, 5:{lv:70,star:5}, 6:{lv:70,star:5}, 7:{lv:70,star:5}, 8:{lv:70,star:5}, 9:{lv:70,star:5}, 10:{lv:70,star:5}, 11:{lv:70,star:5}, 12:{lv:70,star:5} };
@@ -847,7 +854,7 @@
     const skillMult = id => 1 + SKILL_GROWTH * (getProg(id).sk - 1);
     // Chỉ số thực dùng trong trận = cơ bản × hệ số cấp/sao
     // ---- TRANG BỊ: gắn vào KHUNG (vị trí 1-5 ở trang chủ). Tướng đang đứng ở khung nào thì nhận chỉ số của khung đó ----
-    const EQUIP_MAX = 100, FRAMES = 5;
+    const EQUIP_MAX = 1000, FRAMES = 5;
     const EQUIP = [
       { k:'hat',   name:'Mũ',   icon:'🪖', stat:'hp',  per:1000, label:'HP'   },
       { k:'armor', name:'Áo',   icon:'🥋', stat:'def', per:50,   label:'Thủ'  },
@@ -857,7 +864,7 @@
     // Phần thưởng: đánh thắng Ải 4 - Bàn 10 nhận mỗi loại 4 món vào Túi đồ (once = chỉ nhận lần đầu thắng)
     const EQ_REWARD = { stage:4, battle:10, each:4, startLv:1, once:true };
     // ---- CHÌA KHÓA: thắng xong 1 Ải (Bàn 10) nhận 1 🔑. Mỗi 🔑 mở thêm 10 cấp cho tướng và trang bị ----
-    const KEY_LV = 10, ACC_START = 74;     // cấp acc ban đầu 74; mỗi lần mở khóa +10, tối đa 100
+    const KEY_LV = 10, ACC_START = 74;     // cấp acc ban đầu 74; mỗi lần mở khóa +10, tối đa 1000
     let keysClaimed = (() => { let k = 0; try { k = parseInt(localStorage.getItem('keys_claimed')) || 0; } catch (e) {}
       return Math.max(k, (progress.maxStage || 1) - 1); })();   // tổng chìa khóa đã nhận (người chơi cũ tính bù)
     let accLevel = (() => { let v = 0; try { v = parseInt(localStorage.getItem('acc_level')) || 0; } catch (e) {}
@@ -890,6 +897,60 @@
       updateKeys();
       return `\n\n🔑 Nhận 1 Chìa Khóa! Bấm 🔒 ở đầu trang chủ để mở thêm ${KEY_LV} cấp (còn ${keyCount()} 🔑).`;
     }
+    // ================= THỂ LỰC & VIÊN THỂ LỰC =================
+    // • PvE: mỗi TRẬN tốn 1 thể lực (1 Bàn = 4 trận → tốn 4, trừ ngay khi vào Bàn) • 1 thể lực hồi sau 1 phút, hồi tối đa tới 200
+    // • Đánh xong 1 Bàn nhận 10 Viên Thể Lực vào Túi đồ, mỗi viên +30 thể lực • PvP không tốn thể lực, không giới hạn lượt
+    const STA_MAX = 200, STA_REGEN_MS = 60000, STA_PER_WAVE = 1, STA_WAVES = 4, PILL_PER_CLEAR = 10, PILL_STA = 30;
+    let staState = (() => {
+      const s = loadJSON('sta_state'), now = Date.now();
+      return { v: Number.isFinite(s.v) ? Math.max(0, Math.floor(s.v)) : STA_MAX, t: Number(s.t) || now, pills: Math.max(0, Math.floor(s.pills) || 0) };
+    })();
+    const staSave = () => saveJSON('sta_state', staState);
+    function staTick() {
+      const now = Date.now();
+      if (staState.v >= STA_MAX) { staState.t = now; return; }
+      const n = Math.floor((now - staState.t) / STA_REGEN_MS);
+      if (n > 0) {
+        staState.v = Math.min(STA_MAX, staState.v + n);
+        staState.t = staState.v >= STA_MAX ? now : staState.t + n * STA_REGEN_MS;
+        staSave();
+      }
+    }
+    function staRender() {
+      staTick();
+      const v = document.getElementById('sta-val'), t = document.getElementById('sta-title');
+      if (v) v.innerText = staState.v + '/' + STA_MAX;
+      if (t) {
+        if (staState.v >= STA_MAX) t.innerText = 'Thể Lực Đầy';
+        else { const rest = Math.max(0, STA_REGEN_MS - (Date.now() - staState.t)); t.innerText = 'Thể Lực • +1 sau ' + Math.ceil(rest / 1000) + 's'; }
+      }
+    }
+    function staSpend(n) {
+      staTick();
+      if (staState.v < n) return false;
+      if (staState.v >= STA_MAX) staState.t = Date.now();   // bắt đầu tính giờ hồi từ lúc tụt dưới mức đầy
+      staState.v -= n; staSave(); staRender();
+      return true;
+    }
+    function grantPills() {
+      staState.pills += PILL_PER_CLEAR; staSave();
+      if (document.getElementById('equip-modal').style.display === 'flex') renderEquip();
+      return `\n\n💊 Nhận ${PILL_PER_CLEAR} Viên Thể Lực vào Túi đồ (có ${staState.pills} viên)!`;
+    }
+    function usePills(n) {
+      n = Math.min(n, staState.pills);
+      if (n < 1) return;
+      staTick();
+      if (staState.v >= STA_MAX) staState.t = Date.now();
+      staState.pills -= n; staState.v += n * PILL_STA; staSave();
+      staRender(); renderEquip();
+    }
+    function pillPanelHtml() {
+      const c = staState.pills;
+      return `<div class="pill-box"><div class="pb-info">💊 <b>Viên Thể Lực</b> × ${c}<br><small>Mỗi viên +${PILL_STA} thể lực • Hiện có ${staState.v}/${STA_MAX}</small></div>` +
+        `<button ${c < 1 ? 'disabled' : ''} onclick="usePills(1)">Dùng 1</button><button ${c < 1 ? 'disabled' : ''} onclick="usePills(10)">Dùng 10</button></div>`;
+    }
+    setInterval(staRender, 1000); staRender();
     const eqType = k => EQUIP.find(e => e.k === k);
     // Túi đồ: mảng các món { id, k: loại, lv: cấp, f: số khung 0-4 đang gắn (-1 = nằm trong túi) }
     let eqBag = (() => {
@@ -1083,6 +1144,7 @@
     }
     function renderEquip() {
       const e = eqType(eqTab);
+      document.getElementById('eq-pills').innerHTML = eqLock ? '' : pillPanelHtml();
       document.getElementById('eq-sub').innerText = eqLock
         ? `Chọn ${e.name} gắn vào Khung ${eqCtx + 1}. Tướng đứng ở khung nào thì nhận chỉ số của khung đó.`
         : `Cấp acc ${accLevel} → trang bị nâng tối đa tới cấp ${eqCap()} (🔑 ${keyCount()}). Gắn vào khung nào thì tướng đứng ở khung đó được cộng chỉ số.`;
@@ -2035,6 +2097,8 @@
     }
 
     function startBattleSequence(stage, battle) {
+      const staCost = STA_WAVES * STA_PER_WAVE;
+      if (!staSpend(staCost)) { alert('⚡ Không đủ thể lực! Cần ' + staCost + ' thể lực (có ' + staState.v + ').\nThể lực hồi 1 mỗi phút, hoặc dùng 💊 Viên Thể Lực trong Túi đồ (bấm vào ô Thể Lực).'); return; }
       battleToken++;
       playBgm();
       currentStage = stage; currentBattle = battle; currentWave = 1;
@@ -2057,7 +2121,7 @@
     }
 
     // ================= TỶ VÕ (PVP XẾP HẠNG) =================
-    // • Mỗi 24h được khiêu chiến 30 lần • Thắng: +10.000 lực chiến, mọi tướng ra trận +10.000 HP / +5.000 Công / +3.000 Thủ (cộng dồn theo số trận thắng)
+    // • Khiêu chiến KHÔNG GIỚI HẠN lượt • Thắng: +10.000 lực chiến, mọi tướng ra trận +10.000 HP / +5.000 Công / +3.000 Thủ (cộng dồn theo số trận thắng)
     // • Bắt đầu ở hạng thấp nhất 10.000; thắng đối thủ hạng cao hơn thì nhảy lên hạng của đối thủ • Đối thủ = đội 5 tướng ngẫu nhiên
     const PVP_DAILY = 30, PVP_START_RANK = 10000, PVP_POWER = 10000, PVP_HP = 10000, PVP_ATK = 5000, PVP_DEF = 3000, PVP_MAX_ROUNDS = 10, BASE_POWER = 537647;
     const PVP_TIERS = [
@@ -2075,7 +2139,7 @@
     const pvpSave = () => saveJSON('pvp_state', pvpState);
     function pvpBonus(frame) { const w = pvpState.wins; return (frame < 0 || !w) ? { hp:0, atk:0, def:0 } : { hp:PVP_HP * w, atk:PVP_ATK * w, def:PVP_DEF * w }; }
     function pvpRefreshWindow() { if (pvpState.used > 0 && Date.now() - pvpState.winStart >= 86400000) { pvpState.used = 0; pvpState.winStart = 0; pvpSave(); } }
-    const pvpLeft = () => { pvpRefreshWindow(); return Math.max(0, PVP_DAILY - pvpState.used); };
+    const pvpLeft = () => Infinity;   // PvP không giới hạn lượt
     const fmtClock = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, '0')).join(':'); };
     function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = BASE_POWER + pvpState.wins * PVP_POWER; }
     const unitPower = s => Math.round(s.hp / 5 + s.atk * 2 + s.def * 3);
@@ -2121,10 +2185,10 @@
       el.innerHTML = `
         <div class="pvp-top">
           <div class="pvp-rank"><span>Hạng hiện tại</span><b>${fmtN(st.rank)}</b><small>${t.icon} ${t.name}</small></div>
-          <div class="pvp-info">Lực chiến của đội: <b>${fmtN(my)}</b><br>Lượt khiêu chiến: <b>${left}/${PVP_DAILY}</b><br><span id="pvp-timer"></span>${nextT ? '<br>Lên <b>' + nextT.icon + ' ' + nextT.name + '</b> khi đạt hạng ≤ ' + fmtN(nextT.max) : '<br>🏆 Đỉnh cao võ lâm!'}</div>
+          <div class="pvp-info">Lực chiến của đội: <b>${fmtN(my)}</b><br>Lượt khiêu chiến: <b>Không giới hạn ♾️</b>${nextT ? '<br>Lên <b>' + nextT.icon + ' ' + nextT.name + '</b> khi đạt hạng ≤ ' + fmtN(nextT.max) : '<br>🏆 Đỉnh cao võ lâm!'}</div>
         </div>
         <div class="pvp-note">🏆 Mỗi trận thắng: <b>+${fmtN(PVP_POWER)} lực chiến</b> • mọi tướng ra trận cộng dồn <b>+${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ</b>.<br>
-          Đã thắng <b>${w}</b> trận → đang cộng: HP +${fmtN(PVP_HP * w)} • Công +${fmtN(PVP_ATK * w)} • Thủ +${fmtN(PVP_DEF * w)}. Mỗi ${PVP_DAILY} lượt làm mới sau 24 giờ.</div>
+          Đã thắng <b>${w}</b> trận → đang cộng: HP +${fmtN(PVP_HP * w)} • Công +${fmtN(PVP_ATK * w)} • Thủ +${fmtN(PVP_DEF * w)}.</div>
         ${opps || '<div class="eq-empty">Không có đối thủ.</div>'}`;
       pvpTimerTick();
     }
@@ -2141,9 +2205,6 @@
     function startPvp(i) {
       const o = pvpOpps[i]; if (!o) return;
       if (!team.length) { alert('Hãy chọn Đội ngũ ra trận trước!'); return; }
-      if (pvpLeft() <= 0) { alert('Đã hết lượt khiêu chiến! Lượt được làm mới sau 24 giờ.'); return; }
-      if (pvpState.used === 0) pvpState.winStart = Date.now();
-      pvpState.used++; pvpSave();
       battleToken++; playBgm();
       pvp = { opp: o }; pvpRound = 0; pvpDmg = { hero: 0, enemy: 0 }; currentWave = 1; busy = false;
       document.getElementById('bf-units').innerHTML = '';
@@ -2244,7 +2305,7 @@
         pvpSave(); updatePower();
         msg = `🏆 THẮNG${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây nhiều sát thương hơn)' : ''}!\n\n` + (pvpState.rank < old ? `Hạng ${fmtN(old)} → ${fmtN(pvpState.rank)} (${pvpTier(pvpState.rank).icon} ${pvpTier(pvpState.rank).name})\n` : `Giữ vững hạng ${fmtN(old)}\n`) +
           `+${fmtN(PVP_POWER)} lực chiến\nMọi tướng ra trận cộng dồn: +${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ\n(tổng ${pvpState.wins} trận thắng: HP +${fmtN(PVP_HP * pvpState.wins)}, Công +${fmtN(PVP_ATK * pvpState.wins)}, Thủ +${fmtN(PVP_DEF * pvpState.wins)})`;
-      } else msg = `💀 THUA${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây ít sát thương hơn)' : ''}!\nKhông mất hạng, nhưng đã tốn 1 lượt khiêu chiến. Còn ${pvpLeft()}/${PVP_DAILY} lượt.`;
+      } else msg = `💀 THUA${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây ít sát thương hơn)' : ''}!\nKhông mất hạng, cứ khiêu chiến lại (không giới hạn lượt).`;
       pvpGenOpps(); renderPvp(); renderHomeTeam();
       pvpToast(msg + dmgLine, win);
     }
@@ -2445,7 +2506,7 @@
         loadWave();
       } else {
         const keyMsg = currentBattle === 10 ? claimStageKey(currentStage) : '';
-        const rewardMsg = grantStageReward(currentStage, currentBattle) + keyMsg;
+        const rewardMsg = grantStageReward(currentStage, currentBattle) + keyMsg + grantPills();
         pvpToast(`Hoàn thành Ải ${currentStage} - Bàn ${currentBattle}!` + rewardMsg, true);   // tự qua bàn, thông báo tự tắt
         const st = currentStage, bt = currentBattle;
         closeBattle();
@@ -2463,7 +2524,7 @@
       stopHeroSounds();
       try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
       stopBgm();
-      if (pvp) { pvp = null; pvpGenOpps(); renderPvp(); }   // thoát giữa trận Tỷ Võ = bỏ cuộc (đã mất 1 lượt)
+      if (pvp) { pvp = null; pvpGenOpps(); renderPvp(); }   // thoát giữa trận Tỷ Võ = bỏ cuộc
       busy = false;
       document.getElementById('battle-overlay').style.display = 'none';
       isPlayerTurn = false;
@@ -2473,7 +2534,7 @@
 <script>
 /* ===== SAO LƯU / CHUYỂN DỮ LIỆU GIỮA CÁC MÁY ===== */
 const SV_KEYS = ['pve_progress','team_ids','hero_stat_ov','hero_prog','keys_claimed','acc_level',
-                 'eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set'];
+                 'eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set','sta_state'];
 function svMsg(t, ok) { const e = document.getElementById('sv-msg'); e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t; }
 function svCollect() {
   const d = {};
