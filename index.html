@@ -298,6 +298,13 @@
     .sk-desc{font-size:12px;color:#e2e8f0;line-height:1.45;margin-top:3px}
     .md-acts{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
     .md-acts button{padding:8px 14px;font-size:13px;border-radius:16px}
+    .snd-sw{min-width:64px;padding:7px 12px;border-radius:16px;border:2px solid #fde047;font-size:13px;font-weight:900;cursor:pointer;color:#fff;transition:.2s}
+    .snd-sw.on{background:linear-gradient(180deg,#16a34a,#14532d)}
+    .snd-sw.off{background:#4a5568;border-color:#718096;color:#cbd5e1}
+    input,textarea{-webkit-user-select:text;user-select:text}
+    .cl-in{width:100%;margin:4px 0;padding:9px 10px;border-radius:8px;border:1px solid #fde047;background:#1a202c;color:#fff;font-size:15px}
+    .cl-status{font-size:12px;color:#cbd5e1;margin:4px 0;line-height:1.4}
+    .cl-status b{color:#fde047}
     .set-note{font-size:11px;color:#cbd5e1;margin-bottom:6px;line-height:1.4}
     .hero-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}
     .hchip{flex:0 0 64px;border:2px solid #4a5568;border-radius:8px;background:#1a202c;text-align:center;padding:4px 2px;cursor:pointer;opacity:.75}
@@ -574,6 +581,9 @@
   <!-- CÀI ĐẶT -->
   <div id="settings-modal" class="md-wrap"><div class="md-box">
     <div class="hd-head"><div class="hd-info"><div class="hd-name">⚙️ Cài Đặt</div></div><button class="md-x" onclick="closeSettings()">✕</button></div>
+    <div class="md-sec">🔊 Âm thanh</div>
+    <div class="set-row"><label>🎵 Nhạc nền<small>Nhạc lặp lại trong trận đấu</small></label><button class="snd-sw" id="sw-bgm" onclick="toggleAudio('bgm')"></button></div>
+    <div class="set-row"><label>⚔️ Âm thanh skill<small>Giọng tuyệt kỹ, tiếng đọc, hiệu ứng nổ / vỡ</small></label><button class="snd-sw" id="sw-skill" onclick="toggleAudio('skill')"></button></div>
     <div class="md-sec">🛠️ Chỉnh thông số tướng</div>
     <div class="set-note">Chỉnh chỉ số cơ bản của từng tướng (HP, Công, Thủ, Né, Chuẩn). Sửa xong tự lưu và áp dụng ngay vào trận đấu. Cấp và sao sẽ nhân thêm lên trên chỉ số này.</div>
     <div class="hero-chips" id="set-chips"></div>
@@ -581,6 +591,9 @@
     <div class="set-preview" id="set-preview"></div>
     <div class="set-saved" id="set-saved"></div>
     <div class="md-acts"><button class="btn-close-battle" onclick="resetHeroStats()">Khôi phục tướng này</button><button class="btn-close-battle" onclick="resetAllStats()">Khôi phục tất cả</button></div>
+    <div class="md-sec">☁️ Lưu đám mây (chơi mọi web, mọi máy)</div>
+    <div id="cl-box"></div>
+    <div class="set-saved" id="cl-msg" style="height:auto;min-height:16px"></div>
     <div class="md-sec">💾 Sao lưu / Chuyển dữ liệu</div>
     <div class="set-note">Dữ liệu game chỉ lưu trong trình duyệt của từng máy. Muốn chơi tiếp trên máy khác: bấm <b>Xuất</b> ở máy cũ, rồi <b>Nhập</b> ở máy mới.</div>
     <textarea id="sv-box" rows="3" placeholder="Mã lưu sẽ hiện ở đây. Máy mới: dán mã vào đây rồi bấm Nhập mã." style="width:100%;box-sizing:border-box;background:#111;color:#ddd;border:1px solid #444;border-radius:8px;padding:8px;font-size:12px;word-break:break-all"></textarea>
@@ -963,7 +976,22 @@
 
     // ---- Cài đặt: chỉnh thông số cơ bản ----
     let setId = 0, savedTimer = null;
-    function openSettings() { setId = HEROES[0].id; renderSettings(); document.getElementById('settings-modal').style.display = 'flex'; }
+    // ---- Cài đặt âm thanh: bật/tắt nhạc nền & âm skill (lưu trong trình duyệt) ----
+    let audioSet = Object.assign({ bgm: true, skill: true }, loadJSON('audio_set'));
+    function renderAudioSwitches() {
+      ['bgm', 'skill'].forEach(k => {
+        const b = document.getElementById('sw-' + k); if (!b) return;
+        b.className = 'snd-sw ' + (audioSet[k] ? 'on' : 'off');
+        b.innerText = audioSet[k] ? 'BẬT' : 'TẮT';
+      });
+    }
+    function toggleAudio(k) {
+      audioSet[k] = !audioSet[k]; saveJSON('audio_set', audioSet);
+      if (k === 'bgm') { if (audioSet.bgm) { if (document.getElementById('battle-overlay').style.display === 'flex') playBgm(); } else stopBgm(); }
+      if (k === 'skill' && !audioSet.skill) { stopHeroSounds(); try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {} }
+      renderAudioSwitches();
+    }
+    function openSettings() { setId = HEROES[0].id; renderAudioSwitches(); if (typeof clRender === 'function') clRender(); renderSettings(); document.getElementById('settings-modal').style.display = 'flex'; }
     function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; renderHomeTeam(); }
     function setSetHero(id) { setId = id; renderSettings(); }
     function renderSettings() {
@@ -1245,6 +1273,7 @@
     const heroSnd = {};
     function playHeroSound(id) {
       try {
+        if (!audioSet.skill) return;
         const src = HERO_SND_SRC[id]; if (!src) return;
         const a = heroSnd[id] || (heroSnd[id] = new Audio(src));
         a.pause(); a.currentTime = 0;
@@ -1256,6 +1285,7 @@
     let bgm = null;
     function playBgm() {
       try {
+        if (!audioSet.bgm) return;
         if (!bgm) { bgm = new Audio(BGM_SRC); bgm.loop = true; bgm.volume = 0.35; }
         if (bgm.paused) { bgm.currentTime = 0; const p = bgm.play(); if (p && p.catch) p.catch(() => {}); }
       } catch (e) {}
@@ -1458,6 +1488,7 @@
     // ===== Âm thanh Trương Tam Phong: đọc "Thái Cực Quyền" khi tụ chiêu, "đùng" ly vỡ khi chọi xuống =====
     function taichiSay() {
       try {
+        if (!audioSet.skill) return;
         const ss = window.speechSynthesis; if (!ss || !window.SpeechSynthesisUtterance) return;
         ss.cancel();
         const v = ss.getVoices().find(x => /^vi/i.test(x.lang));
@@ -1551,6 +1582,7 @@
     let sfxCtx = null;
     function sfxGet() {
       try {
+        if (!audioSet.skill) return null;
         if (!sfxCtx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; sfxCtx = new C(); }
         if (sfxCtx.state === 'suspended') sfxCtx.resume();
         return sfxCtx;
@@ -2359,7 +2391,7 @@
 <script>
 /* ===== SAO LƯU / CHUYỂN DỮ LIỆU GIỮA CÁC MÁY ===== */
 const SV_KEYS = ['pve_progress','team_ids','hero_stat_ov','hero_prog','keys_claimed','acc_level',
-                 'eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state'];
+                 'eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set'];
 function svMsg(t, ok) { const e = document.getElementById('sv-msg'); e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t; }
 function svCollect() {
   const d = {};
@@ -2410,6 +2442,142 @@ function svImportFile(inp) {
   r.onload = () => { try { svApply(svDecode(String(r.result))); } catch (e) { svMsg('File không hợp lệ.', false); } inp.value = ''; };
   r.readAsText(f);
 }
+</script>
+
+<script>
+/* ===== LƯU ĐÁM MÂY (FIREBASE) - đăng nhập tên + mật khẩu, đồng bộ mọi máy / mọi web ===== */
+// >>> DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY (xem hướng dẫn) <<<
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDOWlrfsWTx0HNWQAYvPHw7fWHlFP3UNu4",
+  authDomain: "game-118e8.firebaseapp.com",
+  projectId: "game-118e8",
+  storageBucket: "game-118e8.firebasestorage.app",
+  messagingSenderId: "612432319937",
+  appId: "1:612432319937:web:0e2ba2a7ecc032d8150b40"
+};
+const CL_DOMAIN = '@mhgh-game.app';
+const CL_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+const _lsGet = Storage.prototype.getItem, _lsSet = Storage.prototype.setItem, _lsDel = Storage.prototype.removeItem;
+let clAuth = null, clDb = null, clUser = null, clTimer = null, clDirty = false, clAsk = false, clBusy = false, clInited = false;
+const clCfgOk = () => !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+const clLocalT = () => Number(_lsGet.call(localStorage, 'cloud_local_t')) || 0;
+const clHasLocal = () => SV_KEYS.some(k => _lsGet.call(localStorage, k) !== null);
+
+function clMsg(t, ok) { const e = document.getElementById('cl-msg'); if (!e) return; e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t || ''; }
+
+// Mỗi khi game ghi dữ liệu -> đánh dấu thay đổi và tự đẩy lên đám mây sau 3 giây
+function clTouch() {
+  try { _lsSet.call(localStorage, 'cloud_local_t', String(Date.now())); } catch (e) {}
+  clDirty = true;
+  if (clUser) { clearTimeout(clTimer); clTimer = setTimeout(clPush, 3000); }
+}
+Storage.prototype.setItem = function (k, v) { _lsSet.call(this, k, v); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
+Storage.prototype.removeItem = function (k) { _lsDel.call(this, k); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
+
+function clLoadScript(src) {
+  return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(s); });
+}
+async function clInit() {
+  if (clInited) return; clInited = true;
+  clRender();
+  if (!clCfgOk()) return;
+  try {
+    await clLoadScript(CL_SDK + 'firebase-app-compat.js');
+    await Promise.all([clLoadScript(CL_SDK + 'firebase-auth-compat.js'), clLoadScript(CL_SDK + 'firebase-firestore-compat.js')]);
+    firebase.initializeApp(FIREBASE_CONFIG);
+    clAuth = firebase.auth(); clDb = firebase.firestore();
+    clAuth.onAuthStateChanged(u => { clUser = u; clRender(); if (u) clSync(); });
+  } catch (e) { clMsg('Không tải được Firebase (mất mạng hoặc bị chặn). Game vẫn chơi bình thường.', false); }
+}
+
+function clErr(e) {
+  const c = (e && e.code) || '';
+  if (c === 'auth/email-already-in-use') return 'Tên tài khoản này đã có người dùng.';
+  if (c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/user-not-found' || c === 'auth/invalid-login-credentials') return 'Sai tên tài khoản hoặc mật khẩu.';
+  if (c === 'auth/weak-password') return 'Mật khẩu quá yếu (tối thiểu 6 ký tự).';
+  if (c === 'auth/network-request-failed') return 'Mất kết nối mạng.';
+  if (c === 'auth/too-many-requests') return 'Thử quá nhiều lần, hãy đợi một lát.';
+  if (c === 'auth/operation-not-allowed') return 'Chưa bật đăng nhập Email/Password trong Firebase.';
+  if (c === 'permission-denied') return 'Chưa cấu hình quy tắc Firestore (xem hướng dẫn).';
+  return 'Lỗi: ' + (c || (e && e.message) || 'không rõ');
+}
+function clCred() {
+  const u = (document.getElementById('cl-user').value || '').trim().toLowerCase();
+  const p = document.getElementById('cl-pass').value || '';
+  if (!/^[a-z0-9_]{3,20}$/.test(u)) { clMsg('Tên tài khoản: 3-20 ký tự, chỉ chữ thường không dấu, số, dấu _', false); return null; }
+  if (p.length < 6) { clMsg('Mật khẩu tối thiểu 6 ký tự.', false); return null; }
+  return { email: u + CL_DOMAIN, pass: p, name: u };
+}
+async function clRegister() {
+  const c = clCred(); if (!c || !clAuth) return; clMsg('Đang tạo tài khoản...');
+  try { await clAuth.createUserWithEmailAndPassword(c.email, c.pass); clMsg('✔ Đã tạo tài khoản và đồng bộ dữ liệu.'); }
+  catch (e) { clMsg(clErr(e), false); }
+}
+async function clLogin() {
+  const c = clCred(); if (!c || !clAuth) return; clMsg('Đang đăng nhập...'); clAsk = true;
+  try { await clAuth.signInWithEmailAndPassword(c.email, c.pass); }
+  catch (e) { clAsk = false; clMsg(clErr(e), false); }
+}
+async function clLogout() { if (clAuth) { try { await clPush(); } catch (e) {} await clAuth.signOut(); clMsg('Đã đăng xuất. Dữ liệu vẫn còn trên máy này.'); } }
+
+async function clPush() {
+  if (!clUser || !clDb) return;
+  clearTimeout(clTimer);
+  const t = clLocalT() || Date.now();
+  try {
+    await clDb.collection('saves').doc(clUser.uid).set({ t: t, data: svCollect().data });
+    _lsSet.call(localStorage, 'cloud_local_t', String(t)); clDirty = false;
+    clMsg('☁️ Đã lưu lên đám mây ' + new Date().toLocaleTimeString());
+  } catch (e) { clMsg(clErr(e), false); }
+}
+function clApplyCloud(cloud) {
+  try {
+    SV_KEYS.forEach(k => _lsDel.call(localStorage, k));
+    Object.keys(cloud.data || {}).forEach(k => { if (SV_KEYS.includes(k)) _lsSet.call(localStorage, k, cloud.data[k]); });
+    _lsSet.call(localStorage, 'cloud_local_t', String(cloud.t || 0));
+  } catch (e) { clMsg('Không ghi được dữ liệu vào máy này.', false); return; }
+  clMsg('✔ Đã tải dữ liệu từ đám mây, đang tải lại game...');
+  setTimeout(() => location.reload(), 500);
+}
+// Đồng bộ: bản nào MỚI HƠN thì thắng. Lần đăng nhập thủ công mà hai bên khác nhau thì hỏi người chơi.
+async function clSync() {
+  if (!clUser || !clDb || clBusy) return; clBusy = true;
+  const ask = clAsk; clAsk = false;
+  try {
+    const snap = await clDb.collection('saves').doc(clUser.uid).get();
+    const cloud = snap.exists ? snap.data() : null, lt = clLocalT(), has = clHasLocal();
+    if (!cloud) { if (has) await clPush(); else clMsg('✔ Đã đăng nhập. Chưa có dữ liệu trên đám mây.'); }
+    else if (cloud.t === lt) { clMsg('☁️ Dữ liệu đã đồng bộ.'); }
+    else if (!has) { clApplyCloud(cloud); }
+    else if (ask) {
+      const useCloud = confirm('Cả máy này và đám mây đều có dữ liệu khác nhau.\n\nOK = dùng dữ liệu ĐÁM MÂY (ghi đè máy này)\nHủy = dùng dữ liệu MÁY NÀY (ghi đè đám mây)');
+      if (useCloud) clApplyCloud(cloud); else { _lsSet.call(localStorage, 'cloud_local_t', String(Date.now())); await clPush(); }
+    }
+    else if (cloud.t > lt) { clApplyCloud(cloud); }
+    else { await clPush(); }
+  } catch (e) { clMsg(clErr(e), false); }
+  clBusy = false;
+}
+
+function clRender() {
+  const box = document.getElementById('cl-box'); if (!box) return;
+  if (!clCfgOk()) {
+    box.innerHTML = '<div class="cl-status">⚠️ Chưa cấu hình Firebase. Mở file game, tìm <b>FIREBASE_CONFIG</b> và dán thông tin dự án Firebase của bạn vào. Khi chưa cấu hình, game vẫn lưu trên máy như bình thường.</div>';
+  } else if (clUser) {
+    const n = (clUser.email || '').replace(CL_DOMAIN, '');
+    box.innerHTML = '<div class="cl-status">Đang đăng nhập: <b>' + n + '</b><br>Tiến trình tự động lưu lên đám mây mỗi khi thay đổi.</div>' +
+      '<div class="md-acts"><button class="btn-attack" onclick="clPush()">☁️ Lưu ngay</button><button class="btn-close-battle" onclick="clLogout()">Đăng xuất</button></div>';
+  } else {
+    box.innerHTML = '<div class="cl-status">Tạo tài khoản (hoặc đăng nhập) để chơi tiếp trên mọi máy và mọi web.</div>' +
+      '<input class="cl-in" id="cl-user" placeholder="Tên tài khoản (a-z, 0-9, _)" autocapitalize="none" autocomplete="username" maxlength="20">' +
+      '<input class="cl-in" id="cl-pass" type="password" placeholder="Mật khẩu (từ 6 ký tự)" autocomplete="current-password">' +
+      '<div class="md-acts"><button class="btn-attack" onclick="clLogin()">Đăng nhập</button><button class="btn-close-battle" onclick="clRegister()">Đăng ký</button></div>';
+  }
+}
+// Khi rời trang / chuyển tab: đẩy dữ liệu chưa lưu
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && clDirty && clUser) clPush(); });
+window.addEventListener('pagehide', () => { if (clDirty && clUser) clPush(); });
+clInit();
 </script>
 </body>
 </html>
