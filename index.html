@@ -266,7 +266,12 @@
     .tm-ok{display:block;margin:12px auto 0}
 
     /* ===== BẢNG TƯỚNG + NỘ ===== */
-    .bf-panel{background:linear-gradient(180deg,#1b2a52,#0d1530);border-top:3px solid #7c8fd6;padding:6px 6px 10px;flex-shrink:0;z-index:100}
+    .bf-panel{background:linear-gradient(180deg,#1b2a52,#0d1530);border-top:3px solid #7c8fd6;padding:0;flex:none;z-index:100}
+    /* ===== Bố cục trận đấu chia 10 phần theo chiều dọc (mọi thiết bị): trời 2.5 • sân đấu 5 • bảng đội hình 2.5 ===== */
+    #battle-overlay .bf-field{flex:none;height:75%}                 /* trời + sân đấu = 7.5 phần (ảnh nền trải cả 2) */
+    #battle-overlay .bf-panel{flex:none;height:25%;position:relative;overflow:hidden}   /* bảng đội hình = 2.5 phần */
+    #battle-overlay .battle-header-info{position:absolute;top:0;left:0;right:0;z-index:70;width:auto}
+    .bf-fit{position:absolute;left:0;top:0;width:100%;padding:6px 6px 8px;transform-origin:0 0}
     .bf-hint{text-align:center;font-size:11px;color:#cbd5e1;margin-bottom:5px}
     .bf-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
     .bf-card{height:78px;border-radius:7px;border:2px solid #5b6ea8;background:linear-gradient(180deg,#2d3f78,#16204a);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:3px;cursor:pointer}
@@ -624,7 +629,7 @@
         <button class="btn-gear" title="Cài đặt" onclick="openSettings()">⚙️</button>
       </div>
       <div class="user-header">
-        <div class="vip-badge">V1</div><div class="user-level">Cấp<span id="acc-level">74</span></div><button class="lock-btn" id="lock-btn" onclick="unlockTier()" title="Dùng 1 🔑 để mở thêm 10 cấp">🔒</button><div class="user-name">Long Hầu</div><div class="server-badge">Văn Lang</div>
+        <div class="vip-badge">V1</div><div class="user-level">Cấp<span id="acc-level">74</span></div><button class="lock-btn" id="lock-btn" onclick="unlockTier()" title="Dùng 1 🔑 để mở thêm 10 cấp">🔒</button><div class="user-name" onclick="renamePlayer()" title="Bấm để đổi tên" style="cursor:pointer">Long Hầu ✎</div><div class="server-badge">Văn Lang</div>
       </div>
       <div class="stamina-power-container">
         <div class="stamina-box" onclick="openEquip()" style="cursor:pointer" title="Bấm để dùng Viên Thể Lực"><div class="stamina-title" id="sta-title">Thể Lực Đầy</div><div class="stamina-val" id="sta-val">200/200</div></div>
@@ -710,7 +715,6 @@
           <button class="btn-back" onclick="switchScreen('home')">Trở về</button>
           <h2 class="pve-title">Tỷ Võ</h2>
           <button class="pvp-mini" onclick="pvpShowTiers()">Xếp Hạng</button>
-          <button class="pvp-mini" id="pvp-mode" onclick="pvpToggleReal()">👥 Người thật</button>
           <button class="pvp-mini" onclick="pvpReroll()">Đổi</button>
         </div>
         <div id="pvp-body"></div>
@@ -744,7 +748,7 @@
       <div class="bf-title" id="ui-enemy-name"></div>
       <div id="bf-units"></div>
     </div>
-    <div class="bf-panel">
+    <div class="bf-panel"><div class="bf-fit">
       <div class="bf-hint" id="bf-hint"></div>
       <div id="pv-panel"></div>
       <div class="bf-row" id="bf-cards"></div>
@@ -755,7 +759,7 @@
         <button id="btn-auto" class="btn-attack" onclick="toggleAuto()">Tự Động: BẬT</button>
         <button class="btn-close-battle" onclick="closeBattle()">Thoát</button>
       </div>
-    </div>
+    </div></div>
   </div>
 
   <!-- ĐỘI NGŨ -->
@@ -1366,7 +1370,7 @@
         else if (free.test(ult)) ult = ult.replace(free, 'Cần đầy 100 nộ mới ulti được. '); }
       return [
         { tag:'Đánh thường', name:'Đòn Thường', desc:`Lao vào 1 địch ngẫu nhiên, gây ${fmtN(st.atk)} sát thương (100% Công). Mỗi lần đánh thường +${RAGE_ATK} nộ.` },
-        { tag:'Tuyệt kỹ', name:HERO_ULT_NAME[id] || 'Tuyệt Kỹ', lv:p.sk, desc:ult + `<br>⭐ Tinh: ★6 ulti 2 lần • ★11 ulti 3 lần • ★16 gộp thành 1 lần ×3 sát thương. Hiện ★${p.star}: ${(() => { const q = ultPlan(p.star); return q.mult > 1 ? '1 lần ×' + q.mult + ' sát thương' : q.casts + ' lần'; })()}.` },
+        { tag:'Tuyệt kỹ', name:HERO_ULT_NAME[id] || 'Tuyệt Kỹ', lv:p.sk, desc:ult },
         { tag:'Nội tại', name:'Nộ Khí', desc:`Mỗi lần bị đánh trúng +20 nộ (đủ 100 nộ để ulti). Né ${tsFmt(st.dodge)}% đòn đánh; Chuẩn của kẻ tấn công sẽ trừ vào tỉ lệ né này.${st.rage ? ` Vào trận với sẵn ${st.rage} nộ.` : ''}` },
         ...(id === 1 ? [{ tag:'Nội tại', name:'Thanh Liên Bất Tử', desc:`Vào trận KHÔNG có nộ. BẤT TỬ trong ${IMMORTAL_TURNS} hiệp đầu mỗi trận: nhận sát thương nhưng máu không thể xuống dưới 1.` }] : []),
         ...(heroById(id).taunt ? [{ tag:'Nội tại', name:(id === 8 ? 'Thiên Long Hộ Thể' : 'Tướng Thủ'), desc:'Là tướng thủ: địch luôn đánh vào tướng này TRƯỚC. Chỉ khi tướng này gục ngã, địch mới đánh sang các tướng khác.' }] : []),
@@ -1664,8 +1668,26 @@
       5: [[34,56],[26,43],[26,69],[16,50],[16,62]]
     };
     // Dịch đội hình ra 2 bên 8% và xuống dưới 12% (giữ nguyên kích thước); địch lấy đối xứng nên cũng dịch theo
-    Object.keys(HERO_POS).forEach(k => { HERO_POS[k] = HERO_POS[k].map(p => [p[0] - 8, p[1] + 12]); });
-    const HERO_DY = 10;   // đội ta dịch thêm xuống dưới 10% (chân tướng sát đáy sân); địch cũng dịch xuống bằng đội ta để 2 bên ngang nhau
+    // Chia ngang 10 phần: đội ta chiếm phần 0–4 (tâm x=20%), đội địch phần 6–10 (đối xứng, tâm x=80%), phần 4–6 ở giữa để trống
+    Object.keys(HERO_POS).forEach(k => { HERO_POS[k] = HERO_POS[k].map(p => [20 + (p[0] - 8 - 17) * 1.2, p[1] + 12]); });
+    const HERO_DY = -1;   // tâm đội hình nằm giữa vùng sân đấu (phần 2.5→7.5 trên 10 phần); địch dịch giống đội ta để 2 bên ngang nhau
+    // Co nội dung bảng đội hình để luôn vừa đúng 2.5/10 chiều cao màn hình (điện thoại hay máy tính đều không lệch)
+    function fitBattlePanel() {
+      const p = document.querySelector('#battle-overlay .bf-panel'), c = p && p.querySelector('.bf-fit'); if (!c) return;
+      const H = p.clientHeight; if (!H) return;
+      c.style.transform = 'none'; c.style.width = '100%'; c.style.top = '0px';
+      let k = 1, v = c.offsetHeight;
+      for (let i = 0; i < 8 && v > H + 0.5; i++) { k = Math.max(0.3, k * H / v); c.style.width = (100 / k) + '%'; v = c.offsetHeight * k; }
+      c.style.transform = k < 1 ? 'scale(' + k + ')' : 'none';
+      c.style.top = Math.max(0, (H - v) / 2) + 'px';
+    }
+    (() => {
+      let raf = 0; const go = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fitBattlePanel); };
+      const p = document.querySelector('#battle-overlay .bf-panel'); if (!p) return;
+      try { new ResizeObserver(go).observe(p); } catch (e) { window.addEventListener('resize', go); }
+      try { new MutationObserver(go).observe(p.querySelector('.bf-fit'), { childList: true, subtree: true, characterData: true }); } catch (e) {}
+      window.addEventListener('resize', go);
+    })();
     let battleFast = false;   // Tỷ Võ: bấm "Bỏ Qua" để tua nhanh trận đấu
     let ultTimeScale = 1;   // các lần ulti lặp (lần 2, 3) chạy nhanh gấp đôi: thu ngắn cả thời gian chờ lẫn hoạt ảnh
     const sleep = ms => new Promise(r => setTimeout(r, battleFast ? 0 : ms * ultTimeScale));
@@ -1998,7 +2020,7 @@
     function stopBgm() { try { if (bgm) { bgm.pause(); bgm.currentTime = 0; } if (openSnd) { openSnd.pause(); openSnd.currentTime = 0; } } catch (e) {} }
     function stopHeroSounds() { try { Object.values(heroSnd).forEach(a => { a.pause(); a.currentTime = 0; }); } catch (e) {} }
     // ★6: ulti 2 lần • ★11: ulti 3 lần • ★16: gộp 3 lần thành 1 lần ulti, sát thương ×3 (vd 300 × 3 lần = 900 → 1 lần đánh 900)
-    function ultPlan(star) { return star >= 16 ? { casts: 1, mult: 3 } : star >= 11 ? { casts: 3, mult: 1 } : star >= 6 ? { casts: 2, mult: 1 } : { casts: 1, mult: 1 }; }
+    function ultPlan(star) { return { casts: 1, mult: 1 }; }   // đã bỏ cơ chế ★6/★11/★16: mọi tướng chỉ ulti 1 lần
     function ultStarOf(u) {
       if (u.id === undefined || u.id === null) return 1;
       if (u.side === 'hero') return getProg(u.id).star;
@@ -3368,7 +3390,7 @@
     let pvpState = (() => {
       const s = loadJSON('pvp_state');
       return { rank: Math.min(PVP_START_RANK, Math.max(1, Math.floor(s.rank) || PVP_START_RANK)), wins: Math.max(0, Math.floor(s.wins) || 0),
-               used: Math.max(0, Math.floor(s.used) || 0), winStart: Number(s.winStart) || 0, log: Array.isArray(s.log) ? s.log.slice(0, 20) : [] };
+               rt: Number(s.rt) || 0, used: Math.max(0, Math.floor(s.used) || 0), winStart: Number(s.winStart) || 0, log: Array.isArray(s.log) ? s.log.slice(0, 20) : [] };
     })();
     const pvpSave = () => saveJSON('pvp_state', pvpState);
     function pvpBonus(frame) { const w = pvpState.wins; return (frame < 0 || !w) ? { hp:0, atk:0, def:0 } : { hp:PVP_HP * w, atk:PVP_ATK * w, def:PVP_DEF * w }; }
@@ -3385,7 +3407,8 @@
     const curRound = () => (typeof pvp !== 'undefined' && pvp) ? pvpRound : waveRound;
     let pvpOpps = [], pvp = null, pvpRound = 0, pvpDmg = { hero: 0, enemy: 0 };   // pvpDmg: tổng sát thương mỗi bên đã gây ra trong trận
 
-    function pvpGenOpps() {
+    function pvpGenOpps() { pvpGenNpc(); pvpMixReal(); }
+    function pvpGenNpc() {
       const P = pvpState.rank, w = pvpState.wins;
       let ranks = [0.01, 0.03, 0.06, 0.10, 0.15].map((p, i) => P - Math.max(i + 1, Math.ceil(P * p))).filter(r => r >= 1);
       ranks = [...new Set(ranks)];
@@ -3398,48 +3421,90 @@
                  lvl: 75 + Math.floor((PVP_START_RANK - r) / PVP_START_RANK * 25), power: stats.reduce((a, x) => a + unitPower(x), 0) };
       });
     }
-    function openPvp() { if (!pvpOpps.length && !pvpReal) pvpGenOpps(); renderPvp(); pvpModeBtn(); switchScreen('pvp'); }
-    // ---- Tỷ Võ NGƯỜI THẬT: đấu với đội hình mà tài khoản khác đã đăng lên đám mây (Firestore: pvp_players/{uid}) ----
-    let pvpReal = false;
-    function pvpModeBtn() { const b = document.getElementById('pvp-mode'); if (b) b.textContent = pvpReal ? '🤖 Máy' : '👥 Người thật'; }
-    async function pvpLoadReal() {
-      const body = document.getElementById('pvp-body');
-      if (typeof clUser === 'undefined' || !clUser || !clDb) { alert('Cần đăng nhập tài khoản đám mây (mục Lưu đám mây ở Cài đặt) để đấu với người chơi thật.'); return false; }
-      if (!team.length) { alert('Hãy chọn Đội ngũ ra trận trước!'); return false; }
-      if (body) body.innerHTML = '<div class="eq-empty" style="padding:40px 10px;text-align:center;color:#fde047">⏳ Đang tìm người chơi...</div>';
+    function openPvp() { if (!pvpOpps.length) pvpGenOpps(); else pvpMixReal(); renderPvp(); switchScreen('pvp'); }
+    // ---- Tỷ Võ: người chơi THẬT (tài khoản khác đăng nhập đám mây) được trộn lẫn với NPC trong cùng bảng xếp hạng ----
+    // Đội hình đăng ở Firestore pvp_players/{uid}. Thắng người thật có hạng cao hơn thì ĐỔI CHỖ hạng (người thua tụt xuống hạng cũ của bạn).
+    let pvpRealSeq = 0;
+    function pvpRealFromDoc(d) {
+      const x = d.data(), num = v => (typeof v === 'number' && isFinite(v) ? v : 0);
+      const stats = (Array.isArray(x.team) ? x.team : []).slice(0, 5).map(m => {
+        const h = heroById(m && m.id); if (!h || num(m.hp) <= 0) return null;
+        return { h, hp: Math.round(num(m.hp)), atk: Math.round(num(m.atk)), def: Math.round(num(m.def)), spd: num(m.spd) || h.spd, dodge: num(m.dodge), acc: num(m.acc), sk: Math.max(1, num(m.sk)), star: Math.max(1, num(m.star)) };
+      }).filter(Boolean);
+      const rk = Math.floor(num(x.rank)); if (!stats.length || rk < 1) return null;
+      return { real: true, uid: d.id, rank: Math.min(PVP_START_RANK, rk), steps: 0, heroes: stats.map(s => s.h), stats,
+               name: pvCleanName(x.name) || 'Người chơi', lvl: Math.max(1, Math.floor(num(x.lvl)) || 1), power: stats.reduce((a, s) => a + unitPower(s), 0) };
+    }
+    async function pvpMixReal() {
+      if (typeof clUser === 'undefined' || !clUser || !clDb || !team.length) return;
+      const seq = ++pvpRealSeq;
       try {
-        await clPublishPvp();                                   // đăng đội hình của mình để người khác cũng đấu được với bạn
-        const snap = await clDb.collection('pvp_players').orderBy('t', 'desc').limit(60).get();
-        const my = pvpMyPower(), pool = [];
-        snap.forEach(d => {
-          if (d.id === clUser.uid) return;
-          const x = d.data(), num = v => (typeof v === 'number' && isFinite(v) ? v : 0);
-          const stats = (Array.isArray(x.team) ? x.team : []).slice(0, 5).map(m => {
-            const h = heroById(m && m.id); if (!h || num(m.hp) <= 0) return null;
-            return { h, hp: Math.round(num(m.hp)), atk: Math.round(num(m.atk)), def: Math.round(num(m.def)), spd: num(m.spd) || h.spd, dodge: num(m.dodge), acc: num(m.acc), sk: Math.max(1, num(m.sk)), star: Math.max(1, num(m.star)) };
-          }).filter(Boolean);
-          if (!stats.length) return;
-          pool.push({ real: true, uid: d.id, rank: Math.max(1, Math.min(PVP_START_RANK, Math.floor(num(x.rank)) || PVP_START_RANK)), steps: 0,
-            heroes: stats.map(s => s.h), stats, name: String(x.name || 'Người chơi').slice(0, 20), lvl: Math.max(1, Math.floor(num(x.lvl)) || 1),
-            power: stats.reduce((a, s) => a + unitPower(s), 0) });
+        const r0 = pvpState.rank;
+        await clSyncRank();                                   // hạng có thể đã bị người khác đổi chỗ
+        if (seq !== pvpRealSeq) return;
+        if (pvpState.rank !== r0) pvpGenNpc();
+        await clPublishPvp();                                 // đăng đội hình của mình để người khác đấu được với bạn
+        const P = pvpState.rank;
+        let q = clDb.collection('pvp_players');
+        q = P > 1 ? q.where('rank', '>=', Math.max(1, P - Math.ceil(P * 0.2) - 1)).where('rank', '<', P) : q.where('rank', '>', 1).where('rank', '<=', 7);
+        const snap = await q.orderBy('rank', 'desc').limit(40).get();
+        if (seq !== pvpRealSeq) return;
+        const cands = []; snap.forEach(d => { if (d.id !== clUser.uid) { const o = pvpRealFromDoc(d); if (o) cands.push(o); } });
+        const used = new Set();
+        shuffled(cands).forEach(o => {
+          let bi = -1, bd = Infinity;
+          pvpOpps.forEach((s, i) => { if (used.has(i)) return; const dd = Math.abs(s.rank - o.rank); if (dd < bd) { bd = dd; bi = i; } });
+          if (bi >= 0) { used.add(bi); pvpOpps[bi] = o; }     // người thật thế chỗ NPC gần hạng nhất
         });
-        if (!pool.length) { if (body) body.innerHTML = '<div class="eq-empty" style="padding:30px 12px;text-align:center">Chưa có người chơi nào khác đăng đội hình.<br>Hãy nhờ bạn bè đăng nhập tài khoản của họ rồi vào game một lần.</div>'; pvpOpps = []; return true; }
-        pool.sort((a, b) => Math.abs(Math.log((a.power + 1) / (my + 1))) - Math.abs(Math.log((b.power + 1) / (my + 1))));
-        pvpOpps = shuffled(pool.slice(0, 12)).slice(0, 5);
         renderPvp();
-        return true;
-      } catch (e) {
-        const msg = (e && e.code === 'permission-denied') ? 'Chưa mở quyền đọc <b>pvp_players</b> trong Firestore Rules (xem hướng dẫn).' : ('Không tải được: ' + ((e && (e.code || e.message)) || 'lỗi mạng'));
-        if (body) body.innerHTML = '<div class="eq-empty" style="padding:30px 12px;text-align:center;color:#f87171">' + msg + '</div>';
-        return false;
-      }
+      } catch (e) {}
     }
-    async function pvpToggleReal() {
-      if (!pvpReal) { pvpReal = true; pvpModeBtn(); if (!(await pvpLoadReal())) { pvpReal = false; pvpModeBtn(); pvpGenOpps(); renderPvp(); } }
-      else { pvpReal = false; pvpModeBtn(); pvpGenOpps(); renderPvp(); }
+    // Hạng lưu trên đám mây là bản gốc: bên nào đổi hạng SAU CÙNG (rt lớn hơn) thì thắng
+    async function clSyncRank() {
+      if (!clUser || !clDb) return;
+      const ref = clDb.collection('pvp_players').doc(clUser.uid), s = await ref.get();
+      if (!s.exists) return;
+      const c = s.data(), cr = Math.floor(c.rank), crt = Number(c.rt) || 0;
+      if (!(cr >= 1)) return;
+      if (crt > (pvpState.rt || 0)) { if (cr !== pvpState.rank) { pvpState.rank = Math.min(PVP_START_RANK, cr); } pvpState.rt = crt; pvpSave(); }
+      else if (cr !== pvpState.rank) { pvpState.rt = pvpState.rt || Date.now(); pvpSave(); await ref.set({ rank: pvpState.rank, rt: pvpState.rt }, { merge: true }); }
     }
-    function pvpReroll() { if (pvpReal) { pvpLoadReal(); return; } pvpGenOpps(); renderPvp(); }
-    const pvName = () => ((document.querySelector('.user-name') || {}).textContent || 'Bạn').trim();
+    async function pvpRankCloud(opp, oldRank) {            // sau khi thắng: ghi hạng mới lên đám mây, đổi chỗ với người thật
+      if (typeof clUser === 'undefined' || !clUser || !clDb) return;
+      const meRef = clDb.collection('pvp_players').doc(clUser.uid), now = pvpState.rt, mine = pvpState.rank;
+      try {
+        if (opp && opp.real) {
+          const opRef = clDb.collection('pvp_players').doc(opp.uid);
+          await clDb.runTransaction(async tx => {
+            const os = await tx.get(opRef);
+            tx.set(meRef, { rank: mine, rt: now }, { merge: true });
+            if (os.exists && os.data().rank === opp.rank) tx.update(opRef, { rank: oldRank, rt: now });
+          });
+        } else await meRef.set({ rank: mine, rt: now }, { merge: true });
+      } catch (e) {}
+    }
+    function pvpReroll() { pvpGenOpps(); renderPvp(); }
+    const pvCleanName = s => String(s || '').replace(/[<>&"'`\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);   // bỏ ký tự nguy hiểm (tên hiện bằng innerHTML)
+    const pvName = () => {
+      let n = ''; try { n = pvCleanName(localStorage.getItem('player_name')); } catch (e) {}
+      if (!n && typeof clUser !== 'undefined' && clUser) n = pvCleanName((clUser.email || '').replace(CL_DOMAIN, ''));   // chưa tự đặt: dùng tên tài khoản
+      return n || 'Bạn';
+    };
+    function applyPlayerName() {
+      let custom = ''; try { custom = pvCleanName(localStorage.getItem('player_name')); } catch (e) {}
+      const el = document.querySelector('.user-name'); if (!el) return;
+      if (custom || (typeof clUser !== 'undefined' && clUser)) el.textContent = pvName();   // chưa đăng nhập & chưa đặt tên: giữ tên mặc định
+    }
+    function renamePlayer() {
+      const v = prompt('Đổi tên hiển thị (trang chủ & Tỷ Võ), 2–16 ký tự:', pvName()); if (v === null) return;
+      const n = pvCleanName(v);
+      if (n.length < 2) { alert('Tên cần từ 2 ký tự trở lên (không dùng các ký tự < > & dấu nháy).'); return; }
+      try { localStorage.setItem('player_name', n); } catch (e) {}
+      applyPlayerName();
+      try { renderPvp(); } catch (e) {}
+      try { if (typeof clPublishPvp === 'function') clPublishPvp().catch(() => {}); } catch (e) {}   // cập nhật tên cho người chơi khác
+    }
+    applyPlayerName();
     const SPOTS = [[50, 15], [19, 29], [81, 37], [26, 54], [76, 65]];     // 5 đối thủ, vị trí như cảnh núi mây
     const ME_SPOT = [50, 82];
     const pvMainOf = stats => stats.reduce((b, x) => unitPower(x) > unitPower(b) ? x : b, stats[0]).h;   // tướng mạnh nhất làm đại diện
@@ -3483,7 +3548,8 @@
       pvShow(pvHead(`Cấp ${accLevel} ${pvName()}`, `Hạng ${fmtN(st.rank)} • ${t.icon} ${t.name}`) +
         `<div style="font-size:12px;color:#cbd5e1">Lực chiến <b style="color:#fde047">${fmtN(pvpMyPower())}</b> • Đã thắng ${st.wins} trận</div>` +
         `<div class="pv-lineup">${team.map(id => { const s2 = heroStats(id); return pvCardL(heroById(id), s2.hp, s2.atk, s2.def); }).join('')}</div>` +
-        `<button class="btn-attack pv-go" onclick="pvClose();openTeam()">⛩️ Đổi Đội Hình</button>`);
+        `<button class="btn-attack pv-go" onclick="pvClose();openTeam()">⛩️ Đổi Đội Hình</button>` +
+        `<button class="btn-close-battle pv-go" style="margin-top:6px" onclick="pvClose();renamePlayer()">✏️ Đổi Tên</button>`);
     }
     function pvpShowTiers() {
       let prev = 0;
@@ -3636,7 +3702,7 @@
       if (win) {
         const old = pvpState.rank;
         pvpState.wins++;
-        if (m.opp.rank < pvpState.rank) pvpState.rank = m.opp.rank;
+        if (m.opp.rank < pvpState.rank) { const mine0 = pvpState.rank; pvpState.rank = m.opp.rank; pvpState.rt = Date.now(); pvpRankCloud(m.opp, mine0); }
         pvpSave(); updatePower();
         msg = `🏆 THẮNG${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây nhiều sát thương hơn)' : ''}!\n\n` + (pvpState.rank < old ? `Hạng ${fmtN(old)} → ${fmtN(pvpState.rank)} (${pvpTier(pvpState.rank).icon} ${pvpTier(pvpState.rank).name})\n` : `Giữ vững hạng ${fmtN(old)}\n`) +
           `+${fmtN(PVP_POWER)} lực chiến\nMọi tướng ra trận cộng dồn: +${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ\n(tổng ${pvpState.wins} trận thắng: HP +${fmtN(PVP_HP * pvpState.wins)}, Công +${fmtN(PVP_ATK * pvpState.wins)}, Thủ +${fmtN(PVP_DEF * pvpState.wins)})`;
@@ -3877,7 +3943,7 @@
 <script>
 /* ===== SAO LƯU / CHUYỂN DỮ LIỆU GIỮA CÁC MÁY ===== */
 const SV_KEYS = ['pve_progress','team_ids','hero_stat_ov','hero_role','hero_prog','keys_claimed','acc_level',
-                 'ts_bag','eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set','sta_state'];
+                 'player_name','ts_bag','eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set','sta_state'];
 function svMsg(t, ok) { const e = document.getElementById('sv-msg'); e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t; }
 function svCollect() {
   const d = {};
@@ -4022,9 +4088,12 @@ async function clPublishPvp() {
   if (!clUser || !clDb) return;
   const ids = (team || []).filter(id => heroById(id)); if (!ids.length) return;
   const tm = ids.map(id => { const s = heroStats(id); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, star: getProg(id).star, sk: skillMult(id) }; });
-  await clDb.collection('pvp_players').doc(clUser.uid).set({
-    name: (clUser.email || '').replace(CL_DOMAIN, ''), lvl: accLevel, rank: pvpState.rank, wins: pvpState.wins,
-    power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm });
+  const ref = clDb.collection('pvp_players').doc(clUser.uid);
+  const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins,
+    power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm };
+  const cur = await ref.get();
+  if (!cur.exists) { data.rank = pvpState.rank; data.rt = pvpState.rt || 0; }   // hạng chỉ ghi lúc tạo; sau đó đổi qua clSyncRank / pvpRankCloud
+  await ref.set(data, { merge: true });
 }
 function clApplyCloud(cloud) {
   try {
@@ -4056,6 +4125,7 @@ async function clSync() {
 }
 
 function clRender() {
+  try { applyPlayerName(); } catch (e) {}
   const box = document.getElementById('cl-box'); if (!box) return;
   if (!clCfgOk()) {
     box.innerHTML = '<div class="cl-status">⚠️ Chưa cấu hình Firebase. Mở file game, tìm <b>FIREBASE_CONFIG</b> và dán thông tin dự án Firebase của bạn vào. Khi chưa cấu hình, game vẫn lưu trên máy như bình thường.</div>';
