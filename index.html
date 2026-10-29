@@ -414,6 +414,56 @@
     .pvp-head .pve-title{flex:1}
     .pvp-mini{background:linear-gradient(180deg,#3b82f6,#1e3a8a);border:1px solid #bfdbfe;border-radius:6px;color:#fff;font-size:12px;font-weight:bold;padding:6px 10px;cursor:pointer}
     #pvp-body{flex:1;overflow-y:auto;padding:10px 12px 24px}
+    /* ===== Tỷ Võ: cảnh núi mây + bệ sen ===== */
+    #pvp-body{position:relative;flex:1;overflow:hidden;padding:0;
+      background:radial-gradient(ellipse 60% 13% at 18% 22%,rgba(255,255,255,.6),transparent 70%),radial-gradient(ellipse 70% 15% at 86% 46%,rgba(255,255,255,.55),transparent 70%),
+        radial-gradient(ellipse 80% 14% at 28% 74%,rgba(255,255,255,.55),transparent 70%),radial-gradient(ellipse 60% 12% at 78% 92%,rgba(255,255,255,.5),transparent 70%),
+        linear-gradient(180deg,#a8d3cf 0%,#7fb3af 38%,#5f9895 68%,#3f7270 100%)}
+    #pvp-body::before{content:'';position:absolute;left:0;right:0;top:6%;height:48%;background:linear-gradient(180deg,#5d8f8c,#7fb3af);opacity:.55;
+      clip-path:polygon(0 100%,0 58%,10% 34%,22% 62%,36% 16%,50% 56%,64% 24%,78% 60%,91% 32%,100% 54%,100% 100%)}
+    .pv-spot{position:absolute;transform:translate(-50%,-50%);width:132px;text-align:center;cursor:pointer;z-index:2}
+    .pv-hero{position:relative;z-index:2;width:84px;height:84px;margin:0 auto -30px;border-radius:50%;border:3px solid #fde047;background:#2a1450;display:flex;align-items:center;justify-content:center;font-size:54px;
+      box-shadow:0 10px 16px rgba(0,0,0,.35),0 0 14px rgba(253,224,71,.5);animation:pvFloat 3.2s ease-in-out infinite}
+    .pv-hero .hero-img{width:100%;height:100%;border:0;border-radius:50%}
+    @keyframes pvFloat{50%{transform:translateY(-6px)}}
+    .pv-lotus{position:relative;width:124px;height:46px;margin:0 auto}
+    .pv-lotus::before{content:'';position:absolute;left:0;right:0;bottom:0;height:34px;border-radius:50% 50% 46% 46%/78% 78% 22% 22%;background:linear-gradient(180deg,#f8f6ec,#cbd8c0);
+      box-shadow:inset 0 -7px 0 #aebfa5,-30px 6px 0 -8px #e6ecdc,30px 6px 0 -8px #e6ecdc,-52px 10px 0 -14px #d7e2cd,52px 10px 0 -14px #d7e2cd,0 8px 14px rgba(0,0,0,.28)}
+    .pv-lotus::after{content:'';position:absolute;left:20px;right:20px;top:2px;height:18px;border-radius:50%;background:radial-gradient(ellipse,#ffffff,#dfeadb 70%);border:1px solid #9bb08f}
+    .pv-name{margin-top:2px;font-size:14px;font-weight:800;line-height:1.15;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 4px rgba(0,0,0,.6)}
+    .pv-spot.me .pv-hero{border-color:#7dd3fc;box-shadow:0 10px 16px rgba(0,0,0,.35),0 0 18px #38bdf8}
+    .pv-info{position:absolute;left:10px;bottom:10px;z-index:3;font-size:15px;font-weight:800;color:#fff;line-height:1.35;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+    .pv-info b{display:block;font-size:20px;color:#fde68a}
+    .pv-log-btn{position:absolute;right:10px;bottom:10px;z-index:3;background:linear-gradient(180deg,#3b82f6,#1e3a8a);border:2px solid #bfdbfe;border-radius:10px;color:#fff;font-weight:900;font-size:15px;padding:9px 16px;cursor:pointer;text-shadow:0 1px 2px #000}
+    .pv-lineup{display:flex;gap:4px;margin:10px 0}
+    .pv-lc{flex:1;min-width:0;border:2px solid #a16207;border-radius:8px;background:linear-gradient(180deg,#4d2d14,#29170a);text-align:center;padding:4px 2px;font-size:10px;color:#e5e7eb;line-height:1.3}
+    .pv-lc .e{font-size:30px;line-height:1.1}.pv-lc .hero-img{width:100%;height:auto;aspect-ratio:1;border-radius:6px;border-width:1px}
+    .pv-lc .n{font-weight:800;color:#fde68a;font-size:10px;margin:2px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pv-go{width:100%;padding:12px;font-size:17px;font-weight:900;border-radius:12px}
+    .pv-row-log{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:5px 2px;border-bottom:1px dashed rgba(253,224,71,.25);color:#e5e7eb}
+    /* ===== Giao diện chiến đấu Tỷ Võ ===== */
+    #pv-panel,#pv-skip{display:none}
+    #battle-overlay.pvp-mode #pv-panel{display:block}
+    #battle-overlay.pvp-mode #bf-cards,#battle-overlay.pvp-mode #bf-orbs,#battle-overlay.pvp-mode #bf-hint,#battle-overlay.pvp-mode #btn-all,#battle-overlay.pvp-mode #btn-end,#battle-overlay.pvp-mode #btn-auto{display:none}
+    #battle-overlay.pvp-mode #pv-skip{display:block}
+    #battle-overlay.pvp-mode #ui-stage-title,#battle-overlay.pvp-mode #ui-enemy-name{display:none}
+    #battle-overlay.pvp-mode .battle-header-info{min-height:44px}
+    #battle-overlay.pvp-mode #ui-wave-title{position:absolute;left:50%;transform:translateX(-50%);font-size:22px;font-weight:900;color:#fff;text-shadow:0 2px 6px #000;top:6px}
+    #pv-skip{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);z-index:120;width:62px;height:62px;border-radius:50%;border:3px solid #fde047;background:radial-gradient(circle at 35% 30%,#4ade80,#166534);color:#fff;font-weight:900;font-size:14px;line-height:1.05;cursor:pointer;box-shadow:0 0 12px #000;text-shadow:0 1px 2px #000}
+    .pv-row{display:flex;gap:4px;margin-bottom:5px;align-items:stretch}
+    .pv-c{flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch}
+    .pv-cb{border:2px solid #b45309;border-radius:7px;background:linear-gradient(180deg,#3b2a1a,#1a1008);padding:2px;display:flex;flex-direction:column;gap:2px;align-items:center}
+    .pv-c.dead .pv-cb{filter:grayscale(1);opacity:.4}
+    .pv-c.opp .pv-cb{border-color:#7c3aed}
+    .pv-p{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;overflow:hidden;border-radius:4px}
+    .pv-p .hero-img{width:100%;height:100%;border:0;border-radius:4px}
+    .pv-st{font-size:9px;line-height:1;color:#fbbf24;letter-spacing:-1px;white-space:nowrap}
+    .pv-b{width:100%;height:5px;background:#0a0f20;border:1px solid #000;border-radius:3px;overflow:hidden}.pv-b i{display:block;height:100%}
+    .pv-b.h i{background:#4ade80}.pv-b.r i{background:#e5e7eb}
+    .pv-sp{margin:3px auto 0;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(180deg,#a16207,#713f12);border:1px solid #fbbf24;border-radius:8px;padding:0 5px;white-space:nowrap}
+    .pv-side{width:98px;flex:0 0 98px;border:2px solid #7c8fd6;border-radius:10px;background:linear-gradient(180deg,#1b2a52,#0d1530);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;text-align:center}
+    .pv-side b{font-size:19px;color:#fff;font-style:italic;text-shadow:0 2px 3px #000;line-height:1.1}
+    .pv-side span{font-size:11px;color:#fde68a;font-weight:800;line-height:1.2;overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
     .pvp-top{background:linear-gradient(180deg,#1e3a8a,#0f1d4a);border:2px solid #fde047;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
     .pvp-rank{min-width:96px;text-align:center;background:rgba(0,0,0,.35);border:1px solid #fde047;border-radius:8px;padding:6px 4px}
     .pvp-rank span{display:block;font-size:11px;color:#bfdbfe}.pvp-rank b{display:block;font-size:26px;color:#fde047;line-height:1.1;text-shadow:0 0 8px #f59e0b}
@@ -539,7 +589,7 @@
         <div class="pvp-head">
           <button class="btn-back" onclick="switchScreen('home')">Trở về</button>
           <h2 class="pve-title">Tỷ Võ</h2>
-          <button class="pvp-mini" onclick="pvpShowTiers()">Phân cấp</button>
+          <button class="pvp-mini" onclick="pvpShowTiers()">Xếp Hạng</button>
           <button class="pvp-mini" onclick="pvpReroll()">Đổi</button>
         </div>
         <div id="pvp-body"></div>
@@ -568,12 +618,14 @@
       <span id="ui-wave-title">Trận 1/4</span>
     </div>
     <div class="bf-field" id="battle-arena">
+      <button id="pv-skip" onclick="pvpSkip()">Bỏ<br>Qua</button>
       <div class="bf-mount"></div><div class="bf-mount b"></div><div class="bf-ground"></div>
       <div class="bf-title" id="ui-enemy-name"></div>
       <div id="bf-units"></div>
     </div>
     <div class="bf-panel">
       <div class="bf-hint" id="bf-hint"></div>
+      <div id="pv-panel"></div>
       <div class="bf-row" id="bf-cards"></div>
       <div class="bf-row" id="bf-orbs"></div>
       <div class="bf-acts">
@@ -615,6 +667,7 @@
     <div class="hd-head"><div class="hd-info"><div class="hd-name" id="ts-pick-title">Chọn tướng</div></div><button class="md-x" onclick="tsPickClose()">✕</button></div>
     <div class="hero-chips" id="ts-pick-list" style="flex-wrap:wrap;overflow:visible"></div>
   </div></div>
+  <div id="pv-modal" class="md-wrap" onclick="if(event.target===this)pvClose()"><div class="md-box" id="pv-box"></div></div>
   <div id="equip-modal" class="md-wrap" onclick="if(event.target===this)closeEquip()"><div class="md-box">
     <div class="hd-head"><div class="hd-info"><div class="hd-name">🎒 Trang Bị</div><div class="hd-sub" id="eq-sub"></div></div><button class="md-x" onclick="closeEquip()">✕</button></div>
     <div class="eq-tabs" id="eq-tabs"></div>
@@ -1325,7 +1378,8 @@
       4: [[34,40],[34,70],[18,40],[18,70]],
       5: [[36,55],[24,34],[24,76],[10,44],[10,68]]
     };
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    let battleFast = false;   // Tỷ Võ: bấm "Bỏ Qua" để tua nhanh trận đấu
+    const sleep = ms => new Promise(r => setTimeout(r, battleFast ? 0 : ms));
     const rand = arr => arr[Math.floor(Math.random() * arr.length)];
 
     function formatNumber(num) {
@@ -1390,7 +1444,7 @@
       u.el.classList.add('hurt'); setTimeout(() => u.el.classList.remove('hurt'), 180);
       if (u.hp <= 0) { u.alive = false; u.el.classList.add('dead'); u.stun = 0; if (u.moon) removeMoon(u); const ic = u.el.querySelector('.bf-stun'); if (ic) ic.remove(); }
       else if (u.rage != null && !noRage) gainRage(u, 20);
-      if (u.side === 'hero') refreshPanel();
+      if (u.side === 'hero' || pvp) refreshPanel();
       if (refl > 0) {
         const tgt = (src && src.alive && src.side !== u.side) ? src : rand(foesOf(u).filter(x => x.alive));
         if (tgt) { floatText(u, '🌙 PHẢN'); hit(tgt, refl, true, null, true); }
@@ -2335,6 +2389,7 @@
     }
 
     function refreshPanel() {
+      if (pvp) { renderPvpPanel(); return; }
       const hs = waveUnits.heroes;
       let cards = '', orbs = '', readyCount = 0;
       for (let i = 0; i < 5; i++) {
@@ -2397,7 +2452,7 @@
     let pvpState = (() => {
       const s = loadJSON('pvp_state');
       return { rank: Math.min(PVP_START_RANK, Math.max(1, Math.floor(s.rank) || PVP_START_RANK)), wins: Math.max(0, Math.floor(s.wins) || 0),
-               used: Math.max(0, Math.floor(s.used) || 0), winStart: Number(s.winStart) || 0 };
+               used: Math.max(0, Math.floor(s.used) || 0), winStart: Number(s.winStart) || 0, log: Array.isArray(s.log) ? s.log.slice(0, 20) : [] };
     })();
     const pvpSave = () => saveJSON('pvp_state', pvpState);
     function pvpBonus(frame) { const w = pvpState.wins; return (frame < 0 || !w) ? { hp:0, atk:0, def:0 } : { hp:PVP_HP * w, atk:PVP_ATK * w, def:PVP_DEF * w }; }
@@ -2427,34 +2482,75 @@
     }
     function openPvp() { if (!pvpOpps.length) pvpGenOpps(); renderPvp(); switchScreen('pvp'); }
     function pvpReroll() { pvpGenOpps(); renderPvp(); }
-    function pvpShowTiers() {
-      let prev = 0;
-      alert('🏅 PHÂN CẤP TỶ VÕ\n\n' + PVP_TIERS.map(t => { const l = `${t.icon} ${t.name}: ${prev + 1 === t.max ? 'hạng ' + t.max : 'hạng ' + (prev + 1) + ' – ' + t.max}`; prev = t.max; return l; }).join('\n') +
-            '\n\nBắt đầu ở hạng ' + fmtN(PVP_START_RANK) + ' (thấp nhất). Thắng đối thủ hạng cao hơn sẽ lên đúng hạng của đối thủ.');
-    }
+    const pvName = () => ((document.querySelector('.user-name') || {}).textContent || 'Bạn').trim();
+    const SPOTS = [[50, 15], [19, 29], [81, 37], [26, 54], [76, 65]];     // 5 đối thủ, vị trí như cảnh núi mây
+    const ME_SPOT = [50, 82];
+    const pvMainOf = stats => stats.reduce((b, x) => unitPower(x) > unitPower(b) ? x : b, stats[0]).h;   // tướng mạnh nhất làm đại diện
+    function pvClose() { document.getElementById('pv-modal').style.display = 'none'; }
+    function pvShow(html) { document.getElementById('pv-box').innerHTML = html; document.getElementById('pv-modal').style.display = 'flex'; }
+    function pvHead(title, sub) { return `<div class="hd-head"><div class="hd-info"><div class="hd-name">${title}</div><div class="hd-sub">${sub || ''}</div></div><button class="md-x" onclick="pvClose()">✕</button></div>`; }
+    const pvCardL = (h, hp, atk, def) => `<div class="pv-lc"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div>HP ${fmtN(hp)}<br>Công ${fmtN(atk)}<br>Thủ ${fmtN(def)}</div>`;
     function renderPvp() {
       const el = document.getElementById('pvp-body'); if (!el) return;
-      const st = pvpState, t = pvpTier(st.rank), left = pvpLeft(), my = pvpMyPower(), w = st.wins;
-      const nextT = PVP_TIERS[PVP_TIERS.indexOf(t) - 1];
-      const opps = pvpOpps.map((o, i) => {
-        const ratio = my ? o.power / my : 9;
-        const d = ratio < 0.8 ? ['Dễ', '#4ade80'] : ratio < 1.25 ? ['Vừa', '#fde047'] : ratio < 2.5 ? ['Khó', '#fb923c'] : ['Rất khó', '#f87171'];
-        const ot = pvpTier(o.rank);
-        return `<div class="pvp-card"><div class="r"><div class="nm">Cấp ${o.lvl} ${o.name}<br><small>${ot.icon} ${ot.name}</small></div><div class="rk">Hạng ${fmtN(o.rank)}</div></div>` +
-          `<div class="pvp-team">${o.heroes.map(h => `<div>${heroIcon(h)}</div>`).join('')}</div>` +
-          `<div class="ft"><div>Lực chiến <b style="color:#fde047">${fmtN(o.power)}</b><br>Độ khó: <b style="color:${d[1]}">${d[0]}</b> • Cộng dồn ×${o.steps}</div>` +
-          `<button ${left <= 0 || !team.length ? 'disabled' : ''} onclick="startPvp(${i})">⚔️ Khiêu chiến</button></div></div>`;
+      const st = pvpState, my = pvpMyPower();
+      const spots = pvpOpps.slice(0, SPOTS.length).map((o, i) => {
+        const main = pvMainOf(o.stats);
+        return `<div class="pv-spot" style="left:${SPOTS[i][0]}%;top:${SPOTS[i][1]}%" onclick="pvpOpen(${i})"><div class="pv-hero" style="animation-delay:${-i * 0.6}s">${heroIcon(main)}</div><div class="pv-lotus"></div><div class="pv-name">Cấp ${o.lvl} ${o.name}<br>Hạng ${fmtN(o.rank)}</div></div>`;
       }).join('');
-      el.innerHTML = `
-        <div class="pvp-top">
-          <div class="pvp-rank"><span>Hạng hiện tại</span><b>${fmtN(st.rank)}</b><small>${t.icon} ${t.name}</small></div>
-          <div class="pvp-info">Lực chiến của đội: <b>${fmtN(my)}</b><br>Lượt khiêu chiến: <b>Không giới hạn ♾️</b>${nextT ? '<br>Lên <b>' + nextT.icon + ' ' + nextT.name + '</b> khi đạt hạng ≤ ' + fmtN(nextT.max) : '<br>🏆 Đỉnh cao võ lâm!'}</div>
-        </div>
-        <div class="pvp-note">🏆 Mỗi trận thắng: <b>+${fmtN(PVP_POWER)} lực chiến</b> • mọi tướng ra trận cộng dồn <b>+${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ</b>.<br>
-          Đã thắng <b>${w}</b> trận → đang cộng: HP +${fmtN(PVP_HP * w)} • Công +${fmtN(PVP_ATK * w)} • Thủ +${fmtN(PVP_DEF * w)}.</div>
-        ${opps || '<div class="eq-empty">Không có đối thủ.</div>'}`;
-      pvpTimerTick();
+      const mainId = team.length ? team.reduce((b, id) => unitPower(heroStats(id)) > unitPower(heroStats(b)) ? id : b, team[0]) : null;
+      const me = mainId !== null ? heroById(mainId) : null;
+      const self = `<div class="pv-spot me" style="left:${ME_SPOT[0]}%;top:${ME_SPOT[1]}%" onclick="pvpOpenSelf()"><div class="pv-hero">${me ? heroIcon(me) : '❔'}</div><div class="pv-lotus"></div><div class="pv-name">Cấp ${accLevel} ${pvName()}<br>Hạng ${fmtN(st.rank)}</div></div>`;
+      el.innerHTML = spots + self +
+        `<div class="pv-info">Lực chiến<b>${fmtN(my)}</b>Đã thắng<b>${st.wins} trận</b></div><button class="pv-log-btn" onclick="pvpShowLog()">Chiến Tích</button>`;
     }
+    // Bấm 1 đối thủ: xem đủ đội hình rồi bấm Chiến Đấu
+    function pvpOpen(i) {
+      const o = pvpOpps[i]; if (!o) return;
+      const my = pvpMyPower(), ratio = my ? o.power / my : 9, ot = pvpTier(o.rank);
+      const d = ratio < 0.8 ? ['Dễ', '#4ade80'] : ratio < 1.25 ? ['Vừa', '#fde047'] : ratio < 2.5 ? ['Khó', '#fb923c'] : ['Rất khó', '#f87171'];
+      pvShow(pvHead(`Cấp ${o.lvl} ${o.name}`, `Hạng ${fmtN(o.rank)} • ${ot.icon} ${ot.name}`) +
+        `<div style="font-size:12px;color:#cbd5e1">Lực chiến <b style="color:#fde047">${fmtN(o.power)}</b> • Độ khó: <b style="color:${d[1]}">${d[0]}</b> • Cộng dồn ×${o.steps}</div>` +
+        `<div class="pv-lineup">${o.stats.map(x => pvCardL(x.h, x.hp, x.atk, x.def)).join('')}</div>` +
+        `<button class="btn-attack pv-go" ${!team.length ? 'disabled' : ''} onclick="pvpGo(${i})">⚔️ Chiến Đấu</button>`);
+    }
+    function pvpGo(i) { pvClose(); startPvp(i); }
+    function pvpOpenSelf() {
+      const st = pvpState, t = pvpTier(st.rank);
+      pvShow(pvHead(`Cấp ${accLevel} ${pvName()}`, `Hạng ${fmtN(st.rank)} • ${t.icon} ${t.name}`) +
+        `<div style="font-size:12px;color:#cbd5e1">Lực chiến <b style="color:#fde047">${fmtN(pvpMyPower())}</b> • Đã thắng ${st.wins} trận</div>` +
+        `<div class="pv-lineup">${team.map(id => { const s2 = heroStats(id); return pvCardL(heroById(id), s2.hp, s2.atk, s2.def); }).join('')}</div>` +
+        `<button class="btn-attack pv-go" onclick="pvClose();openTeam()">⛩️ Đổi Đội Hình</button>`);
+    }
+    function pvpShowTiers() {
+      let prev = 0;
+      const rows = PVP_TIERS.map(t => { const l = `<div class="pv-row-log"><span>${t.icon} ${t.name}</span><b>${prev + 1 === t.max ? 'hạng ' + t.max : 'hạng ' + (prev + 1) + ' – ' + t.max}</b></div>`; prev = t.max; return l; }).join('');
+      const cur = pvpTier(pvpState.rank);
+      pvShow(pvHead('🏅 Xếp Hạng Tỷ Võ', `Bạn: hạng ${fmtN(pvpState.rank)} • ${cur.icon} ${cur.name}`) + rows +
+        `<div class="set-note" style="margin-top:8px">Bắt đầu ở hạng ${fmtN(PVP_START_RANK)} (thấp nhất). Thắng đối thủ hạng cao hơn sẽ lên đúng hạng của đối thủ.</div>`);
+    }
+    function pvpShowLog() {
+      const st = pvpState, w = st.wins, log = st.log || [];
+      const fmtT = t => { const d = new Date(t); return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ' ' + d.getDate() + '/' + (d.getMonth() + 1); };
+      pvShow(pvHead('📜 Chiến Tích', `Đã thắng ${w} trận • Hạng ${fmtN(st.rank)}`) +
+        `<div class="set-note">🏆 Mỗi trận thắng: <b>+${fmtN(PVP_POWER)} lực chiến</b>, mọi tướng ra trận cộng dồn <b>+${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ</b>.<br>Đang cộng: HP +${fmtN(PVP_HP * w)} • Công +${fmtN(PVP_ATK * w)} • Thủ +${fmtN(PVP_DEF * w)}.</div>` +
+        (log.length ? log.map(e => `<div class="pv-row-log"><span>${e.win ? '✅ Thắng' : '❌ Thua'} ${e.opp} (Hạng ${fmtN(e.rank)})</span><span>${fmtT(e.t)}</span></div>`).join('') : '<div class="eq-empty">Chưa có trận nào.</div>'));
+    }
+    // ---- Panel chiến đấu Tỷ Võ: hàng đội địch (trên) + hàng đội ta (dưới), tướng + sao + máu + nộ + Tốc ----
+    function pvCard(u, opp) {
+      const h = heroById(u.id); if (!h) return '<div class="pv-c"></div>';
+      const star = opp ? ((START_PROG[u.id] || {}).star || 5) : getProg(u.id).star;
+      const stars = '★'.repeat(star) + '<span style="opacity:.3">' + '★'.repeat(Math.max(0, STAR_MAX - star)) + '</span>';
+      return `<div class="pv-c ${opp ? 'opp' : ''} ${u.alive ? '' : 'dead'}"><div class="pv-cb"><div class="pv-p">${heroIcon(h)}</div><div class="pv-st">${stars}</div>` +
+        `<div class="pv-b h"><i style="width:${Math.max(0, u.hp / u.max * 100)}%"></i></div><div class="pv-b r"><i style="width:${Math.min(100, u.rage || 0)}%"></i></div></div><div class="pv-sp">Tốc ${Math.round(u.spd || 0)}</div></div>`;
+    }
+    function renderPvpPanel() {
+      const el = document.getElementById('pv-panel'); if (!el || !pvp) return;
+      const H = waveUnits.heroes || [], E = waveUnits.enemies || [], o = pvp.opp;
+      el.innerHTML =
+        `<div class="pv-row">${E.map(u => pvCard(u, true)).join('')}<div class="pv-side"><b>${fmtN(o.power)}</b><span>${o.name}</span></div></div>` +
+        `<div class="pv-row"><div class="pv-side"><b>${fmtN(pvpMyPower())}</b><span>${pvName()}</span></div>${H.map(u => pvCard(u, false)).join('')}</div>`;
+    }
+    function pvpSkip() { battleFast = true; }
     function pvpTimerTick() {
       const el = document.getElementById('pvp-timer'); if (!el) return;
       if (pvpState.used > 0) {
@@ -2468,7 +2564,7 @@
     function startPvp(i) {
       const o = pvpOpps[i]; if (!o) return;
       if (!team.length) { alert('Hãy chọn Đội ngũ ra trận trước!'); return; }
-      battleToken++; playBgm();
+      battleToken++; playBgm(); battleFast = false;
       pvp = { opp: o }; pvpRound = 0; pvpDmg = { hero: 0, enemy: 0 }; currentWave = 1; busy = false;
       document.getElementById('bf-units').innerHTML = '';
       const sel = HEROES.filter(h => team.includes(h.id));
@@ -2489,7 +2585,7 @@
     function loadPvpWave() {
       const tok = battleToken, o = pvp.opp;
       document.getElementById('ui-stage-title').innerText = `Tỷ Võ • ${o.name} (Hạng ${fmtN(o.rank)})`;
-      document.getElementById('ui-wave-title').innerText = 'Đấu hạng';
+      document.getElementById('ui-wave-title').innerText = 'Hiệp 0/' + PVP_MAX_ROUNDS;
       document.getElementById('ui-enemy-name').innerText = o.heroes.map(h => h.name.toUpperCase()).join(' • ');
       waveUnits.enemies.forEach(e => e.el.remove());
       const S = HERO_POS[5].map(p => [100 - p[0], p[1]]);
@@ -2526,7 +2622,7 @@
       };
       while (tok === battleToken) {
         if (++pvpRound > PVP_MAX_ROUNDS) { pvpTimeout(); return; }
-        document.getElementById('ui-wave-title').innerText = `Lượt ${pvpRound}/${PVP_MAX_ROUNDS}`;
+        document.getElementById('ui-wave-title').innerText = `Hiệp ${pvpRound}/${PVP_MAX_ROUNDS}`;
         clearDefBuff(H); clearDefBuff(E); tickMoon(H); tickMoon(E); tickLB(H); tickLB(E); tickDebuffs(H); tickDebuffs(E);
         if (pvpRound > 1) { tickImmortal(H); tickImmortal(E); }
         const bl = (await tickBleed(E)) | (await tickBleed(H));
@@ -2561,6 +2657,7 @@
     function pvpFinish(win, timeout) {
       const m = pvp, dmgLine = timeout ? `\nSát thương: bạn ${fmtN(pvpDmg.hero)} • đối thủ ${fmtN(pvpDmg.enemy)}` : '';
       closeBattle();
+      try { pvpState.log.unshift({ t: Date.now(), win: !!win, opp: m.opp.name, rank: m.opp.rank }); pvpState.log.length = Math.min(pvpState.log.length, 20); pvpSave(); } catch (e) {}
       let msg;
       if (win) {
         const old = pvpState.rank;
@@ -2622,6 +2719,7 @@
     }
     function loadWave() {
       setBattleBg();
+      document.getElementById('battle-overlay').classList.toggle('pvp-mode', !!pvp);
       if (pvp) { loadPvpWave(); return; }
       const tok = battleToken;
       document.getElementById('ui-stage-title').innerText = `Ải ${currentStage} - Bàn ${currentBattle}`;
@@ -2791,7 +2889,7 @@
       battleToken++;
       stopHeroSounds();
       try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
-      stopBgm();
+      stopBgm(); battleFast = false;
       if (pvp) { pvp = null; pvpGenOpps(); renderPvp(); }   // thoát giữa trận Tỷ Võ = bỏ cuộc
       busy = false;
       document.getElementById('battle-overlay').style.display = 'none';
