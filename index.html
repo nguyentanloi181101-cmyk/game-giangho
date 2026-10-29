@@ -206,9 +206,16 @@
     #bf-units{position:absolute;inset:0}
     .bf-unit{position:absolute;width:64px;height:80px;transform:translate(-50%,-50%)}
     .bf-unit.big{width:110px;height:120px}
-    .bf-sprite{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:46px;line-height:1;animation:bfBob 1.6s ease-in-out infinite;filter:drop-shadow(0 4px 3px rgba(0,0,0,.7))}
+    .bf-sprite{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:46px;line-height:1;transform-origin:50% 100%;animation:bfBreath 2.2s ease-in-out infinite;filter:drop-shadow(0 4px 3px rgba(0,0,0,.7))}
     .bf-unit.big .bf-sprite{font-size:84px}
-    .bf-shadow{position:absolute;bottom:0;left:12%;right:12%;height:12px;background:rgba(0,0,0,.55);border-radius:50%;filter:blur(2px)}
+    /* đứng sát đất: chỉ còn bóng đổ ngay chân (không viền) */
+    .bf-shadow{position:absolute;bottom:-3px;left:-4px;right:-4px;height:20px;border-radius:50%;
+      background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.8) 0 40%,rgba(0,0,0,.4) 66%,transparent 72%)}
+    .bf-unit.big .bf-shadow{left:-8px;right:-8px;height:30px}
+    /* viền theo vai trò: thủ đỏ • hỗ trợ vàng • kỹ năng xanh dương • công kích cam */
+    .bf-unit[data-role] .hero-img,.bf-unit[data-role] .bf-emo{border:3px solid var(--rc);box-shadow:0 0 9px var(--rc)}
+    .bf-emo{display:inline-flex;width:56px;height:56px;border-radius:50%;background:#2a1450;align-items:center;justify-content:center;font-size:34px;line-height:1;box-sizing:border-box}
+    @keyframes bfBreath{50%{transform:scaleY(1.035)}}
     .bf-hp{position:absolute;top:-4px;left:4px;right:4px;height:13px;background:#111;border:1px solid #fde047;border-radius:6px;overflow:hidden}
     .bf-name{position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:900;line-height:1;pointer-events:none;z-index:12;-webkit-text-stroke:2px #000;paint-order:stroke fill}
     .bf-unit.hero .bf-name{color:#fde047}
@@ -1373,10 +1380,10 @@
     const HERO_HP = 100000;
     const HERO_POS = {
       1: [[30,55]],
-      2: [[30,40],[30,70]],
-      3: [[34,55],[20,38],[20,72]],
-      4: [[34,40],[34,70],[18,40],[18,70]],
-      5: [[36,55],[24,34],[24,76],[10,44],[10,68]]
+      2: [[28,48],[28,64]],
+      3: [[32,56],[22,44],[22,68]],
+      4: [[30,47],[30,65],[19,47],[19,65]],
+      5: [[34,56],[26,43],[26,69],[16,50],[16,62]]
     };
     let battleFast = false;   // Tỷ Võ: bấm "Bỏ Qua" để tua nhanh trận đấu
     const sleep = ms => new Promise(r => setTimeout(r, battleFast ? 0 : ms));
@@ -1516,7 +1523,16 @@
     }
     const isSilenced = u => !!(u.dn && u.dn.silence > 0);
     // Thanh Y Nữ Hiệp: bất tử 3 hiệp đầu mỗi trận (HP không xuống dưới 1)
-    function grantStart(u) { if (u.id === 1) { (u.dn = u.dn || {}).immortal = IMMORTAL_TURNS; refreshDbf(u); } }
+    // Vai trò (viền): tank = thủ đỏ • sup = hỗ trợ vàng • skill = kỹ năng xanh dương • atk = công kích cam
+    const HERO_ROLE = { 0:'atk', 1:'sup', 2:'sup', 3:'atk', 4:'skill', 5:'sup', 6:'skill', 7:'atk', 8:'tank', 9:'atk', 10:'skill', 11:'sup', 12:'sup' };
+    const ROLE_COLOR = { tank:'#ef4444', sup:'#facc15', skill:'#3b82f6', atk:'#f97316' };
+    function applyRole(u) {
+      const r = HERO_ROLE[u.id]; if (!r || !u.el) return;
+      u.el.dataset.role = r; u.el.style.setProperty('--rc', ROLE_COLOR[r]);
+      const sp = u.el.querySelector('.bf-sprite');
+      if (sp && !sp.querySelector('.hero-img, .bf-emo')) sp.innerHTML = '<span class="bf-emo">' + sp.innerHTML + '</span>';
+    }
+    function grantStart(u) { applyRole(u); if (u.id === 1) { (u.dn = u.dn || {}).immortal = IMMORTAL_TURNS; refreshDbf(u); } }
     function tickImmortal(units) { units.forEach(u => { if (u.dn && u.dn.immortal > 0) { u.dn.immortal--; refreshDbf(u); } }); }
     const deadAllies = u => alliesOf(u).filter(a => !a.alive);
     // Không tung được tuyệt kỹ: bị câm lặng, hoặc là Thanh Y mà chưa có đồng đội nào gục để hồi sinh
@@ -2540,7 +2556,7 @@
       const h = heroById(u.id); if (!h) return '<div class="pv-c"></div>';
       const star = opp ? ((START_PROG[u.id] || {}).star || 5) : getProg(u.id).star;
       const stars = '★'.repeat(star) + '<span style="opacity:.3">' + '★'.repeat(Math.max(0, STAR_MAX - star)) + '</span>';
-      return `<div class="pv-c ${opp ? 'opp' : ''} ${u.alive ? '' : 'dead'}"><div class="pv-cb"><div class="pv-p">${heroIcon(h)}</div><div class="pv-st">${stars}</div>` +
+      return `<div class="pv-c ${opp ? 'opp' : ''} ${u.alive ? '' : 'dead'}"><div class="pv-cb" style="border-color:${ROLE_COLOR[HERO_ROLE[u.id]] || '#b45309'}"><div class="pv-p">${heroIcon(h)}</div><div class="pv-st">${stars}</div>` +
         `<div class="pv-b h"><i style="width:${Math.max(0, u.hp / u.max * 100)}%"></i></div><div class="pv-b r"><i style="width:${Math.min(100, u.rage || 0)}%"></i></div></div><div class="pv-sp">Tốc ${Math.round(u.spd || 0)}</div></div>`;
     }
     function renderPvpPanel() {
