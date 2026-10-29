@@ -3610,13 +3610,12 @@
         await pvpFixTie();                                    // hạng phải duy nhất
         if (seq !== pvpRealSeq) return;
         const P = pvpState.rank;
-        let q = clDb.collection('pvp_players');
-        // người thật có hạng cao hơn bạn (hạng là DUY NHẤT, không trùng); đang hạng 1 thì đấu với hạng 2–7
-        q = P > 1 ? q.where('rank', '>=', Math.max(1, P - Math.ceil(P * 0.2) - 1)).where('rank', '<', P) : q.where('rank', '>', 1).where('rank', '<=', 7);
-        const snap = await q.orderBy('rank', 'desc').limit(40).get();
+        // Lấy TẤT CẢ tài khoản đã đăng đội hình (cao hay thấp hạng đều hiện), chọn 5 người có hạng gần bạn nhất
+        const snap = await clDb.collection('pvp_players').orderBy('rank').limit(300).get();
         if (seq !== pvpRealSeq) return;
         const cands = []; snap.forEach(d => { if (d.id !== clUser.uid) { const o = pvpRealFromDoc(d); if (o) cands.push(o); } });
-        pvpOpps = shuffled(cands).slice(0, 5);               // chỉ người thật, tối đa 5 đối thủ
+        cands.sort((x, y) => Math.abs(x.rank - P) - Math.abs(y.rank - P) || x.rank - y.rank);
+        pvpOpps = cands.slice(0, 5);                          // chỉ người thật, tối đa 5 đối thủ (giao diện có 5 ô)
         renderPvp();
       } catch (e) {}
     }
@@ -3721,7 +3720,7 @@
         return `<div class="pv-spot" style="left:${l}%;top:${t}%" onclick="pvpOpen(${e.i})"><div class="pv-hero full" style="animation-delay:${-k * 0.6}s">${pvBody(main)}</div><div class="pv-lotus"></div><div class="pv-name">Cấp ${o.lvl} ${o.name}<br>Hạng ${fmtN(o.rank)}</div></div>`;
       }).join('');
       const logged = typeof clUser !== 'undefined' && clUser;
-      const note = pvpOpps.length ? '' : `<div style="position:absolute;left:8%;right:8%;top:34%;z-index:5;text-align:center;padding:10px 12px;background:rgba(0,0,0,.6);border:1px dashed #fde047;border-radius:10px;color:#fde68a;font-size:12px;line-height:1.5;pointer-events:none">${logged ? '👤 Chưa có người chơi thật nào ở hạng ngang hoặc cao hơn bạn.<br>Hãy rủ thêm bạn bè đăng nhập đám mây nhé!' : '☁️ Tỷ Võ chỉ đấu với người chơi thật.<br>Hãy đăng nhập tài khoản đám mây để thấy đối thủ.'}</div>`;
+      const note = pvpOpps.length ? '' : `<div style="position:absolute;left:8%;right:8%;top:34%;z-index:5;text-align:center;padding:10px 12px;background:rgba(0,0,0,.6);border:1px dashed #fde047;border-radius:10px;color:#fde68a;font-size:12px;line-height:1.5;pointer-events:none">${logged ? '👤 Chưa có tài khoản nào khác vào Tỷ Võ.<br>Hãy rủ thêm bạn bè đăng nhập đám mây nhé!' : '☁️ Tỷ Võ chỉ đấu với người chơi thật.<br>Hãy đăng nhập tài khoản đám mây để thấy đối thủ.'}</div>`;
       el.innerHTML = spots + note +
         `<div class="pv-info">Lực chiến<b>${fmtN(my)}</b>Đã thắng<b>${st.wins} trận</b></div><button class="pv-log-btn" onclick="pvpShowLog()">Chiến Tích</button>`;
     }
