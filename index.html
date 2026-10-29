@@ -402,6 +402,60 @@
     .cl-in{width:100%;margin:4px 0;padding:9px 10px;border-radius:8px;border:1px solid #fde047;background:#1a202c;color:#fff;font-size:15px}
     .cl-status{font-size:12px;color:#cbd5e1;margin:4px 0;line-height:1.4}
     .cl-status b{color:#fde047}
+
+    /* ===== MÀN HÌNH ĐĂNG NHẬP (bãi biển) ===== */
+    #login-screen{position:fixed;top:0;bottom:0;left:50%;width:100%;max-width:450px;transform:translateX(-50%);z-index:100000;overflow:hidden;background:#79c8f2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+    #login-screen>div,#login-screen>button{position:absolute}
+    .lg-sky{left:0;right:0;top:0;height:58%;background:linear-gradient(180deg,#2f9be0 0%,#79c8f2 42%,#cdeefb 100%)}
+    .lg-sun{right:-50px;top:30px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,252,210,.98) 0,rgba(255,240,170,.55) 28%,transparent 68%)}
+    .lg-cloud{width:120px;height:34px;border-radius:30px;background:#fff;filter:blur(5px);opacity:.88;animation:lgDrift 26s ease-in-out infinite alternate}
+    .lg-cloud:before,.lg-cloud:after{content:"";position:absolute;border-radius:50%;background:#fff}
+    .lg-cloud:before{width:58px;height:58px;left:16px;top:-26px}
+    .lg-cloud:after{width:46px;height:46px;left:60px;top:-18px}
+    .lg-cloud.c1{left:6%;top:30%}
+    .lg-cloud.c2{left:58%;top:40%;transform:scale(.8);animation-duration:34s}
+    .lg-cloud.c3{left:30%;top:49%;transform:scale(.6);animation-duration:30s}
+    @keyframes lgDrift{from{margin-left:-24px}to{margin-left:34px}}
+    .lg-sea{left:0;right:0;top:52%;height:24%;background:repeating-linear-gradient(180deg,rgba(255,255,255,0) 0 13px,rgba(255,255,255,.18) 13px 15px),linear-gradient(180deg,#27b8d4 0%,#5fd6da 55%,#b9efe6 100%)}
+    .lg-isle{left:7%;top:calc(52% - 36px);font-size:48px;line-height:1;opacity:.92}
+    .lg-surf{left:20%;top:58%;font-size:54px;line-height:1;animation:lgBob 2.6s ease-in-out infinite}
+    @keyframes lgBob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-7px) rotate(4deg)}}
+    .lg-sand{left:0;right:0;top:70%;bottom:0;background:linear-gradient(180deg,#f6e3a8 0%,#e8c47c 55%,#d8a95e 100%);border-top-left-radius:60% 26px;border-top-right-radius:40% 20px;box-shadow:0 -5px 0 rgba(255,255,255,.6)}
+    .lg-palm{line-height:1;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
+    .lg-palm.l{left:2px;top:calc(70% - 74px);font-size:84px}
+    .lg-palm.r{right:6px;top:calc(70% - 92px);font-size:100px}
+    .lg-shell{font-size:26px;line-height:1;opacity:.95}
+    .lg-shell.s1{left:6%;bottom:30px}
+    .lg-shell.s2{right:9%;bottom:62px;transform:scaleX(-1)}
+    .lg-18{top:8px;left:8px;background:rgba(0,0,0,.82);border:1px solid #555;border-radius:6px;padding:4px 6px;display:flex;gap:6px;align-items:center;z-index:5;max-width:230px}
+    .lg-logo{top:12%;left:0;right:0;text-align:center;font-family:Georgia,"Noto Serif",serif;font-style:italic;font-weight:900;line-height:.95;pointer-events:none;
+      filter:drop-shadow(0 3px 0 #4a2305) drop-shadow(0 0 12px rgba(255,255,255,.75))}
+    .lg-logo .l1,.lg-logo .l2{background:linear-gradient(180deg,#fffbd0 0%,#f7c948 48%,#b9690f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+    .lg-logo .l1{font-size:clamp(40px,13vw,58px)}
+    .lg-logo .l2{font-size:clamp(46px,15vw,68px)}
+    .lg-row{left:10px;right:10px;bottom:90px;display:flex;align-items:center;gap:6px;z-index:6}
+    .lg-go{position:relative;flex:0 0 41%;background:none;border:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:.92;padding:14px 4px;font-family:Georgia,"Noto Serif",serif;font-style:italic;font-weight:900;font-size:clamp(38px,12vw,52px)}
+    .lg-go:before{content:"";position:absolute;inset:0;z-index:0;border-radius:50%;background:radial-gradient(ellipse at center,rgba(28,20,12,.92) 0,rgba(28,20,12,.88) 58%,rgba(28,20,12,0) 72%)}
+    .lg-go span{position:relative;z-index:1;background:linear-gradient(180deg,#fff7b8 0%,#f7c948 50%,#c9700f 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 0 #3d1c04)}
+    .lg-go:active{transform:scale(.95)}
+    .lg-fields{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+    .lg-in{width:100%;height:46px;border:0;outline:0;border-radius:3px;text-align:center;color:#fff;font-size:19px;font-weight:600;letter-spacing:.3px;text-shadow:1px 1px 2px #000;
+      background:linear-gradient(90deg,rgba(25,25,25,.25),rgba(25,25,25,.85) 16%,rgba(25,25,25,.85) 84%,rgba(25,25,25,.25))}
+    .lg-in::placeholder{color:rgba(255,255,255,.55);font-weight:500}
+    .lg-in:focus{box-shadow:0 0 0 2px #fde047}
+    .lg-gear{right:8px;bottom:198px;display:flex;flex-direction:column;align-items:center;cursor:pointer;z-index:6}
+    .lg-gear .ic{width:50px;height:50px;border-radius:50%;background:radial-gradient(circle,#fff3b0 0%,#d49a1c 100%);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:27px;box-shadow:0 3px 8px rgba(0,0,0,.45)}
+    .lg-gear .tx{margin-top:3px;font-size:12px;font-weight:900;color:#fde047;text-shadow:-1px -1px 0 #4a2305,1px -1px 0 #4a2305,-1px 1px 0 #4a2305,1px 1px 0 #4a2305}
+    .lg-gear:active .ic{transform:scale(.92)}
+    .lg-msg{left:8px;right:8px;bottom:52px;text-align:center;font-size:13px;font-weight:700;line-height:1.35;z-index:6;padding:5px 10px;border-radius:10px;background:rgba(0,0,0,.6)}
+    .lg-msg:empty{display:none}
+    .lg-off{display:none;left:50%;bottom:12px;transform:translateX(-50%);background:none;border:0;color:#fff;font-size:12px;text-decoration:underline;text-shadow:1px 1px 2px #000;cursor:pointer;z-index:6;white-space:nowrap}
+    .lg-reg{display:none;inset:0;background:rgba(0,0,0,.66);align-items:center;justify-content:center;z-index:20}
+    .lg-regbox{width:88%;max-width:360px;background:linear-gradient(180deg,#3b2314,#29170a);border:2px solid #fde047;border-radius:12px;padding:16px;box-shadow:0 0 30px rgba(0,0,0,.8)}
+    .lg-regbox h3{color:#fde047;text-align:center;font-size:19px;margin-bottom:8px}
+    .lg-regbox .cl-in{margin:5px 0}
+    .lg-regbox .set-note{margin:6px 0 2px;color:#e5d9c3}
+    .lg-regbox .set-note b{color:#fca5a5}
     .set-note{font-size:11px;color:#cbd5e1;margin-bottom:6px;line-height:1.4}
     .hero-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}
     .hchip{flex:0 0 64px;border:2px solid #4a5568;border-radius:8px;background:#1a202c;text-align:center;padding:4px 2px;cursor:pointer;opacity:.75}
@@ -553,7 +607,11 @@
     .pv-c.opp .pv-cb{border-color:#7c3aed}
     .pv-p{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;overflow:hidden;border-radius:4px}
     .pv-p .hero-img{width:100%;height:100%;border:0;border-radius:4px}
-    .pv-st{font-size:9px;line-height:1;color:#fbbf24;letter-spacing:-1px;white-space:nowrap}
+    .pv-st{display:flex;align-items:center;justify-content:center;gap:1px;height:16px;line-height:1;color:#fbbf24;white-space:nowrap;text-shadow:0 1px 1px #000}
+    .pv-st i{font-style:normal;font-size:12px;line-height:1}
+    .pv-st i.big{font-size:20px;filter:drop-shadow(0 0 3px rgba(251,191,36,.9))}
+    .pv-st i.off{opacity:.3}
+    .pv-st b{font-size:11px;margin-left:1px}
     .pv-b{width:100%;height:5px;background:#0a0f20;border:1px solid #000;border-radius:3px;overflow:hidden}.pv-b i{display:block;height:100%}
     .pv-b.h i{background:#4ade80}.pv-b.r i{background:#e5e7eb}
     .pv-sp{margin:3px auto 0;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(180deg,#a16207,#713f12);border:1px solid #fbbf24;border-radius:8px;padding:0 5px;white-space:nowrap}
@@ -623,6 +681,38 @@
 </style>
 </head>
 <body>
+
+  <!-- ===== MÀN HÌNH ĐĂNG NHẬP ===== -->
+  <div id="login-screen">
+    <div class="lg-sky"></div><div class="lg-sun"></div>
+    <div class="lg-cloud c1"></div><div class="lg-cloud c2"></div><div class="lg-cloud c3"></div>
+    <div class="lg-sea"></div><div class="lg-isle">🏝️</div><div class="lg-surf">🏄</div>
+    <div class="lg-sand"></div>
+    <div class="lg-palm l">🌴</div><div class="lg-palm r">🌴</div>
+    <div class="lg-shell s1">🐚</div><div class="lg-shell s2">🐚</div>
+    <div class="lg-18"><span class="badge-18">18+</span><span class="text-18">TRÒ CHƠI DÀNH CHO NGƯỜI CHƠI TỪ 18 TUỔI TRỞ LÊN<br><strong>Chơi quá 180 phút một ngày</strong> sẽ ảnh hưởng xấu đến sức khỏe</span></div>
+    <div class="lg-logo"><div class="l1">Mộng Huyễn</div><div class="l2">Giang Hồ</div></div>
+    <div class="lg-gear" onclick="lgReg(true)"><div class="ic">⚙️</div><div class="tx">Đăng ký</div></div>
+    <div class="lg-row">
+      <button class="lg-go" onclick="lgLogin()"><span>Vào</span><span>Game</span></button>
+      <div class="lg-fields">
+        <input class="lg-in" id="lg-user" placeholder="Tên tài khoản" autocapitalize="none" autocomplete="username" maxlength="20" onkeydown="if(event.key==='Enter'){document.getElementById('lg-pass').focus()}">
+        <input class="lg-in" id="lg-pass" type="password" placeholder="Mật khẩu" autocomplete="current-password" onkeydown="if(event.key==='Enter'){lgLogin()}">
+      </div>
+    </div>
+    <div class="lg-msg" id="lg-msg" style="color:#4ade80">Đang kết nối máy chủ...</div>
+    <button class="lg-off" id="lg-off" onclick="lgShow(false)">Chơi không cần tài khoản (dữ liệu chỉ lưu trên máy này)</button>
+    <div class="lg-reg" id="lg-reg" onclick="if(event.target===this)lgReg(false)"><div class="lg-regbox">
+      <h3>⚙️ Đăng ký tài khoản</h3>
+      <input class="cl-in" id="rg-user" placeholder="Tên tài khoản (a-z, 0-9, _)" autocapitalize="none" autocomplete="off" maxlength="20">
+      <input class="cl-in" id="rg-pass" type="password" placeholder="Mật khẩu (từ 6 ký tự)" autocomplete="new-password">
+      <input class="cl-in" id="rg-pass2" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password" onkeydown="if(event.key==='Enter'){lgRegister()}">
+      <div class="set-note"><b>Tài khoản mới sẽ chơi lại từ đầu.</b> Tên tài khoản 3-20 ký tự, chữ thường không dấu, số hoặc dấu _.</div>
+      <div class="set-saved" id="rg-msg" style="height:auto;min-height:16px;text-align:center"></div>
+      <div class="md-acts"><button class="btn-attack" onclick="lgRegister()">Đăng ký</button><button class="btn-close-battle" onclick="lgReg(false)">Quay lại</button></div>
+    </div></div>
+  </div>
+  <script>try{if(localStorage.getItem('cl_was_in')==='1')document.getElementById('login-screen').style.display='none';}catch(e){}</script>
 
   <div id="app">
     <!-- MÀN HÌNH 1: TRANG CHỦ -->
@@ -1607,12 +1697,12 @@
     }
 
     // ================= CHIÊU MỘ =================
-    // Phổ Thông: 5 phút miễn phí 1 lần → 1 mảnh • Cao Cấp: 5 giờ miễn phí 1 lần → 10 mảnh • 10 Lần: 1 ngày miễn phí 1 lần → 100 mảnh, quay tiếp tốn 3000 vàng
+    // Phổ Thông: 5 phút miễn phí 1 lần → 1 mảnh • Cao Cấp: 5 giờ miễn phí 1 lần → 10 mảnh • 10 Lần: 1 ngày miễn phí 1 lần → 100 mảnh, quay tiếp tốn 300 vàng
     // Không cộng dồn lượt: chỉ quay xong mới tính lại thời gian chờ. Mỗi mảnh rơi ngẫu nhiên vào 1 tướng bất kỳ.
     const REC = {
       lam: { name: 'Phổ Thông', cd: 5 * 60e3, n: 1, art: 0 },
       tim: { name: 'Cao Cấp', cd: 5 * 3600e3, n: 10, art: 1 },
-      ten: { name: '10 Lần', cd: 24 * 3600e3, n: 100, art: 2, cost: 3000 }
+      ten: { name: '10 Lần', cd: 24 * 3600e3, n: 100, art: 2, cost: 300 }
     };
     const recLeft = k => Math.max(0, (Number(recState[k]) || 0) - Date.now());
     function openRecruit() { renderRecruit(); switchScreen('chieumo'); const b = document.getElementById('nav-btn-chieumo'); if (b) b.classList.add('active'); }
@@ -3384,6 +3474,10 @@
     // • Khiêu chiến KHÔNG GIỚI HẠN lượt • Thắng: +10.000 lực chiến, mọi tướng ra trận +10.000 HP / +5.000 Công / +3.000 Thủ (cộng dồn theo số trận thắng)
     // • Bắt đầu ở hạng thấp nhất 10.000; thắng đối thủ hạng cao hơn thì nhảy lên hạng của đối thủ • Đối thủ = NGƯỜI CHƠI THẬT (không có NPC / người ảo)
     const PVP_DAILY = 30, PVP_START_RANK = 10000, PVP_POWER = 10000, PVP_HP = 10000, PVP_ATK = 5000, PVP_DEF = 3000, PVP_MAX_ROUNDS = 10, BASE_POWER = 537647;
+    // Giới hạn tối đa điểm Chiến Tích (cộng dồn theo số trận thắng): HP 1.000.000 • Công 500.000 • Thủ 300.000
+    const PVP_HP_MAX = 1000000, PVP_ATK_MAX = 500000, PVP_DEF_MAX = 300000;
+    const pvHp = w => Math.min(PVP_HP * w, PVP_HP_MAX), pvAtk = w => Math.min(PVP_ATK * w, PVP_ATK_MAX), pvDef = w => Math.min(PVP_DEF * w, PVP_DEF_MAX);
+    const pvPow = w => Math.min(PVP_POWER * w, PVP_HP_MAX);   // lực chiến dừng cùng mốc với HP
     const PVP_TIERS = [
       { max:1,     icon:'👑', name:'Võ Lâm Minh Chủ' }, { max:10,    icon:'🐉', name:'Tông Sư' },
       { max:100,   icon:'⚔️', name:'Đại Hiệp' },        { max:500,   icon:'🗡️', name:'Cao Thủ' },
@@ -3397,11 +3491,11 @@
                rt: Number(s.rt) || 0, used: Math.max(0, Math.floor(s.used) || 0), winStart: Number(s.winStart) || 0, log: Array.isArray(s.log) ? s.log.slice(0, 20) : [] };
     })();
     const pvpSave = () => saveJSON('pvp_state', pvpState);
-    function pvpBonus(frame) { const w = pvpState.wins; return (frame < 0 || !w) ? { hp:0, atk:0, def:0 } : { hp:PVP_HP * w, atk:PVP_ATK * w, def:PVP_DEF * w }; }
+    function pvpBonus(frame) { const w = pvpState.wins; return (frame < 0 || !w) ? { hp:0, atk:0, def:0 } : { hp:pvHp(w), atk:pvAtk(w), def:pvDef(w) }; }
     function pvpRefreshWindow() { if (pvpState.used > 0 && Date.now() - pvpState.winStart >= 86400000) { pvpState.used = 0; pvpState.winStart = 0; pvpSave(); } }
     const pvpLeft = () => Infinity;   // PvP không giới hạn lượt
     const fmtClock = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, '0')).join(':'); };
-    function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = BASE_POWER + pvpState.wins * PVP_POWER; }
+    function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = BASE_POWER + pvPow(pvpState.wins); }
     const unitPower = s => Math.round(s.hp / 5 + s.atk * 2 + s.def * 3);
     const pvpMyPower = () => team.reduce((a, id) => a + unitPower(heroStats(id)), 0);
 
@@ -3561,15 +3655,22 @@
       const st = pvpState, w = st.wins, log = st.log || [];
       const fmtT = t => { const d = new Date(t); return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0') + ' ' + d.getDate() + '/' + (d.getMonth() + 1); };
       pvShow(pvHead('📜 Chiến Tích', `Đã thắng ${w} trận • Hạng ${fmtN(st.rank)}`) +
-        `<div class="set-note">🏆 Mỗi trận thắng: <b>+${fmtN(PVP_POWER)} lực chiến</b>, mọi tướng ra trận cộng dồn <b>+${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ</b>.<br>Đang cộng: HP +${fmtN(PVP_HP * w)} • Công +${fmtN(PVP_ATK * w)} • Thủ +${fmtN(PVP_DEF * w)}.</div>` +
+        `<div class="set-note">🏆 Mỗi trận thắng: <b>+${fmtN(PVP_POWER)} lực chiến</b>, mọi tướng ra trận cộng dồn <b>+${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ</b>.<br>Đang cộng: HP +${fmtN(pvHp(w))} • Công +${fmtN(pvAtk(w))} • Thủ +${fmtN(pvDef(w))}.<br>Tối đa: HP +${fmtN(PVP_HP_MAX)} • Công +${fmtN(PVP_ATK_MAX)} • Thủ +${fmtN(PVP_DEF_MAX)}.</div>` +
         (log.length ? log.map(e => `<div class="pv-row-log"><span>${e.win ? '✅ Thắng' : '❌ Thua'} ${e.opp} (Hạng ${fmtN(e.rank)})</span><span>${fmtT(e.t)}</span></div>`).join('') : '<div class="eq-empty">Chưa có trận nào.</div>'));
     }
     // ---- Panel chiến đấu Tỷ Võ: hàng đội địch (trên) + hàng đội ta (dưới), tướng + sao + máu + nộ + Tốc ----
+    // Sao hiển thị luôn 5 ô: ★1-5 = số sao sáng (sao mờ là ô còn thiếu) • ★6 trở lên = 1 sao TO + 4 sao nhỏ (★7+ thêm "×số")
+    function pvStars(star) {
+      let h = '';
+      if (star >= STAR_MAX) { h = '<i class="big">★</i>' + '<i>★</i>'.repeat(4); if (star > STAR_MAX) h += '<b>×' + star + '</b>'; }
+      else for (let k = 0; k < 5; k++) h += '<i class="' + (k < star ? '' : 'off') + '">★</i>';
+      return h;
+    }
     function pvCard(u, opp, pve, idx) {
       const h = heroById(u.id);
       if (!h && !pve) return '<div class="pv-c"></div>';
       const star = !h ? 0 : opp ? (u.star || (START_PROG[u.id] || {}).star || 5) : getProg(u.id).star;
-      const stars = h ? (star > STAR_MAX ? '★×' + star : '★'.repeat(star) + '<span style="opacity:.3">' + '★'.repeat(Math.max(0, STAR_MAX - star)) + '</span>') : '<span style="visibility:hidden">★</span>';
+      const stars = h ? pvStars(star) : '<i style="visibility:hidden">★</i>';
       const portrait = h ? heroIcon(h) : ((u.el.querySelector('.bf-sprite') || {}).innerHTML || '');
       const rl = HERO_ROLE[u.id];
       let cls = opp ? 'opp' : '', click = '';
@@ -3706,7 +3807,7 @@
         if (newRank < pvpState.rank) { const mine0 = pvpState.rank; pvpState.rank = newRank; pvpState.rt = Date.now(); pvpRankCloud(m.opp, mine0); }
         pvpSave(); updatePower();
         msg = `🏆 THẮNG${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây nhiều sát thương hơn)' : ''}!\n\n` + (pvpState.rank < old ? `Hạng ${fmtN(old)} → ${fmtN(pvpState.rank)} (${pvpTier(pvpState.rank).icon} ${pvpTier(pvpState.rank).name})\n` : `Giữ vững hạng ${fmtN(old)}\n`) +
-          `+${fmtN(PVP_POWER)} lực chiến\nMọi tướng ra trận cộng dồn: +${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ\n(tổng ${pvpState.wins} trận thắng: HP +${fmtN(PVP_HP * pvpState.wins)}, Công +${fmtN(PVP_ATK * pvpState.wins)}, Thủ +${fmtN(PVP_DEF * pvpState.wins)})`;
+          `+${fmtN(PVP_POWER)} lực chiến\nMọi tướng ra trận cộng dồn: +${fmtN(PVP_HP)} HP, +${fmtN(PVP_ATK)} Công, +${fmtN(PVP_DEF)} Thủ\n(tổng ${pvpState.wins} trận thắng: HP +${fmtN(pvHp(pvpState.wins))}, Công +${fmtN(pvAtk(pvpState.wins))}, Thủ +${fmtN(pvDef(pvpState.wins))})`;
       } else msg = `💀 THUA${timeout ? ' (hết ' + PVP_MAX_ROUNDS + ' lượt, gây ít sát thương hơn)' : ''}!\nKhông mất hạng, cứ khiêu chiến lại (không giới hạn lượt).`;
       pvpGenOpps(); renderPvp(); renderHomeTeam();
       pvpToast(msg + dmgLine, win);
@@ -4011,12 +4112,12 @@ const FIREBASE_CONFIG = {
 const CL_DOMAIN = '@mhgh-game.app';
 const CL_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const _lsGet = Storage.prototype.getItem, _lsSet = Storage.prototype.setItem, _lsDel = Storage.prototype.removeItem;
-let clAuth = null, clDb = null, clUser = null, clTimer = null, clDirty = false, clAsk = false, clBusy = false, clInited = false;
+let clAuth = null, clDb = null, clUser = null, clTimer = null, clDirty = false, clAsk = false, clBusy = false, clInited = false, clFresh = false, clWiping = false;
 const clCfgOk = () => !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
 const clLocalT = () => Number(_lsGet.call(localStorage, 'cloud_local_t')) || 0;
 const clHasLocal = () => SV_KEYS.some(k => _lsGet.call(localStorage, k) !== null);
 
-function clMsg(t, ok) { const e = document.getElementById('cl-msg'); if (!e) return; e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t || ''; }
+function clMsg(t, ok) { ['cl-msg', 'lg-msg', 'rg-msg'].forEach(id => { const e = document.getElementById(id); if (!e) return; e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t || ''; }); }
 
 // Mỗi khi game ghi dữ liệu -> đánh dấu thay đổi và tự đẩy lên đám mây sau 10 giây (không bị dời lại nếu đã hẹn giờ)
 function clTouch() {
@@ -4024,8 +4125,8 @@ function clTouch() {
   clDirty = true;
   if (clUser && !clTimer) { clTimer = setTimeout(clPush, 10000); }
 }
-Storage.prototype.setItem = function (k, v) { _lsSet.call(this, k, v); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
-Storage.prototype.removeItem = function (k) { _lsDel.call(this, k); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
+Storage.prototype.setItem = function (k, v) { if (clWiping && this === localStorage && SV_KEYS.indexOf(k) >= 0) return; _lsSet.call(this, k, v); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
+Storage.prototype.removeItem = function (k) { if (clWiping && this === localStorage && SV_KEYS.indexOf(k) >= 0) return; _lsDel.call(this, k); if (this === localStorage && SV_KEYS.indexOf(k) >= 0) clTouch(); };
 
 function clLoadScript(src) {
   return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(s); });
@@ -4033,14 +4134,14 @@ function clLoadScript(src) {
 async function clInit() {
   if (clInited) return; clInited = true;
   clRender();
-  if (!clCfgOk()) return;
+  if (!clCfgOk()) { lgOfflineShow(); return; }
   try {
     await clLoadScript(CL_SDK + 'firebase-app-compat.js');
     await Promise.all([clLoadScript(CL_SDK + 'firebase-auth-compat.js'), clLoadScript(CL_SDK + 'firebase-firestore-compat.js')]);
     firebase.initializeApp(FIREBASE_CONFIG);
     clAuth = firebase.auth(); clDb = firebase.firestore();
-    clAuth.onAuthStateChanged(u => { clUser = u; clRender(); if (u) clSync(); });
-  } catch (e) { clMsg('Không tải được Firebase (mất mạng hoặc bị chặn). Game vẫn chơi bình thường.', false); }
+    clAuth.onAuthStateChanged(u => { clUser = u; clRender(); lgUpdate(u); if (u) clSync(); });
+  } catch (e) { clMsg('Không tải được Firebase (mất mạng hoặc bị chặn). Game vẫn chơi bình thường.', false); lgOfflineShow(); }
 }
 
 function clErr(e) {
@@ -4054,20 +4155,36 @@ function clErr(e) {
   if (c === 'permission-denied') return 'Chưa cấu hình quy tắc Firestore (xem hướng dẫn).';
   return 'Lỗi: ' + (c || (e && e.message) || 'không rõ');
 }
-function clCred() {
-  const u = (document.getElementById('cl-user').value || '').trim().toLowerCase();
-  const p = document.getElementById('cl-pass').value || '';
+function clCred(pfx) {
+  pfx = pfx || 'cl';
+  const u = (document.getElementById(pfx + '-user').value || '').trim().toLowerCase();
+  const p = document.getElementById(pfx + '-pass').value || '';
   if (!/^[a-z0-9_]{3,20}$/.test(u)) { clMsg('Tên tài khoản: 3-20 ký tự, chỉ chữ thường không dấu, số, dấu _', false); return null; }
   if (p.length < 6) { clMsg('Mật khẩu tối thiểu 6 ký tự.', false); return null; }
   return { email: u + CL_DOMAIN, pass: p, name: u };
 }
-async function clRegister() {
-  const c = clCred(); if (!c || !clAuth) return; clMsg('Đang tạo tài khoản...');
-  try { await clAuth.createUserWithEmailAndPassword(c.email, c.pass); clMsg('✔ Đã tạo tài khoản và đồng bộ dữ liệu.'); }
-  catch (e) { clMsg(clErr(e), false); }
+async function clRegister(pfx) {
+  const c = clCred(pfx); if (!c) return;
+  if (!clAuth) { clMsg('Đang kết nối máy chủ, vui lòng thử lại sau giây lát.', false); return; }
+  if (clHasLocal() && !confirm('Đăng ký tài khoản mới sẽ CHƠI LẠI TỪ ĐẦU.\nDữ liệu đang có trên máy này sẽ bị xóa (hãy đăng nhập tài khoản cũ để lưu trước nếu cần).\n\nTiếp tục đăng ký?')) return;
+  clMsg('Đang tạo tài khoản...'); clFresh = true;
+  try { await clAuth.createUserWithEmailAndPassword(c.email, c.pass); clMsg('✔ Đã tạo tài khoản mới, đang bắt đầu lại từ đầu...'); }
+  catch (e) { clFresh = false; clMsg(clErr(e), false); }
 }
-async function clLogin() {
-  const c = clCred(); if (!c || !clAuth) return; clMsg('Đang đăng nhập...'); clAsk = true;
+// Tài khoản vừa đăng ký: xóa dữ liệu cũ trên máy rồi tải lại để chơi từ đầu (không đẩy dữ liệu cũ lên tài khoản mới)
+function clStartFresh() {
+  clWiping = true;
+  clearTimeout(clTimer); clTimer = null; clDirty = false;
+  try {
+    SV_KEYS.forEach(k => _lsDel.call(localStorage, k));
+    _lsSet.call(localStorage, 'cloud_local_t', String(Date.now()));
+  } catch (e) {}
+  setTimeout(() => location.reload(), 600);
+}
+async function clLogin(pfx) {
+  const c = clCred(pfx); if (!c) return;
+  if (!clAuth) { clMsg('Đang kết nối máy chủ, vui lòng thử lại sau giây lát.', false); return; }
+  clMsg('Đang đăng nhập...'); clAsk = true;
   try { await clAuth.signInWithEmailAndPassword(c.email, c.pass); }
   catch (e) { clAsk = false; clMsg(clErr(e), false); }
 }
@@ -4109,6 +4226,8 @@ function clApplyCloud(cloud) {
 async function clSync() {
   if (!clUser || !clDb || clBusy) return; clBusy = true;
   const ask = clAsk; clAsk = false;
+  const fresh = clFresh; clFresh = false;
+  if (fresh) { clStartFresh(); clBusy = false; return; }
   try {
     const snap = await clDb.collection('saves').doc(clUser.uid).get();
     const cloud = snap.exists ? snap.data() : null, lt = clLocalT(), has = clHasLocal();
@@ -4144,6 +4263,33 @@ function clRender() {
 // Khi rời trang / chuyển tab: đẩy dữ liệu chưa lưu
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && clDirty && clUser) clPush(); });
 window.addEventListener('pagehide', () => { if (clDirty && clUser) clPush(); });
+
+/* ===== MÀN HÌNH ĐĂNG NHẬP: hiện khi chưa đăng nhập, tự ẩn khi đã đăng nhập ===== */
+let lgReady = false;
+const lgEl = id => document.getElementById(id);
+function lgShow(on) { const e = lgEl('login-screen'); if (e) e.style.display = on ? 'block' : 'none'; }
+function lgReg(on) { const e = lgEl('lg-reg'); if (!e) return; e.style.display = on ? 'flex' : 'none'; if (on) { const m = lgEl('rg-msg'); if (m) m.innerText = ''; setTimeout(() => { const i = lgEl('rg-user'); if (i) i.focus(); }, 50); } }
+function lgOfflineShow() { const o = lgEl('lg-off'); if (o) o.style.display = 'block'; }
+function lgUpdate(u) {
+  try { _lsSet.call(localStorage, 'cl_was_in', u ? '1' : '0'); } catch (e) {}
+  if (u) {
+    try { _lsSet.call(localStorage, 'cl_last_name', (u.email || '').replace(CL_DOMAIN, '')); } catch (e) {}
+    lgReg(false); lgShow(false);
+    const p = lgEl('lg-pass'); if (p) p.value = '';
+    return;
+  }
+  if (!lgReady) { lgReady = true; clMsg(''); }   // lần đầu kết nối xong: xóa dòng "Đang kết nối..."
+  lgShow(true);
+  const un = lgEl('lg-user'), pw = lgEl('lg-pass');
+  if (pw) pw.value = '';
+  try { if (un && !un.value) un.value = _lsGet.call(localStorage, 'cl_last_name') || ''; } catch (e) {}
+}
+function lgLogin() { clLogin('lg'); }
+function lgRegister() {
+  const p1 = lgEl('rg-pass').value || '', p2 = lgEl('rg-pass2').value || '';
+  if (p1 !== p2) { clMsg('Mật khẩu nhập lại không khớp.', false); return; }
+  clRegister('rg');
+}
 clInit();
 </script>
 </body>
