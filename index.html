@@ -428,6 +428,9 @@
     .vm-links button{flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;border:1px solid #fde047;background:#1f2937;color:#fff}
 
     .bf-bfly{position:absolute;font-size:30px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:95}
+    .bf-bfly.flap{animation:bflyFlap .12s ease-in-out infinite alternate}
+    @keyframes bflyFlap{from{scale:1 1}to{scale:.6 1}}
+    .bf-bflash{position:absolute;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:97;background:radial-gradient(closest-side,#fff,var(--fc,#ff7ae0) 45%,transparent 78%)}
     .bf-atkup{position:absolute;top:-42px;right:4px;font-size:16px;z-index:25;animation:bfPulse .8s infinite}
     .bf-bigfly{position:absolute;font-size:120px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:85;filter:drop-shadow(0 0 18px #38bdf8) drop-shadow(0 0 30px #fde047)}
     .bf-gold{position:absolute;width:56px;height:56px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:90;background:radial-gradient(circle at 35% 30%,#fffbe0,#facc15 45%,#b45309 100%);box-shadow:0 0 24px #facc15,0 0 48px #f59e0b}
@@ -2080,22 +2083,23 @@
       const made = [];
       const mk = (cls, txt, x, y) => { const d = document.createElement('div'); d.className = cls; d.textContent = txt; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
       try {
-        // 1. Ba con bướm, mỗi con 1 màu ngẫu nhiên (khác nhau), xoay quanh thân
+        // 1. Triệu hồi 3 con bướm phát sáng, xoay quanh thân (orbit) – chuyển thể từ ButterflySkill.cs
         const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);   // 3 màu khác nhau trong 7 màu
         const flies = picks.map((c, i) => {
-          const b = mk('bf-bfly', '🦋', u.x, u.y - 4);
-          b.style.filter = `hue-rotate(${c.hue}deg) saturate(1.6) drop-shadow(0 0 8px ${c.css})`;
+          const b = mk('bf-bfly flap', '🦋', u.x, u.y - 4);
+          b.style.filter = `hue-rotate(${c.hue}deg) saturate(1.8) brightness(1.15) drop-shadow(0 0 8px ${c.css}) drop-shadow(0 0 16px ${c.css})`;
           return { b, c, hue: c.hue, off: i * (Math.PI * 2 / BFLY_HITS), px: 0, py: 0 };
         });
-        const t0 = performance.now(), ORBIT = 1000;
+        u.el.animate([{ transform: 'translate(-50%,-50%)' }, { transform: 'translate(-50%,calc(-50% - 12px))' }, { transform: 'translate(-50%,-50%)' }], { duration: 600 });
+        const t0 = performance.now(), ORBIT = 1500;
         await new Promise(res => {
           const step = now => {
             const k = (now - t0) / ORBIT;
             if (tok !== battleToken || k >= 1) return res();
-            flies.forEach(fl => {
-              const a = fl.off + k * Math.PI * 4;
-              fl.px = Math.cos(a) * 38; fl.py = Math.sin(a) * 26 - 6;
-              fl.b.style.transform = `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(${1 + Math.sin(a) * 0.2})`;
+            flies.forEach((fl, i) => {
+              const a = fl.off + k * ORBIT / 1000 * 2.8;                 // tốc độ xoay 2.8 rad/s như Unity
+              fl.px = Math.cos(a) * 44; fl.py = Math.sin(a) * 26 - 8 + Math.sin(a * 2 + i) * 4;
+              fl.b.style.transform = `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(${1 + Math.sin(a) * 0.22}) rotate(${Math.cos(a) * 14}deg)`;
               fl.b.style.zIndex = Math.sin(a) > 0 ? 95 : 5;
             });
             requestAnimationFrame(step);
@@ -2104,38 +2108,42 @@
         });
         if (tok !== battleToken) return;
 
-        // 2. Lần lượt từng con bay vút lên trời, rồi lơ lửng
+        // 2. Cả 3 con cùng bay vút lên trời (smooth-step + cung vòng nhẹ)
         const SKY_Y = 3;
-        const skyX = i => cx + (i - (flies.length - 1) / 2) * 14;
-        flies.forEach(fl => { fl.b.style.zIndex = 95; });
-        for (let i = 0; i < flies.length; i++) {
-          const fl = flies[i];
+        const skyX = i => u.x + (i - (flies.length - 1) / 2) * 12;
+        flies.forEach((fl, i) => {
           const dx = (skyX(i) - u.x) * W / 100, dy = (SKY_Y - (u.y - 4)) * H / 100;
-          const from = `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(1)`;
-          const sky = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(2.2)`;
-          fl.sky = sky;
-          sfxRocket();
-          anim(fl.b, [{ transform: from }, { transform: `translate(calc(-50% + ${dx * 0.4}px),calc(-50% + ${dy * 0.6}px)) scale(1.5) rotate(-18deg)`, offset: 0.5 }, { transform: sky }], 600, 'ease-out');
-          await sleep(220); if (tok !== battleToken) return;
-        }
-        await sleep(450); if (tok !== battleToken) return;
+          fl.b.style.zIndex = 95;
+          fl.sky = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(2.2)`;
+          anim(fl.b, [
+            { transform: `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(1)` },
+            { transform: `translate(calc(-50% + ${dx * 0.4}px),calc(-50% + ${dy * 0.55}px)) scale(1.6) rotate(-14deg)`, offset: 0.55 },
+            { transform: fl.sky }
+          ], 1000, 'ease-in-out');
+        });
+        sfxRocket();
+        await sleep(1050); if (tok !== battleToken) return;
 
-        // 3. Lần lượt từng con từ từ rơi xuống, trúng TOÀN BỘ địch
+        // 3. Lần lượt từng con lao xuống đất (cung vòng), nổ ánh sáng ma thuật rồi gây sát thương
         for (let i = 0; i < flies.length; i++) {
           const fl = flies[i];
+          const es1 = alive(); if (!es1.length) { fl.b.remove(); break; }
+          const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length + (i - 1) * 7, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length;
           const sx = (skyX(i) - u.x) * W / 100, sy = (SKY_Y - (u.y - 4)) * H / 100;
-          const ex = (cx - u.x) * W / 100, ey = (cy - (u.y - 4)) * H / 100;
-          const at = (t, sc, rot) => `translate(calc(-50% + ${sx + (ex - sx) * t}px),calc(-50% + ${sy + (ey - sy) * t}px)) scale(${sc}) rotate(${rot}deg)`;
-          // rơi lắc lư như cánh bướm chao xuống
+          const ex = (tx - u.x) * W / 100, ey = (ty - (u.y - 4)) * H / 100;
+          const at = (t, sc, rot) => `translate(calc(-50% + ${sx + (ex - sx) * t}px),calc(-50% + ${sy + (ey - sy) * t - Math.sin(t * Math.PI) * 26}px)) scale(${sc}) rotate(${rot}deg)`;
           anim(fl.b, [
-            { transform: fl.sky },
-            { transform: at(0.25, 2.1, 14) }, { transform: at(0.5, 1.9, -14) },
-            { transform: at(0.75, 1.7, 10) }, { transform: at(1, 1.5, 0) }
-          ], 750, 'ease-in');
-          await sleep(760); if (tok !== battleToken) return;
+            { transform: fl.sky }, { transform: at(0.25, 2.0, 12) }, { transform: at(0.5, 1.8, -12) },
+            { transform: at(0.75, 1.6, 8) }, { transform: at(1, 1.4, 0) }
+          ], 650, 'ease-in');
+          await sleep(660); if (tok !== battleToken) return;
           sfxBell();
-          const es = alive(); if (!es.length) { fl.b.remove(); break; }
+          fl.b.remove();
           const col = fl.c.css;
+          const fx = document.createElement('div'); fx.className = 'bf-bflash'; fx.style.left = tx + '%'; fx.style.top = ty + '%'; fx.style.setProperty('--fc', col);
+          box.appendChild(fx); made.push(fx); setTimeout(() => fx.remove(), 400);
+          anim(fx, [{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], 350, 'ease-out');   // nổ to dần ×8 như ExpandImpact
+          const es = alive(); if (!es.length) break;
           es.forEach(e => {
             skillHit(e, dmg);
             const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = e.x + '%'; w.style.top = e.y + '%';
@@ -2144,8 +2152,8 @@
           });
           bflyEffect(fl.c, es);                                   // hiệu ứng theo màu bướm
           f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
-          anim(fl.b, [{ opacity: 1 }, { opacity: 0 }], 250);
-          await sleep(300); if (tok !== battleToken) return;
+          if (i < flies.length - 1) await sleep(350);              // delayBetweenDives
+          if (tok !== battleToken) return;
         }
 
         // 4. Tăng 50% Công cho toàn đội (không cộng dồn)
