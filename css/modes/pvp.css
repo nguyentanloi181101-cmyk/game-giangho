@@ -1,0 +1,80 @@
+/* TỶ VÕ (PVP): núi mây, bệ sen, giao diện chiến đấu
+   (tách từ index.html cũ — style) */
+
+.pvp-head{display:flex;align-items:center;gap:8px;padding:12px 12px;background:rgba(0,0,0,.4);border-bottom:2px solid #fde047}
+    .pvp-head .pve-title{flex:1}
+    .pvp-mini{background:linear-gradient(180deg,#3b82f6,#1e3a8a);border:1px solid #bfdbfe;border-radius:6px;color:#fff;font-size:12px;font-weight:bold;padding:6px 10px;cursor:pointer}
+    #pvp-body{flex:1;overflow-y:auto;padding:10px 12px 24px}
+    /* ===== Tỷ Võ: cảnh núi mây + bệ sen ===== */
+    #pvp-body{position:relative;flex:1;overflow:hidden;padding:0;
+      background:radial-gradient(ellipse 60% 13% at 18% 22%,rgba(255,255,255,.6),transparent 70%),radial-gradient(ellipse 70% 15% at 86% 46%,rgba(255,255,255,.55),transparent 70%),
+        radial-gradient(ellipse 80% 14% at 28% 74%,rgba(255,255,255,.55),transparent 70%),radial-gradient(ellipse 60% 12% at 78% 92%,rgba(255,255,255,.5),transparent 70%),
+        linear-gradient(180deg,#a8d3cf 0%,#7fb3af 38%,#5f9895 68%,#3f7270 100%)}
+    #pvp-body::before{content:'';position:absolute;left:0;right:0;top:6%;height:48%;background:linear-gradient(180deg,#5d8f8c,#7fb3af);opacity:.55;
+      clip-path:polygon(0 100%,0 58%,10% 34%,22% 62%,36% 16%,50% 56%,64% 24%,78% 60%,91% 32%,100% 54%,100% 100%)}
+    .pv-spot{position:absolute;transform:translate(-50%,-50%);width:132px;text-align:center;cursor:pointer;z-index:2}
+    .pv-hero{position:relative;z-index:2;width:84px;height:84px;margin:0 auto -30px;border-radius:50%;border:3px solid #fde047;background:#2a1450;display:flex;align-items:center;justify-content:center;font-size:54px;
+      box-shadow:0 10px 16px rgba(0,0,0,.35),0 0 14px rgba(253,224,71,.5);animation:pvFloat 3.2s ease-in-out infinite}
+    @keyframes pvFloat{50%{transform:translateY(-6px)}}
+    .pv-hero.full{width:auto;height:auto;border:0;border-radius:0;background:none;box-shadow:none;margin:0 auto -22px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.55))}
+    .pv-spot.me .pv-hero.full{box-shadow:none;border:0}
+    .pv-hero.full .pv-body{display:block;width:auto;max-width:none;margin:0 auto}
+    .pv-lotus{position:relative;width:124px;height:46px;margin:0 auto}
+    .pv-lotus::before{content:'';position:absolute;left:0;right:0;bottom:0;height:34px;border-radius:50% 50% 46% 46%/78% 78% 22% 22%;background:linear-gradient(180deg,#f8f6ec,#cbd8c0);
+      box-shadow:inset 0 -7px 0 #aebfa5,-30px 6px 0 -8px #e6ecdc,30px 6px 0 -8px #e6ecdc,-52px 10px 0 -14px #d7e2cd,52px 10px 0 -14px #d7e2cd,0 8px 14px rgba(0,0,0,.28)}
+    .pv-lotus::after{content:'';position:absolute;left:20px;right:20px;top:2px;height:18px;border-radius:50%;background:radial-gradient(ellipse,#ffffff,#dfeadb 70%);border:1px solid #9bb08f}
+    .pv-name{margin-top:2px;font-size:14px;font-weight:800;line-height:1.15;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 4px rgba(0,0,0,.6)}
+    .pv-spot.me .pv-hero{border-color:#7dd3fc;box-shadow:0 10px 16px rgba(0,0,0,.35),0 0 18px #38bdf8}
+    .pv-info{position:absolute;left:10px;bottom:10px;z-index:3;font-size:15px;font-weight:800;color:#fff;line-height:1.35;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+    .pv-info b{display:block;font-size:20px;color:#fde68a}
+    .pv-log-btn{position:absolute;right:10px;bottom:10px;z-index:3;background:linear-gradient(180deg,#3b82f6,#1e3a8a);border:2px solid #bfdbfe;border-radius:10px;color:#fff;font-weight:900;font-size:15px;padding:9px 16px;cursor:pointer;text-shadow:0 1px 2px #000}
+    .pv-lineup{display:flex;gap:4px;margin:10px 0}
+    .pv-lc{flex:1;min-width:0;border:2px solid #a16207;border-radius:8px;background:linear-gradient(180deg,#4d2d14,#29170a);text-align:center;padding:4px 2px;font-size:10px;color:#e5e7eb;line-height:1.3}
+    .pv-lc .n{font-weight:800;color:#fde68a;font-size:10px;margin:2px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pv-go{width:100%;padding:12px;font-size:17px;font-weight:900;border-radius:12px}
+    .pv-row-log{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:5px 2px;border-bottom:1px dashed rgba(253,224,71,.25);color:#e5e7eb}
+    /* ===== Giao diện chiến đấu Tỷ Võ ===== */
+    #pv-skip{display:none}
+   /* nút ulti chuyển vào góc trái dưới của thẻ tướng */
+    .pv-cb .bf-orb.in-card{position:absolute;left:-9px;bottom:-9px;margin:0;width:38px;height:38px;border-width:2px;font-size:10px;z-index:4}
+    .pv-c.pve-h{cursor:pointer}
+    .pv-c.can .pv-cb{border-color:#fde047!important;box-shadow:0 0 8px #fde047}
+    .pv-c.acted .pv-cb{filter:grayscale(.8);opacity:.55}
+    #pv-skip{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);z-index:120;width:62px;height:62px;border-radius:50%;border:3px solid #fde047;background:radial-gradient(circle at 35% 30%,#4ade80,#166534);color:#fff;font-weight:900;font-size:14px;line-height:1.05;cursor:pointer;box-shadow:0 0 12px #000;text-shadow:0 1px 2px #000}
+    .pv-row{display:flex;gap:4px;margin-bottom:5px;align-items:stretch}
+    .pv-c{flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch}
+    .pv-cb{position:relative;border:2px solid #b45309;border-radius:7px;background:linear-gradient(180deg,#3b2a1a,#1a1008);padding:2px;display:flex;flex-direction:column;gap:2px;align-items:center}
+    .pv-c.dead .pv-cb{filter:grayscale(1);opacity:.4}
+    .pv-c.opp .pv-cb{border-color:#7c3aed}
+    .pv-p{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;overflow:hidden;border-radius:4px}
+    .pv-st{display:flex;align-items:center;justify-content:center;gap:1px;height:16px;line-height:1;color:#fbbf24;white-space:nowrap;text-shadow:0 1px 1px #000}
+    .pv-st i{font-style:normal;font-size:12px;line-height:1}
+    .pv-st i.big{font-size:20px;filter:drop-shadow(0 0 3px rgba(251,191,36,.9))}
+    .pv-st i.off{opacity:.3}
+    .pv-st b{font-size:11px;margin-left:1px}
+    .pv-b{width:100%;height:5px;background:#0a0f20;border:1px solid #000;border-radius:3px;overflow:hidden}
+.pv-b i{display:block;height:100%}
+    .pv-b.h i{background:#4ade80}
+.pv-b.r i{background:#e5e7eb}
+    .pv-sp{margin:3px auto 0;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(180deg,#a16207,#713f12);border:1px solid #fbbf24;border-radius:8px;padding:0 5px;white-space:nowrap}
+    .pv-side{width:98px;flex:0 0 98px;border:2px solid #7c8fd6;border-radius:10px;background:linear-gradient(180deg,#1b2a52,#0d1530);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;text-align:center}
+    .pv-side b{font-size:19px;color:#fff;font-style:italic;text-shadow:0 2px 3px #000;line-height:1.1}
+    .pv-side span{font-size:11px;color:#fde68a;font-weight:800;line-height:1.2;overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
+    .pvp-top{background:linear-gradient(180deg,#1e3a8a,#0f1d4a);border:2px solid #fde047;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+    .pvp-rank{min-width:96px;text-align:center;background:rgba(0,0,0,.35);border:1px solid #fde047;border-radius:8px;padding:6px 4px}
+    .pvp-rank span{display:block;font-size:11px;color:#bfdbfe}
+.pvp-rank b{display:block;font-size:26px;color:#fde047;line-height:1.1;text-shadow:0 0 8px #f59e0b}
+    .pvp-rank small{display:block;font-size:11px;color:#fff;margin-top:2px}
+    .pvp-info{flex:1;font-size:12px;line-height:1.55;color:#e2e8f0}
+.pvp-info b{color:#fde047}
+    .pvp-note{background:rgba(0,0,0,.35);border:1px dashed #fde047;border-radius:8px;padding:7px 9px;font-size:11px;color:#fde68a;margin-bottom:10px;line-height:1.5}
+    .pvp-card{background:linear-gradient(90deg,#4d2d14 0%,#29170a 100%);border:2px solid #a16207;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+    .pvp-card .r{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .pvp-card .nm{font-size:13px;font-weight:900;color:#fff}
+.pvp-card .nm small{color:#fbbf24;font-weight:bold}
+    .pvp-card .rk{font-size:13px;font-weight:900;color:#fde047;white-space:nowrap}
+    .pvp-team{display:flex;gap:4px;margin:6px 0}
+.pvp-team>div{flex:1;text-align:center;font-size:24px}
+    .pvp-card .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:#cbd5e1}
+    .pvp-card .ft button{background:#ea580c;border:1px solid #fde047;color:#fff;font-weight:bold;font-size:13px;border-radius:6px;padding:7px 14px;cursor:pointer;white-space:nowrap}
+    .pvp-card .ft button:disabled{background:#4a5568;border-color:#4a5568;color:#a0aec0;cursor:not-allowed}

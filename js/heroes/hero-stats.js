@@ -1,0 +1,40 @@
+/* TƯỚNG: chỉ số thực dụng trong trận và mô tả kỹ năng
+   (tách từ index.html cũ — script) */
+
+    // Chỉ số cấp/sao nhân trước, trang bị của khung cộng thẳng lên trên
+    function heroStats(id) {
+      const h = heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id);
+      return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + eb.hp + pb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk, def:Math.round(h.def * g) + eb.def + pb.def,
+               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:tb.crit, critDmg:tb.critDmg, tough:tb.tough, spd:h.spd + eb.spd, rage:h.startRage || 0 };
+    }
+
+    // ---- Mô tả kỹ năng (số liệu lấy đúng theo cơ chế trận đấu + cấp kỹ năng hiện tại) ----
+    function heroSkills(id) {
+      const st = heroStats(id), sk = skillMult(id), p = getProg(id), pct = x => Math.round(x * 100);
+      let ult;
+      if (id === 4) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. Tụ khối cầu Thái Cực trắng đen, nhảy lên trời rồi ném xuống: gây ${pct(TAICHI_MULT * sk)}% Công (≈ ${fmtN(st.atk * TAICHI_MULT * sk)} sát thương) lên TOÀN BỘ địch. ${p.star >= STAR_MAX ? '(Đang ★6) ' : '(Đang ★' + p.star + ') '}★5: choáng 1 địch ngẫu nhiên 2 hiệp, không chảy máu. ★6: choáng 2 địch ngẫu nhiên 2 hiệp và toàn bộ địch trúng chiêu bị CHẢY MÁU ${TAICHI_BLEED_TURNS} hiệp, mỗi hiệp mất ${pct(TAICHI_BLEED_PCT)}% HP hiện tại.`;
+      else if (id === 3) ult = `Cần đầy 100 nộ. Triệu hồi ${DUCO_TWISTERS} lốc xoáy có tia sét TÍM bao quanh, lần lượt từng xoáy quét từ đội ta sang đội địch: mỗi xoáy gây ${pct(DUCO_MULT * sk / DUCO_TWISTERS)}% Công, tổng ${pct(DUCO_MULT * sk)}% Công (≈ ${fmtN(st.atk * DUCO_MULT * sk)}) lên TOÀN BỘ địch. Mọi hiệu ứng TĂNG PHÚC đang có của đội địch bị XÓA SẠCH và ${DUCO_NOBUFF} hiệp không thể nhận tăng phúc.`;
+      else if (id === 0) ult = `Cần đầy 100 nộ. Nhảy qua đội hình địch rồi ulti ${MADAO_SLASHES} nhát chém màu TÍM chồng lên nhau với tốc độ rất nhanh; mỗi nhát trúng TOÀN BỘ địch còn sống: tổng ${pct(MADAO_MULT * sk)}% Công (≈ ${fmtN(st.atk * MADAO_MULT * sk)}, mỗi nhát ≈ ${fmtN(st.atk * MADAO_MULT * sk / MADAO_SLASHES)}). Sau đó nhảy về chỗ cũ, nộ về 0.`;
+      else if (id === 12) ult = `Ra trận ĐẦY NỘ. Ulti 18 đạo tàn ảnh dồn dập chạy từ đội ta sang đội địch. TOÀN ĐỘI nhận trong ${LB_TURNS} hiệp: +${pct(LB_DODGE_MULT)}% Né của Đoàn Dự (≈ +${fmtN(st.dodge * LB_DODGE_MULT)}% Né), +${pct(LB_SPD_MULT)}% Tốc của Đoàn Dự (≈ +${fmtN(st.spd * LB_SPD_MULT)} Tốc) và mỗi hiệp hồi ${pct(LB_HEAL_MULT)}% Máu của Đoàn Dự (≈ ${fmtN(st.hp * LB_HEAL_MULT)} máu/hiệp). Cần đầy 100 nộ, mỗi lần ulti xong nộ về 0.`;
+      else if (id === 11) ult = `KHÔNG TỐN NỘ – hiệp nào cũng ulti được. Ném hủ cờ vây lên phía địch: hiện ra 1 BÀN CỜ lớn trùm cả đội địch, ${GO_STONES} quân cờ trắng đen ngẫu nhiên từ trên trời rơi xuống từng quân thật nhanh, mỗi quân trúng gây ${pct(GO_STONE_PCT)}% HP hiện tại của địch bị rơi trúng. Hiệp ${GO_STUN_ROUNDS.join(', ')}: CHOÁNG ${GO_STUN_COUNT} địch ngẫu nhiên 1 hiệp. Sau đó chọn BOSS MẠNH NHẤT (nhiều HP tối đa nhất), HOÁN ĐỔI: đồng đội nhận CÔNG / THỦ / HP của boss, boss nhận chỉ số gốc của Vô Nhai Tử (≈ Công ${fmtN(st.atk)}, Thủ ${fmtN(st.def)}, HP ${fmtN(st.hp)}). Từ lần hoán đổi thứ 2: so với lần trước, chỉ số nào lần 1 cao hơn thì giữ nguyên, chỉ số nào lần 2 cao hơn thì lấy lần 2 (không cộng dồn).`;
+      else if (id === 10) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. Triệu hồi ${SKEL_COUNT} bộ xương khô lao tới ${SKEL_COUNT} địch, mỗi địch mất ${pct(SKEL_PCT)}% HP HIỆN TẠI. Bỏ qua mọi thứ (giáp, khiên, bất tử…) TRỪ NÉ – địch né được thì không mất máu. Bản thân không bị trừ máu.`;
+      else if (id === 2) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. Trăng khuyết hiện lên, ánh sáng chiếu xuống toàn đội cùng vô số hạt sáng lấp lánh: GIẢI TẤT CẢ hiệu ứng bất lợi (chảy máu, choáng) của phe ta và dựng KHIÊN TRĂNG KHUYẾT: PHẢN ${pct(MOON_REFLECT)}% sát thương nhận vào về cho địch, đồng đội chỉ chịu ${pct(MOON_TAKE)}% sát thương. Khiên duy trì ${MOON_TURNS} hiệp.`;
+      else if (id === 8) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. Gọi cơn mưa bong bóng từ trên trời rơi xuống phe ta, hộ thể ${LLQ_TARGETS} đồng đội còn sống ngẫu nhiên: +${LLQ_RAGE} nộ và cộng ${pct(LLQ_DEF_MULT * sk)}% Thủ của bản thân (≈ +${fmtN(st.def * LLQ_DEF_MULT * sk)} Thủ) trong 1 hiệp.`;
+      else if (id === 7) ult = `Nhảy qua đầu tướng địch, ulti 2 hỏa long quấn chéo nhau 2 vòng, giáng ${DRAGON_TIERS} tầng sát thương lên TOÀN BỘ địch: tổng ${pct(DRAGON_MULT * sk)}% Công (≈ ${fmtN(st.atk * DRAGON_MULT * sk)}, mỗi tầng ≈ ${fmtN(st.atk * DRAGON_MULT * sk / DRAGON_TIERS)}). Địch trúng chiêu bị CHẢY MÁU ${BLEED_TURNS} hiệp, mỗi hiệp mất ${pct(BLEED_PCT)}% HP hiện tại.`;
+      else if (id === 1) ult = `Cần đầy 100 nộ. Mưa cánh hoa sen rơi từ trời xuống chỗ đồng đội đã gục, hoa sen xanh nở ra và HỒI SINH tối đa ${REVIVE_COUNT} tướng với ${pct(REVIVE_HP_PCT)}% HP (nộ về 0, chưa ra đòn ngay lượt đó). Chỉ ulti khi có đồng đội đã gục – nếu chưa có thì giữ nộ và đánh thường.`;
+      else if (id === 6) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. 3 con bướm, mỗi con 1 màu ngẫu nhiên, xoay quanh thân rồi lần lượt bay lên trời; sau đó từng con từ từ rơi xuống, mỗi con gây ${pct(BFLY_MULT * sk)}% Công (≈ ${fmtN(st.atk * BFLY_MULT * sk)}) lên TOÀN BỘ địch, kèm hiệu ứng theo màu bướm (đều ${pct(BF_PCT)}%, kéo dài ${BF_TURNS} hiệp): 🔴 Đỏ chảy máu • 🟠 Cam giảm sát thương • 🟡 Vàng giảm Thủ • 🟢 Lục giảm hồi máu • 🔵 Lam giảm nộ • 🟣 Chàm choáng ${BF_STUN_TARGETS} địch ngẫu nhiên ${BF_STUN_TURNS} hiệp • 💜 Tím trúng độc + câm lặng (không thể dùng tuyệt kỹ). Cuối chiêu, TOÀN ĐỘI được +${pct(BFLY_ATK_BUFF)}% Công (không cộng dồn, kéo dài hết trận).`;
+      else if (id === 5) ult = `Nâng hoa sen nở rộ, hồi ${pct(HEAL_MULT * sk)}% (Công + Thủ) ≈ ${fmtN(HEAL_MULT * sk * (st.atk + st.def))} máu cho toàn bộ đồng đội còn sống.`;
+      else if (id === 9) ult = `KHÔNG TỐN NỘ – lượt nào cũng ulti được. Chém ra ${HTT_LINES} đường lửa cùng lúc, chồng chéo như tơ nhện lên TOÀN BỘ địch: mỗi địch chịu ${fmtN(HTT_FLAT * sk)} sát thương chuẩn cộng Công bản thân (≈ ${fmtN(HTT_FLAT * sk + st.atk)}), BỎ QUA TẤT CẢ GIÁP, và bị giảm thêm ${pct(HTT_HP_PCT)}% HP hiện tại.`;
+      else ult = `Lao vào địch, đánh ${ULT_HITS} đòn liên tiếp, mỗi đòn ${pct(ULT_MULT * sk)}% Công (≈ ${fmtN(st.atk * ULT_MULT * sk)} mỗi đòn). Cần đầy 100 nộ.`;
+      { const hh = heroById(id), free = /^KHÔNG TỐN NỘ – (lượt|hiệp) nào cũng ulti được\.\s*/;
+        if (hh.alwaysUlt) { if (!free.test(ult)) ult = 'KHÔNG TỐN NỘ – lượt nào cũng ulti được. ' + ult.replace(/Cần đầy 100 nộ[,.]?\s*/g, ''); }
+        else if (free.test(ult)) ult = ult.replace(free, 'Cần đầy 100 nộ mới ulti được. '); }
+      return [
+        { tag:'Đánh thường', name:'Đòn Thường', desc:`Lao vào 1 địch ngẫu nhiên, gây ${fmtN(st.atk)} sát thương (100% Công). Mỗi lần đánh thường +${RAGE_ATK} nộ.` },
+        { tag:'Tuyệt kỹ', name:HERO_ULT_NAME[id] || 'Tuyệt Kỹ', lv:p.sk, desc:ult },
+        { tag:'Nội tại', name:'Nộ Khí', desc:`Mỗi lần bị đánh trúng +20 nộ (đủ 100 nộ để ulti). Né ${tsFmt(st.dodge)}% đòn đánh; Muốn chắc chắn đánh trúng, Chuẩn của kẻ tấn công phải cao hơn Né từ ${ACC_GAP} điểm trở lên (VD Né 3000 → Chuẩn 3300).${st.rage ? ` Vào trận với sẵn ${st.rage} nộ.` : ''}` },
+        ...(id === 1 ? [{ tag:'Nội tại', name:'Thanh Liên Bất Tử', desc:`Vào trận KHÔNG có nộ. BẤT TỬ trong ${IMMORTAL_TURNS} hiệp đầu mỗi trận: nhận sát thương nhưng máu không thể xuống dưới 1.` }] : []),
+        ...(heroById(id).taunt ? [{ tag:'Nội tại', name:(id === 8 ? 'Thiên Long Hộ Thể' : 'Tướng Thủ'), desc:'Là tướng thủ: địch luôn đánh vào tướng này TRƯỚC. Chỉ khi tướng này gục ngã, địch mới đánh sang các tướng khác.' }] : []),
+        ...(heroById(id).prio2 ? [{ tag:'Nội tại', name:'Tướng Trị Liệu', desc:'Địch ưu tiên đánh THỨ 2: khi tướng thủ (nếu có) đã gục, địch sẽ đánh tướng trị liệu trước các tướng còn lại.' }] : [])
+      ];
+    }

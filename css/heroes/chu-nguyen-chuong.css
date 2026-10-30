@@ -1,0 +1,9 @@
+/* HIỆU ỨNG TUYỆT KỸ: chu-nguyen-chuong
+   (tách từ index.html cũ — style) */
+
+    .bf-moon{position:absolute;font-size:70px;line-height:1;z-index:95;pointer-events:none;filter:drop-shadow(0 0 12px #fef08a) drop-shadow(0 0 28px #fde047);animation:moonIn 2.1s ease-out forwards}
+    @keyframes moonIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(-50deg)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(0)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.05)}}
+    .bf-moonbeam{position:absolute;top:0;z-index:5;pointer-events:none;background:linear-gradient(180deg,rgba(254,240,138,.6) 0%,rgba(254,249,195,.22) 60%,rgba(254,249,195,0) 100%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);opacity:0;animation:beamIn 1.8s ease-out forwards}
+    @keyframes beamIn{0%{opacity:0}25%{opacity:1}75%{opacity:.9}100%{opacity:0}}
+    .bf-spark{position:absolute;z-index:96;pointer-events:none;opacity:0;color:#fef9c3;text-shadow:0 0 6px #fde047,0 0 12px #fff;animation:sparkFall var(--d) linear var(--dl) forwards}
+    @keyframes sparkFall{0%{opacity:0;transform:translateY(0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translateY(var(--h)) scale(1.1) rotate(180deg)}}

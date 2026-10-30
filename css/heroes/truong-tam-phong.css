@@ -1,0 +1,14 @@
+/* HIỆU ỨNG TUYỆT KỸ: truong-tam-phong
+   (tách từ index.html cũ — style) */
+
+    /* ===== TRƯƠNG TAM PHONG: THÁI CỰC ===== */
+    .bf-yy{position:absolute;width:76px;height:76px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;
+      background:radial-gradient(circle 7px at 50% 25%,#000 0 98%,transparent 100%),radial-gradient(circle 7px at 50% 75%,#fff 0 98%,transparent 100%),
+        radial-gradient(circle 19px at 50% 25%,#fff 0 98%,transparent 100%),radial-gradient(circle 19px at 50% 75%,#000 0 98%,transparent 100%),linear-gradient(90deg,#fff 50%,#000 50%);
+      box-shadow:0 0 0 3px #111,0 0 0 5px #f5f5f5,0 0 16px 4px #fff,0 0 34px 8px rgba(255,255,255,.55),0 0 60px 14px rgba(160,160,160,.35)}
+    .bf-yy::before{content:'';position:absolute;inset:-16px;border-radius:50%;border:2px dashed rgba(255,255,255,.9);box-shadow:0 0 8px #fff;animation:yySpin 2.4s linear infinite reverse}
+    .bf-yy::after{content:'';position:absolute;inset:-28px;border-radius:50%;background:conic-gradient(from 0deg,#fff 0 12.5%,#000 0 25%,#fff 0 37.5%,#000 0 50%,#fff 0 62.5%,#000 0 75%,#fff 0 87.5%,#000 0);
+      -webkit-mask:radial-gradient(circle,transparent 62%,#000 63% 68%,transparent 69%);mask:radial-gradient(circle,transparent 62%,#000 63% 68%,transparent 69%);opacity:.85;animation:yySpin 4s linear infinite}
+    @keyframes yySpin{to{transform:rotate(360deg)}}
+    .bf-yyfx{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);border:3px solid #fff;box-shadow:0 0 24px #fff,inset 0 0 26px #000;z-index:80;animation:yyWave .8s ease-out forwards}
+    @keyframes yyWave{0%{width:30px;height:30px;opacity:1}100%{width:260px;height:260px;opacity:0}}

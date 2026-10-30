@@ -1,0 +1,7 @@
+/* HIỆU ỨNG TUYỆT KỸ: doan-du
+   (tách từ index.html cũ — style) */
+
+    .bf-lbghost{position:absolute;font-size:44px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:93;filter:drop-shadow(0 0 8px #67e8f9) drop-shadow(0 0 16px #22d3ee) hue-rotate(-20deg) saturate(1.4);opacity:.85}
+    .bf-lbghost .bf-sprite{display:flex;justify-content:center}
+    .bf-lb{position:absolute;top:-42px;left:2px;font-size:11px;z-index:25;filter:drop-shadow(0 0 6px #67e8f9);pointer-events:none}
+    .bf-lb b{background:#0e7490;border:1px solid #67e8f9;border-radius:8px;padding:0 4px;color:#cffafe}

@@ -1,0 +1,170 @@
+/* TRẬN ĐẤU: sân, đơn vị, thanh máu, thẻ tướng, hiệu ứng chung
+   (tách từ index.html cũ — style) */
+
+    /* --- BATTLE OVERLAY --- */
+    #battle-overlay { display: none; position: fixed; inset: 0; background: radial-gradient(circle at center, rgba(30, 15, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%); z-index: 9999; flex-direction: column; justify-content: space-between; overflow: hidden; }
+    .battle-header-info { display: flex; justify-content: space-between; width: 100%; padding: 15px 20px; color: #fde047; font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.6); border-bottom: 1px solid rgba(253, 224, 71, 0.3); }
+    .battle-arena { flex: 1; display: flex; flex-direction: column; justify-content: space-between; position: relative; perspective: 1000px; overflow: hidden; padding-bottom: 20px;}
+    
+    .enemy-side { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; margin-top: 20px; }
+    .enemy-name-tag { color: #ff4444; font-size: 18px; font-weight: 900; text-shadow: 1px 1px 3px #000, 0 0 10px #ff0000; margin-bottom: 5px; }
+    .enemy-3d-wrapper { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; }
+    .enemy-platform { position: absolute; bottom: 0; width: 120px; height: 40px; background: radial-gradient(ellipse, rgba(255,0,0,0.6) 0%, transparent 70%); border-radius: 50%; border: 2px solid #ff4444; transform: rotateX(70deg) translateZ(-20px); animation: spinPlatform 4s linear infinite; }
+    @keyframes spinPlatform { 0% { transform: rotateX(70deg) rotateZ(0deg) translateZ(-20px); } 100% { transform: rotateX(70deg) rotateZ(360deg) translateZ(-20px); } }
+    .enemy-avatar-3d { font-size: 80px; position: relative; filter: drop-shadow(0 15px 10px rgba(0,0,0,0.8)) drop-shadow(0 0 15px rgba(255,0,0,0.6)); z-index: 2; animation: floatEnemy 2s ease-in-out infinite; }
+    @keyframes floatEnemy { 0%, 100% { transform: translateY(0) translateZ(20px); } 50% { transform: translateY(-15px) translateZ(30px); } }
+    .enemy-attack-anim { animation: enemyLunge 0.6s cubic-bezier(0.5, 0, 1, 0.5) !important; }
+    @keyframes enemyLunge {
+      0% { transform: translateY(0) scale(1) translateZ(20px); }
+      30% { transform: translateY(150px) scale(1.2) translateZ(80px); filter: brightness(1.5) drop-shadow(0 0 30px red); }
+      60% { transform: translateY(150px) scale(1.2) translateZ(80px); }
+      100% { transform: translateY(0) scale(1) translateZ(20px); }
+    }
+    .hero-hurt-anim { animation: heroHurt 0.4s ease-in-out; }
+    @keyframes heroHurt { 0%, 100% { transform: translateX(0); filter: none; } 25% { transform: translateX(15px) rotateZ(5deg); filter: brightness(2) sepia(1) hue-rotate(-50deg); } 50% { transform: translateX(-15px) rotateZ(-5deg); filter: brightness(2) sepia(1) hue-rotate(-50deg); } 75% { transform: translateX(10px); } }
+    .hp-bar-container { width: 80%; height: 16px; background: #222; border: 2px solid #fde047; border-radius: 10px; position: relative; overflow: hidden; margin: 5px 0; }
+    .hp-fill { height: 100%; transition: width 0.3s ease; }
+    .enemy-hp { background: linear-gradient(90deg, #b91c1c, #ef4444); }
+    .hero-hp { background: linear-gradient(90deg, #15803d, #22c55e); }
+    .hp-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000; line-height: 14px; }
+    .enemy-stats-box { background: rgba(0, 0, 0, 0.7); border: 1px solid #fde047; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #e2e8f0; margin: 5px auto; display: inline-block; }
+    .hero-side { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; height: 350px; z-index: 5; }
+    .hero-hp-container { position: absolute; bottom: 10px; z-index: 20; }
+    .battle-controls { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; z-index: 100; }
+    .btn-attack { background: linear-gradient(180deg, #ea580c, #9a3412); border: 2px solid #fde047; color: #fff; font-size: 16px; font-weight: 900; padding: 10px 30px; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.8); transition: 0.2s; }
+    .btn-attack:disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.7; }
+    .btn-close-battle { background: linear-gradient(180deg, #4b5563 0%, #1f2937 100%); border: 2px solid #9ca3af; color: #fff; font-size: 16px; font-weight: bold; padding: 10px 24px; border-radius: 20px; cursor: pointer; }
+    .boss-hit { animation: shakeBoss 0.2s ease-in-out; }
+    @keyframes shakeBoss { 0%, 100% { transform: translateX(0); filter: brightness(1); } 25% { transform: translateX(-15px); filter: brightness(2) drop-shadow(0 0 10px red); } 50% { transform: translateX(15px); filter: brightness(2) drop-shadow(0 0 10px red); } 75% { transform: translateX(-5px); } }
+    .boss-stunned { filter: grayscale(80%) sepia(50%); }
+    #battle-stun-effect { display: none; position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 26px; animation: spin 1s linear infinite; text-shadow: 0 0 10px #fde047; }
+    @keyframes spin { 0% { transform: translateX(-50%) rotate(0deg); } 100% { transform: translateX(-50%) rotate(360deg); } }
+    .damage-number { position: absolute; font-size: 26px; font-weight: 900; font-style: italic; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; animation: floatDamage 0.8s ease-out forwards; pointer-events: none; z-index: 10000; }
+    @keyframes floatDamage { 0% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -80px) scale(1.5); } }
+    .tornado-effect { position: fixed; top: 50%; left: 50%; width: 100px; height: 200px; margin-left: -50px; margin-top: -100px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 255, 255, 0.8) 90deg, transparent 180deg, rgba(255, 215, 0, 0.8) 270deg, transparent 360deg); filter: blur(6px); opacity: 0; pointer-events: none; z-index: 150; transform-style: preserve-3d; }
+    .tornado-effect.active { animation: spinTornado 0.3s linear infinite, flyToBoss 1s cubic-bezier(0.5, 0, 1, 0.5) forwards; }
+    @keyframes spinTornado { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes flyToBoss { 0% { top: 80%; left: 50%; opacity: 1; transform: scale(0.5); } 80% { top: 30%; left: 50%; opacity: 1; transform: scale(1.5) rotate(720deg); } 100% { top: 25%; left: 50%; opacity: 0; transform: scale(2) rotate(1080deg); } }
+  
+    /* ===== SÀN ĐẤU NGANG (mới) ===== */
+    #battle-overlay{width:100%;max-width:450px;left:50%;right:auto;transform:translateX(-50%);background:#05070d;justify-content:flex-start}
+    .bf-field{flex:1;position:relative;overflow:hidden;background:#1b2a33}
+   /* nền trận đấu đơn giản */
+    .bf-field .bf-mount,.bf-field .bf-ground{display:none}
+    .bf-field.has-bg .bf-mount, .bf-field.has-bg .bf-ground{display:none}
+    .bf-field.has-bg{background-size:cover;background-position:center;background-repeat:no-repeat}
+    .bf-mount{position:absolute;left:0;right:0;top:10%;height:30%;background:#52667a;opacity:.85;clip-path:polygon(0 100%,0 55%,12% 20%,22% 50%,35% 8%,50% 45%,64% 18%,78% 52%,90% 25%,100% 55%,100% 100%)}
+    .bf-mount.b{top:22%;height:18%;background:#33475a;opacity:1;clip-path:polygon(0 100%,0 40%,18% 60%,34% 20%,52% 55%,70% 25%,86% 55%,100% 30%,100% 100%)}
+    .bf-ground{position:absolute;left:0;right:0;top:37%;bottom:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.05) 0 14px,transparent 14px 44px)}
+    .bf-title{position:absolute;top:8px;left:0;right:0;text-align:center;color:#ff5a5a;font-weight:900;font-size:16px;text-shadow:1px 1px 3px #000,0 0 10px #f00;z-index:60}
+    #bf-units{position:absolute;inset:0}
+    .bf-unit{position:absolute;width:64px;height:80px;transform:translate(-50%,-50%)}
+    .bf-unit.big{width:110px;height:120px}
+    .bf-sprite{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:46px;line-height:1;transform-origin:50% 100%;animation:bfBreath 2.2s ease-in-out infinite;filter:drop-shadow(0 4px 3px rgba(0,0,0,.7))}
+    .bf-unit.big .bf-sprite{font-size:84px}
+    /* Tướng ngoài sân: KHÔNG mây, KHÔNG khung, KHÔNG tên, KHÔNG thanh máu (máu xem ở thẻ tướng phía dưới) */
+    .bf-unit{--rc:#cbd5e1}
+    .bf-shadow{display:none !important}
+    .bf-sprite{z-index:1}
+    .bf-name,.bf-hp{display:none !important}
+    .bf-unit::before,.bf-unit::after{display:none}
+    .bf-sprite .hero-body{display:block;height:76px;width:auto;max-width:none;margin:0 auto;filter:drop-shadow(0 3px 2px rgba(0,0,0,.55))}
+    .bf-sprite .hero-portrait{filter:none;-webkit-mask-image:radial-gradient(ellipse 72% 74% at 50% 48%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 72% 74% at 50% 48%,#000 58%,transparent 100%)}
+    .role-box{background:rgba(0,0,0,.3);border:1px solid #fde047;border-radius:10px;padding:8px;margin-bottom:8px}
+    .role-title{font-size:13px;font-weight:900;color:#fde047;margin-bottom:6px}
+    .role-title small{display:block;font-size:11px;font-weight:400;color:#cbd5e1;margin-top:2px;line-height:1.35}
+    .role-btns{display:flex;gap:6px}
+    .role-btn{flex:1;padding:7px 2px;border-radius:8px;border:2px solid var(--rc);background:rgba(0,0,0,.45);color:#fff;font-size:12px;font-weight:bold;cursor:pointer;line-height:1.2}
+    .role-btn.on{background:var(--rc);color:#111;box-shadow:0 0 8px var(--rc)}
+    .bf-emo{display:inline-flex;width:56px;height:56px;border-radius:50%;border:2px solid #fde047;background:#2a1450;align-items:center;justify-content:center;font-size:34px;line-height:1;box-sizing:border-box}
+    @keyframes bfBreath{50%{transform:scaleY(1.035)}}
+    .bf-hp{position:absolute;top:-4px;left:4px;right:4px;height:13px;background:#111;border:1px solid #fde047;border-radius:6px;overflow:hidden}
+    .bf-name{position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:900;line-height:1;pointer-events:none;z-index:12;-webkit-text-stroke:2px #000;paint-order:stroke fill}
+    .bf-unit.hero .bf-name{color:#fde047}
+    .bf-unit.enemy .bf-name{color:#fca5a5}
+    .bf-hpn{position:absolute;left:0;right:0;top:0;text-align:center;font-size:9px;font-weight:900;line-height:11px;color:#fff;font-style:normal;-webkit-text-stroke:2px #000;paint-order:stroke fill;z-index:2}
+    .bf-hp i{display:block;height:100%;width:100%;transition:width .25s}
+    .bf-unit.hero .bf-hp i{background:linear-gradient(90deg,#15803d,#4ade80)}
+    .bf-unit.enemy .bf-hp i{background:linear-gradient(90deg,#b91c1c,#f87171)}
+    .bf-unit.dead{opacity:0;transition:opacity .5s;pointer-events:none}
+    .bf-unit.hurt .bf-sprite{filter:brightness(2.2) sepia(1) hue-rotate(-40deg)}
+    .bf-dmg{position:absolute;left:50%;top:-10px;font-size:24px;font-weight:900;font-style:italic;color:#fff;-webkit-text-stroke:2px #7f1d1d;paint-order:stroke fill;animation:bfDmg .8s ease-out forwards;pointer-events:none;z-index:20;white-space:nowrap}
+    .bf-unit.hero .bf-dmg{color:#fde047;-webkit-text-stroke:2px #1e3a8a}
+    .bf-fx{position:absolute;left:50%;top:45%;font-size:40px;pointer-events:none;z-index:15;animation:bfFx .35s ease-out forwards}
+    @keyframes bfDmg{0%{opacity:1;transform:translate(-50%,0) scale(.6)}20%{transform:translate(-50%,-14px) scale(1.3)}100%{opacity:0;transform:translate(-50%,-60px) scale(1)}}
+    @keyframes bfBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes bfFx{0%{opacity:1;transform:translate(-50%,-50%) scale(.4) rotate(0)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.6) rotate(90deg)}}
+    /* ===== BẢNG TƯỚNG + NỘ ===== */
+    .bf-panel{background:linear-gradient(180deg,#1b2a52,#0d1530);border-top:3px solid #7c8fd6;padding:0;flex:none;z-index:100}
+    /* ===== Bố cục trận đấu chia 10 phần theo chiều dọc (mọi thiết bị): trời 2.5 • sân đấu 5 • bảng đội hình 2.5 ===== */
+    #battle-overlay .bf-field{flex:none;height:75%}
+                 /* trời + sân đấu = 7.5 phần (ảnh nền trải cả 2) */
+    #battle-overlay .bf-panel{flex:none;height:25%;position:relative;overflow:hidden}
+   /* bảng đội hình = 2.5 phần */
+    #battle-overlay .battle-header-info{position:absolute;top:0;left:0;right:0;z-index:70;width:auto}
+    .bf-fit{position:absolute;left:0;top:0;width:100%;padding:6px 6px 8px;transform-origin:0 0}
+    .bf-hint{text-align:center;font-size:11px;color:#cbd5e1;margin-bottom:5px}
+    .bf-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+    .bf-card{height:78px;border-radius:7px;border:2px solid #5b6ea8;background:linear-gradient(180deg,#2d3f78,#16204a);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:3px;cursor:pointer}
+    .bf-card.empty{background:#10172f;border-color:#2a3358;cursor:default;opacity:.6}
+    .bf-card .b{width:100%;height:6px;background:#0a0f20;border-radius:3px;overflow:hidden;border:1px solid #000}
+    .bf-card .b i{display:block;height:100%}
+    .bf-card .hpb i{background:#4ade80}
+.bf-card .rgb i{background:#22d3ee}
+    .bf-card{position:relative}
+    .bf-card[data-role]{border-color:var(--rc);box-shadow:0 0 6px var(--rc)}
+    .bf-cardic{position:absolute;left:-9px;top:-11px;width:30px;height:30px;border-radius:50%;z-index:3;pointer-events:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#334155,#0f172a);border:2px solid var(--rc);box-shadow:0 0 8px var(--rc);font-size:17px;line-height:1}
+    .bf-cardic svg{width:20px;height:20px;display:block}
+    .bf-card.can{border-color:#fde047;box-shadow:0 0 8px #fde047}
+    .bf-card.acted{filter:grayscale(.8);opacity:.55}
+    .bf-card.dead{filter:grayscale(1);opacity:.3}
+    .bf-orb{margin:6px auto 0;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7aa7ff,#1e3a8a 70%);border:3px solid #6b7fc0;color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;filter:grayscale(.7) brightness(.7);cursor:pointer;text-shadow:1px 1px 2px #000}
+    .bf-orb.ready{filter:none;border-color:#fde047;box-shadow:0 0 14px #60a5fa;animation:bfPulse .8s infinite}
+    .bf-orb.empty{visibility:hidden}
+.bf-orb.dead{opacity:.3}
+    @keyframes bfPulse{50%{transform:scale(1.08)}}
+    /* Hàng nút: nằm ở đáy sân đấu (ngay trên bảng đội hình), nút to, trải đều toàn bộ chiều ngang */
+    #battle-overlay .bf-acts{position:absolute;left:0;right:0;bottom:25%;z-index:101;display:flex;gap:8px;padding:0 8px 8px;margin:0;justify-content:stretch;pointer-events:none}
+    #battle-overlay .bf-acts button{pointer-events:auto;flex:1 1 0;min-width:0;padding:14px 4px;font-size:15px;border-radius:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bf-taichi{position:absolute;font-size:64px;line-height:1;transform:translate(-50%,-50%);color:#fff;filter:drop-shadow(0 0 10px #38bdf8) drop-shadow(0 0 22px #fde047);pointer-events:none}
+    .bf-wave{position:absolute;width:60px;height:60px;border-radius:50%;border:4px solid #7dd3fc;box-shadow:0 0 20px #60a5fa,inset 0 0 20px #60a5fa;transform:translate(-50%,-50%);animation:bfWave .6s ease-out forwards;pointer-events:none;z-index:80}
+    @keyframes bfWave{0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}100%{opacity:0;transform:translate(-50%,-50%) scale(5)}}
+    .bf-stun{position:absolute;top:-46px;left:50%;font-size:22px;animation:bfSpin 1s linear infinite;z-index:25}
+    @keyframes bfSpin{from{transform:translateX(-50%) rotate(0)}to{transform:translateX(-50%) rotate(360deg)}}
+    .bf-unit.stunned .bf-sprite{filter:drop-shadow(0 4px 3px rgba(0,0,0,.7))}
+    .hero-img,.hero-body,.pv-lc img{image-rendering:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+    .hero-img{border-radius:50%;border:2px solid #fde047;vertical-align:middle;object-fit:cover;background:#2a1450}
+    .bf-sprite .hero-img{width:56px;height:56px}
+    .bf-card .hero-img{width:42px;height:42px}
+    .bf-unit .bf-dmg.bf-heal{color:#86efac;-webkit-text-stroke:2px #14532d}
+    .btn-back{background:linear-gradient(180deg,#4ade80 0%,#166534 100%);border:1px solid #bbf7d0;border-radius:6px;color:#fff;font-size:12px;font-weight:bold;padding:6px 12px;cursor:pointer}
+    .btn-gear{margin-left:auto;flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid #fef08a;background:radial-gradient(circle,#eab308 0%,#854d0e 100%);font-size:14px;line-height:1;cursor:pointer;color:#fff}
+.bf-fireline{position:absolute;height:6px;border-radius:4px;background:linear-gradient(90deg,transparent,#fde047 12%,#fb923c 50%,#ef4444 88%,transparent);box-shadow:0 0 10px #f97316,0 0 22px #ef4444;pointer-events:none;z-index:96;opacity:0}
+    .bf-bflash{position:absolute;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:97;background:radial-gradient(closest-side,#fff,var(--fc,#ff7ae0) 45%,transparent 78%)}
+    .bf-atkup{position:absolute;top:-42px;right:4px;font-size:16px;z-index:25;animation:bfPulse .8s infinite}
+    .bf-bigfly{position:absolute;font-size:120px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:85;filter:drop-shadow(0 0 18px #38bdf8) drop-shadow(0 0 30px #fde047)}
+    .bf-gold{position:absolute;width:56px;height:56px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:90;background:radial-gradient(circle at 35% 30%,#fffbe0,#facc15 45%,#b45309 100%);box-shadow:0 0 24px #facc15,0 0 48px #f59e0b}
+    .bf-bleed{position:absolute;top:-42px;left:4px;font-size:16px;z-index:25;animation:bfPulse .8s infinite}
+    .bf-petal{position:absolute;pointer-events:none;z-index:96;transform:translate(-50%,-50%);line-height:1;filter:hue-rotate(150deg) saturate(1.5) drop-shadow(0 0 4px #4ade80)}
+    .bf-lotus{position:absolute;font-size:46px;line-height:1;pointer-events:none;z-index:90;transform:translate(-50%,-50%) scale(0);filter:hue-rotate(150deg) saturate(1.7) drop-shadow(0 0 12px #22c55e) drop-shadow(0 0 22px #86efac)}
+    .bf-dbf{position:absolute;top:-27px;left:50%;transform:translateX(-50%);font-size:11px;line-height:1;white-space:nowrap;z-index:25;pointer-events:none;text-shadow:0 0 3px #000,0 0 3px #000}
+    .bf-unit.big .bf-dbf{top:-40px}
+    .bf-water{position:absolute;font-size:44px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:92;filter:drop-shadow(0 0 10px #38bdf8) drop-shadow(0 0 20px #0ea5e9)}
+    #bf-cards,#bf-hint{display:none}
+    #battle-overlay:not(.pvp-mode) #bf-orbs{display:none}
+    #battle-overlay:not(.pvp-mode) #bf-orbs{gap:4px}
+    #battle-overlay:not(.pvp-mode) #pv-panel .pv-row,#battle-overlay:not(.pvp-mode) #bf-orbs{padding:0 14px}
+    #battle-overlay:not(.pvp-mode) .pv-c.empty{visibility:hidden}
+    #battle-overlay.pvp-mode #bf-orbs,#battle-overlay.pvp-mode #btn-all,#battle-overlay.pvp-mode #btn-end,#battle-overlay.pvp-mode #btn-auto{display:none}
+    #battle-overlay.pvp-mode #pv-skip{display:block}
+    #battle-overlay.pvp-mode #ui-stage-title,#battle-overlay.pvp-mode #ui-enemy-name{display:none}
+    #battle-overlay.pvp-mode .battle-header-info{min-height:44px}
+    #battle-overlay.pvp-mode #ui-wave-title{position:absolute;left:50%;transform:translateX(-50%);font-size:22px;font-weight:900;color:#fff;text-shadow:0 2px 6px #000;top:6px}
+    .bf-mouth{position:absolute;width:40px;height:48px;margin:-24px 0 0 -20px;border-radius:50%;background:radial-gradient(ellipse at 50% 75%,#fb7185 0,#7f1d1d 42%,#140505 100%);border:3px solid #fecaca;box-shadow:0 0 16px #f43f5e;z-index:97;pointer-events:none;animation:mouthPulse .35s ease-in-out infinite alternate}
+    @keyframes mouthPulse{from{transform:scale(1)}to{transform:scale(1.35,1.2)}}
+    .bf-vortex{position:absolute;font-size:96px;line-height:1;margin:-48px 0 0 -48px;z-index:94;pointer-events:none;filter:drop-shadow(0 0 12px #c084fc);animation:vSpin .6s linear infinite}
+    @keyframes vSpin{to{transform:rotate(360deg)}}
+    .bf-fxorb{position:absolute;font-size:22px;line-height:1;z-index:96;pointer-events:none;filter:drop-shadow(0 0 6px #fde047)}
+    .bf-moonshield{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;border:2px solid rgba(254,240,138,.9);background:radial-gradient(circle,rgba(254,249,195,.04) 45%,rgba(253,224,71,.3) 100%);box-shadow:0 0 14px #fde047,inset 0 0 14px rgba(254,249,195,.6);z-index:12;pointer-events:none;animation:moonPulse 1.6s ease-in-out infinite}
+    @keyframes moonPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+    .bf-shield{position:absolute;top:-42px;right:2px;font-size:16px;z-index:25;filter:drop-shadow(0 0 6px #38bdf8)}

@@ -1,0 +1,12 @@
+/* HIỆU ỨNG TUYỆT KỸ: vo-nhai-tu
+   (tách từ index.html cũ — style) */
+
+    /* ===== Vô Nhai Tử: hủ cờ vây, bàn cờ, quân cờ ===== */
+    .bf-gopot{position:absolute;width:34px;height:28px;margin:-14px 0 0 -17px;border-radius:6px 6px 50% 50%/6px 6px 100% 100%;background:radial-gradient(ellipse at 35% 30%,#b9824a 0,#7a4a1c 60%,#3d230c 100%);border:2px solid #2a1606;box-shadow:0 0 12px #fde047;z-index:98;pointer-events:none}
+    .bf-gopot::before{content:'';position:absolute;left:3px;top:-9px;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#cbd5e1);box-shadow:13px -2px 0 -1px #111827}
+    .bf-goboard{position:absolute;width:92px;height:92px;margin:-46px 0 0 -46px;transform:translate(0,0) scaleY(.5);border:3px solid #6b3f12;border-radius:4px;z-index:0;pointer-events:none;
+      background:linear-gradient(rgba(60,30,5,.75) 1.5px,transparent 1.5px) 0 0/11.5px 11.5px,linear-gradient(90deg,rgba(60,30,5,.75) 1.5px,transparent 1.5px) 0 0/11.5px 11.5px,linear-gradient(135deg,#e8b45a,#c98a2e);
+      box-shadow:0 0 14px rgba(253,224,71,.55),0 6px 10px rgba(0,0,0,.5)}
+    .bf-gostone{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;z-index:99;pointer-events:none;box-shadow:0 3px 4px rgba(0,0,0,.6)}
+    .bf-gostone.b{background:radial-gradient(circle at 32% 28%,#6b7280 0,#111827 55%,#000 100%)}
+    .bf-gostone.w{background:radial-gradient(circle at 32% 28%,#fff 0,#e5e7eb 55%,#9ca3af 100%)}

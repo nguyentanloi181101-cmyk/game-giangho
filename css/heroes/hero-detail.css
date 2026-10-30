@@ -1,0 +1,38 @@
+/* CHI TIẾT TƯỚNG / hộp thoại
+   (tách từ index.html cũ — style) */
+
+    .md-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9998;align-items:center;justify-content:center}
+    .md-box{width:94%;max-width:430px;max-height:90vh;overflow-y:auto;background:linear-gradient(180deg,#3b2314,#120904);border:2px solid #fde047;border-radius:12px;padding:12px}
+    .hd-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .hd-ico{width:58px;height:58px;border-radius:50%;border:3px solid #fde047;background:radial-gradient(circle,#523b28,#1e120a);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;overflow:hidden}
+    .hd-ico .hero-img{width:100%;height:100%;border:0;border-radius:0}
+    .hd-info{flex:1;min-width:0}
+    .hd-name{font-size:18px;font-weight:900;color:#fde047;text-shadow:1px 1px 3px #000}
+    .hd-sub{font-size:12px;color:#cbd5e1;margin-top:2px}
+    .md-x{background:#4b5563;border:1px solid #9ca3af;color:#fff;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;flex-shrink:0}
+    .md-sec{font-size:13px;font-weight:900;color:#fde047;margin:10px 0 6px;border-bottom:1px dashed rgba(253,224,71,.4);padding-bottom:3px}
+    .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .st-item{background:rgba(0,0,0,.45);border:1px solid rgba(253,224,71,.35);border-radius:6px;padding:5px 8px;display:flex;justify-content:space-between;font-size:12px;color:#e2e8f0}
+    .st-item b{color:#fde047}
+    .sk-card{background:rgba(0,0,0,.45);border-left:3px solid #fde047;border-radius:6px;padding:6px 8px;margin-bottom:6px}
+    .sk-name{font-weight:900;color:#fde047;font-size:13px}
+    .sk-tag{font-size:10px;background:#7c2d12;border-radius:3px;padding:1px 5px;margin-left:4px;color:#fff;font-weight:bold}
+    .sk-lv{font-size:10px;background:#166534;border-radius:3px;padding:1px 5px;margin-left:4px;color:#fff;font-weight:bold}
+    .sk-desc{font-size:12px;color:#e2e8f0;line-height:1.45;margin-top:3px}
+    .md-acts{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+    .md-acts button{padding:8px 14px;font-size:13px;border-radius:16px}
+    .hero-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px}
+    .hchip{flex:0 0 64px;border:2px solid #4a5568;border-radius:8px;background:#1a202c;text-align:center;padding:4px 2px;cursor:pointer;opacity:.75}
+    .hchip.sel{border-color:#fde047;opacity:1;box-shadow:0 0 8px #fde047}
+    .hchip .n{font-size:9px;color:#fff;font-weight:bold;min-height:22px}
+    .hchip .s{font-size:9px;color:#fde047}
+.hd-main{display:flex;gap:8px;margin-top:4px}
+    .hd-detail{flex:1;min-width:0;background:rgba(8,14,34,.88);border:2px solid #7c8fd6;border-radius:6px;padding:6px 10px 8px}
+    .hd-detail .t{text-align:center;font-weight:900;color:#fff;font-size:14px;border-bottom:1px solid rgba(124,143,214,.5);padding-bottom:3px;margin-bottom:4px}
+    .hd-line{display:flex;justify-content:space-between;gap:6px;font-size:13px;color:#fff;padding:2px 0}
+    .hd-line em{font-style:normal;color:#4ade80;font-weight:bold}
+    .hd-line em.pv{color:#fde047}
+.hd-line em.ts{color:#c084fc}
+    .hd-line>span:first-child{white-space:nowrap;flex-shrink:0}
+    .hd-line>span:last-child{text-align:right}
+    .hd-line em{white-space:nowrap}

@@ -1,0 +1,6 @@
+/* HIỆU ỨNG TUYỆT KỸ: hoa-man-lau
+   (tách từ index.html cũ — style) */
+
+    .bf-bfly{position:absolute;font-size:30px;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:95}
+    .bf-bfly.flap{animation:bflyFlap .12s ease-in-out infinite alternate}
+    @keyframes bflyFlap{from{scale:1 1}to{scale:.6 1}}

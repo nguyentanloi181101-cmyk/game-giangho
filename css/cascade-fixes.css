@@ -1,0 +1,16 @@
+/* CÁC LUẬT GHI ĐÈ nạp cuối: giữ đúng thứ tự cascade của file gốc (đừng đổi thứ tự file CSS)
+   (tách từ index.html cũ — style) */
+
+    .bf-card .e{font-size:34px;line-height:1.1}
+    .ts-hero .hero-img{width:100%;height:100%;border:0;border-radius:6px}
+    .hchip .e{font-size:26px;line-height:1.2}
+    .hchip .hero-img{width:32px;height:32px}
+    .eq-fr .hero-img{width:26px;height:26px}
+.bf-lbghost .hero-img{width:56px;height:56px}
+    .pv-hero .hero-img{width:100%;height:100%;border:0;border-radius:50%}
+    .pv-lc .e{font-size:30px;line-height:1.1}
+.pv-lc .hero-img{width:100%;height:auto;aspect-ratio:1;border-radius:6px;border-width:1px}
+    .pv-p .hero-img{width:100%;height:100%;border:0;border-radius:4px}
+    .pvp-team .hero-img{width:38px;height:38px}
+    .bf-moonshield b{position:absolute;top:-8px;right:-4px;font-size:11px;background:#1e293b;border:1px solid #fde047;border-radius:8px;padding:0 4px;color:#fef08a}
+    .pill-box b { color: #4ade80; }

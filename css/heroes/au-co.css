@@ -1,0 +1,21 @@
+/* HIỆU ỨNG TUYỆT KỸ: au-co
+   (tách từ index.html cũ — style) */
+
+    /* ===== ÂU CƠ: HOA SEN 3D (ảnh hoa sen phát sáng, xếp nhiều lớp theo chiều sâu để xoay có khối) ===== */
+    .bf-lotus3d{position:absolute;width:132px;height:166px;transform:translate(-50%,-50%);pointer-events:none;z-index:90;perspective:620px}
+    .bf-lotus3d .l3-glow{position:absolute;left:-30%;top:-8%;width:160%;height:118%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,230,.55),rgba(192,132,252,.26) 52%,transparent 76%);animation:l3Pulse .9s ease-in-out infinite alternate}
+    .bf-lotus3d .l3-water{position:absolute;left:-35%;bottom:-8%;width:170%;height:62%;transform:rotateX(74deg)}
+    .bf-lotus3d .l3-water i{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,190,238,.9);box-shadow:0 0 14px #f0abfc,inset 0 0 14px #f0abfc;opacity:0;animation:l3Ring 1.3s ease-out infinite}
+    .bf-lotus3d .l3-water i:nth-child(2){animation-delay:.43s}
+    .bf-lotus3d .l3-water i:nth-child(3){animation-delay:.86s}
+    .bf-lotus3d .l3-stage{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+    .bf-lotus3d .l3-layer{position:absolute;inset:0;background:url(../../assets/images/fx/bf-lotus3d-l3-layer.webp) center/100% 100% no-repeat}
+    /* Âu Cơ – LotusBloom3D: cánh hoa 3D nở dần + nhụy phát sáng + hạt sáng bay lên */
+    .bf-lotus3d .l3-spin{position:absolute;inset:0;transform-style:preserve-3d}
+    .bf-lotus3d .l3-pv{position:absolute;left:50%;top:56%;width:0;height:0;transform-style:preserve-3d}
+    .bf-lotus3d .l3-petal{position:absolute;transform-origin:50% 100%;border-radius:50% 50% 50% 50%/78% 78% 22% 22%;background:linear-gradient(to top,#ff1493 0%,#ff4fb0 55%,#ffd0f0 100%);box-shadow:0 0 10px #ff2fa8,inset 0 0 8px rgba(255,220,245,.8);backface-visibility:visible}
+    .bf-lotus3d .l3-petal.in{background:linear-gradient(to top,#ff5fbf 0%,#ff9ad8 55%,#fff0fb 100%)}
+    .bf-lotus3d .l3-core{position:absolute;left:50%;top:56%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ffb8ee 55%,#ff3fb6 100%);box-shadow:0 0 14px #fff,0 0 30px #ff4fc0,0 0 54px #ff1ecb;z-index:5}
+    .l3-spark{position:absolute;border-radius:50%;pointer-events:none;z-index:97;background:radial-gradient(circle,#fff,#ff7ae0 55%,transparent 75%);box-shadow:0 0 6px #ff4fc0}
+    @keyframes l3Pulse{from{opacity:.55;transform:scale(.92)}to{opacity:1;transform:scale(1.08)}}
+    @keyframes l3Ring{0%{transform:scale(.25);opacity:.95}100%{transform:scale(1);opacity:0}}
