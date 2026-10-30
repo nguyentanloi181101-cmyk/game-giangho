@@ -16,7 +16,7 @@
     const BFLY_HITS = 3, BFLY_MULT = 1.0, BFLY_ATK_BUFF = 0.5;
     // Hoa Mãn Lâu: mỗi màu bướm kèm 1 hiệu ứng lên địch. Mọi hiệu ứng 25%, kéo dài 2 hiệp (Chàm: choáng 2 địch ngẫu nhiên 1 hiệp)
     const REVIVE_COUNT = 2, REVIVE_HP_PCT = 0.5, IMMORTAL_TURNS = 3;   // Thanh Y Tiên Tử: hồi sinh 2 đồng đội với 50% HP; bất tử 3 hiệp đầu mỗi trận
-    const BF_PCT = 0.25, BF_TURNS = 2, BF_STUN_TURNS = 1, BF_STUN_TARGETS = 2, BF_POISON_PCT = 0.25;
+    const BF_PCT = 0.25, BF_TURNS = 2, BF_STUN_TURNS = 1, BF_STUN_TARGETS = 2, BF_SILENCE_TARGETS = 2, BF_POISON_PCT = 0.25;
     // hue = độ xoay màu so với 🦋 gốc (xanh lam ~210°); css = màu hào quang/sóng
     const BFLY_COLORS = [
       { k: 'red',    hue: 150, css: '#ef4444' },   // Đỏ: chảy máu

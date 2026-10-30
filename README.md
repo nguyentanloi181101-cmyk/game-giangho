@@ -95,3 +95,12 @@ match /chat_messages/{id} {
 - `js/social/thanthu.js`: 18 thần thú (8 A+, 10 S) với hiệu quả phụ thể, tab Cấp (Cho Ăn bằng Thú Hồn/Thú Linh), Sao (Quỷ Linh + Đá Nữ Oa), Phụ Thể (Lĩnh Ngộ: Tẩy miễn phí/2 phút, Tẩy 10 lần 500 Vàng, Danh Sách). Cấm Địa: 3 lượt/ngày nhận mảnh + Thú Hồn.
 - Túi Đồ chỉ chứa tiền tệ + vật phẩm (không còn mảnh tướng, trang bị, bảo vật). Vật phẩm từ Boss bang nằm ở mục "Kho Bang Hội".
 - Thần thú hiện chưa tham gia chiến đấu (chỉ số/phụ thể mới để hiển thị & tích lũy).
+
+## Cập nhật
+- Hoa Mãn Lâu, bướm Tím: trúng độc TOÀN địch, câm lặng chỉ 2 địch ngẫu nhiên (`BF_SILENCE_TARGETS` trong skill-config.js).
+- Thần Thú thêm 5 con S: Tản Viên Thần, Giáp Thìn, Cửu Vỹ Hồ, Hỏa Kỳ Lân (coming soon), Khổng Tước — tổng 23.
+
+## Nhiệm Vụ (Tích Cực) + Sự Kiện
+- `js/social/quests.js`: 9 nhiệm vụ ngày, mốc 25/50/75/100 điểm mở rương quà (vào Túi Đồ; vàng cộng thẳng). Tiến độ đếm bằng cách bọc các hàm cũ (PVE, Tỷ Võ, Chiêu Mộ, cường hóa trang bị, bồi dưỡng). Reset mỗi ngày.
+- "Danh Tướng Lầu" và "Luận Kiếm" chưa có chế độ nên bấm vào là tạm tính hoàn thành.
+- Sự Kiện: đã bỏ hết mục nạp/tiêu phí; chỉ còn Quà Free (nhận mỗi ngày) và các mục "sắp ra mắt".

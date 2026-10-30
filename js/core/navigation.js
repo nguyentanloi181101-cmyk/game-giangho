@@ -9,7 +9,7 @@
       const navBtn = document.getElementById(`nav-btn-${screenId}`);
       if(navBtn) navBtn.classList.add('active');
       
-      if(['home','picker','vhub','guild','thanthu','dienvo'].includes(screenId)) {
+      if(['home','picker','vhub','guild','thanthu','dienvo','quest'].includes(screenId)) {
         document.getElementById('app-header').style.display = 'block';
         document.getElementById('app-nav').style.display = 'flex';
       } else {

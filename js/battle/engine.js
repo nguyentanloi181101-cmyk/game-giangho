@@ -291,6 +291,7 @@
         });
         return;
       }
+      const mute = c.k === 'purple' ? alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_SILENCE_TARGETS) : [];   // Tím: độc TOÀN địch, câm lặng chỉ 2 địch ngẫu nhiên
       alive.forEach(e => {
         const d = e.dn || (e.dn = {});
         if (c.k === 'red') {
@@ -308,7 +309,7 @@
         } else if (c.k === 'blue') {
           d.rage = BF_TURNS; say(e, '⚡ GIẢM NỘ ' + Math.round(BF_PCT * 100) + '%');
         } else if (c.k === 'purple') {
-          d.poison = BF_TURNS; d.silence = BF_TURNS; say(e, '☠️ ĐỘC + 🤐 CÂM LẶNG');
+          d.poison = BF_TURNS; if (mute.includes(e)) { d.silence = BF_TURNS; say(e, '☠️ ĐỘC + 🤐 CÂM LẶNG'); } else say(e, '☠️ TRÚNG ĐỘC');
         }
         refreshDbf(e);
       });
