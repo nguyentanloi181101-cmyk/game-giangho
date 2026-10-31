@@ -141,9 +141,3 @@ Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự
 - Tụ Bảo Bồn: ảnh `assets/images/items/tu-bao-bon.webp`.
 - Đông Tà: nốt nhạc `dt-burst.webp` bung ra từ tâm rồi tan biến, 4 nhịp (`dongTaUlt`).
 - Thần thú ra trận: .bf-bst top:34px, cao min(196px,29vh) (đã đưa sát lên và thu nhỏ).
-
-## Bang Hội (bản cập nhật)
-- Bản đồ Bang Hội dùng ảnh (`assets/images/guild/`), 3 hàng vừa 1 khung, không đè nhau.
-- Vật phẩm đấu giá / mua Boss gửi về Hộp Thư (`mailAddItem`), bấm Nhận để vào Kho.
-- Boss thường và Chí Tôn có lượt riêng (mỗi loại 2 lượt/ngày: `left`, `leftCt`).
-- Vải Xanh dùng ảnh; nút "Cường Thân" ở Đại Sảnh đổi tên thành "Diễn Võ Trường".

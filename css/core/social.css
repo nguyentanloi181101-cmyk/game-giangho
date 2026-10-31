@@ -30,7 +30,7 @@
 .vh-btn .bd{position:absolute;top:-6px;right:-4px;background:#dc2626;color:#fff;border-radius:10px;min-width:20px;height:20px;line-height:20px;font-size:11px;text-align:center}
 /* bang hội */
 #screen-guild{background:linear-gradient(180deg,#1e3a5f 0%,#3b6b8f 38%,#2d5a2d 38%,#1b3a1b 100%)}
-.gd-scene{position:relative;flex:1;min-height:560px}
+.gd-scene{position:relative;flex:1;min-height:420px}
 .gd-loc{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer;color:#fff}
 .gd-loc .ic{font-size:42px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.7))}
 .gd-loc .lb{display:inline-block;margin-top:2px;background:rgba(0,0,0,.65);border:1px solid #fde047;border-radius:10px;padding:1px 9px;font-size:12px;font-weight:900;color:#fde047}
@@ -134,7 +134,3 @@ img.gi-g{height:1.15em;width:auto;vertical-align:-.2em;display:inline-block}.bm-
 #tt-body{padding-bottom:96px}.gs-act img.gi{width:22px;height:22px;vertical-align:middle;display:inline-block}
 .tt-hist{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 8px}.tt-hist>div{position:relative;text-align:center;font-size:10px;color:#fff;border:2px solid;border-radius:8px;padding:4px 0;background:#1e3a5f;cursor:pointer}.tt-hist i{display:block;font-style:normal;font-size:24px}.tt-hist small{display:block;color:#fde047}.tt-hist>div.sel{outline:3px solid #fde047;background:#3b2f6b}.tt-hist>div.new::after{content:"Mới";position:absolute;top:-6px;right:-4px;background:#ef4444;color:#fff;font-size:9px;border-radius:6px;padding:0 4px}.tt-hist .tt-hist-empty{grid-column:1/-1;border:0;background:none;color:#cbd5e1;cursor:default}
 .tt-save{padding:8px 28px;border:2px solid #86efac;border-radius:10px;background:linear-gradient(#22c55e,#15803d);color:#fff;font-weight:900;font-size:16px}.tt-save:disabled{opacity:.4}
-
-.gd-art{display:block;margin:0 auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.7));pointer-events:none;width:100%!important}
-.qs-gifts img.gi{width:36px;height:36px}
-.gd-loc .lb{font-size:11px;padding:1px 6px;white-space:nowrap}

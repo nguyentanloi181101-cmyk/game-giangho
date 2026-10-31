@@ -3,7 +3,7 @@
 
     // Mỗi ngày có 1 thư quà 10.000 vàng. Thư chưa nhận được giữ lại tối đa 7 ngày gần nhất.
     const MAIL_GOLD = 10000, MAIL_DAYS = 7;
-    let mailState = (() => { const s = loadJSON('mail_state'); return { first: typeof s.first === 'string' ? s.first : '', claimed: (s.claimed && typeof s.claimed === 'object') ? s.claimed : {}, items: Array.isArray(s.items) ? s.items : [] }; })();
+    let mailState = (() => { const s = loadJSON('mail_state'); return { first: typeof s.first === 'string' ? s.first : '', claimed: (s.claimed && typeof s.claimed === 'object') ? s.claimed : {} }; })();
     const mailSave = () => saveJSON('mail_state', mailState);
     const mailDayKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const mailDayText = k => k.split('-').reverse().join('/');
@@ -16,17 +16,9 @@
       return days;
     }
     const mailUnclaimed = () => mailDays().filter(k => !mailState.claimed[k]);
-    // thư vật phẩm (đấu giá / mua Boss bang): nhận thì vào Kho
-    function mailAddItem(name, ico, qty, why) { mailState.items.push({ id: Date.now() + Math.random(), name, ico, qty, why: why || '', t: Date.now() }); mailSave(); try { updateMailBadge(); } catch (e) {} }
-    function mailTakeItem(id, quiet) {
-      const i = mailState.items.findIndex(x => x.id === id); if (i < 0) return; const it = mailState.items.splice(i, 1)[0];
-      const s = gdSt(); (s.kho[it.name] = s.kho[it.name] || { ico: it.ico, qty: 0 }).qty += it.qty; gdSave(s); mailSave();
-      if (!quiet) { renderMail(); updateMailBadge(); if (typeof scToast === 'function') scToast('Đã nhận ' + it.qty + ' ' + it.name); }
-    }
-    function mailTakeAllItems() { mailState.items.slice().forEach(x => mailTakeItem(x.id, true)); renderMail(); updateMailBadge(); }
     function updateMailBadge() {
       const el = document.getElementById('mail-badge'); if (!el) return;
-      const n = mailUnclaimed().length + mailState.items.length; el.innerText = n; el.style.display = n ? 'flex' : 'none';
+      const n = mailUnclaimed().length; el.innerText = n; el.style.display = n ? 'flex' : 'none';
     }
     function mailClaim(k) {
       if (mailState.claimed[k] || !mailDays().includes(k)) return;
@@ -34,15 +26,14 @@
       renderMail(); updateMailBadge();
     }
     function mailClaimAll() {
-      const list = mailUnclaimed(); mailTakeAllItems(); if (!list.length) return;
+      const list = mailUnclaimed(); if (!list.length) return;
       list.forEach(k => { mailState.claimed[k] = true; }); gold += MAIL_GOLD * list.length; goldSave(); mailSave();
       renderMail(); updateMailBadge();
     }
     function renderMail() {
       const days = mailDays(), un = days.filter(k => !mailState.claimed[k]);
       document.getElementById('mail-note').innerHTML = `Mỗi ngày nhận <b>${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</b> miễn phí. Thư chưa nhận được giữ ${MAIL_DAYS} ngày.` + (un.length > 1 ? ` <button class="btn-attack" style="padding:4px 12px;font-size:12px;margin-left:6px" onclick="mailClaimAll()">Nhận tất cả</button>` : '');
-      const itemsHtml = mailState.items.map(x => `<div class="bm-row"><div class="bm-ico">${typeof gdIco === 'function' ? gdIco(x.name, x.ico) : x.ico}</div><div class="bm-info"><b>${x.name} ×${fmtN(x.qty)}</b><small>${x.why}</small></div><button class="btn-attack" onclick="mailTakeItem(${x.id})">Nhận</button></div>`).join('');
-      document.getElementById('mail-list').innerHTML = itemsHtml + days.map(k => {
+      document.getElementById('mail-list').innerHTML = days.map(k => {
         const got = !!mailState.claimed[k];
         return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '🎁'}</div><div class="bm-info"><b>Quà hằng ngày</b><small>Ngày ${mailDayText(k)} • +${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</small></div>` +
           (got ? '<div class="bm-qty">Đã nhận ✔</div>' : `<button class="btn-attack" onclick="mailClaim('${k}')">Nhận</button>`) + '</div>';

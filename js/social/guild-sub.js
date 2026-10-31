@@ -4,7 +4,7 @@ const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng 1000 điểm H
   ['Cường Thân', '💪', 'Mỗi cấp tăng 800 điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng 40 điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp tăng hồi máu'],
   ['Thần Tốc', '⚡', 'Mỗi cấp tăng tốc độ'], ['Bạo Kích', '💥', 'Mỗi cấp tăng bạo kích'], ['Chí Tôn', '👑', 'Mỗi cấp tăng sát thương lên boss']];
 const GD_SKILL_UNLOCK = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10], GD_SKILL_MAX = [60, 60, 60, 60, 60, 60, 60, 60, 60, 40];
-const GD_ICO = { 'Thú Noãn': 'thu-noan', 'Thú Hồn': 'thu-hon', 'Thú Linh': 'thu-linh', 'Đá Nữ Oa': 'da-nu-oa', 'Dị Linh': 'di-linh', 'Đào Tiên': 'dao-tien', 'Đào Tiên Vương': 'dao-tien', 'Tử Linh Thạch': 'tu-linh-thach', 'Vải Xanh': 'vai-xanh' };
+const GD_ICO = { 'Thú Noãn': 'thu-noan', 'Thú Hồn': 'thu-hon', 'Thú Linh': 'thu-linh', 'Đá Nữ Oa': 'da-nu-oa', 'Dị Linh': 'di-linh', 'Đào Tiên': 'dao-tien', 'Đào Tiên Vương': 'dao-tien', 'Tử Linh Thạch': 'tu-linh-thach' };
 function gdIco(name, ico) { const f = GD_ICO[name] || (String(name).indexOf('Châu ') === 0 ? 'chau' : ''); return f ? `<img class="gi" src="assets/images/items/${f}.webp" alt="${name}">` : ico; }
 function gdSt() {
   const s = loadJSON('guild_state');
@@ -13,7 +13,7 @@ function gdSt() {
   (s.lots || []).forEach(l => { if (l.name === 'Quỷ Linh') l.name = 'Dị Linh'; if (l.name === 'Hỏa Tinh') l.name = 'Thú Noãn'; if (l.name.indexOf('Thạch ') === 0) l.name = 'Tử Linh Thạch'; });
   s.beast = Object.assign({ lv: 1, star: 1, name: 'Kỳ Lân' }, s.beast || {});
   s.uytin = s.uytin === undefined ? 3000 : s.uytin; s.uyMax = 9500; s.bangLv = s.bangLv || 5;
-  s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? 2 : s.left; s.leftCt = s.leftCt === undefined ? 2 : s.leftCt;
+  s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? 2 : s.left;
   return s;
 }
 const gdSave = s => saveJSON('guild_state', s);
@@ -61,12 +61,12 @@ const gdDrops = k => { const b = GD_BOSS[k][0]; return k < 4
 let bbTab = 'thuong', bbCur = null;
 function gdTick() {   // đổi ngày: +lượt; thứ 2 & thứ 5 3h: boss hồi đầy; 12h: kết thúc đấu giá
   const s = gdSt(), now = new Date(), dk = now.toDateString(); let ch = false;
-  if (s.day !== dk) { s.day = dk; s.left = 2; s.leftCt = 2; ch = true; }
+  if (s.day !== dk) { s.day = dk; s.left = 2; ch = true; }
   const r = new Date(now.getTime() - 3 * 3600e3); while (r.getDay() !== 1 && r.getDay() !== 4) r.setDate(r.getDate() - 1);
   const rid = r.toDateString(); if (s.rid !== rid) { s.rid = rid; s.boss = {}; s.bossCt = {}; ch = true; }
   const keep = [];
   s.lots.forEach(l => { if (l.exp > Date.now()) return keep.push(l);
-    if (l.bid > 0 && l.mine) mailAddItem(l.name, l.ico, l.qty, 'Thắng đấu giá Boss');   // thắng đấu giá -> Hộp Thư
+    if (l.bid > 0 && l.mine) { const k = s.kho[l.name] || (s.kho[l.name] = { ico: l.ico, qty: 0 }); k.qty += l.qty; }   // thắng đấu giá -> Kho
     ch = true; });
   if (keep.length !== s.lots.length) s.lots = keep;
   if (ch) gdSave(s); return s;
@@ -80,12 +80,12 @@ function bbInfo(k, ct) {
   <div class="bm-top"><div class="bm-pic">${ttImg(b[0], ct)}</div><div class="bm-desc">Cách đánh: ${b[3]}<br><br>Đặc điểm: ${b[4]}${ct ? '<br>HP & sát thương x2' : ''}<br><br>HP ${fmtN(gdBossHp(k, ct))}</div></div>
   <div class="bm-sk">${b[5].map((n, i) => `<span>Kỹ Năng ${i + 1}:${n}</span>`).join('')}<span>Kỹ Năng 5:</span></div>
   <div class="gs-bar">Vật Phẩm <span>(Chuyển vào Kho)</span></div><div class="bm-drops">${gdDrops(k).map(d => `<div title="${d[0]}">${gdIco(d[0], d[1])}</div>`).join('')}${'<div class="e">+</div>'.repeat(4)}</div>
-  <div class="gs-act"><div>Hôm nay còn: ${ct ? gdSt().leftCt : gdSt().left}</div><button onclick="bbFight()">Khiêu chiến</button></div></div>`;
+  <div class="gs-act"><div>Hôm nay còn: ${gdSt().left}</div><button onclick="bbFight()">Khiêu chiến</button></div></div>`;
   m.style.display = 'flex';
 }
 function bbFight() {   // trận tự động mô phỏng bằng chỉ số đội hình (kỹ năng boss sẽ cập nhật khi có mô tả)
   const [k, ct] = bbCur, s = gdTick(), key = ct ? 'bossCt' : 'boss', mx = gdBossHp(k, ct), cur = s[key][k] === undefined ? mx : s[key][k];
-  if ((ct ? s.leftCt : s.left) < 1) return scToast('Hết lượt hôm nay'); if (cur <= 0) return scToast('Boss đã bị hạ');
+  if (s.left < 1) return scToast('Hết lượt hôm nay'); if (cur <= 0) return scToast('Boss đã bị hạ');
   const heroes = team.map(id => { const t = heroStats(id); return { hp: t.hp, atk: t.atk, def: t.def }; });
   if (!heroes.length) return scToast('Chưa có tướng trong đội');
   let boss = cur, dmgDone = 0, rounds = 0; const bAtk = gdBossAtk(k, ct);
@@ -97,7 +97,7 @@ function bbFight() {   // trận tự động mô phỏng bằng chỉ số đ�
     tgt.hp -= Math.max(1, bAtk - Math.round(tgt.def * .5));
   }
   const killed = boss <= 0; boss = Math.max(0, boss); dmgDone = Math.min(dmgDone, cur);
-  s[key][k] = boss; if (ct) s.leftCt--; else s.left--; const pts = Math.floor(dmgDone / 20000) + (killed ? 100 : 0); s.pts += pts;
+  s[key][k] = boss; s.left--; const pts = Math.floor(dmgDone / 20000) + (killed ? 100 : 0); s.pts += pts;
   let msg = `Gây ${fmtN(dmgDone)} sát thương • +${pts} Điểm BOSS`;
   if (killed) {   // rơi vật phẩm vào mục Đổi, hết hạn 12h trưa kế tiếp
     const e = new Date(); e.setHours(12, 0, 0, 0); if (e <= Date.now()) e.setDate(e.getDate() + 1);
@@ -112,7 +112,7 @@ function renderBangBoss() {
   const body = document.getElementById('bb-body');
   if (bbTab === 'doi') return renderBossShop(s, body);
   const ct = bbTab === 'chiton';
-  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn:${ct ? s.leftCt : s.left}</span><span>Làm mới vào 3h-4h thứ 2, thứ 5</span></div>` + GD_BOSS.map((b, k) => {
+  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn:${s.left}</span><span>Làm mới vào 3h-4h thứ 2, thứ 5</span></div>` + GD_BOSS.map((b, k) => {
     const open = ct ? !!s.ct[k] : b[1] <= s.bangLv, mx = gdBossHp(k, ct), h = (ct ? s.bossCt : s.boss)[k], cur = h === undefined ? mx : h, pct = Math.ceil(cur / mx * 100);
     const act = open ? `bbInfo(${k},${ct ? 1 : 0})` : ct ? `bbCtUnlock(${k})` : '';
     return `<div class="bb-card ${open ? '' : 'lock'}"><div class="bb-h"><b>${ct ? b[6] : b[0]}</b><span class="${open ? 'ok' : 'no'}">Bang cấp ${ct ? 10 : b[1]}</span><button onclick="scToast('Bảng xếp hạng sắp ra mắt')">Hạng</button></div>
@@ -124,12 +124,12 @@ function renderBossShop(s, body) {
   body.innerHTML = `<div class="dv-uy">Điểm BOSS: ${fmtN(s.pts)}</div><div class="bs-list">${s.lots.length ? s.lots.map((l, i) => `<div class="bs-row"><div class="bs-ico">${gdIco(l.name, l.ico)}<em>${l.qty}</em></div><div class="bs-mid"><b>${l.name}</b>
     <div>Giá cao nhất: ${l.bid ? l.bid + (l.mine ? ' (bạn)' : '') : 'Chưa có'}<br>Mua ${fmtN(l.buy)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> &nbsp; Giá đấu: ${l.bid ? l.bid + 1 : l.bid0}</div></div>
     <div class="bs-t" data-exp="${l.exp}">Còn:${t(l.exp - Date.now())}</div><div class="bs-b"><button class="g" onclick="bsBuy(${i})">Mua</button><button onclick="bsBid(${i})">Đấu Giá</button></div></div>`).join('') : '<div class="ch-empty" style="padding:30px">Chưa có vật phẩm. Hạ Boss để vật phẩm rơi vào đây.</div>'}</div>
-    <div class="bs-note">Lưu ý: Vật phẩm đấu giá / mua sẽ gửi về Hộp Thư để bạn nhận. Dùng Điểm BOSS để đấu giá trước 12h00 mỗi ngày.</div>`;
+    <div class="bs-note">Lưu ý: Vật phẩm trong phó bản Bang Hội sẽ chuyển vào Kho, dùng Điểm BOSS để đấu giá trước 12h00 mỗi ngày. Kho xem trong Túi Đồ.</div>`;
 }
 function bsBuy(i) {
   const s = gdTick(), l = s.lots[i]; if (!l) return; if (gold < l.buy) return scToast('Không đủ Vàng');
-  gold -= l.buy; resSave(); mailAddItem(l.name, l.ico, l.qty, 'Mua vật phẩm Boss');
-  if (l.bid && l.mine) s.pts += l.bid; s.lots.splice(i, 1); gdSave(s); renderBangBoss(); scToast('Vật phẩm đã gửi về Hộp Thư');
+  gold -= l.buy; resSave(); const k = s.kho[l.name] || (s.kho[l.name] = { ico: l.ico, qty: 0 }); k.qty += l.qty;
+  if (l.bid && l.mine) s.pts += l.bid; s.lots.splice(i, 1); gdSave(s); renderBangBoss(); scToast('Đã chuyển vào Kho');
 }
 function bsBid(i) {
   const s = gdTick(), l = s.lots[i]; if (!l) return; const min = l.bid ? l.bid + 1 : l.bid0;
