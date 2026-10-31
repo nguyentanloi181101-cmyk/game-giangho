@@ -31,7 +31,7 @@
         const r = REC[k], left = recLeft(k), free = left <= 0;
         st.innerHTML = `+${r.n} mảnh tướng bất kỳ<br>` + (free ? '<b>Miễn phí 1 lần</b>' : `<span class="tm">⏳ ${fmtClock(left)}</span>`);
         if (free) { bt.disabled = false; bt.innerHTML = 'Miễn phí<small>Mời</small>'; }
-        else if (r.cost) { bt.disabled = false; bt.innerHTML = `🪙 ${r.cost}<small>10 Lần</small>`; }
+        else if (r.cost) { bt.disabled = false; bt.innerHTML = `<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> ${r.cost}<small>10 Lần</small>`; }
         else { bt.disabled = true; bt.innerHTML = 'Chờ<small>miễn phí</small>'; }
       });
     }

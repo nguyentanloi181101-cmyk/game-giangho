@@ -68,7 +68,7 @@
           sl.style.left = (cx + (Math.random() - 0.5) * 6) + '%'; sl.style.top = (cy + (Math.random() - 0.5) * 8) + '%';
           sl.style.width = len + 'px'; sl.style.setProperty('--r', (ANG[k % ANG.length] + (Math.random() - 0.5) * 8) + 'deg');
           box.appendChild(sl); made.push(sl); setTimeout(() => sl.remove(), 420);
-          alive().forEach(e => skillHit(e, per));
+          alive().forEach(e => skillHit(e, per, u));
           f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 120);
           crackFx(f, W, H, (cx + (Math.random() - 0.5) * 16) / 100 * W, (cy + (Math.random() - 0.5) * 20) / 100 * H, k === MADAO_SLASHES - 1, crack);   // nứt màn hình
           if (!alive().length) break;

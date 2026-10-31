@@ -16,7 +16,7 @@
       return { picks, foes: picks.map((h, i) => {
         const u = makeUnit('enemy', heroIcon(h), S[i][0], S[i][1], B4_HERO_HP * k, B4_HERO_ATK * k, false, h.name);
         u.id = h.id; u.isHero = true;
-        u.def = B4_HERO_DEF; u.dodge = B4_HERO_DODGE; u.acc = 0; u.sk = 1;     // skill cấp 1, không cộng cấp/sao
+        u.def = B4_HERO_DEF; u.dodge = B4_HERO_DODGE; u.acc = 300; u.crit = h.crit || 0; u.critDmg = h.critDmg || 0; u.tough = h.tough || 0; u.pierce = h.pierce || 0; u.block = h.block || 0; u.sk = 1;     // skill cấp 1, không cộng cấp/sao
         u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2; u.rage = h.startRage || 0; grantStart(u);
         return u;
       }) };

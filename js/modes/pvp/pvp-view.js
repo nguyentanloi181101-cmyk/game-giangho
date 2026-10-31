@@ -18,7 +18,7 @@
       entries.push({ me: true, rank: st.rank });
       entries.sort((x, y) => x.rank - y.rank || (x.me ? 1 : -1));
       const pos = entries.length === SLOTS.length ? SLOTS : [...SLOTS.slice(0, entries.length - 1), SLOTS[SLOTS.length - 1]];
-      const mainId = team.length ? team.reduce((b, id) => unitPower(heroStats(id)) > unitPower(heroStats(b)) ? id : b, team[0]) : null;
+      const mainId = team.length ? team.reduce((b, id) => unitPower(heroStats(id, true)) > unitPower(heroStats(b, true)) ? id : b, team[0]) : null;
       const me = mainId !== null ? heroById(mainId) : null;
       const spots = entries.map((e, k) => {
         const l = pos[k][0], t = pos[k][1];
@@ -46,7 +46,7 @@
       const st = pvpState, t = pvpTier(st.rank);
       pvShow(pvHead(`Cấp ${accLevel} ${pvName()}`, `Hạng ${fmtN(st.rank)} • ${t.icon} ${t.name}`) +
         `<div style="font-size:12px;color:#cbd5e1">Lực chiến <b style="color:#fde047">${fmtN(pvpMyPower())}</b> • Đã thắng ${st.wins} trận</div>` +
-        `<div class="pv-lineup">${team.map(id => { const s2 = heroStats(id); return pvCardL(heroById(id), s2.hp, s2.atk, s2.def); }).join('')}</div>` +
+        `<div class="pv-lineup">${team.map(id => { const s2 = heroStats(id, true); return pvCardL(heroById(id), s2.hp, s2.atk, s2.def); }).join('')}</div>` +
         `<button class="btn-attack pv-go" onclick="pvClose();openTeam()">⛩️ Đổi Đội Hình</button>` +
         `<button class="btn-close-battle pv-go" style="margin-top:6px" onclick="pvClose();renamePlayer()">✏️ Đổi Tên</button>`);
     }

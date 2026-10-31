@@ -122,7 +122,7 @@ function renderBangBoss() {
 function renderBossShop(s, body) {
   const t = n => { const x = Math.max(0, Math.floor(n / 1000)); return [x / 3600 | 0, x / 60 % 60 | 0, x % 60].map(v => String(v).padStart(2, '0')).join(':'); };
   body.innerHTML = `<div class="dv-uy">Điểm BOSS: ${fmtN(s.pts)}</div><div class="bs-list">${s.lots.length ? s.lots.map((l, i) => `<div class="bs-row"><div class="bs-ico">${gdIco(l.name, l.ico)}<em>${l.qty}</em></div><div class="bs-mid"><b>${l.name}</b>
-    <div>Giá cao nhất: ${l.bid ? l.bid + (l.mine ? ' (bạn)' : '') : 'Chưa có'}<br>Mua ${fmtN(l.buy)} 🪙 &nbsp; Giá đấu: ${l.bid ? l.bid + 1 : l.bid0}</div></div>
+    <div>Giá cao nhất: ${l.bid ? l.bid + (l.mine ? ' (bạn)' : '') : 'Chưa có'}<br>Mua ${fmtN(l.buy)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> &nbsp; Giá đấu: ${l.bid ? l.bid + 1 : l.bid0}</div></div>
     <div class="bs-t" data-exp="${l.exp}">Còn:${t(l.exp - Date.now())}</div><div class="bs-b"><button class="g" onclick="bsBuy(${i})">Mua</button><button onclick="bsBid(${i})">Đấu Giá</button></div></div>`).join('') : '<div class="ch-empty" style="padding:30px">Chưa có vật phẩm. Hạ Boss để vật phẩm rơi vào đây.</div>'}</div>
     <div class="bs-note">Lưu ý: Vật phẩm trong phó bản Bang Hội sẽ chuyển vào Kho, dùng Điểm BOSS để đấu giá trước 12h00 mỗi ngày. Kho xem trong Túi Đồ.</div>`;
 }

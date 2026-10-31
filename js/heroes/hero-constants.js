@@ -12,8 +12,13 @@
       { k:'hp',    label:'HP (Máu)',   min:1, max:99999999 },
       { k:'atk',   label:'Công',       min:0, max:9999999 },
       { k:'def',   label:'Thủ',        min:0, max:99999 },
-      { k:'dodge', label:'Né (%)',     min:0, max:100 },
-      { k:'acc',   label:'Chuẩn (%)',  min:0, max:100 },
+      { k:'dodge', label:'Né',         min:0, max:99999 },
+      { k:'acc',   label:'Chuẩn',      min:0, max:99999 },
+      { k:'crit',  label:'Bạo',        min:0, max:99999 },
+      { k:'critDmg', label:'Bạo Sát',  min:0, max:99999 },
+      { k:'tough', label:'Bền',        min:0, max:99999 },
+      { k:'pierce', label:'Phá giáp',  min:0, max:9999999 },
+      { k:'block', label:'Đỡ đòn (%)', min:0, max:100 },
       { k:'spd',   label:'Tốc',        min:0, max:99999 },
       { k:'startRage', label:'Nộ khởi đầu', min:0, max:100 }
     ];

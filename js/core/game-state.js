@@ -5,7 +5,7 @@
     const heroById = id => HEROES.find(h => h.id === id);
 
     const HERO_DEFAULTS = {};
-    HEROES.forEach(h => { HERO_DEFAULTS[h.id] = { hp:h.hp, atk:h.atk, def:h.def, dodge:h.dodge, acc:h.acc || 0, spd:h.spd, startRage:h.startRage || 0 }; });
+    HEROES.forEach(h => { HERO_DEFAULTS[h.id] = { hp:h.hp, atk:h.atk, def:h.def, dodge:h.dodge, acc:h.acc || 0, crit:h.crit || 0, critDmg:h.critDmg || 0, tough:h.tough || 0, pierce:h.pierce || 0, block:h.block || 0, spd:h.spd, startRage:h.startRage || 0 }; });
     const loadJSON = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } };
     const saveJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     let statOv = loadJSON('hero_stat_ov');   // chỉnh sửa trong Cài đặt

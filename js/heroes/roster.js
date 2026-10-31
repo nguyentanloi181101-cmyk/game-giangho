@@ -32,6 +32,15 @@
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
       {id:12,name:'Đoàn Dự',emoji:'🪭',img:'assets/images/heroes/doan-du.webp',body:'assets/images/heroes/doan-du-body.webp',bodyH:80,hp:3000,atk:300,def:40,spd:70,dodge:30,startRage:100,noEnemy:true},
     ];
+    // CHỈ SỐ CHIẾN ĐẤU (hệ thống sát thương mới): Thủ trừ thẳng vào Công • Né/Chuẩn tính theo điểm (Chuẩn ≥ Né + 200 mới trúng)
+    // Bạo × Bạo Sát = sát thương thêm (trừ Bền của địch) • Phá giáp bỏ qua mọi giáp • Đỡ đòn (%) giảm sát thương trừ Phá giáp
+    const HERO_COMBAT = {   // def, dodge, acc, crit(Bạo), critDmg(Bạo Sát), tough(Bền), pierce(Phá giáp), block(Đỡ đòn %)
+      0: [30, 10, 300, 40, 4, 5, 30, 0],   1: [45, 5, 300, 10, 2, 10, 10, 5],    2: [40, 8, 300, 15, 3, 15, 15, 10],
+      3: [35, 10, 300, 50, 5, 5, 40, 0],   4: [60, 5, 300, 10, 2, 20, 20, 15],   5: [50, 10, 300, 10, 2, 10, 10, 5],
+      6: [60, 50, 300, 40, 4, 10, 30, 0],  7: [100, 2, 300, 30, 3, 5, 100, 0],   8: [120, 70, 300, 10, 2, 30, 10, 30],
+      9: [80, 20, 300, 30, 3, 10, 50, 5],  10: [50, 8, 300, 30, 3, 10, 25, 5],   11: [45, 12, 300, 15, 2, 10, 15, 5],
+      12: [40, 30, 300, 20, 3, 10, 20, 5] };
+    HEROES.forEach(h => { const c = HERO_COMBAT[h.id]; if (c) { h.def = c[0]; h.dodge = c[1]; h.acc = c[2]; h.crit = c[3]; h.critDmg = c[4]; h.tough = c[5]; h.pierce = c[6]; h.block = c[7]; } });
     const heroIcon = h => h.img ? `<img class="hero-img" src="${h.img}">` : h.emoji;
     let team = [];
     try { team = JSON.parse(localStorage.getItem('team_ids')) || []; } catch (e) {}

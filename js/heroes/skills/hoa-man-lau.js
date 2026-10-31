@@ -106,7 +106,7 @@
           anim(fx, [{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], 350, 'ease-out');   // nổ to dần ×8 như ExpandImpact
           const es = alive(); if (!es.length) break;
           es.forEach(e => {
-            skillHit(e, dmg);
+            skillHit(e, dmg, u);
             const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = e.x + '%'; w.style.top = e.y + '%';
             w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
             box.appendChild(w); setTimeout(() => w.remove(), 650);

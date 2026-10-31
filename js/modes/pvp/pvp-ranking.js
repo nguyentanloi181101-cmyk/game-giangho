@@ -12,7 +12,7 @@
       const x = d.data(), num = v => (typeof v === 'number' && isFinite(v) ? v : 0);
       const stats = (Array.isArray(x.team) ? x.team : []).slice(0, 5).map(m => {
         const h = heroById(m && m.id); if (!h || num(m.hp) <= 0) return null;
-        return { h, hp: Math.round(num(m.hp)), atk: Math.round(num(m.atk)), def: Math.round(num(m.def)), spd: num(m.spd) || h.spd, dodge: num(m.dodge), acc: num(m.acc), crit: num(m.crit), critDmg: num(m.critDmg), tough: num(m.tough), sk: Math.max(1, num(m.sk)), star: Math.max(1, num(m.star)) };
+        return { h, hp: Math.round(num(m.hp)), atk: Math.round(num(m.atk)), def: Math.round(num(m.def)), spd: num(m.spd) || h.spd, dodge: num(m.dodge), acc: num(m.acc), crit: num(m.crit), critDmg: num(m.critDmg), tough: num(m.tough), pierce: num(m.pierce), block: num(m.block), sk: Math.max(1, num(m.sk)), star: Math.max(1, num(m.star)) };
       }).filter(Boolean);
       if (!stats.length) return null;
       return { real: true, uid: d.id, rank: pos, steps: 0, heroes: stats.map(s => s.h), stats,

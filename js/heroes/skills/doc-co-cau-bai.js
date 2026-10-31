@@ -144,7 +144,7 @@
             strike(es); sfxThunder();
             f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 160);
             es.forEach(e => {
-              skillHit(e, per);
+              skillHit(e, per, u);
               const fl = document.createElement('div'); fl.className = 'bf-bflash'; fl.style.left = e.x + '%'; fl.style.top = e.y + '%'; fl.style.setProperty('--fc', '#a855f7');
               box.appendChild(fl); setTimeout(() => fl.remove(), 450);
             });

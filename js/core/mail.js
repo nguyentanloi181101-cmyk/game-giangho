@@ -32,10 +32,10 @@
     }
     function renderMail() {
       const days = mailDays(), un = days.filter(k => !mailState.claimed[k]);
-      document.getElementById('mail-note').innerHTML = `Mỗi ngày nhận <b>${fmtN(MAIL_GOLD)} 🪙 vàng</b> miễn phí. Thư chưa nhận được giữ ${MAIL_DAYS} ngày.` + (un.length > 1 ? ` <button class="btn-attack" style="padding:4px 12px;font-size:12px;margin-left:6px" onclick="mailClaimAll()">Nhận tất cả</button>` : '');
+      document.getElementById('mail-note').innerHTML = `Mỗi ngày nhận <b>${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</b> miễn phí. Thư chưa nhận được giữ ${MAIL_DAYS} ngày.` + (un.length > 1 ? ` <button class="btn-attack" style="padding:4px 12px;font-size:12px;margin-left:6px" onclick="mailClaimAll()">Nhận tất cả</button>` : '');
       document.getElementById('mail-list').innerHTML = days.map(k => {
         const got = !!mailState.claimed[k];
-        return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '🎁'}</div><div class="bm-info"><b>Quà hằng ngày</b><small>Ngày ${mailDayText(k)} • +${fmtN(MAIL_GOLD)} 🪙 vàng</small></div>` +
+        return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '🎁'}</div><div class="bm-info"><b>Quà hằng ngày</b><small>Ngày ${mailDayText(k)} • +${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</small></div>` +
           (got ? '<div class="bm-qty">Đã nhận ✔</div>' : `<button class="btn-attack" onclick="mailClaim('${k}')">Nhận</button>`) + '</div>';
       }).join('');
     }

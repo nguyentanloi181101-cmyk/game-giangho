@@ -22,7 +22,7 @@ function renderDaiSanh() {
   if (dsTab === 'tin') body = `<div class="ds-news">${b.news.length ? b.news.map(n => { const d = new Date(n.t); return `<div><small>${d.getDate()}/${d.getMonth() + 1} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}</small> ${chEsc(n.x)}</div>`; }).join('') : '<div class="ch-empty">Chưa có tin tức.</div>'}</div>`;
   document.getElementById('ds-body').innerHTML = body;
 }
-const DS_DONATE = [['🥈 100.000 bạc', () => silver >= 100000, () => { silver -= 100000; }, 40, 10000], ['🌾 100.000 gạo', () => rice >= 100000, () => { rice -= 100000; }, 40, 10000], ['🪙 100 vàng', () => gold >= 100, () => { gold -= 100; }, 150, 50000]];
+const DS_DONATE = [['🥈 100.000 bạc', () => silver >= 100000, () => { silver -= 100000; }, 40, 10000], ['🌾 100.000 gạo', () => rice >= 100000, () => { rice -= 100000; }, 40, 10000], ['<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 100 vàng', () => gold >= 100, () => { gold -= 100; }, 150, 50000]];
 function dsDonate() {
   const m = document.getElementById('qs-modal');
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Quyên Góp</div>${DS_DONATE.map((d, i) => `<div class="bm-row"><div class="bm-info"><b>${d[0]}</b><small>+${d[3]} Uy Tín • +${fmtN(d[4])} EXP Bang</small></div><button class="btn-attack" onclick="dsGive(${i})">Góp</button></div>`).join('')}</div>`; m.style.display = 'flex';
@@ -31,7 +31,7 @@ function dsGive(i) {
   const d = DS_DONATE[i]; if (!d[1]()) return scToast('Không đủ tài nguyên');
   d[2](); resSave(); const s = gdBang(); s.uytin = Math.min(s.uyMax, s.uytin + d[3]); s.bang.exp += d[4];
   while (s.bangLv < 10 && s.bang.exp >= gdExpMax(s.bangLv)) { s.bang.exp -= gdExpMax(s.bangLv); s.bangLv++; s.bang.news.unshift({ t: Date.now(), x: 'Bang lên cấp ' + s.bangLv + '!' }); }
-  s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${d[0]}` }); gdSave(s); scToast(`+${d[3]} Uy Tín`); dsDonate(); renderDaiSanh();
+  s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${d[0].replace(/<[^>]+>/g, "")}` }); gdSave(s); scToast(`+${d[3]} Uy Tín`); dsDonate(); renderDaiSanh();
 }
 /* ---- Tụ Bảo Bồn ---- */
 const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị Linh', '🎭', 1], ['Đá Nữ Oa', '🔻', 20]];
@@ -40,7 +40,7 @@ function renderBasin() {
   const s = gdBang(), v = s.bang.basin, m = document.getElementById('qs-modal');
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><img class="bz-pic" src="assets/images/items/tu-bao-bon.webp" alt="Tụ Bảo Bồn"><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
   <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${v / 10}%"></i></div><div class="dv-uy">${v}/1000</div>
-  <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div>🪙 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
+  <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
 }
 function basinPut(k) {
   const cost = k ? 50 : 100000, add = k ? 300 : 50; if ((k ? gold : silver) < cost) return scToast('Không đủ tài nguyên');

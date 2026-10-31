@@ -23,7 +23,7 @@
       const tb = tsBonus(id);
       document.getElementById('hd-stats').innerHTML =
         line('❤️ HP', fmtN(st.hp), eb.hp, pb.hp, tb.hp) + line('⚔️ Công', fmtN(st.atk), eb.atk, pb.atk, tb.atk) + line('🛡️ Thủ', fmtN(st.def), eb.def, pb.def) +
-        line('⚡ Tốc', st.spd, eb.spd) + `<div class="hd-line"><span>💨 Né</span><span>${tsFmt(st.dodge)}%${tsBonus(id).dodge ? ` <em title="Cộng từ Bảo Vật">+${tsFmt(tsBonus(id).dodge)}%🔮</em>` : ''}</span></div>` + line('🎯 Chuẩn', tsFmt(st.acc) + '%') + (st.crit ? line('💥 Bạo', tsFmt(st.crit) + '%') : '') + (st.critDmg ? line('🔥 Bạo Sát', '+' + tsFmt(st.critDmg) + '%') : '') + (st.tough ? line('🛡️ Bền (giảm bị bạo)', tsFmt(st.tough) + '%') : '') +
+        line('⚡ Tốc', st.spd, eb.spd) + line('💨 Né', tsFmt(st.dodge)) + line('🎯 Chuẩn', tsFmt(st.acc)) + line('💥 Bạo', tsFmt(st.crit)) + line('🔥 Bạo Sát', tsFmt(st.critDmg)) + line('🧱 Bền', tsFmt(st.tough)) + line('🗡️ Phá giáp', fmtN(st.pierce)) + line('🛡️ Đỡ đòn', tsFmt(st.block) + '%') +
         line('🎭 Chất tướng', ROLE_ICON[HERO_ROLE[id]] + ' ' + ROLE_NAME[HERO_ROLE[id]]) + line('🔥 Nộ khởi đầu', st.rage) +
         line('📈 Hệ số cấp/sao', '×' + g.toFixed(2)) +
         (f < 0 ? '<div class="set-note" style="margin-top:6px">Tướng chưa ra trận nên không có khung để gắn trang bị.</div>' : '');

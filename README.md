@@ -113,3 +113,12 @@ match /chat_messages/{id} {
 
 ## Icon vật phẩm bang (ảnh thật)
 `assets/images/items/`: Thú Noãn, Thú Hồn, Thú Linh, Đá Nữ Oa, Dị Linh (đổi tên từ Quỷ Linh), Châu (mọi thần thú), Đào Tiên, Tử Linh Thạch (thay "Thạch <thú>"), Tụ Bảo Bồn. Hàm `gdIco(tên, emoji)` trong guild-sub.js trả về ảnh; kho cũ tự đổi tên khi load.
+
+## Hệ thống tính sát thương (theo bảng của bạn)
+Code: `js/battle/engine.js` (`calcDmg`, `strike`, `missed`), dữ liệu: `HERO_COMBAT` trong `js/heroes/roster.js`.
+- Trúng khi Chuẩn ≥ Né + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: hiện "NÉ", không mất máu, hiệu ứng chiêu vẫn dính.
+- 1 tia = 3 loại sát thương riêng: Công − Thủ (trắng) • (Bạo − Bền) × Bạo Sát (vàng) • Phá giáp (tím, bỏ qua giáp).
+- Đỡ đòn (%) giảm sát thương Công và Bạo, không giảm Phá giáp. Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
+- Sát thương Công tối thiểu 10% (tránh còn 1 khi Thủ quá cao).
+- Tỷ Võ chỉ lấy chỉ số cơ bản gốc + trang bị/Bảo Vật/cộng dồn Tỷ Võ, không lấy số chỉnh trong Cài đặt.
+- Cài đặt → Chỉnh thông số tướng có thêm Bạo, Bạo Sát, Bền, Phá giáp, Đỡ đòn. Số 13 tướng là số tạm, chỉnh trong `HERO_COMBAT`.

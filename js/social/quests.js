@@ -4,7 +4,7 @@ const QS_TASKS = [   // [id, tên, mục tiêu, điểm, nhãn]
   ['gh', 'Vượt 10 phó bản Giang Hồ', 10, 10], ['rec', 'Chiêu mộ võ hiệp 1 lần', 1, 10], ['rec2', 'Chiêu Mộ Cao Cấp 1 lần', 1, 15], ['eq', 'Cường hóa trang bị 2 lần', 2, 10],
   ['pvp', 'Tỷ võ 3 lần', 3, 15], ['dtl', 'Vượt ải Danh Tướng Lầu 1 lần', 1, 10, 1], ['bd', 'Bồi dưỡng 10 lần', 10, 10], ['bd2', 'Bồi dưỡng cao cấp 1 lần', 1, 10], ['lk', 'Tham gia Luận Kiếm 1 lần', 1, 10, 1]];
 const QS_CHESTS = [[25, [['Vải Xanh', '🧵', 2], ['Túi Xanh', '👝', 2], ['Thú Hồn', '🟠', 100]]], [50, [['Vải Xanh', '🧵', 2], ['Túi Xanh', '👝', 2], ['Ngọc Tím', '🟣', 5]]],
-  [75, [['@gold', '🪙', 200], ['Vải Xanh', '🧵', 2], ['Túi Lam', '👜', 1]]], [100, [['@gold', '🪙', 1000], ['Vải Xanh', '🧵', 2], ['Túi Lam', '👜', 1]]]];
+  [75, [['@gold', '<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng">', 200], ['Vải Xanh', '🧵', 2], ['Túi Lam', '👜', 1]]], [100, [['@gold', '<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng">', 1000], ['Vải Xanh', '🧵', 2], ['Túi Lam', '👜', 1]]]];
 function qsSt() {
   const s = loadJSON('quest_state'), dk = new Date().toDateString();
   if (s.day !== dk) { s.day = dk; s.p = {}; s.claimed = {}; s.free = 0; saveJSON('quest_state', s); }

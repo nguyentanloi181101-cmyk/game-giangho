@@ -28,7 +28,7 @@
         let tier = 0, lastEmber = 0;
         const doTier = () => {
           tier++;
-          alive().forEach(e => skillHit(e, per));
+          alive().forEach(e => skillHit(e, per, u));
           const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = cx + '%'; w.style.top = cy + '%';
           w.style.borderColor = '#fb923c'; w.style.boxShadow = '0 0 24px #ef4444, inset 0 0 24px #f97316';
           box.appendChild(w); setTimeout(() => w.remove(), 650);

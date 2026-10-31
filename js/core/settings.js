@@ -53,7 +53,7 @@
     }
     function renderSetPreview() {
       const p = getProg(setId), st = heroStats(setId);
-      document.getElementById('set-preview').innerHTML = `Chỉ số thực tế trong trận (Cấp ${p.lv}, ★${p.star}): HP <b>${fmtN(st.hp)}</b> • Công <b>${fmtN(st.atk)}</b> • Thủ <b>${fmtN(st.def)}</b> • Né <b>${tsFmt(st.dodge)}%</b> • Chuẩn <b>${st.acc}%</b> • Tốc <b>${fmtN(st.spd)}</b> • Nộ đầu <b>${st.rage}</b>`;
+      document.getElementById('set-preview').innerHTML = `Chỉ số thực tế trong trận (Cấp ${p.lv}, ★${p.star}): HP <b>${fmtN(st.hp)}</b> • Công <b>${fmtN(st.atk)}</b> • Thủ <b>${fmtN(st.def)}</b> • Né <b>${tsFmt(st.dodge)}</b> • Chuẩn <b>${tsFmt(st.acc)}</b> • Bạo <b>${tsFmt(st.crit)}</b> • Bạo Sát <b>${tsFmt(st.critDmg)}</b> • Bền <b>${tsFmt(st.tough)}</b> • Phá giáp <b>${fmtN(st.pierce)}</b> • Đỡ đòn <b>${tsFmt(st.block)}%</b> • Tốc <b>${fmtN(st.spd)}</b> • Nộ đầu <b>${st.rage}</b>`;
     }
     function flashSaved() {
       const el = document.getElementById('set-saved'); el.innerText = '✔ Đã lưu';

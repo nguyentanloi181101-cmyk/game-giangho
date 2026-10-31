@@ -15,7 +15,7 @@
         heroes: sel.map((h, i) => {
           const s = heroStats(h.id);
           const u = makeUnit('hero', heroIcon(h), pos[i][0], pos[i][1], s.hp, s.atk, false, h.name);
-          u.id = h.id; u.emoji = heroIcon(h); u.def = s.def; u.spd = s.spd; u.dodge = s.dodge; u.acc = s.acc; u.crit = s.crit; u.critDmg = s.critDmg; u.tough = s.tough; u.sk = skillMult(h.id); u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2;
+          u.id = h.id; u.emoji = heroIcon(h); u.def = s.def; u.spd = s.spd; u.dodge = s.dodge; u.acc = s.acc; u.crit = s.crit; u.critDmg = s.critDmg; u.tough = s.tough; u.pierce = s.pierce; u.block = s.block; u.sk = skillMult(h.id); u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2;
           u.rage = h.startRage || 0; grantStart(u); u.acted = false;
           return u;
         }),

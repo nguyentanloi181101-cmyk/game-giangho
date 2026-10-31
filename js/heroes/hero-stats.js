@@ -2,10 +2,10 @@
    (tách từ index.html cũ — script) */
 
     // Chỉ số cấp/sao nhân trước, trang bị của khung cộng thẳng lên trên
-    function heroStats(id) {
-      const h = heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id);
+    function heroStats(id, base) {   // base = true (Tỷ Võ): chỉ lấy chỉ số cơ bản gốc, không lấy số chỉnh trong Cài đặt
+      const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id);
       return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + eb.hp + pb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk, def:Math.round(h.def * g) + eb.def + pb.def,
-               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:tb.crit, critDmg:tb.critDmg, tough:tb.tough, spd:h.spd + eb.spd, rage:h.startRage || 0 };
+               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:h.pierce || 0, block:h.block || 0, spd:h.spd + eb.spd, rage:h.startRage || 0 };
     }
 
     // ---- Mô tả kỹ năng (số liệu lấy đúng theo cơ chế trận đấu + cấp kỹ năng hiện tại) ----
@@ -32,7 +32,7 @@
       return [
         { tag:'Đánh thường', name:'Đòn Thường', desc:`Lao vào 1 địch ngẫu nhiên, gây ${fmtN(st.atk)} sát thương (100% Công). Mỗi lần đánh thường +${RAGE_ATK} nộ.` },
         { tag:'Tuyệt kỹ', name:HERO_ULT_NAME[id] || 'Tuyệt Kỹ', lv:p.sk, desc:ult },
-        { tag:'Nội tại', name:'Nộ Khí', desc:`Mỗi lần bị đánh trúng +20 nộ (đủ 100 nộ để ulti). Né ${tsFmt(st.dodge)}% đòn đánh; Muốn chắc chắn đánh trúng, Chuẩn của kẻ tấn công phải cao hơn Né từ ${ACC_GAP} điểm trở lên (VD Né 3000 → Chuẩn 3300).${st.rage ? ` Vào trận với sẵn ${st.rage} nộ.` : ''}` },
+        { tag:'Nội tại', name:'Nộ Khí', desc:`Mỗi lần bị đánh trúng +20 nộ (đủ 100 nộ để ulti). Né ${tsFmt(st.dodge)} điểm; kẻ tấn công cần Chuẩn ≥ Né + ${HIT_GAP} mới đánh trúng (VD Né ${tsFmt(st.dodge)} → Chuẩn ${tsFmt(st.dodge + HIT_GAP)}).${st.rage ? ` Vào trận với sẵn ${st.rage} nộ.` : ''}` },
         ...(id === 1 ? [{ tag:'Nội tại', name:'Thanh Liên Bất Tử', desc:`Vào trận KHÔNG có nộ. BẤT TỬ trong ${IMMORTAL_TURNS} hiệp đầu mỗi trận: nhận sát thương nhưng máu không thể xuống dưới 1.` }] : []),
         ...(heroById(id).taunt ? [{ tag:'Nội tại', name:(id === 8 ? 'Thiên Long Hộ Thể' : 'Tướng Thủ'), desc:'Là tướng thủ: địch luôn đánh vào tướng này TRƯỚC. Chỉ khi tướng này gục ngã, địch mới đánh sang các tướng khác.' }] : []),
         ...(heroById(id).prio2 ? [{ tag:'Nội tại', name:'Tướng Trị Liệu', desc:'Địch ưu tiên đánh THỨ 2: khi tướng thủ (nếu có) đã gục, địch sẽ đánh tướng trị liệu trước các tướng còn lại.' }] : [])

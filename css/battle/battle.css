@@ -168,3 +168,5 @@
     .bf-moonshield{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;border:2px solid rgba(254,240,138,.9);background:radial-gradient(circle,rgba(254,249,195,.04) 45%,rgba(253,224,71,.3) 100%);box-shadow:0 0 14px #fde047,inset 0 0 14px rgba(254,249,195,.6);z-index:12;pointer-events:none;animation:moonPulse 1.6s ease-in-out infinite}
     @keyframes moonPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
     .bf-shield{position:absolute;top:-42px;right:2px;font-size:16px;z-index:25;filter:drop-shadow(0 0 6px #38bdf8)}
+.bf-dmg.bf-d-main{font-size:22px}.bf-dmg.bf-d-crit{color:#fbbf24;-webkit-text-stroke:2px #78350f;font-size:26px}.bf-dmg.bf-d-pierce{color:#e9d5ff;-webkit-text-stroke:2px #581c87;font-size:20px}
+.bf-unit.hero .bf-dmg.bf-d-main{color:#fff;-webkit-text-stroke:2px #1e3a8a}.bf-unit.hero .bf-dmg.bf-d-crit{color:#fbbf24;-webkit-text-stroke:2px #78350f}.bf-unit.hero .bf-dmg.bf-d-pierce{color:#e9d5ff;-webkit-text-stroke:2px #581c87}

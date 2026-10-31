@@ -123,7 +123,7 @@ async function clPush() {
 async function clPublishPvp() {
   if (!clUser || !clDb) return;
   const ids = (team || []).filter(id => heroById(id)); if (!ids.length) return;
-  const tm = ids.map(id => { const s = heroStats(id); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, star: getProg(id).star, sk: skillMult(id) }; });
+  const tm = ids.map(id => { const s = heroStats(id, true); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, block: s.block, star: getProg(id).star, sk: skillMult(id) }; });
   const ref = clDb.collection('pvp_players').doc(clUser.uid);
   const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins,
     power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm };

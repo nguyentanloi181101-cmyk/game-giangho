@@ -27,8 +27,8 @@
     const pvpLeft = () => Infinity;   // PvP không giới hạn lượt
     const fmtClock = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, '0')).join(':'); };
     function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = BASE_POWER + pvPow(pvpState.wins); }
-    const unitPower = s => Math.round(s.hp / 5 + s.atk * 2 + s.def * 3);
-    const pvpMyPower = () => team.reduce((a, id) => a + unitPower(heroStats(id)), 0);
+    const unitPower = s => Math.round(s.hp / 5 + s.atk * 2 + s.def * 3 + (s.pierce || 0) * 2 + (s.crit || 0) * (s.critDmg || 0));
+    const pvpMyPower = () => team.reduce((a, id) => a + unitPower(heroStats(id, true)), 0);
 
     let waveRound = 1;   // số hiệp trong ải thường (Tỷ Võ dùng pvpRound)
     const curRound = () => (typeof pvp !== 'undefined' && pvp) ? pvpRound : waveRound;

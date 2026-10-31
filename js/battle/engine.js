@@ -63,7 +63,7 @@
       el.style.left = x + '%'; el.style.top = y + '%'; el.style.zIndex = Math.round(y);
       el.innerHTML = `<div class="bf-name">${name || ''}</div><div class="bf-hp"><i></i><b class="bf-hpn">${formatNumber(hp)}</b></div><div class="bf-sprite">${emoji}</div><div class="bf-shadow"></div>`;
       document.getElementById('bf-units').appendChild(el);
-      return { el, side, hp, max: hp, atk, x, y, alive: true, def: 0 };
+      return { el, side, hp, max: hp, atk, x, y, alive: true, def: 0, dodge: 0, acc: 300, crit: 0, critDmg: 0, tough: 0, pierce: 0, block: 0 };
     }
 
     function setHpBar(u) {
@@ -93,13 +93,9 @@
         if (had) floatText(a, '✨ GIẢI HIỆU ỨNG');
       });
     }
-    function hit(u, dmg, noRage, src, noRefl) {
+    function hit(u, dmg, noRage, src, noRefl, parts) {   // parts = {main, crit, pierce}: 3 loại sát thương của 1 tia (xem strike)
       if (!u.alive) return;
-      dmg = Math.round(dmg);
-      let crit = false;
-      if (src && !noRage && src.crit > 0 && src.side !== u.side) {   // Bạo kích: tỉ lệ = Bạo của người đánh − Bền của mục tiêu; sát thương ×(1.5 + Bạo Sát)
-        if (Math.random() * 100 < Math.min(100, Math.max(0, src.crit - (u.tough || 0)))) { dmg = Math.round(dmg * (1.5 + (src.critDmg || 0) / 100)); crit = true; }
-      }
+      dmg = Math.round(dmg); const dmg0 = dmg;
       let refl = 0;
       if (u.moon > 0 && !noRage && !noRefl) {      // Khiên Trăng Khuyết: nhận 30%, phản 50% về địch
         refl = Math.round(dmg * MOON_REFLECT); dmg = Math.max(1, Math.round(dmg * MOON_TAKE));
@@ -110,8 +106,16 @@
       u.hp = Math.max(0, u.hp - dmg);
       if (pvp) pvpDmg[u.side === 'hero' ? 'enemy' : 'hero'] += hpBefore - u.hp;   // Tỷ Võ: cộng sát thương cho bên gây ra
       setHpBar(u);
-      const d = document.createElement('div'); d.className = 'bf-dmg'; d.textContent = (crit ? '💥 ' : '') + formatNumber(dmg); if (crit) d.style.color = '#fbbf24';
-      u.el.appendChild(d); setTimeout(() => d.remove(), 800);
+      if (parts) {   // hiện riêng 3 loại: Công-Thủ (trắng) • Bạo (vàng) • Phá giáp (tím)
+        const k = dmg0 > 0 ? dmg / dmg0 : 1;
+        [['main', '', 'bf-d-main', -10, -28], ['crit', '💥 ', 'bf-d-crit', -34, 0], ['pierce', '🗡️ ', 'bf-d-pierce', -58, 28]].forEach(([n, ic, cl, top, dx]) => {
+          if (!(parts[n] > 0)) return; const e = document.createElement('div'); e.className = 'bf-dmg ' + cl; e.textContent = ic + formatNumber(Math.max(1, Math.round(parts[n] * k)));
+          e.style.top = top + 'px'; e.style.marginLeft = dx + 'px'; u.el.appendChild(e); setTimeout(() => e.remove(), 900);
+        });
+      } else {
+        const d = document.createElement('div'); d.className = 'bf-dmg'; d.textContent = formatNumber(dmg);
+        u.el.appendChild(d); setTimeout(() => d.remove(), 800);
+      }
       const fx = document.createElement('div'); fx.className = 'bf-fx'; fx.textContent = u.side === 'enemy' ? '⚔️' : '💥';
       u.el.appendChild(fx); setTimeout(() => fx.remove(), 350);
       u.el.classList.add('hurt'); setTimeout(() => u.el.classList.remove('hurt'), 180);
@@ -138,8 +142,7 @@
       for (let k = 0; k < hits; k++) {
         if (!t.alive) t = pickTarget(foes);
         if (!t) break;
-        if (Math.random() * 100 < dodgeChance(t, u)) floatText(t, 'NÉ');   // Né của mục tiêu trừ Chuẩn của người đánh
-        else hit(t, Math.max(1, dmg * 100 / (100 + (t.def || 0))), false, u);
+        if (!strike(u, t, dmg)) floatText(t, 'NÉ');   // Chuẩn phải ≥ Né + 200 mới trúng
         await sleep(150); if (tok !== battleToken) return;
       }
       u.el.animate([{ transform: go }, { transform: base }], { duration: 220, fill: 'forwards' });
@@ -148,13 +151,23 @@
     }
 
     
-    // Né vs Chuẩn tính theo ĐIỂM: Chuẩn phải cao hơn Né ít nhất ACC_GAP (300) điểm thì chắc chắn trúng (VD né 3000 -> chuẩn 3300).
-    // Chuẩn ≤ Né: tỉ lệ né đầy đủ (= Né, tối đa 100%); ở giữa giảm dần theo đường thẳng.
-    const ACC_GAP = 300;
-    function dodgeChance(t, u) {
-      const d = t.dodge || 0; if (d <= 0) return 0;
-      const f = Math.min(1, Math.max(0, (d + ACC_GAP - (u.acc || 0)) / ACC_GAP));
-      return Math.min(100, d) * f;
+    // ===== HỆ THỐNG TÍNH SÁT THƯƠNG =====
+    // • Trúng: Chuẩn của người đánh ≥ Né của mục tiêu + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: không mất máu nhưng hiệu ứng của chiêu vẫn dính.
+    // • 1 tia gồm 3 loại sát thương riêng: Công − Thủ • (Bạo − Bền) × Bạo Sát • Phá giáp (bỏ qua mọi giáp).
+    // • Đỡ đòn (%) giảm sát thương Công và Bạo (không giảm Phá giáp).  Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
+    const HIT_GAP = 200, MIN_DMG_PCT = 0.1;   // sát thương Công tối thiểu 10% (tránh đánh vào giáp quá cao mà chỉ còn 1)
+    const missed = (u, t) => (u.acc || 0) - (t.dodge || 0) < HIT_GAP;
+    const dodgeChance = (t, u) => missed(u, t) ? 100 : 0;   // dùng cho chiêu chỉ né được
+    function calcDmg(u, t, raw) {
+      const keep = 1 - Math.min(100, Math.max(0, t.block || 0)) / 100;
+      return {
+        main: Math.max(1, Math.round(Math.max(raw * MIN_DMG_PCT, raw - (t.def || 0)) * keep)),
+        crit: Math.round(Math.max(0, (u.crit || 0) - (t.tough || 0)) * (u.critDmg || 0) * keep),
+        pierce: Math.round(u.pierce || 0) };
+    }
+    function strike(u, t, raw) {   // false = trượt
+      if (missed(u, t)) return false;
+      const p = calcDmg(u, t, raw); hit(t, p.main + p.crit + p.pierce, false, u, false, p); return true;
     }
     function floatText(u, t) {
       const d = document.createElement('div'); d.className = 'bf-dmg'; d.style.fontSize = '16px'; d.textContent = t;
@@ -163,7 +176,7 @@
     // ---- Helper 2 phe: tướng địch (Trận 4) dùng lại đúng skill của tướng ta ----
     const foesOf   = u => u.side === 'hero' ? waveUnits.enemies : waveUnits.heroes;
     const alliesOf = u => u.side === 'hero' ? waveUnits.heroes  : waveUnits.enemies;
-    const skillHit = (t, dmg) => hit(t, Math.max(1, dmg * 100 / (100 + (t.def || 0))));   // sát thương chiêu cũng trừ Thủ
+    const skillHit = (t, dmg, src) => { if (!src) return hit(t, Math.max(1, dmg - (t.def || 0))); if (!strike(src, t, dmg)) floatText(t, 'NÉ'); };   // chiêu cũng tính 3 loại sát thương
     function clearDefBuff(units) {
       units.forEach(h => { if (h.defBuff) { h.def -= h.defBuff; h.defBuff = 0; const ic = h.el.querySelector('.bf-shield'); if (ic) ic.remove(); } });
     }

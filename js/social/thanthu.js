@@ -14,7 +14,7 @@ const TT_PT = ['Huyết Bạo', 'Ngự Thuẫn', 'Hoạt Khí', 'Cường Công'
 const TT_PT_ICO = ['🩸', '🛡️', '💠', '⚔️', '🗡️', '❤️‍🔥', '💚', '🔰', '🧱', '🐯', '💪', '⚡', '🎯', '🏃', '🌫️', '🔪', '👹', '💨', '🛡️', '👤', '☯️', '👢', '👟', '👞', '🥾'];
 const TT_QC = ['#9ca3af', '#22c55e', '#3b82f6', '#a855f7', '#f59e0b'], TT_FEED = { 'Thú Hồn': 100, 'Thú Linh': 500 };
 const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su' };
-function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? `<img class="tt-img ${ct ? 'ct' : ''}" alt="${n}" src="assets/images/thanthu/${sl}.webp">` : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
+function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? (ct ? `<span class="ct-wrap"><img class="tt-img ct" alt="${n}" src="assets/images/thanthu/${sl}.webp"><i class="ct-crown">👑</i></span>` : `<img class="tt-img" alt="${n}" src="assets/images/thanthu/${sl}.webp">`) : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
 const ttBeast = n => TT_BEASTS.find(b => b[0] === n);
 function ttSt() {
   const s = gdSt();
@@ -88,7 +88,7 @@ function renderThanThu() {
   if (ttTab === 'phu') { const sl = arr[t.sel] || null, left = Math.max(0, Math.ceil((t.freeAt - Date.now()) / 1000));
     body = `<div class="tt-row">${slotRow(10, 0)}</div><div class="gs-bar">Lĩnh Ngộ <button class="tt-ngo" onclick="ttList()">Danh Sách</button></div>
     <div class="tt-ngo2"><div class="c"><h4>Hiện Tại</h4><div class="cb" style="${sl ? 'border-color:' + TT_QC[sl.q - 1] : ''}"><i>${sl ? TT_PT_ICO[TT_PT.indexOf(sl.n)] : '＋'}</i><b>${sl ? sl.n : 'Trống'}</b><p>${ttSlotDesc(sl)}</p></div></div>
-    <div class="c"><h4>Tẩy phụ thể</h4><div class="cb dark"><p>Tẩy để có Phụ Thể mới.</p><div>Miễn phí 🪙</div><button ${left ? 'disabled' : ''} onclick="ttReroll(1)">Tẩy</button><div style="margin-top:6px">500 🪙 <em>Siêu</em></div><button onclick="ttReroll(10)">Tẩy 10 lần</button></div></div></div>
+    <div class="c"><h4>Tẩy phụ thể</h4><div class="cb dark"><p>Tẩy để có Phụ Thể mới.</p><div>Miễn phí <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"></div><button ${left ? 'disabled' : ''} onclick="ttReroll(1)">Tẩy</button><div style="margin-top:6px">500 🪙 <em>Siêu</em></div><button onclick="ttReroll(10)">Tẩy 10 lần</button></div></div></div>
     <div class="gs-act"><button class="red" onclick="ttRevert()">Lần trước tẩy</button><div id="tt-free">Miễn phí: ${[left / 3600 | 0, left / 60 % 60 | 0, left % 60].map(v => String(v).padStart(2, '0')).join(':')}</div></div>`; }
   document.getElementById('tt-body').innerHTML = body;
 }

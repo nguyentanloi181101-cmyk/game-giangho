@@ -9,7 +9,7 @@
         sec('💰 Tiền tệ') +
         row('🥈', 'Bạc', fmtN(silver), 'Thắng Bàn PVE để nhận • tăng cấp tướng') +
         row('🌾', 'Gạo', fmtN(rice), 'Thắng Bàn PVE để nhận • tăng cấp tướng') +
-        row('🪙', 'Vàng', fmtN(gold), 'Quà Hộp Thư mỗi ngày • Chiêu Mộ') +
+        row('<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng">', 'Vàng', fmtN(gold), 'Quà Hộp Thư mỗi ngày • Chiêu Mộ') +
         sec('🎒 Vật phẩm') +
         row('💊', 'Viên Thể Lực', '× ' + fmtN(pills), `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX})`,
             `<button class="btn-attack" ${pills < 1 ? 'disabled' : ''} onclick="usePills(1);renderBag()">Dùng 1</button><button class="btn-close-battle" ${pills < 1 ? 'disabled' : ''} onclick="usePills(10);renderBag()">Dùng 10</button>`) +
