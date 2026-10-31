@@ -139,5 +139,5 @@ Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự
 - Vương Trùng Dương: lốc xoáy Thái Cực 3D (`vtd-taiji-vortex.webp` cắt 14 lát lắc lệch pha, `vtd-taiji-core.webp` xoay như đồng xu, vòng Bát Quái, vòng sáng đất). Code: `vtdUlt`.
 - Tây Độc: cóc ngọc 3D (`td-toad3d.webp`, `td-coin.webp`) thay emoji 🐸 — thở/lắc theo chiều sâu, mắt đỏ phát sáng, tiền vàng quay quanh. Code: `tayDocUlt`.
 - Tụ Bảo Bồn: ảnh `assets/images/items/tu-bao-bon.webp`.
-- Đông Tà: 2 dải nhạc `dt-notes.webp` lượn 3D quanh địch (CSS `nt-*` trong ngu-tuyet.css). Code: `dongTaUlt`.
+- Đông Tà: nốt nhạc `dt-burst.webp` bung ra từ tâm rồi tan biến, 4 nhịp (`dongTaUlt`).
 - Thần thú ra trận: .bf-bst top:34px, cao min(196px,29vh) (đã đưa sát lên và thu nhỏ).

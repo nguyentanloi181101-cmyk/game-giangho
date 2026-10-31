@@ -2,7 +2,7 @@
    Tăng/giảm chỉ số dùng addMod (engine.js): hết hạn tự trả lại đúng số đã cộng/trừ. */
 
     const BC_IMG = 'assets/images/fx/bac-cai-bamboo.webp';   // ảnh cây tre Bắc Cái (Đả Cẩu Bổng)
-    ['assets/images/fx/dt-notes.webp', 'assets/images/fx/td-toad3d.webp', 'assets/images/fx/td-coin.webp', 'assets/images/fx/bac-cai-bamboo.webp', 'assets/images/fx/vtd-taiji-vortex.webp', 'assets/images/fx/vtd-taiji-core.webp'].forEach(src => { const im = new Image(); im.src = src; });   // nạp sẵn để lần đầu thi triển không bị giật
+    ['assets/images/fx/dt-burst.webp', 'assets/images/fx/td-toad3d.webp', 'assets/images/fx/td-coin.webp', 'assets/images/fx/bac-cai-bamboo.webp', 'assets/images/fx/vtd-taiji-vortex.webp', 'assets/images/fx/vtd-taiji-core.webp'].forEach(src => { const im = new Image(); im.src = src; });   // nạp sẵn để lần đầu thi triển không bị giật
 
     // Bộ dựng chung cho các chiêu: sân đấu, kích thước, danh sách địch/ta còn sống, tạo hiệu ứng tạm
     function nt(u) {
@@ -78,27 +78,27 @@
         u.el.animate([{ transform: base }, { transform: up }], { duration: 420, easing: 'ease-out', fill: 'forwards' });
         await sleep(450); if (tok !== battleToken) return;
         u.el.animate([{ transform: up, filter: 'drop-shadow(0 0 0 #a3e635)' }, { transform: up, filter: 'drop-shadow(0 0 16px #bef264)' }], { duration: 300, fill: 'forwards' });
-        // 2 dải nhạc vàng bay từ Đông Tà sang, rồi lượn vòng 3D (hai quỹ đạo nghiêng khác nhau, ngược chiều) quanh đội địch; mỗi nhịp gây sát thương 1 lần
-        const sy = Math.max(4, u.y - (H * 0.2) / H * 100), Rr = Math.round(Math.max(80, (b.maxX - b.minX) * g.W / 200 + 90)), IW = Math.round(Math.max(120, Math.min(g.W * 0.26, 220)));
-        const mkRing = (cls) => `<div class="nt-ring ${cls}"><div class="nt-spin"><div class="nt-item"><img src="assets/images/fx/dt-notes.webp" alt=""></div></div></div>`;
-        const notes = g.mk('bf-notes3d', mkRing('r1') + mkRing('r2'), b.cx, b.cy);
-        notes.style.setProperty('--R', Rr + 'px'); notes.style.setProperty('--iw', IW + 'px');
-        const fx = (u.x - b.cx) * g.W / 100, fy = (sy - b.cy) * H / 100;
-        notes.animate([{ transform: `translate(calc(-50% + ${fx}px),calc(-50% + ${fy}px)) scale(.25)`, opacity: 0 }, { opacity: 1, offset: .4 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }], { duration: 480, easing: 'ease-out', fill: 'forwards' });
-        await sleep(480); if (tok !== battleToken) return;
+        // Mỗi nhịp: nốt nhạc vàng bung ra từ tâm (chữ ♪ lớn ở giữa) lan rộng khắp đội địch rồi tan biến; thêm nốt ♪ bắn tỏa tròn theo mọi hướng
+        const BW = Math.round(Math.max(240, Math.min(g.W * 0.62, 520)));
         for (let k = 0; k < DT_HITS; k++) {
           const es = g.es(); if (!es.length) break;
-          await sleep(430); if (tok !== battleToken) return;
-          g.ring(b.cx, b.cy, '#fde047'); g.shake();
-          es.forEach(e => {
-            skillHit(e, per, u); g.ring(e.x, e.y, '#bef264');
-            const n = g.mk('bf-sonic', ['🎵', '🎶'][k % 2], e.x, e.y);
-            n.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: `translate(calc(-50% + ${(Math.random() - .5) * 50}px),calc(-50% - 60px)) scale(1.5)`, opacity: 0 }], { duration: 600, easing: 'ease-out', fill: 'forwards' });
-            setTimeout(() => n.remove(), 620);
-          });
-          await sleep(190); if (tok !== battleToken) return;
+          const tilt = (k % 2 ? -1 : 1) * 14;
+          const bu = g.mk('bf-notesburst', '<img src="assets/images/fx/dt-burst.webp" alt="">', b.cx, b.cy);
+          bu.style.width = BW + 'px'; bu.style.height = Math.round(BW / 1.4766) + 'px';
+          const T = (sc, rz, rx) => `translate(-50%,-50%) perspective(800px) rotateX(${rx}deg) rotateZ(${rz}deg) scale(${sc})`;
+          bu.animate([{ transform: T(.06, -tilt, 35), opacity: 0 }, { transform: T(.5, -tilt / 2, 22), opacity: 1, offset: .25 },
+                      { transform: T(1.05, 0, 10), opacity: 1, offset: .6 }, { transform: T(1.3, tilt / 2, 0), opacity: 0 }], { duration: 900, easing: 'ease-out', fill: 'forwards' });
+          for (let j = 0; j < 9; j++) {   // nốt nhỏ bắn ra từ tâm
+            const n = g.mk('bf-nparticle', ['🎵', '🎶'][(j + k) % 2], b.cx, b.cy), an = (j / 9) * Math.PI * 2 + k * .35, d = BW * (.4 + Math.random() * .25);
+            n.animate([{ transform: 'translate(-50%,-50%) scale(.3)', opacity: 0 }, { opacity: 1, offset: .2 },
+                       { transform: `translate(calc(-50% + ${Math.cos(an) * d}px),calc(-50% + ${Math.sin(an) * d * .6}px)) scale(1.1) rotate(${(Math.random() - .5) * 60}deg)`, opacity: 0 }], { duration: 800, easing: 'ease-out', fill: 'forwards' });
+            setTimeout(() => n.remove(), 820);
+          }
+          setTimeout(() => bu.remove(), 920);
+          await sleep(300); if (tok !== battleToken) return;
+          g.ring(b.cx, b.cy, '#fde047'); g.shake(); g.es().forEach(e => { skillHit(e, per, u); g.ring(e.x, e.y, '#bef264'); });
+          await sleep(320); if (tok !== battleToken) return;
         }
-        notes.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 350, fill: 'forwards' });
         g.es().forEach(e => { pctMod(e, 'crit', -DT_CRIT, DT_TURNS, 'debuff', 'dt'); sayLater(e, '💥 BẠO -' + Math.round(DT_CRIT * 100) + '%'); });
         g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'crit', DT_CRIT, DT_TURNS, 'buff', 'dt'); sayLater(a, '💥 BẠO +' + Math.round(DT_CRIT * 100) + '%'); });
         refreshPanel(); await sleep(450); if (tok !== battleToken) return;
