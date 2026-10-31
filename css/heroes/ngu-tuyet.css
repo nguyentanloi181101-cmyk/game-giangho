@@ -1,5 +1,13 @@
 /* NGŨ TUYỆT — hiệu ứng 3D: Bắc Cái (tre Đả Cẩu Bổng) • Vương Trùng Dương (lốc xoáy Thái Cực) */
 
+/* ===== CHUỖI KHUNG HÌNH dùng chung (js/heroes/hero-seq.js) ===== */
+.hero-seq{display:block;position:relative;background-repeat:no-repeat;pointer-events:none;will-change:background-position}
+.bf-sprite .hero-seq{left:50%;animation:seqRun var(--ms,1300ms) steps(12) infinite}   /* dáng đứng: tự lặp */
+.hero-seq.seq-over{position:absolute;left:50%;bottom:2px;z-index:3;transform:translateX(-50%);margin:0}   /* phủ lên tướng khi tung tuyệt kỹ */
+.bf-seq-fx{position:absolute;transform:translate(-50%,-50%);z-index:105;pointer-events:none}   /* hiệu ứng đặt trên sân (lốc xoáy, cóc độc) */
+.bf-seq-fx.mir .hero-seq{transform:scaleX(-1)}
+@keyframes seqRun{from{background-position:0 0}to{background-position:var(--end,0) 0}}
+
 /* ===== BẮC CÁI: chuỗi khung hành động tuyệt kỹ (js/heroes/skills/ngu-tuyet.js · bcSeq) ===== */
 .bc-seq{position:absolute;left:50%;bottom:2px;z-index:3;pointer-events:none;background-repeat:no-repeat;
   filter:drop-shadow(0 3px 2px rgba(0,0,0,.45));will-change:background-position,transform}

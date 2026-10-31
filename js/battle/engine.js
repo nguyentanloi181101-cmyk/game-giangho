@@ -216,6 +216,8 @@
       const r = HERO_ROLE[u.id]; if (!r || !u.el) return;
       u.el.dataset.role = r; u.el.style.setProperty('--rc', ROLE_COLOR[r]);
       const sp = u.el.querySelector('.bf-sprite'), hb = heroById(u.id);
+      const sq = (typeof seqIdleHTML === 'function') ? seqIdleHTML(u.id, hb) : '';   // dáng đứng bằng chuỗi khung (hero-seq.js)
+      if (sp && sq) { if (!sp.querySelector('.hero-seq')) sp.innerHTML = sq; return; }
       if (sp && hb && hb.body && !sp.querySelector('.hero-body')) { sp.innerHTML = '<img class="hero-body" style="height:' + (hb.bodyH || 76) + 'px" src="' + hb.body + '">'; return; }
       if (sp && hb && hb.img && !hb.body && !sp.querySelector('.hero-body')) { sp.innerHTML = '<img class="hero-body hero-portrait" style="height:80px" src="' + hb.img + '">'; return; }
       if (sp && !sp.querySelector('.hero-img, .bf-emo, .hero-body')) sp.innerHTML = '<span class="bf-emo">' + sp.innerHTML + '</span>';

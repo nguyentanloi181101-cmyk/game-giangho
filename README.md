@@ -10,6 +10,7 @@ assets/               ảnh + âm thanh (trước đây nhúng base64 trong code
   images/items/       Bảo Vật (treasure-*), trang bị (equipment-*)
   images/giangho/     banner Giang Hồ
   images/fx/          ảnh hiệu ứng
+  images/seq/         chuỗi khung hình (sprite sheet 1 hàng × 12 khung): dáng đứng + tuyệt kỹ của Vương Trùng Dương, Tây Độc
   audio/              nhạc nền, âm đánh thường, âm mở trận, âm theo tướng
 css/
   core/               nền, thanh trên, trang chủ, cài đặt, thể lực
@@ -23,6 +24,7 @@ js/
   core/               navigation, game-state, keys, stamina, settings, player-name, backup, boot
   heroes/             roster (danh sách tướng) · hero-stats · hero-roles · hero-detail · vohiep · recruit
     skills/           MỖI TƯỚNG 1 FILE tuyệt kỹ (ma-dao-thanh-nu.js, au-co.js, ...)
+    hero-seq.js       khai báo các chuỗi khung hình (SEQ, SEQ_IDLE) + hàm seqEl / seqOverlay / seqIdleHTML
   items/              treasure.js (Bảo Vật + Búa) · equipment*.js (Trang bị)
   battle/             engine, ultimate (điều phối), audio, synth-sfx, skill-config, auto-battle, battle-panel
   modes/giangho/      giangho.js
@@ -148,3 +150,20 @@ Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự
 - Code: `bcSeq(u)` + `BC_SEQ` + lịch đổi khung trong `bacCaiUlt` (`js/heroes/skills/ngu-tuyet.js`); CSS `.bc-seq` ở `css/heroes/ngu-tuyet.css`.
 - Muốn đổi tốc độ: sửa các mốc ms trong `[0, 80, 160, ...]` và `at(120, 9); at(380, 10)...`. Muốn nhân vật to/nhỏ hơn: sửa `k` trong `BC_SEQ`.
 - Thêm chuỗi khung cho tướng khác: tạo sheet cùng quy cách, copy `bcSeq` đổi hằng số, gọi `show(i)` theo mốc thời gian trong hàm tuyệt kỹ của tướng đó.
+
+## Chuỗi khung hình: Vương Trùng Dương (17) và Tây Độc (15)
+Mỗi sheet là 1 hàng × 12 khung nền trong suốt (`assets/images/seq/`), khai báo trong `js/heroes/hero-seq.js` (`SEQ`).
+- **Dáng đứng trong trận** (`SEQ_IDLE`): tướng nào có tên trong `SEQ_IDLE` thì `applyRole` (engine.js) thay ảnh thân tĩnh bằng chuỗi khung tự lặp.
+  Chỉnh cỡ: `h` (chiều cao hiển thị, px); chỉnh tốc độ: `ms` (thời gian 1 vòng 12 khung).
+- **Vương Trùng Dương — tuyệt kỹ** (`vtdUlt` trong `skills/ngu-tuyet.js`): 12 khung tung chiêu phủ lên tướng (`seqOverlay`, rộng 150 px) →
+  khoảng 0,66 s sau, lốc xoáy Thái Cực (`SEQ.vtdStorm`, lặp) mở ra **giữa đội địch** → cầu Thái Cực bay từ tướng sang từng đồng đội, tăng 300% mọi chỉ số như cũ.
+- **Tây Độc — tuyệt kỹ** (`tayDocUlt`): cảnh cóc độc (`SEQ.tdToad`, 12 khung × 110 ms) trồi lên bên cạnh tướng, khung 8 trở đi phun bong bóng độc; luồng độc bay sang địch rồi trừ Thủ/Tốc/máu như cũ. Đội phải tự lật ảnh.
+- Thêm chuỗi khung cho tướng khác: tạo sheet cùng quy cách → thêm vào `SEQ` (và `SEQ_IDLE` nếu là dáng đứng) → dùng `seqEl(SEQ.xxx, rộng)` hoặc `seqOverlay(u, SEQ.xxx, rộng)` trong hàm tuyệt kỹ.
+- Mọi mốc thời gian chuỗi khung dùng `seqT(ms)` để khớp với chế độ tua nhanh của trận.
+
+## Chuỗi khung hình: Đông Tà (14) và Bắc Cái (13)
+Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, khai báo trong `SEQ` / `SEQ_IDLE` (`hero-seq.js`):
+- `dong-ta-idle.webp` (`dtIdle`) và `bac-cai-idle.webp` (`bcIdle`): dáng đứng trong trận, tự lặp.
+- `dong-ta-ult.webp` (`dtCast`): tuyệt kỹ Đông Tà (`dongTaUlt`): khung 0-3 nhảy lên, 4-10 xoáy vàng theo 4 nhịp sóng âm, 11 đáp đất. Bắc Cái vẫn dùng `bac-cai-ult.webp` cũ cho tuyệt kỹ.
+- Nam Đế (16): `nam-de-idle.webp` (`ndIdle`, dáng đứng) và `nam-de-ult.webp` (`ndCast`, tuyệt kỹ `namDeUlt`: khung 0-6 Phật quang xoay, 7-11 chữ Vạn rực sáng; đặt giữa đội địch, chạm ở ~0,9 s).
+- Trương Tam Phong (4): `truong-tam-phong-idle.webp` (`ttpIdle`) + `truong-tam-phong-ult.webp` (`ttpCast`, dùng trong `taichiUlt`: khung 0-4 tụ cầu, 5-7 nhảy lên, 8-11 chọi xuống; quả cầu bay chỉ hiện lúc chọi). Âu Cơ (5): `au-co-idle.webp` (`acIdle`, dáng đứng).
