@@ -76,10 +76,9 @@
       <div class="banner-18">
         <span class="badge-18">18+</span>
         <div class="text-18"><strong>TRÒ CHƠI DÀNH CHO NGƯỜI CHƠI TỪ 18 TUỔI TRỞ LÊN</strong><br><span>Chơi quá 180 phút một ngày sẽ ảnh hưởng xấu đến sức khỏe</span></div>
-        <button class="btn-gear" title="Cài đặt" onclick="openSettings()">⚙️</button>
       </div>
       <div class="user-header">
-        <div class="vip-badge">V1</div><div class="user-level">Cấp<span id="acc-level">74</span></div><button class="lock-btn" id="lock-btn" onclick="unlockTier()" title="Dùng 1 🔑 để mở thêm 10 cấp">🔒</button><div class="user-name" onclick="renamePlayer()" title="Bấm để đổi tên" style="cursor:pointer">Long Hầu ✎</div><div class="server-badge">Văn Lang</div>
+        <div class="vip-badge">V1</div><div class="user-level">Cấp<span id="acc-level">74</span></div><button class="lock-btn" id="lock-btn" onclick="unlockTier()" title="Dùng 1 🔑 để mở thêm 10 cấp">🔒</button><div class="user-name" onclick="renamePlayer()" title="Bấm để đổi tên" style="cursor:pointer">Long Hầu ✎</div><div class="server-badge">Văn Lang</div><button class="btn-gear" title="Cài đặt" onclick="openSettings()">⚙️</button>
       </div>
       <div class="stamina-power-container">
         <div class="stamina-box" onclick="openEquip()" style="cursor:pointer" title="Bấm để dùng Viên Thể Lực"><div class="stamina-title" id="sta-title">Thể Lực Đầy</div><div class="stamina-val" id="sta-val">200/200</div></div>
@@ -191,12 +190,12 @@
       <div class="screen" id="screen-guild">
         <div class="gd-name" id="gd-name">🏯 Bang Hội</div>
         <div class="gd-scene">
-          <div class="gd-loc" style="left:22%;top:18%" onclick="openCamDia()"><div class="ic">⛰️</div><span class="lb">Cấm Địa</span></div>
+          <div class="gd-loc" style="left:22%;top:18%" onclick="openBangBoss()"><div class="ic">⛰️</div><span class="lb">Cấm Địa</span></div>
           <div class="gd-loc" style="left:75%;top:20%" onclick="openThanThu()"><div class="ic">🐉</div><span class="lb">Thần Thú</span></div>
-          <div class="gd-loc" style="left:50%;top:40%" onclick="gdGo('Đại Sảnh')"><div class="ic">🏯</div><span class="lb">Đại Sảnh</span></div>
+          <div class="gd-loc" style="left:50%;top:40%" onclick="openDaiSanh()"><div class="ic">🏯</div><span class="lb">Đại Sảnh</span></div>
           <div class="gd-loc" style="left:22%;top:64%" onclick="openDienVo()"><div class="ic">🥋</div><span class="lb">Diễn Võ Trường</span></div>
-          <div class="gd-loc" style="left:78%;top:62%" onclick="openBangBoss()"><div class="ic">⚔️</div><span class="lb">Bang Chiến</span></div>
-          <div class="gd-loc" style="left:50%;top:82%" onclick="gdGo('Tụ Bảo Các')"><div class="ic">💰</div><span class="lb">Tụ Bảo Các</span></div>
+          <div class="gd-loc" style="left:78%;top:62%" onclick="gdGo('Bang Chiến')"><div class="ic">⚔️</div><span class="lb">Bang Chiến</span></div>
+          <div class="gd-loc" style="left:50%;top:82%" onclick="openBasin()"><div class="ic">💰</div><span class="lb">Tụ Bảo Các</span></div>
           <div class="gd-chat" onclick="openChat()">💬</div>
         </div>
       </div>
@@ -414,6 +413,7 @@
   <script src="js/social/guild.js"></script>
   <script src="js/social/guild-sub.js"></script>
   <script src="js/social/thanthu.js"></script>
+  <script src="js/social/daisanh.js"></script>
   <script src="js/social/quests.js"></script>
   <script src="js/core/boot.js"></script>
 </body>

@@ -116,7 +116,7 @@
     .bf-cardic{position:absolute;left:-9px;top:-11px;width:30px;height:30px;border-radius:50%;z-index:3;pointer-events:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#334155,#0f172a);border:2px solid var(--rc);box-shadow:0 0 8px var(--rc);font-size:17px;line-height:1}
     .bf-cardic svg{width:20px;height:20px;display:block}
     .bf-card.can{border-color:#fde047;box-shadow:0 0 8px #fde047}
-    .bf-card.acted{filter:grayscale(.8);opacity:.55}
+    .bf-card.acted{filter:none;opacity:1}
     .bf-card.dead{filter:grayscale(1);opacity:.3}
     .bf-orb{margin:6px auto 0;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7aa7ff,#1e3a8a 70%);border:3px solid #6b7fc0;color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;filter:grayscale(.7) brightness(.7);cursor:pointer;text-shadow:1px 1px 2px #000}
     .bf-orb.ready{filter:none;border-color:#fde047;box-shadow:0 0 14px #60a5fa;animation:bfPulse .8s infinite}

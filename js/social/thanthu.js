@@ -13,11 +13,13 @@ const TT_BEASTS = [   // [tên, hạng, mảnh cần, icon, [hiệu quả phụ 
 const TT_PT = ['Huyết Bạo', 'Ngự Thuẫn', 'Hoạt Khí', 'Cường Công', 'Sát Lục', 'Thần Huyết', 'Tái Sinh', 'Thần Thuẫn', 'Chiến Thuẫn', 'Bá Thuẫn', 'Bạo Nộ', 'Bạo Tức', 'Tinh Chuẩn', 'Cấp Tốc', 'Ẩn Thân', 'Kích Sát', 'Kích Phá', 'Đẩy Lui', 'Trợ Thuẫn', 'Tàn Ảnh', 'Kỳ Thuẫn', 'Thần Tốc', 'Trợ Tốc', 'Hộ Tốc', 'Gia Tốc'];
 const TT_PT_ICO = ['🩸', '🛡️', '💠', '⚔️', '🗡️', '❤️‍🔥', '💚', '🔰', '🧱', '🐯', '💪', '⚡', '🎯', '🏃', '🌫️', '🔪', '👹', '💨', '🛡️', '👤', '☯️', '👢', '👟', '👞', '🥾'];
 const TT_QC = ['#9ca3af', '#22c55e', '#3b82f6', '#a855f7', '#f59e0b'], TT_FEED = { 'Thú Hồn': 100, 'Thú Linh': 500 };
+const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su' };
+function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? `<img class="tt-img ${ct ? 'ct' : ''}" alt="${n}" src="assets/images/thanthu/${sl}.webp">` : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
 const ttBeast = n => TT_BEASTS.find(b => b[0] === n);
 function ttSt() {
   const s = gdSt();
   if (!s.tt) { s.tt = { cur: 'Kỳ Lân', own: { 'Kỳ Lân': { lv: 1, star: 1, exp: 0 } }, sh: {}, slots: {}, sel: 0, prev: null, freeAt: 0, cc: { day: '', left: 3 } };
-    s.kho['Thú Hồn'] = { ico: '🟠', qty: 100 }; s.kho['Thú Linh'] = { ico: '🔥', qty: 10 }; s.kho['Quỷ Linh'] = { ico: '🎭', qty: 10 }; s.kho['Đá Nữ Oa'] = { ico: '🔻', qty: 400 }; gdSave(s); }   // quà khởi đầu
+    s.kho['Thú Hồn'] = { ico: '🟠', qty: 100 }; s.kho['Thú Linh'] = { ico: '🔥', qty: 10 }; s.kho['Dị Linh'] = { ico: '🎭', qty: 10 }; s.kho['Đá Nữ Oa'] = { ico: '🔻', qty: 400 }; gdSave(s); }   // quà khởi đầu
   const t = s.tt; Object.keys(s.kho).forEach(k => { if (k.indexOf('Châu ') === 0 && s.kho[k].qty > 0 && ttBeast(k.slice(5))) { t.sh[k.slice(5)] = (t.sh[k.slice(5)] || 0) + s.kho[k].qty; s.kho[k].qty = 0; } });   // Châu = mảnh thần thú
   return s;
 }
@@ -42,8 +44,8 @@ function ttFeed() {
 }
 function ttStarUp() {
   const s = ttSt(), o = ttCur(s); if (o.star >= 5) return scToast('Đã tối đa sao');
-  const ql = 10 * o.star, da = 400 * o.star; if (ttItem(s, 'Quỷ Linh') < ql || ttItem(s, 'Đá Nữ Oa') < da) return scToast('Không đủ vật liệu');
-  ttTake(s, 'Quỷ Linh', ql); ttTake(s, 'Đá Nữ Oa', da); o.star++; gdSave(s); renderThanThu(); scToast('Lên ' + o.star + ' sao!');
+  const ql = 10 * o.star, da = 400 * o.star; if (ttItem(s, 'Dị Linh') < ql || ttItem(s, 'Đá Nữ Oa') < da) return scToast('Không đủ vật liệu');
+  ttTake(s, 'Dị Linh', ql); ttTake(s, 'Đá Nữ Oa', da); o.star++; gdSave(s); renderThanThu(); scToast('Lên ' + o.star + ' sao!');
 }
 function ttSel(i) { const s = ttSt(); s.tt.sel = i; gdSave(s); renderThanThu(); }
 function ttReroll(n) {
@@ -61,7 +63,7 @@ function ttList() {
 function ttClose() { document.getElementById('tt-modal').style.display = 'none'; }
 function ttChange() {
   const s = ttSt(), t = s.tt, bx = b => { const own = t.own[b[0]], sh = t.sh[b[0]] || 0, cur = t.cur === b[0];
-    return `<div class="tt-bc"><div class="tt-bp"><span class="rk ${b[1] === 'S' ? 's' : ''}">${b[1]}</span>${own ? '' : `<span class="ct">${sh}/${b[2]}</span>`}<div class="pic">${b[3]}</div><b>${b[0]}</b></div><div class="fx">${(b[4].length ? b[4] : [0, 0, 0, 0]).map(f => !f ? '<div><u>Coming soon...</u>Coming soon...</div>' : `<div><u>${f[0]}</u>Hiệu quả phụ thể ${f[0]} tăng ${f[1]}${f[2] ? ' điểm' : '%'}</div>`).join('')}</div>
+    return `<div class="tt-bc"><div class="tt-bp"><span class="rk ${b[1] === 'S' ? 's' : ''}">${b[1]}</span>${own ? '' : `<span class="ct">${sh}/${b[2]}</span>`}<div class="pic">${ttImg(b[0])}</div><b>${b[0]}</b></div><div class="fx">${(b[4].length ? b[4] : [0, 0, 0, 0]).map(f => !f ? '<div><u>Coming soon...</u>Coming soon...</div>' : `<div><u>${f[0]}</u>Hiệu quả phụ thể ${f[0]} tăng ${f[1]}${f[2] ? ' điểm' : '%'}</div>`).join('')}</div>
     ${own ? `<button ${cur ? 'disabled' : ''} onclick="ttUse('${b[0]}')">${cur ? 'Đang dùng' : 'Dùng'}</button>` : `<button class="g" ${sh < b[2] ? 'disabled' : ''} onclick="ttGet('${b[0]}')">Nhận</button>`}</div>`; };
   document.getElementById('tt-modal').innerHTML = `<div class="md-box"><button class="md-x" onclick="ttClose()">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Thần Thú</div><div class="tt-bgrid">${TT_BEASTS.map(bx).join('')}</div><div style="text-align:center;color:#4ade80;margin-top:6px;font-weight:700">Mảnh Thần Thú nhận từ Cấm Địa</div></div>`; document.getElementById('tt-modal').style.display = 'flex';
 }
@@ -74,15 +76,15 @@ function renderThanThu() {
   const slotRow = (cnt, offs) => Array.from({ length: cnt }, (_, k) => { const i = k + offs, sl = arr[i], on = i < open;
     return `<div class="tt-sk ${t.sel === i && on ? 'use' : ''}" onclick="${on ? `ttSel(${i})` : ''}"><i style="${on && sl ? 'border-color:' + TT_QC[sl.q - 1] : ''}">${!on ? '🔒' : sl ? TT_PT_ICO[TT_PT.indexOf(sl.n)] : '＋'}</i>${!on ? (i < 5 ? (i + 1) + ' Sao mở' : 'Cấp S mở') : sl ? sl.n : 'Trống'}</div>`; }).join('');
   let body = '';
-  if (ttTab === 'thu') body = `<div class="tt-card"><div class="tt-pic">${b[3]}<button onclick="ttChange()">Đổi</button></div><div class="tt-info"><div class="tt-nm">${b[0]} <small>${b[1]}</small></div><div>Điểm: <b class="gold">${fmtN(st.pts)}</b></div><div>Sao: ${stars} &nbsp; Cấp: ${o.lv}</div><div>HP: ${fmtN(st.hp)} &nbsp; Hồi: ${fmtN(st.heal)}</div><div>Phá Giáp: ${fmtN(st.pha)} &nbsp; Đỡ Đòn: ${st.dodge}%</div></div></div>
+  if (ttTab === 'thu') body = `<div class="tt-card"><div class="tt-pic">${ttImg(b[0])}<button onclick="ttChange()">Đổi</button></div><div class="tt-info"><div class="tt-nm">${b[0]} <small>${b[1]}</small></div><div>Điểm: <b class="gold">${fmtN(st.pts)}</b></div><div>Sao: ${stars} &nbsp; Cấp: ${o.lv}</div><div>HP: ${fmtN(st.hp)} &nbsp; Hồi: ${fmtN(st.heal)}</div><div>Phá Giáp: ${fmtN(st.pha)} &nbsp; Đỡ Đòn: ${st.dodge}%</div></div></div>
     <div class="gs-bar">Kỹ Năng <span>Không thể dùng trong Tỷ Võ</span></div><div class="tt-row">${['Thanh Diệp', 'Thanh Tâm', 'Tái Sinh', 'Hùng Đàm', '5 Sao mở'].map((n, i) => `<div class="tt-sk ${i === 2 ? 'use' : ''}"><em>${i === 2 ? 'Dùng' : 'Chọn'}</em><i>${['🍃', '🌊', '✨', '🐺', '🔒'][i]}</i>${n}</div>`).join('')}</div>
     <div class="gs-bar">Phụ Thể <span>Lĩnh Ngộ để đạt được</span><button class="tt-ngo" onclick="ttTabSet('phu')">Ngộ</button></div><div class="tt-row">${slotRow(5, 0)}</div>`;
   if (ttTab === 'lv') { const need = ttNeed(o.lv), have = Object.keys(TT_FEED).map(k => ttItem(s, k));
-    body = `<div class="tt-lv"><div class="tt-pic big">${b[3]}</div><div class="tt-info box">Cấp: ${o.lv}<br>Sao: ${stars}<br>Phá Giáp: ${fmtN(st.pha)}<br>Đỡ Đòn: ${st.dodge}%<br>HP: ${fmtN(st.hp)}<br>Hồi: ${fmtN(st.heal)}</div></div><div class="tt-exp">${fmtN(o.exp)}/${fmtN(need)}<i style="width:${Math.min(100, o.exp / need * 100)}%"></i></div>
-    <div class="gs-bar">Vật Liệu <span>Giới hạn cấp ${ttCap(o)} (tăng theo sao)</span></div><div class="tt-row">${['Thú Hồn', 'Thú Linh'].map((k, i) => `<div class="tt-sk"><i>${['🟠', '🔥'][i]}</i>${k}<br>×${fmtN(have[i])}<br><small>+${TT_FEED[k]} EXP</small></div>`).join('')}</div><div class="gs-act"><div>Tự động dùng toàn bộ Thú Hồn & Thú Linh</div><button onclick="ttFeed()">Cho Ăn</button></div>`; }
-  if (ttTab === 'star') { const ql = 10 * o.star, da = 400 * o.star, hq = ttItem(s, 'Quỷ Linh'), hd = ttItem(s, 'Đá Nữ Oa');
-    body = o.star >= 5 ? '<div class="ch-empty" style="padding:40px">Thần thú đã đạt 5 sao</div>' : `<div class="tt-lv"><div class="tt-pic big">${b[3]}</div><div class="tt-info box"><div>HP:</div><div class="cmp">${fmtN(st.hp)} → ${fmtN(nx.hp)}</div><div>Hồi:</div><div class="cmp">${fmtN(st.heal)} → ${fmtN(nx.heal)}</div><div>Phá Giáp:</div><div class="cmp">${st.pha} → ${nx.pha}</div><div>Đỡ Đòn:</div><div class="cmp">${st.dodge}% → ${nx.dodge}%</div><small class="gr">Thăng sao sẽ mở thêm 1 ô Phụ Thể</small></div></div>
-    <div class="gs-bar">Tăng Sao</div><div class="tt-row cost"><div class="tt-sk"><small>Quỷ Linh</small><i>🎭</i>${hq}/${ql}</div><div class="tt-sk"><small>Đá Nữ Oa</small><i>🔻</i>${hd}/${da}</div></div><div class="gs-act"><div>Cần Quỷ Linh & Đá Nữ Oa (rơi từ Boss bang)</div><button onclick="ttStarUp()">Tăng</button></div>`; }
+    body = `<div class="tt-lv"><div class="tt-pic big">${ttImg(b[0])}</div><div class="tt-info box">Cấp: ${o.lv}<br>Sao: ${stars}<br>Phá Giáp: ${fmtN(st.pha)}<br>Đỡ Đòn: ${st.dodge}%<br>HP: ${fmtN(st.hp)}<br>Hồi: ${fmtN(st.heal)}</div></div><div class="tt-exp">${fmtN(o.exp)}/${fmtN(need)}<i style="width:${Math.min(100, o.exp / need * 100)}%"></i></div>
+    <div class="gs-bar">Vật Liệu <span>Giới hạn cấp ${ttCap(o)} (tăng theo sao)</span></div><div class="tt-row">${['Thú Hồn', 'Thú Linh'].map((k, i) => `<div class="tt-sk"><i>${gdIco(k, ['🟠', '🔥'][i])}</i>${k}<br>×${fmtN(have[i])}<br><small>+${TT_FEED[k]} EXP</small></div>`).join('')}</div><div class="gs-act"><div>Tự động dùng toàn bộ Thú Hồn & Thú Linh</div><button onclick="ttFeed()">Cho Ăn</button></div>`; }
+  if (ttTab === 'star') { const ql = 10 * o.star, da = 400 * o.star, hq = ttItem(s, 'Dị Linh'), hd = ttItem(s, 'Đá Nữ Oa');
+    body = o.star >= 5 ? '<div class="ch-empty" style="padding:40px">Thần thú đã đạt 5 sao</div>' : `<div class="tt-lv"><div class="tt-pic big">${ttImg(b[0])}</div><div class="tt-info box"><div>HP:</div><div class="cmp">${fmtN(st.hp)} → ${fmtN(nx.hp)}</div><div>Hồi:</div><div class="cmp">${fmtN(st.heal)} → ${fmtN(nx.heal)}</div><div>Phá Giáp:</div><div class="cmp">${st.pha} → ${nx.pha}</div><div>Đỡ Đòn:</div><div class="cmp">${st.dodge}% → ${nx.dodge}%</div><small class="gr">Thăng sao sẽ mở thêm 1 ô Phụ Thể</small></div></div>
+    <div class="gs-bar">Tăng Sao</div><div class="tt-row cost"><div class="tt-sk"><small>Dị Linh</small><i>${gdIco('Dị Linh', '🎭')}</i>${hq}/${ql}</div><div class="tt-sk"><small>Đá Nữ Oa</small><i>${gdIco('Đá Nữ Oa', '🔻')}</i>${hd}/${da}</div></div><div class="gs-act"><div>Cần Dị Linh & Đá Nữ Oa (rơi từ Boss bang)</div><button onclick="ttStarUp()">Tăng</button></div>`; }
   if (ttTab === 'phu') { const sl = arr[t.sel] || null, left = Math.max(0, Math.ceil((t.freeAt - Date.now()) / 1000));
     body = `<div class="tt-row">${slotRow(10, 0)}</div><div class="gs-bar">Lĩnh Ngộ <button class="tt-ngo" onclick="ttList()">Danh Sách</button></div>
     <div class="tt-ngo2"><div class="c"><h4>Hiện Tại</h4><div class="cb" style="${sl ? 'border-color:' + TT_QC[sl.q - 1] : ''}"><i>${sl ? TT_PT_ICO[TT_PT.indexOf(sl.n)] : '＋'}</i><b>${sl ? sl.n : 'Trống'}</b><p>${ttSlotDesc(sl)}</p></div></div>
@@ -91,14 +93,5 @@ function renderThanThu() {
   document.getElementById('tt-body').innerHTML = body;
 }
 setInterval(() => { const e = document.getElementById('tt-free'); if (e && gdSt().tt) { const l = Math.max(0, Math.ceil((gdSt().tt.freeAt - Date.now()) / 1000)); e.textContent = 'Miễn phí: ' + [l / 3600 | 0, l / 60 % 60 | 0, l % 60].map(v => String(v).padStart(2, '0')).join(':'); } }, 1000);
-/* Cấm Địa: 3 lượt/ngày, nhận Mảnh Thần Thú + Thú Hồn */
-function openCamDia() {
-  const s = ttSt(), t = s.tt, dk = new Date().toDateString(); if (t.cc.day !== dk) { t.cc = { day: dk, left: 3 }; gdSave(s); }
-  const m = document.getElementById('tt-modal'); m.innerHTML = `<div class="md-box"><button class="md-x" onclick="ttClose()">✕</button><div class="hd-name" style="text-align:center">⛰️ Cấm Địa</div><div class="set-note">Thám hiểm để nhận Mảnh Thần Thú và Thú Hồn. Hôm nay còn: <b>${t.cc.left}</b> lượt</div><div class="gs-act"><div>Mỗi lượt: 5–10 mảnh + 30 Thú Hồn</div><button onclick="ttExplore()">Thám hiểm</button></div></div>`; m.style.display = 'flex';
-}
-function ttExplore() {
-  const s = ttSt(), t = s.tt; if (t.cc.left < 1) return scToast('Hết lượt hôm nay');
-  const pool = TT_BEASTS.filter(b => !t.own[b[0]] && b[1] === 'A+'); const b = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null, n = 5 + Math.floor(Math.random() * 6);
-  if (b) t.sh[b[0]] = (t.sh[b[0]] || 0) + n; (s.kho['Thú Hồn'] = s.kho['Thú Hồn'] || { ico: '🟠', qty: 0 }).qty += 30; t.cc.left--; gdSave(s); openCamDia(); scToast(b ? `+${n} mảnh ${b[0]}, +30 Thú Hồn` : '+30 Thú Hồn');
-}
+function openCamDia() { openBangBoss(); }   // Cấm Địa = Boss bang (mảnh Thần Thú rơi từ Châu của boss)
 (function () { const d = document.createElement('div'); d.id = 'tt-modal'; d.className = 'md-wrap'; d.onclick = e => { if (e.target === d) ttClose(); }; document.body.appendChild(d); })();

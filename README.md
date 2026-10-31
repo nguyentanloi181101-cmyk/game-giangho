@@ -104,3 +104,12 @@ match /chat_messages/{id} {
 - `js/social/quests.js`: 9 nhiệm vụ ngày, mốc 25/50/75/100 điểm mở rương quà (vào Túi Đồ; vàng cộng thẳng). Tiến độ đếm bằng cách bọc các hàm cũ (PVE, Tỷ Võ, Chiêu Mộ, cường hóa trang bị, bồi dưỡng). Reset mỗi ngày.
 - "Danh Tướng Lầu" và "Luận Kiếm" chưa có chế độ nên bấm vào là tạm tính hoàn thành.
 - Sự Kiện: đã bỏ hết mục nạp/tiêu phí; chỉ còn Quà Free (nhận mỗi ngày) và các mục "sắp ra mắt".
+
+## Ảnh thần thú, Cấm Địa, Đại Sảnh
+- `assets/images/thanthu/*.webp`: 8 ảnh thần thú đã xóa phông (Kỳ Lân, Xích Vũ, Tiên Lộc, Long Quy, Báo Tuyết, Hắc Điêu, Cuồng Ngưu, Lân Sư); có chuyển động thở/nhấp nhô nhẹ (`.tt-img`). Dùng chung cho Thần Thú và Boss bang.
+- Cấm Địa = màn Boss (Thường / Chí Tôn / Đổi). Bang Chiến để trống "sắp ra mắt".
+- `js/social/daisanh.js`: Đại Sảnh (Bang Hội / Thành Viên / Tin Tức, Quyên Góp, Cường Thân) và Tụ Bảo Bồn.
+- Nút Cài đặt nằm cạnh chữ "Văn Lang". Tướng đã đánh xong không còn bị xám (PVE & Tỷ Võ).
+
+## Icon vật phẩm bang (ảnh thật)
+`assets/images/items/`: Thú Noãn, Thú Hồn, Thú Linh, Đá Nữ Oa, Dị Linh (đổi tên từ Quỷ Linh), Châu (mọi thần thú), Đào Tiên, Tử Linh Thạch (thay "Thạch <thú>"), Tụ Bảo Bồn. Hàm `gdIco(tên, emoji)` trong guild-sub.js trả về ảnh; kho cũ tự đổi tên khi load.
