@@ -15,7 +15,7 @@
         return { h, hp: Math.round(num(m.hp)), atk: Math.round(num(m.atk)), def: Math.round(num(m.def)), spd: num(m.spd) || h.spd, dodge: num(m.dodge), acc: num(m.acc), crit: num(m.crit), critDmg: num(m.critDmg), tough: num(m.tough), pierce: num(m.pierce), block: num(m.block), sk: Math.max(1, num(m.sk)), star: Math.max(1, num(m.star)) };
       }).filter(Boolean);
       if (!stats.length) return null;
-      return { real: true, uid: d.id, rank: pos, steps: 0, heroes: stats.map(s => s.h), stats,
+      return { real: true, beast: (TT_SLUG[x.beast] ? x.beast : ''), pt: Array.isArray(x.pt) ? x.pt.slice(0, 20).filter(p => p && TT_PT.includes(p.n)).map(p => ({ n: p.n, v: num(p.v), pts: !!p.pts })) : [], uid: d.id, rank: pos, steps: 0, heroes: stats.map(s => s.h), stats,
                name: pvCleanName(x.name) || 'Người chơi', lvl: Math.max(1, Math.floor(num(x.lvl)) || 1), power: stats.reduce((a, s) => a + unitPower(s), 0) };
     }
     const pvpKeyOf = d => { const v = d.data().rank; return (typeof v === 'number' && isFinite(v)) ? v : 1e9; };

@@ -32,3 +32,9 @@
     const DRAGON_MULT = 3.5, DRAGON_TIERS = 3, BLEED_TURNS = 3, BLEED_PCT = 0.2, TAICHI_BLEED_TURNS = 2, TAICHI_BLEED_PCT = 0.4;
     const LB_TURNS = 3, LB_DODGE_MULT = 3.0, LB_SPD_MULT = 1.5, LB_HEAL_MULT = 3.0, LB_GHOSTS = 18;   // Đoàn Dự: 3 hiệp, +300% Né, +150% Tốc, hồi 300% Máu (theo chỉ số của Đoàn Dự), 18 tàn ảnh
     const LLQ_RAGE = 50, LLQ_DEF_MULT = 3.0, LLQ_TARGETS = 2;
+    // ===== NGŨ TUYỆT (Bắc Cái • Đông Tà • Tây Độc • Nam Đế • Vương Trùng Dương) =====
+    const BC_HITS = 18, BC_MULT = 3.6, BC_DEF_DOWN = 0.3, BC_ATK_UP = 0.3, BC_TURNS = 1;     // Bắc Cái: 18 cây tre (mỗi cây trúng toàn địch), tổng 360% Công; -30% Thủ địch, +30% Công đội 1 hiệp
+    const DT_HITS = 4, DT_MULT = 3.6, DT_CRIT = 0.3, DT_TURNS = 2;                           // Đông Tà: 4 sóng âm, tổng 360% Công; -30% Bạo địch, +30% Bạo đội 2 hiệp
+    const TD_DEF_DOWN = 0.7, TD_HP_DOWN = 0.5, TD_SPD_DOWN = 0.2, TD_TURNS = 3;              // Tây Độc: cóc độc phun độc: -70% Thủ, -50% máu hiện tại, -20% Tốc trong 3 hiệp
+    const ND_ALL_DOWN = 0.5, ND_TURNS = 2;                                                   // Nam Đế: chưởng ấn chữ Vạn: địch giảm 50% tất cả thuộc tính 2 hiệp
+    const VTD_ALL_UP = 3.0, VTD_TURNS = 2;                                                   // Vương Trùng Dương: đội tăng 300% tất cả thuộc tính (theo thuộc tính của từng người) 2 hiệp

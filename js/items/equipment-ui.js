@@ -41,7 +41,7 @@
     }
     function renderEquip() {
       const e = eqType(eqTab);
-      document.getElementById('eq-pills').innerHTML = eqLock ? '' : pillPanelHtml();
+      document.getElementById('eq-pills').innerHTML = '';   // Viên Thể Lực chỉ nằm trong Túi Đồ
       document.getElementById('eq-sub').innerText = eqLock
         ? `Chọn ${e.name} gắn vào Khung ${eqCtx + 1}. Tướng đứng ở khung nào thì nhận chỉ số của khung đó.`
         : `Cấp acc ${accLevel} → trang bị nâng tối đa tới cấp ${eqCap()} (🔑 ${keyCount()}). Gắn vào khung nào thì tướng đứng ở khung đó được cộng chỉ số.`;

@@ -46,7 +46,7 @@
         `<div class="hchip ${x.id === setId ? 'sel' : ''}" onclick="setSetHero(${x.id})"><div class="e">${heroIcon(x)}</div><div class="n">${x.name}</div></div>`).join('');
       const rcur = HERO_ROLE[setId];
       const roleHtml = `<div class="role-box"><div class="role-title">🎭 Chất tướng<small>${ROLE_DESC[rcur]}</small></div><div class="role-btns">` +
-        ['skill', 'atk', 'sup', 'tank'].map(r => `<button class="role-btn ${rcur === r ? 'on' : ''}" style="--rc:${ROLE_COLOR[r]}" onclick="setRole(${setId},'${r}')">${ROLE_ICON[r]}<br>${ROLE_NAME[r]}</button>`).join('') + `</div></div>`;
+        ['skill', 'atk', 'sup', 'heal', 'tank'].map(r => `<button class="role-btn ${rcur === r ? 'on' : ''}" style="--rc:${ROLE_COLOR[r]}" onclick="setRole(${setId},'${r}')">${ROLE_ICON[r]}<br>${ROLE_NAME[r]}</button>`).join('') + `</div></div>`;
       document.getElementById('set-form').innerHTML = roleHtml + STAT_FIELDS.map(f =>
         `<div class="set-row"><label for="st-${f.k}">${f.label}<small>Mặc định: ${fmtN(HERO_DEFAULTS[setId][f.k])}</small></label><input id="st-${f.k}" type="number" inputmode="numeric" min="${f.min}" max="${f.max}" value="${h[f.k]}" onchange="saveStat(${setId},'${f.k}',this.value)"></div>`).join('');
       renderSetPreview();

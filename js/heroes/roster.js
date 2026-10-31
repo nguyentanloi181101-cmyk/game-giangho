@@ -31,6 +31,17 @@
       // Đoàn Dự: ra trận ĐẦY NỘ. Lăng Ba Vi Bộ – 18 tàn ảnh lao từ đội ta sang đội địch; toàn đội 3 hiệp: +300% Né, +150% Tốc, hồi 300% máu (theo chỉ số Đoàn Dự)
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
       {id:12,name:'Đoàn Dự',emoji:'🪭',img:'assets/images/heroes/doan-du.webp',body:'assets/images/heroes/doan-du-body.webp',bodyH:80,hp:3000,atk:300,def:40,spd:70,dodge:30,startRage:100,noEnemy:true},
+      // ===== NGŨ TUYỆT (chất tướng trong hero-roles.js): Bắc Cái / Đông Tà = Kỹ năng • Tây Độc = Thủ • Nam Đế / Vương Trùng Dương = Hỗ trợ =====
+      // Bắc Cái: bay qua đội địch, 18 cây tre từ góc chéo trên xuống (mỗi cây trúng toàn địch), -30% Thủ địch, +30% Công đội
+      {id:13,name:'Bắc Cái',emoji:'🍶',img:'assets/images/heroes/bac-cai.webp',body:'assets/images/heroes/bac-cai-body.webp',bodyH:82,hp:3000,atk:330,def:40,spd:56,dodge:15},
+      // Đông Tà: nhảy lên cao thổi sóng âm 4 lần lên toàn địch, -30% Bạo địch, +30% Bạo đội 2 hiệp
+      {id:14,name:'Đông Tà',emoji:'🎋',img:'assets/images/heroes/dong-ta.webp',body:'assets/images/heroes/dong-ta-body.webp',bodyH:82,hp:2800,atk:350,def:35,spd:60,dodge:20},
+      // Tây Độc: tướng thủ – cóc độc phun độc: địch -70% Thủ, -50% máu, -20% Tốc trong 3 hiệp
+      {id:15,name:'Tây Độc',emoji:'🐍',img:'assets/images/heroes/tay-doc.webp',body:'assets/images/heroes/tay-doc-body.webp',bodyH:84,hp:4200,atk:280,def:80,spd:48,dodge:10},
+      // Nam Đế: chưởng ấn chữ Vạn rơi từ trời xuống, toàn địch giảm 50% tất cả thuộc tính 2 hiệp
+      {id:16,name:'Nam Đế',emoji:'🙏',img:'assets/images/heroes/nam-de.webp',body:'assets/images/heroes/nam-de-body.webp',bodyH:82,hp:3300,atk:270,def:50,spd:52,dodge:15},
+      // Vương Trùng Dương: toàn đội +300% tất cả thuộc tính (theo thuộc tính từng người) 2 hiệp
+      {id:17,name:'Vương Trùng Dương',emoji:'☯️',img:'assets/images/heroes/vuong-trung-duong.webp',body:'assets/images/heroes/vuong-trung-duong-body.webp',bodyH:82,hp:3200,atk:280,def:45,spd:54,dodge:12},
     ];
     // CHỈ SỐ CHIẾN ĐẤU (hệ thống sát thương mới): Thủ trừ thẳng vào Công • Né/Chuẩn tính theo điểm (Chuẩn ≥ Né + 200 mới trúng)
     // Bạo × Bạo Sát = sát thương thêm (trừ Bền của địch) • Phá giáp bỏ qua mọi giáp • Đỡ đòn (%) giảm sát thương trừ Phá giáp
@@ -39,7 +50,9 @@
       3: [35, 10, 300, 50, 5, 5, 40, 0],   4: [60, 5, 300, 10, 2, 20, 20, 15],   5: [50, 10, 300, 10, 2, 10, 10, 5],
       6: [60, 50, 300, 40, 4, 10, 30, 0],  7: [100, 2, 300, 30, 3, 5, 100, 0],   8: [120, 70, 300, 10, 2, 30, 10, 30],
       9: [80, 20, 300, 30, 3, 10, 50, 5],  10: [50, 8, 300, 30, 3, 10, 25, 5],   11: [45, 12, 300, 15, 2, 10, 15, 5],
-      12: [40, 30, 300, 20, 3, 10, 20, 5] };
+      12: [40, 30, 300, 20, 3, 10, 20, 5],
+      13: [40, 15, 300, 30, 3, 10, 30, 5], 14: [35, 20, 300, 40, 4, 10, 30, 0], 15: [80, 10, 300, 15, 2, 25, 20, 25],
+      16: [50, 15, 300, 15, 2, 15, 15, 10], 17: [45, 12, 300, 20, 3, 10, 20, 10] };
     HEROES.forEach(h => { const c = HERO_COMBAT[h.id]; if (c) { h.def = c[0]; h.dodge = c[1]; h.acc = c[2]; h.crit = c[3]; h.critDmg = c[4]; h.tough = c[5]; h.pierce = c[6]; h.block = c[7]; } });
     const heroIcon = h => h.img ? `<img class="hero-img" src="${h.img}">` : h.emoji;
     let team = [];

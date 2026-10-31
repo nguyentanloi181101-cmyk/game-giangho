@@ -42,6 +42,7 @@
       if (e.lb > 0) { clearLB(e); had = true; }
       if (e.defBuff) { e.def -= e.defBuff; e.defBuff = 0; const ic = e.el.querySelector('.bf-shield'); if (ic) ic.remove(); had = true; }
       if (e.atkBuff) { e.atk -= e.atkBuff; e.atkBuff = 0; const ic = e.el.querySelector('.bf-atkup'); if (ic) ic.remove(); had = true; }
+      if (e.mods && e.mods.some(m => m.kind === 'buff')) { clearMods(e, 'buff'); had = true; }
       if (e.dn && e.dn.immortal > 0) { e.dn.immortal = 0; had = true; }
       (e.dn = e.dn || {}).nobuff = DUCO_NOBUFF;
       refreshDbf(e);

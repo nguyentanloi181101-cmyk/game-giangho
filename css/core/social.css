@@ -115,3 +115,18 @@ img.gi-g{height:1.15em;width:auto;vertical-align:-.2em;display:inline-block}.bm-
 .ct-crown{position:absolute;z-index:2;top:-4px;left:50%;transform:translateX(-50%);font-style:normal;font-size:22px;filter:drop-shadow(0 0 5px #f59e0b);animation:ctCrown 2.4s ease-in-out infinite}
 @keyframes ctAura{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(.92)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}@keyframes ctCrown{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
 .bb-ico.img .ct-wrap{width:100%}.bb-ico.img .ct-crown{font-size:20px;top:-6px}
+/* ===== Túi Đồ dạng lưới ===== */
+.bg-top{display:flex;justify-content:space-between;color:#fff;font-size:15px;margin:4px 2px 8px}.bg-top b{color:#fde047}
+.bg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:46vh;overflow-y:auto;padding:2px}
+.bg-cell{position:relative;aspect-ratio:1;background:linear-gradient(180deg,#5b4636,#3a2c22);border:2px solid #7a6048;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.bg-cell.sel{border-color:#fff;box-shadow:0 0 10px #fff,inset 0 0 8px #fde04788}.bg-cell.empty{opacity:.35;cursor:default}
+.bg-i{font-size:30px;width:70%;height:70%;display:flex;align-items:center;justify-content:center}.bg-i img.gi{width:100%;height:100%}
+.bg-cell em{position:absolute;top:1px;right:4px;font-style:normal;font-size:12px;font-weight:900;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}
+.bg-info{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:center;margin-top:8px;background:linear-gradient(180deg,#3d2a16,#22150a);border:2px solid #fde047;border-radius:10px;padding:8px;color:#fde68a;font-size:13px}
+.bg-l b{color:#fff}.bg-m{text-align:center;font-size:11px;color:#fff}.bg-big{font-size:34px;line-height:1;height:38px;display:flex;justify-content:center}.bg-big img.gi{height:38px;width:auto}
+.bg-r{display:flex;flex-direction:column;gap:4px}.bg-r button,.bg-q button{background:linear-gradient(180deg,#22c55e,#15803d);border:2px solid #bbf7d0;color:#fff;font-weight:900;border-radius:8px;padding:5px 10px;cursor:pointer}
+.bg-r .bg-sell{background:linear-gradient(180deg,#f59e0b,#b45309);border-color:#fde68a}.bg-r button:disabled{opacity:.4}
+.bg-q{display:flex;align-items:center;gap:4px;margin-top:4px}.bg-q button{padding:2px 8px;font-size:12px}.bg-q span{min-width:28px;text-align:center;color:#fff;font-weight:900}
+.bg-d{grid-column:1/-1;color:#e2e8f0;font-size:12px;border-top:1px dashed #fde04755;padding-top:5px}
+.bg-pass{width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border-radius:8px;border:2px solid #fde047;background:#111827;color:#fff;font-size:18px;text-align:center;letter-spacing:6px}
+.bm-drops div img.gi{width:36px;height:36px;object-fit:contain;display:block}

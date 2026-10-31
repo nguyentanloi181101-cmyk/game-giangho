@@ -22,5 +22,5 @@
         const tot = lvCostRange(p.lv, k); silver -= tot.silver; rice -= tot.rice; resSave(); n = k;
       }
       heroProg[vmId] = Object.assign({}, p, { [kind]: Math.min(cap, p[kind] + n) });
-      saveJSON('hero_prog', heroProg); renderVoHiep(); renderHomeTeam();
+      saveJSON('hero_prog', heroProg); renderVoHiep(); renderHomeTeam(); if (typeof renderUpg === 'function') renderUpg();
     }

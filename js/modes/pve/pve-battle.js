@@ -28,7 +28,7 @@
       waveRound = 1;
     // Quân ta đánh trước: sang trận mới thì hồi lại lượt cho cả đội, xóa choáng / chảy máu / buff cũ
       waveUnits.heroes.forEach(h => {
-        h.acted = false; h.stun = 0; h.bleed = 0; h.bleedPct = 0; clearDebuffs(h); grantStart(h);
+        h.acted = false; h.stun = 0; h.bleed = 0; h.bleedPct = 0; clearDebuffs(h); clearMods(h); grantStart(h);
         h.el.classList.remove('stunned');
         h.el.querySelectorAll('.bf-stun, .bf-bleed').forEach(ic => ic.remove());
       });

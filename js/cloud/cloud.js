@@ -123,10 +123,11 @@ async function clPush() {
 async function clPublishPvp() {
   if (!clUser || !clDb) return;
   const ids = (team || []).filter(id => heroById(id)); if (!ids.length) return;
-  const tm = ids.map(id => { const s = heroStats(id, true); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, block: s.block, star: getProg(id).star, sk: skillMult(id) }; });
+  const _tt = (typeof ttMine === 'function' && ttMine()) || null, _bn = _tt ? ttBonus(_tt.pt) : {};
+  const tm = ids.map(id => { const s = ttApply(Object.assign({}, heroStats(id, true)), _bn); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, block: s.block, star: getProg(id).star, sk: skillMult(id) }; });
   const ref = clDb.collection('pvp_players').doc(clUser.uid);
   const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins,
-    power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm };
+    power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm, beast: _tt ? _tt.beast : '', pt: _tt ? _tt.pt : [] };
   const cur = await ref.get();
   if (!cur.exists) { data.rank = await pvpNewKey(); data.rt = Date.now(); }   // tài khoản mới xếp tiếp xuống cuối bảng; sau đó đổi qua pvpRankCloud
   await ref.set(data, { merge: true });

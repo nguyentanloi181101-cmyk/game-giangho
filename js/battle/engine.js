@@ -88,7 +88,7 @@
       units.filter(a => a.alive).forEach(a => {
         let had = false;
         if (a.bleed > 0) { a.bleed = 0; a.bleedPct = 0; const ic = a.el.querySelector('.bf-bleed'); if (ic) ic.remove(); had = true; }
-        if (a.dn && ['atk', 'def', 'heal', 'rage', 'silence', 'poison'].some(k => a.dn[k] > 0)) { clearDebuffs(a); had = true; }
+        if ((a.mods && a.mods.some(m => m.kind === 'debuff')) || (a.dn && ['atk', 'def', 'heal', 'rage', 'silence', 'poison'].some(k => a.dn[k] > 0))) { clearDebuffs(a); had = true; }
         if (a.stun > 0) { a.stun = 0; a.el.classList.remove('stunned'); const ic = a.el.querySelector('.bf-stun'); if (ic) ic.remove(); had = true; }
         if (had) floatText(a, '✨ GIẢI HIỆU ỨNG');
       });
@@ -211,7 +211,7 @@
     const isSilenced = u => !!(u.dn && u.dn.silence > 0);
     // Thanh Y Tiên Tử: bất tử 3 hiệp đầu mỗi trận (HP không xuống dưới 1)
     // Vai trò (viền): tank = thủ đỏ • sup = hỗ trợ vàng • skill = kỹ năng xanh dương • atk = công kích cam
-    const BF_ROLE_BADGE = { sup: '<svg viewBox="0 0 24 24"><rect x="10.6" y="0.8" width="2.8" height="3" rx="1" fill="#a16207"/><path d="M12 3.6c-1.5 0-2.5 1-2.5 2.3 0 .9.5 1.6 1.2 2-1.7.7-2.7 2.1-2.7 3.8 0 1.3.6 2.3 1.6 3-1.9.8-3.1 2.5-3.1 4.6 0 2.9 2.4 5.2 5.5 5.2s5.5-2.3 5.5-5.2c0-2.1-1.2-3.8-3.1-4.6 1-.7 1.6-1.7 1.6-3 0-1.7-1-3.1-2.7-3.8.7-.4 1.2-1.1 1.2-2 0-1.3-1-2.3-2.5-2.3z" fill="#f59e0b" stroke="#92400e" stroke-width="1"/><path d="M9.2 13.8h5.6" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="9.6" cy="18" rx="1.2" ry="2" fill="#fde68a" opacity=".7"/></svg>', atk: '🗡️', skill: '☯️', tank: '🛡️' };   // hỗ trợ/trị liệu = hồ lô • công kích = kiếm • kỹ năng = thái cực • thủ = khiên
+    const BF_ROLE_BADGE = { sup: '<svg viewBox="0 0 24 24"><rect x="10.6" y="0.8" width="2.8" height="3" rx="1" fill="#a16207"/><path d="M12 3.6c-1.5 0-2.5 1-2.5 2.3 0 .9.5 1.6 1.2 2-1.7.7-2.7 2.1-2.7 3.8 0 1.3.6 2.3 1.6 3-1.9.8-3.1 2.5-3.1 4.6 0 2.9 2.4 5.2 5.5 5.2s5.5-2.3 5.5-5.2c0-2.1-1.2-3.8-3.1-4.6 1-.7 1.6-1.7 1.6-3 0-1.7-1-3.1-2.7-3.8.7-.4 1.2-1.1 1.2-2 0-1.3-1-2.3-2.5-2.3z" fill="#f59e0b" stroke="#92400e" stroke-width="1"/><path d="M9.2 13.8h5.6" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="9.6" cy="18" rx="1.2" ry="2" fill="#fde68a" opacity=".7"/></svg>', heal: '🌿', atk: '🗡️', skill: '☯️', tank: '🛡️' };   // hỗ trợ/trị liệu = hồ lô • công kích = kiếm • kỹ năng = thái cực • thủ = khiên
     function applyRole(u) {
       const r = HERO_ROLE[u.id]; if (!r || !u.el) return;
       u.el.dataset.role = r; u.el.style.setProperty('--rc', ROLE_COLOR[r]);
@@ -284,15 +284,41 @@
     }
     function tickDebuffs(units) {                              // giảm 1 hiệp các hiệu ứng (độc do tickBleed xử lý)
       units.forEach(u => {
+        tickMods(u);
         const d = u.dn; if (!d) return;
         ['atk', 'def', 'heal', 'rage', 'silence', 'nobuff'].forEach(k => { if (d[k] > 0 && --d[k] <= 0) endDebuff(u, k); });
         refreshDbf(u);
       });
     }
     function clearDebuffs(u) {
+      clearMods(u, 'debuff');
       if (!u.dn) return;
       ['atk', 'def', 'heal', 'rage', 'silence', 'poison', 'nobuff'].forEach(k => endDebuff(u, k));
       refreshDbf(u);
+    }
+    // ---- Tăng/giảm CHỈ SỐ theo hiệp (Ngũ Tuyệt): u.mods = [{k, d, t, kind}] — hết hạn thì trả lại đúng số đã cộng/trừ ----
+    // Bên ta tick đầu hiệp, bên địch tick sau khi ra đòn -> bên ta (và Tỷ Võ) cộng thêm 1 để "N hiệp" đủ N hiệp đầy đủ.
+    const MOD_STATS = ['atk', 'def', 'spd', 'dodge', 'acc', 'crit', 'critDmg', 'tough', 'pierce', 'block'];
+    function addMod(u, k, delta, turns, kind, tag) {
+      if (!delta) return;
+      u.mods = u.mods || []; const old = u.mods.findIndex(m => m.k === k && m.tag === tag);
+      if (old >= 0) { u[k] -= u.mods[old].d; u.mods.splice(old, 1); }   // cùng nguồn: làm mới, không cộng dồn
+      u.mods.push({ k, d: delta, t: turns + ((u.side === 'hero' || pvp) ? 1 : 0), kind, tag }); u[k] = (u[k] || 0) + delta; refreshMods(u);
+    }
+    function refreshMods(u) {
+      let ic = u.el.querySelector('.bf-mods'); const m = u.mods || [];
+      if (!m.length) { if (ic) ic.remove(); return; }
+      if (!ic) { ic = document.createElement('div'); ic.className = 'bf-mods'; u.el.appendChild(ic); }
+      const up = m.filter(x => x.kind === 'buff'), dn = m.filter(x => x.kind === 'debuff');
+      ic.innerHTML = (up.length ? '<b class="up">▲' + Math.max(...up.map(x => x.t)) + '</b>' : '') + (dn.length ? '<b class="dn">▼' + Math.max(...dn.map(x => x.t)) + '</b>' : '');
+    }
+    function tickMods(u) {
+      if (!u.mods || !u.mods.length) return;
+      u.mods = u.mods.filter(m => { if (--m.t > 0) return true; u[m.k] -= m.d; return false; }); refreshMods(u);
+    }
+    function clearMods(u, kind) {       // kind = 'debuff' | 'buff' | undefined (tất cả)
+      if (!u.mods || !u.mods.length) return;
+      u.mods = u.mods.filter(m => { if (kind && m.kind !== kind) return true; u[m.k] -= m.d; return false; }); refreshMods(u);
     }
     // Hiệu ứng của 1 con bướm đáp xuống: targets = toàn bộ địch
     function bflyEffect(c, targets) {

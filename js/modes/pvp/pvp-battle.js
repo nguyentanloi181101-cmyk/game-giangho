@@ -58,9 +58,10 @@
       document.getElementById('bf-units').innerHTML = '';
       const sel = HEROES.filter(h => team.includes(h.id));
       const pos = HERO_POS[sel.length].map(p => [p[0], p[1] + HERO_DY]);
+      const _tm = ttMine(); ttSetupUI(_tm, o.beast ? { beast: o.beast, pt: o.pt || [] } : ttFake(o.name));
       waveUnits = {
         heroes: sel.map((h, k) => {
-          const s = heroStats(h.id, true);   // Tỷ Võ: chỉ chỉ số cơ bản + trang bị/Bảo Vật/cộng dồn, không lấy số chỉnh trong Cài đặt
+          const s = ttApply(Object.assign({}, heroStats(h.id, true)), ttBonus(_tm && _tm.pt));   // Tỷ Võ: chỉ chỉ số cơ bản + trang bị/Bảo Vật/cộng dồn, không lấy số chỉnh trong Cài đặt
           const u = makeUnit('hero', heroIcon(h), pos[k][0], pos[k][1], s.hp, s.atk, false, h.name);
           u.id = h.id; u.emoji = heroIcon(h); u.def = s.def; u.spd = s.spd; u.dodge = s.dodge; u.acc = s.acc; u.crit = s.crit; u.critDmg = s.critDmg; u.tough = s.tough; u.pierce = s.pierce; u.block = s.block; u.sk = skillMult(h.id); u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2;
           u.rage = h.startRage || 0; grantStart(u); u.acted = false;

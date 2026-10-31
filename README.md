@@ -122,3 +122,13 @@ Code: `js/battle/engine.js` (`calcDmg`, `strike`, `missed`), dữ liệu: `HERO_
 - Sát thương Công tối thiểu 10% (tránh còn 1 khi Thủ quá cao).
 - Tỷ Võ chỉ lấy chỉ số cơ bản gốc + trang bị/Bảo Vật/cộng dồn Tỷ Võ, không lấy số chỉnh trong Cài đặt.
 - Cài đặt → Chỉnh thông số tướng có thêm Bạo, Bạo Sát, Bền, Phá giáp, Đỡ đòn. Số 13 tướng là số tạm, chỉnh trong `HERO_COMBAT`.
+
+## Ngũ Tuyệt: 5 tướng mới (id 13-17)
+Bắc Cái, Đông Tà (Kỹ năng) • Tây Độc (Thủ) • Nam Đế, Vương Trùng Dương (Hỗ trợ). Chiêu: `js/heroes/skills/ngu-tuyet.js`, hằng số: cuối `skill-config.js`, chỉ số: `HERO_COMBAT` + `HEROES` trong `roster.js`.
+Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự trả đúng số. Chất tướng theo bảng: Kỹ năng (ulti liên tục) • Công kích 50 nộ • Hỗ trợ 100 nộ, ưu tiên 2 • Trị liệu 50 nộ, ưu tiên 2 • Thủ 100 nộ, ưu tiên 1 (Chất tướng "Trị liệu" tách mới khỏi "Hỗ trợ").
+
+## Thần Thú ra trận & Phụ Thể
+- `js/social/thanthu-battle.js`: 2 bệ đứng ở góc trên (trái = thần thú mình đang chọn, phải = đối thủ), hàng icon phụ thể (hiệu quả thần thú + các ô Lĩnh Ngộ đã mở) hiển thị trên cùng.
+- Phụ thể cộng **% theo chỉ số của từng tướng** lúc vào trận (PVE + Tỷ Võ). `Kích Phá` của thần thú là điểm cộng thẳng.
+- Mapping tên → chỉ số (`TT_FXMAP`, đoán tạm, sửa tại đó): Cường Công/Sát Lục→Công; Thần Thuẫn/Bá Thuẫn/Thần Huyết/Hoạt Khí/Tái Sinh→HP; Chiến Thuẫn/Ngự Thuẫn/Trợ Thuẫn→Thủ; Kỳ Thuẫn→Đỡ đòn; Huyết Bạo/Kích Sát→Bạo; Bạo Tức/Bạo Nộ→Bạo sát; Kích Phá→Phá giáp; Tinh Chuẩn→Chuẩn; Ẩn Thân/Tàn Ảnh→Né; các loại Tốc→Tốc độ. Đẩy Lui chưa có hiệu ứng.
+- Tỷ Võ người thật: snapshot đã gồm chỉ số sau phụ thể + tên thần thú/phụ thể. Bot/PVE: thần thú đối thủ chỉ trang trí.

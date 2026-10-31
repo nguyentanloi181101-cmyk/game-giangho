@@ -42,6 +42,11 @@
       if (u.id === 8) return waterUlt(u, tok);
       if (u.id === 9) return fireWebUlt(u, tok);
       if (u.id === 5) return lotusUlt(u, tok);
+      if (u.id === 13) return bacCaiUlt(u, tok);
+      if (u.id === 14) return dongTaUlt(u, tok);
+      if (u.id === 15) return tayDocUlt(u, tok);
+      if (u.id === 16) return namDeUlt(u, tok);
+      if (u.id === 17) return vtdUlt(u, tok);
       return attack(u, foesOf(u), ULT_HITS, u.atk * ULT_MULT * (u.sk || 1), tok);
     }
 

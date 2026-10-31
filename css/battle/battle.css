@@ -87,7 +87,7 @@
     .bf-unit.hero .bf-hp i{background:linear-gradient(90deg,#15803d,#4ade80)}
     .bf-unit.enemy .bf-hp i{background:linear-gradient(90deg,#b91c1c,#f87171)}
     .bf-unit.dead{opacity:0;transition:opacity .5s;pointer-events:none}
-    .bf-unit.hurt .bf-sprite{filter:brightness(2.2) sepia(1) hue-rotate(-40deg)}
+    .bf-unit.hurt .bf-sprite{filter:brightness(1.2) drop-shadow(0 0 7px #ef4444)}   /* trúng đòn: chớp đỏ nhẹ, KHÔNG làm trắng/xám tướng */
     .bf-dmg{position:absolute;left:50%;top:-10px;font-size:24px;font-weight:900;font-style:italic;color:#fff;-webkit-text-stroke:2px #7f1d1d;paint-order:stroke fill;animation:bfDmg .8s ease-out forwards;pointer-events:none;z-index:20;white-space:nowrap}
     .bf-unit.hero .bf-dmg{color:#fde047;-webkit-text-stroke:2px #1e3a8a}
     .bf-fx{position:absolute;left:50%;top:45%;font-size:40px;pointer-events:none;z-index:15;animation:bfFx .35s ease-out forwards}
@@ -170,3 +170,28 @@
     .bf-shield{position:absolute;top:-42px;right:2px;font-size:16px;z-index:25;filter:drop-shadow(0 0 6px #38bdf8)}
 .bf-dmg.bf-d-main{font-size:22px}.bf-dmg.bf-d-crit{color:#fbbf24;-webkit-text-stroke:2px #78350f;font-size:26px}.bf-dmg.bf-d-pierce{color:#e9d5ff;-webkit-text-stroke:2px #581c87;font-size:20px}
 .bf-unit.hero .bf-dmg.bf-d-main{color:#fff;-webkit-text-stroke:2px #1e3a8a}.bf-unit.hero .bf-dmg.bf-d-crit{color:#fbbf24;-webkit-text-stroke:2px #78350f}.bf-unit.hero .bf-dmg.bf-d-pierce{color:#e9d5ff;-webkit-text-stroke:2px #581c87}
+/* ===== Ngũ Tuyệt ===== */
+.bf-mods{position:absolute;top:-39px;left:50%;transform:translateX(-50%);display:flex;gap:3px;font-size:10px;line-height:1;z-index:25;pointer-events:none;white-space:nowrap}
+.bf-mods b{padding:1px 3px;border-radius:5px;color:#fff;text-shadow:0 0 2px #000}.bf-mods .up{background:#16a34a}.bf-mods .dn{background:#dc2626}
+.bf-unit.big .bf-mods{top:-52px}
+.bf-bamboo{position:absolute;width:9px;height:96px;transform:translate(-50%,-50%);background:repeating-linear-gradient(to bottom,#3f6212 0 3px,#84cc16 3px 25px,#a3e635 25px 28px);border-radius:3px 3px 0 0;clip-path:polygon(0 0,100% 0,100% 84%,50% 100%,0 84%);box-shadow:0 0 10px #a3e635;z-index:70;pointer-events:none;filter:drop-shadow(0 0 5px #bef264)}
+.bf-sonic{position:absolute;font-size:46px;z-index:70;pointer-events:none;color:#d9f99d;text-shadow:0 0 14px #84cc16,0 0 28px #bef264;border:3px solid #bef26488;border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#ecfccb55,transparent 70%)}
+.bf-toad{position:absolute;font-size:68px;z-index:70;pointer-events:none;filter:hue-rotate(25deg) drop-shadow(0 0 12px #84cc16)}
+.bf-venom{position:absolute;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ecfccb,#84cc16 45%,#4d7c0f);box-shadow:0 0 14px #a3e635;z-index:70;pointer-events:none}
+.bf-wan{position:absolute;width:230px;height:230px;z-index:75;pointer-events:none;display:flex;align-items:center;justify-content:center;border-radius:50%;background:radial-gradient(circle,#fef08acc,#f59e0b88 55%,transparent 72%)}
+.bf-wan span{font-size:170px;line-height:1;font-weight:900;color:#fde047;text-shadow:0 0 18px #f59e0b,0 0 40px #fbbf24,0 4px 0 #92400e}
+.bf-wan-halo{position:absolute;width:300px;height:300px;z-index:60;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#fde04755,#f59e0b22 60%,transparent 72%);animation:wanPulse 1.2s ease-in-out infinite}
+@keyframes wanPulse{50%{filter:brightness(1.4)}}
+.bf-taiji{position:absolute;font-size:96px;line-height:1;z-index:75;pointer-events:none;color:#fff;text-shadow:0 0 18px #60a5fa,0 0 38px #fde047;filter:drop-shadow(0 0 10px #60a5fa)}
+/* Thần thú ra trận */
+.bf-bst{position:absolute;top:78px;width:64px;height:64px;z-index:5;pointer-events:none}
+.bf-bst.l{left:6px}.bf-bst.r{right:6px}
+.bf-bst-pl{position:absolute;left:-4px;right:-4px;bottom:0;height:16px;border-radius:50%;background:radial-gradient(ellipse,#d9b96a 0,#8a6a2a 70%);box-shadow:0 3px 6px #0008}
+.bf-bst-sp{position:absolute;left:0;right:0;bottom:8px;text-align:center;z-index:1}
+.bf-bst-sp .tt-img{width:56px;height:56px;object-fit:contain}
+.bf-ptrow{position:absolute;top:52px;display:flex;flex-wrap:wrap;gap:2px;max-width:46%;z-index:61}
+.bf-ptrow.l{left:4px}.bf-ptrow.r{right:4px;justify-content:flex-end}
+.bf-ptrow span{width:18px;height:18px;font-size:12px;line-height:18px;text-align:center;border-radius:4px;background:#000a;border:1px solid #f5c542}
+/* hai bên quay mặt vào nhau: hình gốc hướng sang trái -> lật phe mình + thần thú trái */
+.bf-unit.hero .bf-sprite .hero-body,.bf-unit.hero .bf-sprite .hero-img,.bf-unit.hero .bf-sprite .hero-portrait{transform:scaleX(-1)}
+.bf-bst.l .tt-img{transform:scaleX(-1)}
