@@ -169,7 +169,7 @@
       }).join('');
       const bagua = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'].map((c, i) => `<b style="--i:${i}">${c}</b>`).join('');
       const root = g.mk('bf-vtd3d', `<div class="vt-glow"></div><div class="vt-ground"><i></i><i></i><i></i></div><div class="vt-orbit"><div class="vt-orbit-spin">${bagua}</div></div><div class="vt-stage"><div class="vt-strips">${strips}</div><div class="vt-core"></div></div>`, cx, cy);
-      root.style.setProperty('--s', S + 'px'); const iso = g.box.style.isolation; g.box.style.isolation = 'isolate';   // để lốc xoáy nằm SAU các tướng (z-index âm) mà vẫn trên nền sân
+      root.style.setProperty('--s', S + 'px');
       try {
         root.animate([{ transform: 'translate(-50%,-50%) scale(.15,.05)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.08,1.12)', opacity: 1, offset: .65 }, { transform: 'translate(-50%,-50%) scale(1,1)', opacity: 1 }],
                      { duration: 900, easing: 'ease-out', fill: 'forwards' });
@@ -190,5 +190,5 @@
         }, i * 140));
         await sleep(as.length * 140 + 1250); if (tok !== battleToken) return;
         root.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1,1)' }, { opacity: 0, transform: 'translate(-50%,-50%) scale(.6,1.25)' }], { duration: 480, fill: 'forwards' }); await sleep(500);
-      } finally { made.forEach(d => d.remove()); g.box.style.isolation = iso; }
+      } finally { made.forEach(d => d.remove()); }
     }

@@ -1,7 +1,7 @@
 /* NGŨ TUYỆT — hiệu ứng 3D: Bắc Cái (tre Đả Cẩu Bổng) • Vương Trùng Dương (lốc xoáy Thái Cực) */
 
 /* ===== BẮC CÁI: tre 3D rơi chéo ===== */
-.bf-bamboo3d{position:absolute;transform:translate(-50%,-50%);z-index:70;pointer-events:none;will-change:transform,opacity}
+.bf-bamboo3d{position:absolute;transform:translate(-50%,-50%);z-index:105;pointer-events:none;will-change:transform,opacity}
 .bf-bamboo3d img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;
   filter:drop-shadow(0 0 7px rgba(253,224,71,.95)) drop-shadow(0 0 16px rgba(163,230,53,.7))}
 .bf-bamboo3d.mir img{transform:scaleX(-1)}
@@ -9,11 +9,11 @@
 .bf-bamboo3d .bt-trail{position:absolute;left:50%;bottom:50%;width:22px;height:260px;margin-left:-11px;transform-origin:50% 100%;
   transform:rotate(var(--lean,0deg));border-radius:50% 50% 0 0/30% 30% 0 0;
   background:linear-gradient(to top,rgba(253,224,71,.75),rgba(163,230,53,.35) 45%,transparent);filter:blur(4px)}
-.bf-leaf{position:absolute;font-size:18px;line-height:1;z-index:71;pointer-events:none;filter:drop-shadow(0 0 4px #bef264)}
+.bf-leaf{position:absolute;font-size:18px;line-height:1;z-index:106;pointer-events:none;filter:drop-shadow(0 0 4px #bef264)}
 
 /* ===== VƯƠNG TRÙNG DƯƠNG: lốc xoáy Thái Cực 3D ===== */
 .bf-vtd3d{position:absolute;width:var(--s,240px);height:var(--s,240px);transform:translate(-50%,-50%);transform-origin:50% 88%;
-  z-index:-1;pointer-events:none;perspective:900px}
+  z-index:105;pointer-events:none;perspective:900px}
 .bf-vtd3d .vt-glow{position:absolute;left:-15%;top:-10%;width:130%;height:125%;border-radius:50%;
   background:radial-gradient(closest-side,rgba(253,224,71,.5),rgba(96,165,250,.22) 55%,transparent 78%);animation:vtPulse 1.1s ease-in-out infinite alternate}
 .bf-vtd3d .vt-ground{position:absolute;left:-12%;bottom:-4%;width:124%;height:38%;transform:rotateX(74deg)}
@@ -35,7 +35,7 @@
 .bf-vtd3d .vt-core{position:absolute;left:50.8%;top:41%;width:21%;height:21%;margin:-10.5% 0 0 -10.5%;border-radius:50%;
   background:url(../../assets/images/fx/vtd-taiji-core.webp) center/100% 100% no-repeat;
   box-shadow:0 0 18px #fde047,0 0 40px rgba(96,165,250,.8);transform:translateZ(70px);animation:vtCoin 2.4s linear infinite;backface-visibility:visible}
-.bf-vtd-orb{position:absolute;width:18px;height:18px;border-radius:50%;z-index:80;pointer-events:none;
+.bf-vtd-orb{position:absolute;width:18px;height:18px;border-radius:50%;z-index:106;pointer-events:none;
   background:radial-gradient(circle,#fff 0%,#fde047 45%,rgba(96,165,250,.7) 75%,transparent 100%);box-shadow:0 0 14px #fde047,0 0 28px #60a5fa}
 
 @keyframes vtPulse{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1.06)}}
@@ -46,7 +46,7 @@
 @keyframes vtCoin{to{transform:translateZ(70px) rotateY(360deg)}}
 
 /* ===== TÂY ĐỘC: cóc ngọc 3D ===== */
-.bf-toad3d{position:absolute;transform:translate(-50%,-50%);z-index:70;pointer-events:none;perspective:800px}
+.bf-toad3d{position:absolute;transform:translate(-50%,-50%);z-index:105;pointer-events:none;perspective:800px}
 .bf-toad3d .td-glow{position:absolute;left:-12%;top:-12%;width:124%;height:124%;border-radius:50%;
   background:radial-gradient(closest-side,rgba(132,204,22,.5),rgba(34,197,94,.22) 55%,transparent 78%);animation:vtPulse 1s ease-in-out infinite alternate}
 .bf-toad3d .td-ground{position:absolute;left:-8%;bottom:-6%;width:116%;height:34%;transform:rotateX(74deg)}
@@ -67,7 +67,7 @@
 @keyframes tdEye{from{opacity:.55;transform:translateZ(30px) scale(.85)}to{opacity:1;transform:translateZ(30px) scale(1.15)}}
 
 /* ===== ĐÔNG TÀ: 2 dải nhạc 3D lượn vòng quanh địch ===== */
-.bf-notes3d{position:absolute;width:0;height:0;transform:translate(-50%,-50%);z-index:76;pointer-events:none;perspective:700px}
+.bf-notes3d{position:absolute;width:0;height:0;transform:translate(-50%,-50%);z-index:105;pointer-events:none;perspective:700px}
 .bf-notes3d .nt-ring{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
 .bf-notes3d .nt-ring.r1{transform:rotateX(66deg) rotateY(-12deg);--d:3s;--dir:normal}
 .bf-notes3d .nt-ring.r2{transform:rotateX(66deg) rotateY(26deg);--d:3.6s;--dir:reverse}
@@ -79,3 +79,6 @@
 @keyframes ntSpin{to{transform:rotateZ(360deg)}}
 @keyframes ntFace{from{transform:translateX(var(--R,100px)) rotateZ(0deg) rotateX(-66deg) translate(-50%,-50%)}
   to{transform:translateX(var(--R,100px)) rotateZ(-360deg) rotateX(-66deg) translate(-50%,-50%)}}
+
+/* hiệu ứng Ngũ Tuyệt luôn nằm TRÊN tướng (tướng có z-index = vị trí dọc 0–100, Bắc Cái khi bay là 99) */
+.bf-sonic,.bf-venom{z-index:106}
