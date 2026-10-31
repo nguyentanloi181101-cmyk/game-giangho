@@ -79,7 +79,7 @@ function bbInfo(k, ct) {
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('boss-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">BOSS${ct ? ' CHÍ TÔN' : ''}</div>
   <div class="bm-top"><div class="bm-pic">${ttImg(b[0], ct)}</div><div class="bm-desc">Cách đánh: ${b[3]}<br><br>Đặc điểm: ${b[4]}${ct ? '<br>HP & sát thương x2' : ''}<br><br>HP ${fmtN(gdBossHp(k, ct))}</div></div>
   <div class="bm-sk">${b[5].map((n, i) => `<span>Kỹ Năng ${i + 1}:${n}</span>`).join('')}<span>Kỹ Năng 5:</span></div>
-  <div class="gs-bar">Vật Phẩm <span>(Chuyển vào Kho)</span></div><div class="bm-drops">${gdDrops(k).map(d => `<div title="${d[0]}">${gdIco(d[0], d[1])}</div>`).join('')}${'<div class="e">+</div>'.repeat(4)}</div>
+  <div class="gs-bar">Vật Phẩm <span>(Chuyển vào Kho)</span></div><div class="bm-drops">${gdDrops(k).map(d => `<div title="${d[0]}">${d[1]}</div>`).join('')}${'<div class="e">+</div>'.repeat(4)}</div>
   <div class="gs-act"><div>Hôm nay còn: ${gdSt().left}</div><button onclick="bbFight()">Khiêu chiến</button></div></div>`;
   m.style.display = 'flex';
 }
