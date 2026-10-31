@@ -165,5 +165,5 @@ Mỗi sheet là 1 hàng × 12 khung nền trong suốt (`assets/images/seq/`), k
 Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, khai báo trong `SEQ` / `SEQ_IDLE` (`hero-seq.js`):
 - `dong-ta-idle.webp` (`dtIdle`) và `bac-cai-idle.webp` (`bcIdle`): dáng đứng trong trận, tự lặp.
 - `dong-ta-ult.webp` (`dtCast`): tuyệt kỹ Đông Tà (`dongTaUlt`): khung 0-3 nhảy lên, 4-10 xoáy vàng theo 4 nhịp sóng âm, 11 đáp đất. Bắc Cái vẫn dùng `bac-cai-ult.webp` cũ cho tuyệt kỹ.
-- Nam Đế (16): `nam-de-idle.webp` (`ndIdle`, dáng đứng) và `nam-de-ult.webp` (`ndCast`, tuyệt kỹ `namDeUlt`: khung 0-6 Phật quang xoay, 7-11 chữ Vạn rực sáng; đặt giữa đội địch, chạm ở ~0,9 s).
+- Nam Đế (16): `nam-de-idle.webp` (`ndIdle`, dáng đứng). Tuyệt kỹ giữ hiệu ứng cũ (chữ Vạn + vòng sáng).
 - Trương Tam Phong (4): `truong-tam-phong-idle.webp` (`ttpIdle`) + `truong-tam-phong-ult.webp` (`ttpCast`, dùng trong `taichiUlt`: khung 0-4 tụ cầu, 5-7 nhảy lên, 8-11 chọi xuống; quả cầu bay chỉ hiện lúc chọi). Âu Cơ (5): `au-co-idle.webp` (`acIdle`, dáng đứng).

@@ -171,21 +171,19 @@
     // ---------- NAM ĐẾ: chưởng ấn chữ Vạn (Phật Như Lai) rơi từ trời xuống ----------
     async function namDeUlt(u, tok) {
       const g = nt(u), { H, made } = g, es0 = g.es(); if (!es0.length) return;
-      const b = g.box0(es0), timers = [];
+      const b = g.box0(es0);
       try {
         u.el.animate([{ filter: 'drop-shadow(0 0 0 #fde047)' }, { filter: 'drop-shadow(0 0 18px #fde047)' }, { filter: 'drop-shadow(0 0 0 #fde047)' }], { duration: 700 });
-        // Chuỗi 12 khung (SEQ.ndCast) đặt giữa đội địch: khung 0-6 Phật quang xoay, 7-11 chữ Vạn rực sáng giáng xuống → chạm ở khung 7 (~0,9 s)
-        const SW = Math.round(Math.max(200, Math.min(g.W * 0.56, H * 0.9))), SH = Math.round(SW * SEQ.ndCast.ch / SEQ.ndCast.cw);
-        const palm = g.mk('bf-seq-fx', '', b.cx, b.cy); palm.style.width = SW + 'px'; palm.style.height = SH + 'px';
-        const sc = seqEl(SEQ.ndCast, SW); palm.appendChild(sc);
-        for (let i = 0; i < 12; i++) timers.push(setTimeout(() => { if (tok === battleToken) sc.show(i); }, seqT(i * 125)));
-        palm.animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.6)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1)' }], { duration: 400, easing: 'ease-out', fill: 'forwards' });
+        const halo = g.mk('bf-wan-halo', '', b.cx, b.cy); halo.animate([{ opacity: 0, transform: 'translate(-50%,-50%) scale(.3)' }, { opacity: 1, transform: 'translate(-50%,-50%) scale(1)' }], { duration: 700, fill: 'forwards' });
+        const palm = g.mk('bf-wan', '<span>卍</span>', b.cx, b.cy);
+        palm.animate([{ transform: `translate(-50%,calc(-50% - ${H}px)) scale(.5)`, opacity: 0 }, { opacity: 1, offset: .2 },
+                      { transform: 'translate(-50%,-50%) scale(1.5)', opacity: 1, offset: .75 }, { transform: 'translate(-50%,-50%) scale(1.25)', opacity: 1 }], { duration: 1050, easing: 'ease-in', fill: 'forwards' });
         await sleep(900); if (tok !== battleToken) return;
         g.ring(b.cx, b.cy, '#fde047'); g.shake(); setTimeout(() => g.ring(b.cx, b.cy, '#f59e0b'), 160);
         g.es().forEach(e => { MOD_STATS.forEach(k => pctMod(e, k, -ND_ALL_DOWN, ND_TURNS, 'debuff', 'nd:' + k)); floatText(e, '卍 ẤN PHONG'); sayLater(e, '⬇ TẤT CẢ -' + Math.round(ND_ALL_DOWN * 100) + '%', 280); });
         refreshPanel(); await sleep(1100); if (tok !== battleToken) return;
-        palm.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 420, fill: 'forwards' }); await sleep(440);
-      } finally { timers.forEach(clearTimeout); made.forEach(d => d.remove()); }
+        palm.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 420, fill: 'forwards' }); halo.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 420, fill: 'forwards' }); await sleep(440);
+      } finally { made.forEach(d => d.remove()); }
     }
 
     // ---------- VƯƠNG TRÙNG DƯƠNG: tung Thái Cực (chuỗi 12 khung), lốc xoáy âm dương mở ra bên ĐỊCH, đội ta tăng 300% mọi thuộc tính ----------
