@@ -184,14 +184,14 @@
 @keyframes wanPulse{50%{filter:brightness(1.4)}}
 .bf-taiji{position:absolute;font-size:96px;line-height:1;z-index:75;pointer-events:none;color:#fff;text-shadow:0 0 18px #60a5fa,0 0 38px #fde047;filter:drop-shadow(0 0 10px #60a5fa)}
 /* Thần thú ra trận */
-.bf-bst{position:absolute;top:78px;width:64px;height:64px;z-index:5;pointer-events:none}
-.bf-bst.l{left:6px}.bf-bst.r{right:6px}
-.bf-bst-pl{position:absolute;left:-4px;right:-4px;bottom:0;height:16px;border-radius:50%;background:radial-gradient(ellipse,#d9b96a 0,#8a6a2a 70%);box-shadow:0 3px 6px #0008}
-.bf-bst-sp{position:absolute;left:0;right:0;bottom:8px;text-align:center;z-index:1}
-.bf-bst-sp .tt-img{width:56px;height:56px;object-fit:contain}
+.bf-bst{position:absolute;top:70px;width:50%;height:min(230px,34vh);z-index:5;pointer-events:none}
+.bf-bst.l{left:0}.bf-bst.r{right:0}
+.bf-bst-pl{position:absolute;left:6%;right:6%;bottom:0;height:26px;border-radius:50%;background:radial-gradient(ellipse,#d9b96a 0,#8a6a2a 70%);box-shadow:0 4px 10px #000a}
+.bf-bst-sp{position:absolute;left:0;right:0;top:0;bottom:12px;display:flex;align-items:flex-end;justify-content:center;z-index:1;filter:drop-shadow(0 6px 8px #000a)}
+.bf-bst-sp .tt-img{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;object-position:center bottom}
 .bf-ptrow{position:absolute;top:52px;display:flex;flex-wrap:wrap;gap:2px;max-width:46%;z-index:61}
 .bf-ptrow.l{left:4px}.bf-ptrow.r{right:4px;justify-content:flex-end}
 .bf-ptrow span{width:18px;height:18px;font-size:12px;line-height:18px;text-align:center;border-radius:4px;background:#000a;border:1px solid #f5c542}
 /* hai bên quay mặt vào nhau: hình gốc hướng sang trái -> lật phe mình + thần thú trái */
 .bf-unit.hero .bf-sprite .hero-body,.bf-unit.hero .bf-sprite .hero-img,.bf-unit.hero .bf-sprite .hero-portrait{transform:scaleX(-1)}
-.bf-bst.l .tt-img{transform:scaleX(-1)}
+.bf-bst.flip .bf-bst-sp{transform:scaleX(-1)}   /* thần thú trái nhìn sang phải, phải nhìn sang trái (lật theo hướng gốc của từng ảnh) */

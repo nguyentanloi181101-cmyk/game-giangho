@@ -13,14 +13,15 @@ const TT_BEASTS = [   // [tên, hạng, mảnh cần, icon, [hiệu quả phụ 
 const TT_PT = ['Huyết Bạo', 'Ngự Thuẫn', 'Hoạt Khí', 'Cường Công', 'Sát Lục', 'Thần Huyết', 'Tái Sinh', 'Thần Thuẫn', 'Chiến Thuẫn', 'Bá Thuẫn', 'Bạo Nộ', 'Bạo Tức', 'Tinh Chuẩn', 'Cấp Tốc', 'Ẩn Thân', 'Kích Sát', 'Kích Phá', 'Đẩy Lui', 'Trợ Thuẫn', 'Tàn Ảnh', 'Kỳ Thuẫn', 'Thần Tốc', 'Trợ Tốc', 'Hộ Tốc', 'Gia Tốc'];
 const TT_PT_ICO = ['🩸', '🛡️', '💠', '⚔️', '🗡️', '❤️‍🔥', '💚', '🔰', '🧱', '🐯', '💪', '⚡', '🎯', '🏃', '🌫️', '🔪', '👹', '💨', '🛡️', '👤', '☯️', '👢', '👟', '👞', '🥾'];
 const TT_QC = ['#9ca3af', '#22c55e', '#3b82f6', '#a855f7', '#f59e0b'], TT_FEED = { 'Thú Hồn': 100, 'Thú Linh': 500 };
-const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su' };
+const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su', 'Khổng Tước': 'khong-tuoc', 'Cửu Vỹ Hồ': 'cuu-vi-ho', 'Hỏa Kỳ Lân': 'hoa-ky-lan', 'Kim Sư': 'kim-su' };
 function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? (ct ? `<span class="ct-wrap"><img class="tt-img ct" alt="${n}" src="assets/images/thanthu/${sl}.webp"><i class="ct-crown">👑</i></span>` : `<img class="tt-img" alt="${n}" src="assets/images/thanthu/${sl}.webp">`) : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
 const ttBeast = n => TT_BEASTS.find(b => b[0] === n);
 function ttSt() {
   const s = gdSt();
   if (!s.tt) { s.tt = { cur: 'Kỳ Lân', own: { 'Kỳ Lân': { lv: 1, star: 1, exp: 0 } }, sh: {}, slots: {}, sel: 0, prev: null, freeAt: 0, cc: { day: '', left: 3 } };
     s.kho['Thú Hồn'] = { ico: '🟠', qty: 100 }; s.kho['Thú Linh'] = { ico: '🔥', qty: 10 }; s.kho['Dị Linh'] = { ico: '🎭', qty: 10 }; s.kho['Đá Nữ Oa'] = { ico: '🔻', qty: 400 }; gdSave(s); }   // quà khởi đầu
-  const t = s.tt; Object.keys(s.kho).forEach(k => { if (k.indexOf('Châu ') === 0 && s.kho[k].qty > 0 && ttBeast(k.slice(5))) { t.sh[k.slice(5)] = (t.sh[k.slice(5)] || 0) + s.kho[k].qty; s.kho[k].qty = 0; } });   // Châu = mảnh thần thú
+  const t = s.tt; t.hist = Array.isArray(t.hist) ? t.hist : []; if (t.pick === undefined) t.pick = -1; t.newN = t.newN | 0;   // hist: tối đa 30 Phụ Thể vừa tẩy
+  Object.keys(s.kho).forEach(k => { if (k.indexOf('Châu ') === 0 && s.kho[k].qty > 0 && ttBeast(k.slice(5))) { t.sh[k.slice(5)] = (t.sh[k.slice(5)] || 0) + s.kho[k].qty; s.kho[k].qty = 0; } });   // Châu = mảnh thần thú
   return s;
 }
 const ttCur = s => s.tt.own[s.tt.cur];
@@ -48,15 +49,26 @@ function ttStarUp() {
   ttTake(s, 'Dị Linh', ql); ttTake(s, 'Đá Nữ Oa', da); o.star++; gdSave(s); renderThanThu(); scToast('Lên ' + o.star + ' sao!');
 }
 function ttSel(i) { const s = ttSt(); s.tt.sel = i; gdSave(s); renderThanThu(); }
-function ttReroll(n) {
-  const s = ttSt(), t = s.tt, o = ttCur(s), b = ttBeast(t.cur), arr = t.slots[t.cur] = t.slots[t.cur] || [];
-  if (t.sel >= ttSlotsOpen(b, o)) return scToast('Ô này chưa mở');
+const TT_HIST_MAX = 30;
+function ttReroll(n) {   // Tẩy: n=1 (miễn phí, 2 phút/lần) hoặc n=10 (500 vàng). Kết quả vào danh sách (tối đa 30 gần nhất); chọn 1 cái rồi bấm Lưu
+  const s = ttSt(), t = s.tt;
   if (n === 1) { if (Date.now() < t.freeAt) return scToast('Chưa hết thời gian miễn phí'); t.freeAt = Date.now() + 120000; }
   else { if (gold < 500) return scToast('Cần 500 Vàng'); gold -= 500; resSave(); }
-  let best = null; for (let i = 0; i < n; i++) { const r = ttRoll(); if (!best || r.q > best.q) best = r; }
-  t.prev = { i: t.sel, v: arr[t.sel] || null }; arr[t.sel] = best; gdSave(s); renderThanThu();
+  const res = []; for (let i = 0; i < n; i++) res.push(ttRoll());
+  t.hist = res.concat(t.hist).slice(0, TT_HIST_MAX); t.newN = res.length; t.pick = -1; gdSave(s); renderThanThu();
 }
-function ttRevert() { const s = ttSt(), t = s.tt, arr = t.slots[t.cur] = t.slots[t.cur] || []; if (!t.prev) return scToast('Chưa có lần tẩy trước'); const cur = arr[t.prev.i] || null; arr[t.prev.i] = t.prev.v; t.prev = { i: t.prev.i, v: cur }; gdSave(s); renderThanThu(); }
+function ttPick(i) { const s = ttSt(), t = s.tt; t.pick = t.pick === i ? -1 : i; gdSave(s); renderThanThu(); }
+function ttSave() {   // Lưu Phụ Thể đã chọn vào ô đang chọn
+  const s = ttSt(), t = s.tt, o = ttCur(s), b = ttBeast(t.cur), arr = t.slots[t.cur] = t.slots[t.cur] || [];
+  const it = t.hist[t.pick]; if (!it) return scToast('Chưa chọn Phụ Thể nào');
+  if (t.sel >= ttSlotsOpen(b, o)) return scToast('Ô này chưa mở');
+  t.hist.splice(t.pick, 1); if (t.pick < t.newN) t.newN--;
+  t.prev = { i: t.sel, v: arr[t.sel] || null, saved: it }; arr[t.sel] = it; t.pick = -1; gdSave(s); renderThanThu(); scToast('Đã lưu ' + it.n + ' vào ô ' + (t.sel + 1));
+}
+function ttRevert() {   // hoàn tác lần Lưu gần nhất: ô trở lại như cũ, Phụ Thể đã lưu quay về danh sách
+  const s = ttSt(), t = s.tt, arr = t.slots[t.cur] = t.slots[t.cur] || []; if (!t.prev) return scToast('Chưa có lần lưu trước');
+  arr[t.prev.i] = t.prev.v; if (t.prev.saved) { t.hist.unshift(t.prev.saved); t.hist = t.hist.slice(0, TT_HIST_MAX); t.newN++; } t.prev = null; t.pick = -1; gdSave(s); renderThanThu();
+}
 function ttList() {
   document.getElementById('tt-modal').innerHTML = `<div class="md-box"><button class="md-x" onclick="ttClose()">✕</button><div class="hd-name" style="text-align:center">Phụ Thể</div><div class="tt-pgrid">${TT_PT.map((n, i) => `<div style="border-color:${TT_QC[i % 5]}"><i>${TT_PT_ICO[i]}</i>${n}</div>`).join('')}</div></div>`; document.getElementById('tt-modal').style.display = 'flex';
 }
@@ -78,6 +90,7 @@ function renderThanThu() {
   let body = '';
   if (ttTab === 'thu') body = `<div class="tt-card"><div class="tt-pic">${ttImg(b[0])}<button onclick="ttChange()">Đổi</button></div><div class="tt-info"><div class="tt-nm">${b[0]} <small>${b[1]}</small></div><div>Điểm: <b class="gold">${fmtN(st.pts)}</b></div><div>Sao: ${stars} &nbsp; Cấp: ${o.lv}</div><div>HP: ${fmtN(st.hp)} &nbsp; Hồi: ${fmtN(st.heal)}</div><div>Phá Giáp: ${fmtN(st.pha)} &nbsp; Đỡ Đòn: ${st.dodge}%</div></div></div>
     <div class="gs-bar">Kỹ Năng <span>Không thể dùng trong Tỷ Võ</span></div><div class="tt-row">${['Thanh Diệp', 'Thanh Tâm', 'Tái Sinh', 'Hùng Đàm', '5 Sao mở'].map((n, i) => `<div class="tt-sk ${i === 2 ? 'use' : ''}"><em>${i === 2 ? 'Dùng' : 'Chọn'}</em><i>${['🍃', '🌊', '✨', '🐺', '🔒'][i]}</i>${n}</div>`).join('')}</div>
+    <div class="gs-act"><div>Tăng sao: ${gdIco('Dị Linh', '🎭')} ${ttItem(s, 'Dị Linh')}/${10 * o.star} • ${gdIco('Đá Nữ Oa', '🔻')} ${ttItem(s, 'Đá Nữ Oa')}/${400 * o.star}</div><button ${o.star >= 5 ? 'disabled' : ''} onclick="ttStarUp()">Tăng Sao</button></div>
     <div class="gs-bar">Phụ Thể <span>Lĩnh Ngộ để đạt được</span><button class="tt-ngo" onclick="ttTabSet('phu')">Ngộ</button></div><div class="tt-row">${slotRow(5, 0)}</div>`;
   if (ttTab === 'lv') { const need = ttNeed(o.lv), have = Object.keys(TT_FEED).map(k => ttItem(s, k));
     body = `<div class="tt-lv"><div class="tt-pic big">${ttImg(b[0])}</div><div class="tt-info box">Cấp: ${o.lv}<br>Sao: ${stars}<br>Phá Giáp: ${fmtN(st.pha)}<br>Đỡ Đòn: ${st.dodge}%<br>HP: ${fmtN(st.hp)}<br>Hồi: ${fmtN(st.heal)}</div></div><div class="tt-exp">${fmtN(o.exp)}/${fmtN(need)}<i style="width:${Math.min(100, o.exp / need * 100)}%"></i></div>
@@ -85,11 +98,14 @@ function renderThanThu() {
   if (ttTab === 'star') { const ql = 10 * o.star, da = 400 * o.star, hq = ttItem(s, 'Dị Linh'), hd = ttItem(s, 'Đá Nữ Oa');
     body = o.star >= 5 ? '<div class="ch-empty" style="padding:40px">Thần thú đã đạt 5 sao</div>' : `<div class="tt-lv"><div class="tt-pic big">${ttImg(b[0])}</div><div class="tt-info box"><div>HP:</div><div class="cmp">${fmtN(st.hp)} → ${fmtN(nx.hp)}</div><div>Hồi:</div><div class="cmp">${fmtN(st.heal)} → ${fmtN(nx.heal)}</div><div>Phá Giáp:</div><div class="cmp">${st.pha} → ${nx.pha}</div><div>Đỡ Đòn:</div><div class="cmp">${st.dodge}% → ${nx.dodge}%</div><small class="gr">Thăng sao sẽ mở thêm 1 ô Phụ Thể</small></div></div>
     <div class="gs-bar">Tăng Sao</div><div class="tt-row cost"><div class="tt-sk"><small>Dị Linh</small><i>${gdIco('Dị Linh', '🎭')}</i>${hq}/${ql}</div><div class="tt-sk"><small>Đá Nữ Oa</small><i>${gdIco('Đá Nữ Oa', '🔻')}</i>${hd}/${da}</div></div><div class="gs-act"><div>Cần Dị Linh & Đá Nữ Oa (rơi từ Boss bang)</div><button onclick="ttStarUp()">Tăng</button></div>`; }
-  if (ttTab === 'phu') { const sl = arr[t.sel] || null, left = Math.max(0, Math.ceil((t.freeAt - Date.now()) / 1000));
+  if (ttTab === 'phu') { const sl = arr[t.sel] || null, left = Math.max(0, Math.ceil((t.freeAt - Date.now()) / 1000)), pk = t.hist[t.pick] || null;
     body = `<div class="tt-row">${slotRow(10, 0)}</div><div class="gs-bar">Lĩnh Ngộ <button class="tt-ngo" onclick="ttList()">Danh Sách</button></div>
-    <div class="tt-ngo2"><div class="c"><h4>Hiện Tại</h4><div class="cb" style="${sl ? 'border-color:' + TT_QC[sl.q - 1] : ''}"><i>${sl ? TT_PT_ICO[TT_PT.indexOf(sl.n)] : '＋'}</i><b>${sl ? sl.n : 'Trống'}</b><p>${ttSlotDesc(sl)}</p></div></div>
+    <div class="tt-ngo2"><div class="c"><h4>Hiện Tại (ô ${t.sel + 1})</h4><div class="cb" style="${sl ? 'border-color:' + TT_QC[sl.q - 1] : ''}"><i>${sl ? TT_PT_ICO[TT_PT.indexOf(sl.n)] : '＋'}</i><b>${sl ? sl.n : 'Trống'}</b><p>${ttSlotDesc(sl)}</p></div></div>
     <div class="c"><h4>Tẩy phụ thể</h4><div class="cb dark"><p>Tẩy để có Phụ Thể mới.</p><div>Miễn phí <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"></div><button ${left ? 'disabled' : ''} onclick="ttReroll(1)">Tẩy</button><div style="margin-top:6px">500 🪙 <em>Siêu</em></div><button onclick="ttReroll(10)">Tẩy 10 lần</button></div></div></div>
-    <div class="gs-act"><button class="red" onclick="ttRevert()">Lần trước tẩy</button><div id="tt-free">Miễn phí: ${[left / 3600 | 0, left / 60 % 60 | 0, left % 60].map(v => String(v).padStart(2, '0')).join(':')}</div></div>`; }
+    <div class="gs-bar">Kết quả tẩy <span>${t.hist.length}/${TT_HIST_MAX} gần nhất • chọn 1 rồi bấm Lưu</span></div>
+    <div class="tt-hist">${t.hist.length ? t.hist.map((p, i) => `<div class="${t.pick === i ? 'sel' : ''} ${i < t.newN ? 'new' : ''}" style="border-color:${TT_QC[p.q - 1]}" onclick="ttPick(${i})"><i>${TT_PT_ICO[TT_PT.indexOf(p.n)]}</i>${p.n}<small>+${[4, 6, 8, 12, 16][p.q - 1]}%</small></div>`).join('') : '<div class="tt-hist-empty">Chưa có kết quả. Bấm Tẩy hoặc Tẩy 10 lần.</div>'}</div>
+    <div class="gs-act"><div>${pk ? `Đã chọn: <b>${pk.n}</b> ${ttSlotDesc(pk).replace('Hiệu quả ', '')} → ô ${t.sel + 1}` : 'Chưa chọn Phụ Thể'}</div><button class="tt-save" ${pk ? '' : 'disabled'} onclick="ttSave()">Lưu</button></div>
+    <div class="gs-act"><button class="red" onclick="ttRevert()">Hoàn tác lần lưu</button><div id="tt-free">Miễn phí: ${[left / 3600 | 0, left / 60 % 60 | 0, left % 60].map(v => String(v).padStart(2, '0')).join(':')}</div></div>`; }
   document.getElementById('tt-body').innerHTML = body;
 }
 setInterval(() => { const e = document.getElementById('tt-free'); if (e && gdSt().tt) { const l = Math.max(0, Math.ceil((gdSt().tt.freeAt - Date.now()) / 1000)); e.textContent = 'Miễn phí: ' + [l / 3600 | 0, l / 60 % 60 | 0, l % 60].map(v => String(v).padStart(2, '0')).join(':'); } }, 1000);

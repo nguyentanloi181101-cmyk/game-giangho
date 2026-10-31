@@ -32,7 +32,7 @@
       const c = bagItems().find(x => x.k === bagSel); if (!c) return; const n = Math.min(bagQty, c.qty);
       if (c.use === 'pill') { usePills(n); renderBag(); return; }
       if (c.use === 'hammer' || c.use === 'key') { closeBag(); if (typeof tsOpen === 'function') tsOpen(); return; }
-      closeBag(); if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') openThanThu(); } else if (typeof openBangBoss === 'function') openBangBoss();
+      closeBag(); if (c.name === 'Đá Nữ Oa' || c.name === 'Dị Linh') { if (typeof openThanThu === 'function') { ttTab = 'star'; openThanThu(); } } else if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') { ttTab = 'lv'; openThanThu(); } } else if (typeof openBangBoss === 'function') openBangBoss();
     }
     function bagSellOpen() {
       const c = bagItems().find(x => x.k === bagSel); if (!c || !c.price) return; const n = Math.min(bagQty, c.qty), m = document.getElementById('bag-sell');

@@ -1,6 +1,9 @@
 /* NGŨ TUYỆT: Bắc Cái (13) • Đông Tà (14) • Tây Độc (15) • Nam Đế (16) • Vương Trùng Dương (17)
    Tăng/giảm chỉ số dùng addMod (engine.js): hết hạn tự trả lại đúng số đã cộng/trừ. */
 
+    const BC_IMG = 'assets/images/fx/bac-cai-bamboo.webp';   // ảnh cây tre Bắc Cái (Đả Cẩu Bổng)
+    ['assets/images/fx/dt-notes.webp', 'assets/images/fx/td-toad3d.webp', 'assets/images/fx/td-coin.webp', 'assets/images/fx/bac-cai-bamboo.webp', 'assets/images/fx/vtd-taiji-vortex.webp', 'assets/images/fx/vtd-taiji-core.webp'].forEach(src => { const im = new Image(); im.src = src; });   // nạp sẵn để lần đầu thi triển không bị giật
+
     // Bộ dựng chung cho các chiêu: sân đấu, kích thước, danh sách địch/ta còn sống, tạo hiệu ứng tạm
     function nt(u) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units'), made = [];
@@ -35,11 +38,25 @@
         for (let k = 0; k < BC_HITS; k++) {
           const es = g.es(); if (!es.length) break;
           const tx = Math.max(6, Math.min(94, b.cx + (Math.random() - 0.5) * (b.maxX - b.minX + 16))), ty = Math.max(12, Math.min(88, b.cy + (Math.random() - 0.5) * (b.maxY - b.minY + 18)));
-          const r = g.mk('bf-bamboo', '', tx, ty), sx = dir * 170, sy = -430;
-          r.style.setProperty('--r', (dir * 21) + 'deg');
-          r.animate([{ transform: `translate(calc(-50% + ${sx}px),calc(-50% + ${sy}px)) rotate(${dir * 21}deg)`, opacity: 0 }, { opacity: 1, offset: .15 },
-                     { transform: `translate(-50%,-50%) rotate(${dir * 21}deg)`, opacity: 1 }], { duration: 230, easing: 'ease-in', fill: 'forwards' });
-          setTimeout(() => { if (tok !== battleToken) return; g.ring(tx, ty, '#a3e635'); g.es().forEach(e => skillHit(e, per, u)); if (k % 3 === 0) g.shake(); setTimeout(() => r.remove(), 120); }, 230);
+          // Tre 3D: đội TRÁI (hero) rơi từ trên-trái xuống địch; đội PHẢI rơi từ trên-phải xuống ta. Trục tre nghiêng ~25° nên rơi đúng theo trục.
+          const hh = Math.round(Math.max(140, Math.min(220, H * 0.42))), fall = Math.round(Math.max(280, Math.min(520, H * 0.9)));
+          const sx = -dir * Math.round(fall * 0.466), sy = -fall;
+          const r = g.mk('bf-bamboo3d' + (dir > 0 ? ' mir' : ''), '<i class="bt-trail"></i><img src="' + BC_IMG + '" alt="">', tx, ty);
+          r.style.height = hh + 'px'; r.style.width = Math.round(hh * 0.645) + 'px'; r.style.setProperty('--lean', (-dir * 25) + 'deg');
+          const T = (x, y, ry, sc) => `perspective(700px) translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) rotateY(${ry}deg) scale(${sc})`;
+          r.animate([{ transform: T(sx, sy, -dir * 70, .65), opacity: 0 }, { opacity: 1, offset: .2 },
+                     { transform: T(0, 0, 0, 1.12), opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.35,0,.85,.55)', fill: 'forwards' });
+          setTimeout(() => {
+            if (tok !== battleToken) return;
+            g.ring(tx, ty, '#bef264');
+            g.es().forEach(e => skillHit(e, per, u)); if (k % 3 === 0) g.shake();
+            if (k % 2 === 0) for (let j = 0; j < 3; j++) {   // lá tre bung ra khi chạm đất
+              const lf = g.mk('bf-leaf', '🍃', tx, ty), a = Math.random() * Math.PI * 2, d = 24 + Math.random() * 36;
+              lf.animate([{ transform: 'translate(-50%,-50%) scale(.6) rotate(0deg)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(a) * d}px),calc(-50% + ${Math.sin(a) * d - 22}px)) scale(1) rotate(${Math.random() * 360}deg)`, opacity: 0 }], { duration: 520, easing: 'ease-out', fill: 'forwards' });
+              setTimeout(() => lf.remove(), 540);
+            }
+            r.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' }); setTimeout(() => r.remove(), 190);
+          }, 380);
           await sleep(75); if (tok !== battleToken) return;
         }
         await sleep(420); if (tok !== battleToken) return;
@@ -61,17 +78,27 @@
         u.el.animate([{ transform: base }, { transform: up }], { duration: 420, easing: 'ease-out', fill: 'forwards' });
         await sleep(450); if (tok !== battleToken) return;
         u.el.animate([{ transform: up, filter: 'drop-shadow(0 0 0 #a3e635)' }, { transform: up, filter: 'drop-shadow(0 0 16px #bef264)' }], { duration: 300, fill: 'forwards' });
-        const sy = u.y - (H * 0.2) / H * 100;
+        // 2 dải nhạc vàng bay từ Đông Tà sang, rồi lượn vòng 3D (hai quỹ đạo nghiêng khác nhau, ngược chiều) quanh đội địch; mỗi nhịp gây sát thương 1 lần
+        const sy = Math.max(4, u.y - (H * 0.2) / H * 100), Rr = Math.round(Math.max(80, (b.maxX - b.minX) * g.W / 200 + 90)), IW = Math.round(Math.max(120, Math.min(g.W * 0.26, 220)));
+        const mkRing = (cls) => `<div class="nt-ring ${cls}"><div class="nt-spin"><div class="nt-item"><img src="assets/images/fx/dt-notes.webp" alt=""></div></div></div>`;
+        const notes = g.mk('bf-notes3d', mkRing('r1') + mkRing('r2'), b.cx, b.cy);
+        notes.style.setProperty('--R', Rr + 'px'); notes.style.setProperty('--iw', IW + 'px');
+        const fx = (u.x - b.cx) * g.W / 100, fy = (sy - b.cy) * H / 100;
+        notes.animate([{ transform: `translate(calc(-50% + ${fx}px),calc(-50% + ${fy}px)) scale(.25)`, opacity: 0 }, { opacity: 1, offset: .4 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }], { duration: 480, easing: 'ease-out', fill: 'forwards' });
+        await sleep(480); if (tok !== battleToken) return;
         for (let k = 0; k < DT_HITS; k++) {
           const es = g.es(); if (!es.length) break;
-          const w = g.mk('bf-sonic', '🎵', u.x, Math.max(4, sy)), tx = b.cx - u.x, ty = b.cy - Math.max(4, sy);
-          const Wd = g.W / 100, Hd = H / 100;
-          w.animate([{ transform: 'translate(-50%,-50%) scale(.3)', opacity: 0 }, { opacity: .95, offset: .2 },
-                     { transform: `translate(calc(-50% + ${tx * Wd}px),calc(-50% + ${ty * Hd}px)) scale(2.6)`, opacity: 0.15 }], { duration: 520, easing: 'ease-out', fill: 'forwards' });
           await sleep(430); if (tok !== battleToken) return;
-          g.ring(b.cx, b.cy, '#bef264'); g.shake(); g.es().forEach(e => skillHit(e, per, u)); setTimeout(() => w.remove(), 150);
+          g.ring(b.cx, b.cy, '#fde047'); g.shake();
+          es.forEach(e => {
+            skillHit(e, per, u); g.ring(e.x, e.y, '#bef264');
+            const n = g.mk('bf-sonic', ['🎵', '🎶'][k % 2], e.x, e.y);
+            n.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: `translate(calc(-50% + ${(Math.random() - .5) * 50}px),calc(-50% - 60px)) scale(1.5)`, opacity: 0 }], { duration: 600, easing: 'ease-out', fill: 'forwards' });
+            setTimeout(() => n.remove(), 620);
+          });
           await sleep(190); if (tok !== battleToken) return;
         }
+        notes.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 350, fill: 'forwards' });
         g.es().forEach(e => { pctMod(e, 'crit', -DT_CRIT, DT_TURNS, 'debuff', 'dt'); sayLater(e, '💥 BẠO -' + Math.round(DT_CRIT * 100) + '%'); });
         g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'crit', DT_CRIT, DT_TURNS, 'buff', 'dt'); sayLater(a, '💥 BẠO +' + Math.round(DT_CRIT * 100) + '%'); });
         refreshPanel(); await sleep(450); if (tok !== battleToken) return;
@@ -84,10 +111,14 @@
     // ---------- TÂY ĐỘC: triệu hồi cóc độc phun độc qua đội địch ----------
     async function tayDocUlt(u, tok) {
       const g = nt(u), { W, H, made } = g, es0 = g.es(); if (!es0.length) return;
-      const b = g.box0(es0), dir = u.side === 'hero' ? 1 : -1, tx0 = Math.max(6, Math.min(94, u.x + dir * 12)), ty0 = u.y;
+      const b = g.box0(es0), dir = u.side === 'hero' ? 1 : -1, tx0 = Math.max(6, Math.min(94, u.x + dir * 14)), ty0 = Math.max(18, Math.min(82, u.y - 4));
       try {
-        const toad = g.mk('bf-toad', '🐸', tx0, ty0);
-        toad.animate([{ transform: 'translate(-50%,-50%) scale(0) rotate(-30deg)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.3)', opacity: 1, offset: .6 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }], { duration: 500, fill: 'forwards' });
+        // Cóc ngọc 3D (ảnh thật): thân thở/lắc lư theo chiều sâu, mắt đỏ phát sáng, tiền vàng xoay quanh. Đội phải thì lật ảnh để cóc nhìn về phía ta.
+        const TW = Math.round(Math.max(150, Math.min(W * 0.34, H * 0.62))), TH = Math.round(TW / 1.5);
+        const coins = Array.from({ length: 6 }, (_, i) => `<b style="--i:${i}"></b>`).join('');
+        const toad = g.mk('bf-toad3d' + (dir > 0 ? '' : ' mir'), `<div class="td-glow"></div><div class="td-ground"><i></i><i></i></div><div class="td-orbit"><div class="td-orbit-spin">${coins}</div></div><div class="td-stage"><div class="td-body"></div><i class="td-eye" style="left:56%;top:16.6%"></i><i class="td-eye" style="left:73.8%;top:19.7%"></i></div>`, tx0, ty0);
+        toad.style.width = TW + 'px'; toad.style.height = TH + 'px'; toad.style.setProperty('--w', TW + 'px');
+        toad.animate([{ transform: 'translate(-50%,-50%) scale(0)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.3)', opacity: 1, offset: .6 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }], { duration: 500, fill: 'forwards' });
         g.ring(tx0, ty0, '#84cc16'); await sleep(620); if (tok !== battleToken) return;
         toad.animate([{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: 'translate(-50%,-50%) scale(1.35,.8)', offset: .5 }, { transform: 'translate(-50%,-50%) scale(1)' }], { duration: 420 });
         for (let i = 0; i < 26; i++) {   // luồng độc phun qua đội hình địch
@@ -126,21 +157,38 @@
       } finally { made.forEach(d => d.remove()); }
     }
 
-    // ---------- VƯƠNG TRÙNG DƯƠNG: Thái Cực bát quái, đội tăng 300% mọi thuộc tính ----------
+    // ---------- VƯƠNG TRÙNG DƯƠNG: Thái Cực bát quái 3D (lốc xoáy âm dương), đội tăng 300% mọi thuộc tính ----------
+    // Lốc xoáy cắt thành 14 lát ngang, mỗi lát lắc lư lệch pha theo chiều sâu (translateZ) → nhìn như xoáy 3D; lõi Thái Cực xoay như đồng xu; vòng Bát Quái quay quanh; vòng sáng vàng loang dưới đất.
     async function vtdUlt(u, tok) {
-      const g = nt(u), { made } = g, as = g.as(); if (!as.length) return;
-      const b = g.box0(as);
+      const g = nt(u), { W, H, made } = g, as = g.as(); if (!as.length) return;
+      const b = g.box0(as), S = Math.round(Math.max(170, Math.min(W * 0.55, H * 0.85))), N = 14, step = S / N;
+      const hw = S * 0.5 / W * 100, cx = Math.max(hw + 1, Math.min(99 - hw, b.cx)), cy = Math.max(S * 0.5 / H * 100 + 2, Math.min(96 - S * 0.5 / H * 100, b.cy - 2));
+      const strips = Array.from({ length: N }, (_, i) => {
+        const t = i / (N - 1), amp = (4 + 9 * Math.sin(Math.PI * Math.min(1, t * 1.15))).toFixed(1);   // giữa/dưới lắc mạnh hơn, đỉnh/chân lắc nhẹ
+        return `<i class="vt-strip" style="top:${(i * step).toFixed(1)}px;height:${(step + 5).toFixed(1)}px;background-size:${S}px ${S}px;background-position:0 -${(i * step).toFixed(1)}px;--a:${amp}%;animation-delay:-${(i * 0.17).toFixed(2)}s"></i>`;
+      }).join('');
+      const bagua = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'].map((c, i) => `<b style="--i:${i}">${c}</b>`).join('');
+      const root = g.mk('bf-vtd3d', `<div class="vt-glow"></div><div class="vt-ground"><i></i><i></i><i></i></div><div class="vt-orbit"><div class="vt-orbit-spin">${bagua}</div></div><div class="vt-stage"><div class="vt-strips">${strips}</div><div class="vt-core"></div></div>`, cx, cy);
+      root.style.setProperty('--s', S + 'px'); const iso = g.box.style.isolation; g.box.style.isolation = 'isolate';   // để lốc xoáy nằm SAU các tướng (z-index âm) mà vẫn trên nền sân
       try {
-        const tc = g.mk('bf-taiji', '☯', b.cx, Math.max(8, b.minY - 8));
-        tc.animate([{ transform: 'translate(-50%,-50%) scale(.2) rotate(0deg)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.3) rotate(360deg)', opacity: 1, offset: .6 }, { transform: 'translate(-50%,-50%) scale(1.1) rotate(540deg)', opacity: 1 }], { duration: 1100, easing: 'ease-out', fill: 'forwards' });
+        root.animate([{ transform: 'translate(-50%,-50%) scale(.15,.05)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.08,1.12)', opacity: 1, offset: .65 }, { transform: 'translate(-50%,-50%) scale(1,1)', opacity: 1 }],
+                     { duration: 900, easing: 'ease-out', fill: 'forwards' });
+        g.ring(cx, Math.min(94, cy + S * 0.4 / H * 100), '#fde047');
         await sleep(900); if (tok !== battleToken) return;
+        const cxp = cx * W / 100, cyp = (cy - S * 0.08 / H * 100) * H / 100;
         as.forEach((a, i) => setTimeout(() => {
-          if (!a.alive) return;
-          if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; }
-          g.ring(a.x, a.y, '#60a5fa'); MOD_STATS.forEach(k => pctMod(a, k, VTD_ALL_UP, VTD_TURNS, 'buff', 'vtd:' + k));
-          floatText(a, '☯ TẤT CẢ +' + Math.round(VTD_ALL_UP * 100) + '%'); refreshPanel();
+          if (tok !== battleToken || !a.alive) return;
+          const orb = g.mk('bf-vtd-orb', '', cx, cy - S * 0.08 / H * 100), dx = a.x * W / 100 - cxp, dy = a.y * H / 100 - cyp;
+          orb.animate([{ transform: 'translate(-50%,-50%) scale(.4)', opacity: 0 }, { opacity: 1, offset: .2 }, { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(1.2)`, opacity: 1 }], { duration: 420, easing: 'ease-in', fill: 'forwards' });
+          setTimeout(() => {
+            orb.remove(); if (tok !== battleToken || !a.alive) return;
+            if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; }
+            g.ring(a.x, a.y, '#fde047'); setTimeout(() => g.ring(a.x, a.y, '#60a5fa'), 90);
+            MOD_STATS.forEach(k => pctMod(a, k, VTD_ALL_UP, VTD_TURNS, 'buff', 'vtd:' + k));
+            floatText(a, '☯ TẤT CẢ +' + Math.round(VTD_ALL_UP * 100) + '%'); refreshPanel();
+          }, 420);
         }, i * 140));
-        await sleep(as.length * 140 + 900); if (tok !== battleToken) return;
-        tc.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, fill: 'forwards' }); await sleep(400);
-      } finally { made.forEach(d => d.remove()); }
+        await sleep(as.length * 140 + 1250); if (tok !== battleToken) return;
+        root.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1,1)' }, { opacity: 0, transform: 'translate(-50%,-50%) scale(.6,1.25)' }], { duration: 480, fill: 'forwards' }); await sleep(500);
+      } finally { made.forEach(d => d.remove()); g.box.style.isolation = iso; }
     }

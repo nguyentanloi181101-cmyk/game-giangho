@@ -49,7 +49,7 @@ js/
 - **Hạng Tỷ Võ = vị trí trong bảng** (có 3 người thì hạng 1-2-3). Tài khoản mới vào tự xếp tiếp xuống cuối bảng.
   Thắng người hạng cao hơn thì chèn lên ngay trên họ (họ và những người ở giữa tụt 1 hạng). Chỉ ghi vào doc của chính mình
   nên chạy được với Firestore rules chặt (mỗi người chỉ ghi `pvp_players/{uid}` của mình). Code: `js/modes/pvp/pvp-ranking.js`.
-- **Bảo Vật có 4 loại** (Tôn Sư Ký, Bá Vương Kiếm, Thủy Hoàng Đăng, Trống Lôi Âm). Mỗi loại có thể có nhiều bản
+- **Bảo Vật có 5 loại** (Tôn Sư Ký, Bá Vương Kiếm, Thủy Hoàng Đăng, Trống Lôi Âm, Kim Giao Tiễn; thông số ở `TS_DEFS` trong `js/items/treasure.js`; công thức: gốc × (1 + 0.5×★) × (1 + điểm/cấp × Lv)). Mỗi loại có thể có nhiều bản
   (cùng tên, cùng thông số, cấp/sao riêng). Mỗi khung gắn tối đa 3 Bảo Vật và **không được trùng loại**.
   Đổi 10🔥 ở Tỷ Võ = thêm 1 bản mới (Lv.0 ★0) của loại đã chọn. Code: `js/items/treasure.js`, `js/modes/pvp/pvp-flame.js`.
 
@@ -132,3 +132,11 @@ Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự
 - Phụ thể cộng **% theo chỉ số của từng tướng** lúc vào trận (PVE + Tỷ Võ). `Kích Phá` của thần thú là điểm cộng thẳng.
 - Mapping tên → chỉ số (`TT_FXMAP`, đoán tạm, sửa tại đó): Cường Công/Sát Lục→Công; Thần Thuẫn/Bá Thuẫn/Thần Huyết/Hoạt Khí/Tái Sinh→HP; Chiến Thuẫn/Ngự Thuẫn/Trợ Thuẫn→Thủ; Kỳ Thuẫn→Đỡ đòn; Huyết Bạo/Kích Sát→Bạo; Bạo Tức/Bạo Nộ→Bạo sát; Kích Phá→Phá giáp; Tinh Chuẩn→Chuẩn; Ẩn Thân/Tàn Ảnh→Né; các loại Tốc→Tốc độ. Đẩy Lui chưa có hiệu ứng.
 - Tỷ Võ người thật: snapshot đã gồm chỉ số sau phụ thể + tên thần thú/phụ thể. Bot/PVE: thần thú đối thủ chỉ trang trí.
+
+
+## Hiệu ứng 3D Ngũ Tuyệt
+- Bắc Cái: tre `assets/images/fx/bac-cai-bamboo.webp` rơi chéo 25° (đội trái rơi từ trên-trái xuống địch, đội phải rơi từ trên-phải xuống ta). Code: `js/heroes/skills/ngu-tuyet.js` (`bacCaiUlt`), CSS: `css/heroes/ngu-tuyet.css`.
+- Vương Trùng Dương: lốc xoáy Thái Cực 3D (`vtd-taiji-vortex.webp` cắt 14 lát lắc lệch pha, `vtd-taiji-core.webp` xoay như đồng xu, vòng Bát Quái, vòng sáng đất). Code: `vtdUlt`.
+- Tây Độc: cóc ngọc 3D (`td-toad3d.webp`, `td-coin.webp`) thay emoji 🐸 — thở/lắc theo chiều sâu, mắt đỏ phát sáng, tiền vàng quay quanh. Code: `tayDocUlt`.
+- Tụ Bảo Bồn: ảnh `assets/images/items/tu-bao-bon.webp`.
+- Đông Tà: 2 dải nhạc `dt-notes.webp` lượn 3D quanh địch (CSS `nt-*` trong ngu-tuyet.css). Code: `dongTaUlt`.

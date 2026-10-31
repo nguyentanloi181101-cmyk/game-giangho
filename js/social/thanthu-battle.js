@@ -25,12 +25,14 @@ function ttApply(u, bonus) {
   return u;
 }
 const ttPtIco = n => TT_PT_ICO[TT_PT.indexOf(n)] || '✨';
+const TT_FACE_LEFT = ['Tiên Lộc', 'Kim Sư'];   // thần thú có ảnh gốc quay mặt sang TRÁI (các con khác quay sang phải)
 function ttSetupUI(my, foe) {
   const ar = document.getElementById('battle-arena'); if (!ar) return;
   ar.querySelectorAll('.bf-bst, .bf-ptrow').forEach(e => e.remove());
   [[my, 'l'], [foe, 'r']].forEach(([x, side]) => {
     if (!x) return;
-    const st = document.createElement('div'); st.className = 'bf-bst ' + side;
+    const faceL = TT_FACE_LEFT.includes(x.beast), flip = side === 'l' ? faceL : !faceL;   // trái phải nhìn sang phải, phe địch nhìn sang trái
+    const st = document.createElement('div'); st.className = 'bf-bst ' + side + (flip ? ' flip' : '');
     st.innerHTML = `<div class="bf-bst-sp">${ttImg(x.beast)}</div><i class="bf-bst-pl"></i>`; ar.appendChild(st);
     if (x.pt && x.pt.length) { const r = document.createElement('div'); r.className = 'bf-ptrow ' + side;
       r.innerHTML = x.pt.map(p => `<span title="${p.n} +${p.v}${p.pts ? '' : '%'}">${ttPtIco(p.n)}</span>`).join(''); ar.appendChild(r); }

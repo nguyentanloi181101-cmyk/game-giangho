@@ -22,16 +22,26 @@ function renderDaiSanh() {
   if (dsTab === 'tin') body = `<div class="ds-news">${b.news.length ? b.news.map(n => { const d = new Date(n.t); return `<div><small>${d.getDate()}/${d.getMonth() + 1} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}</small> ${chEsc(n.x)}</div>`; }).join('') : '<div class="ch-empty">Chưa có tin tức.</div>'}</div>`;
   document.getElementById('ds-body').innerHTML = body;
 }
-const DS_DONATE = [['🥈 100.000 bạc', () => silver >= 100000, () => { silver -= 100000; }, 40, 10000], ['🌾 100.000 gạo', () => rice >= 100000, () => { rice -= 100000; }, 40, 10000], ['<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 100 vàng', () => gold >= 100, () => { gold -= 100; }, 150, 50000]];
+// [nhãn, tài nguyên đang có, số lượng / 1 lần góp, trừ tài nguyên(n), Uy Tín / lần, EXP Bang / lần]
+const DS_DONATE = [['🥈 bạc', () => silver, 100000, n => { silver -= n; }, 40, 10000], ['🌾 gạo', () => rice, 100000, n => { rice -= n; }, 40, 10000], ['<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng', () => gold, 100, n => { gold -= n; }, 150, 50000]];
+let dsQty = [1, 1, 1];   // số lần góp người chơi đã nhập cho từng dòng (1 lần = DS_DONATE[i][2] tài nguyên)
+const dsMax = i => Math.floor(DS_DONATE[i][1]() / DS_DONATE[i][2]);
+function dsQtyGet(i) { const el = document.getElementById('ds-q' + i); let q = Math.floor(Number(el ? el.value : dsQty[i])); if (!Number.isFinite(q) || q < 1) q = 1; return q; }
+function dsQtyRefresh(i) {   // cập nhật số tiền & phần thưởng khi gõ số lượng
+  const d = DS_DONATE[i], q = dsQtyGet(i); dsQty[i] = q;
+  const t = document.getElementById('ds-t' + i); if (t) t.innerHTML = `${fmtN(d[2] * q)} ${d[0]}`;
+  const r = document.getElementById('ds-r' + i); if (r) r.textContent = `+${fmtN(d[4] * q)} Uy Tín • +${fmtN(d[5] * q)} EXP Bang`;
+}
+function dsQtyMax(i) { const el = document.getElementById('ds-q' + i); el.value = Math.max(1, dsMax(i)); dsQtyRefresh(i); }
 function dsDonate() {
   const m = document.getElementById('qs-modal');
-  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Quyên Góp</div>${DS_DONATE.map((d, i) => `<div class="bm-row"><div class="bm-info"><b>${d[0]}</b><small>+${d[3]} Uy Tín • +${fmtN(d[4])} EXP Bang</small></div><button class="btn-attack" onclick="dsGive(${i})">Góp</button></div>`).join('')}</div>`; m.style.display = 'flex';
+  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Quyên Góp</div>${DS_DONATE.map((d, i) => `<div class="bm-row" style="flex-wrap:wrap"><div class="bm-info"><b id="ds-t${i}">${fmtN(d[2] * dsQty[i])} ${d[0]}</b><small id="ds-r${i}">+${fmtN(d[4] * dsQty[i])} Uy Tín • +${fmtN(d[5] * dsQty[i])} EXP Bang</small><small>Có: ${fmtN(d[1]())} • góp tối đa ${fmtN(dsMax(i))} lần (mỗi lần ${fmtN(d[2])})</small></div><div class="ds-qbox"><input type="number" class="ds-q" id="ds-q${i}" min="1" step="1" inputmode="numeric" value="${dsQty[i]}" oninput="dsQtyRefresh(${i})" aria-label="Số lần góp"><button class="ds-qmax" onclick="dsQtyMax(${i})">Tối đa</button><button class="btn-attack" onclick="dsGive(${i})">Góp</button></div></div>`).join('')}</div>`; m.style.display = 'flex';
 }
 function dsGive(i) {
-  const d = DS_DONATE[i]; if (!d[1]()) return scToast('Không đủ tài nguyên');
-  d[2](); resSave(); const s = gdBang(); s.uytin = Math.min(s.uyMax, s.uytin + d[3]); s.bang.exp += d[4];
+  const d = DS_DONATE[i], q = dsQtyGet(i), cost = d[2] * q; if (d[1]() < cost) return scToast('Không đủ tài nguyên');
+  d[3](cost); resSave(); const s = gdBang(), uy = d[4] * q, ex = d[5] * q; s.uytin = Math.min(s.uyMax, s.uytin + uy); s.bang.exp += ex;
   while (s.bangLv < 10 && s.bang.exp >= gdExpMax(s.bangLv)) { s.bang.exp -= gdExpMax(s.bangLv); s.bangLv++; s.bang.news.unshift({ t: Date.now(), x: 'Bang lên cấp ' + s.bangLv + '!' }); }
-  s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${d[0].replace(/<[^>]+>/g, "")}` }); gdSave(s); scToast(`+${d[3]} Uy Tín`); dsDonate(); renderDaiSanh();
+  s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${fmtN(cost)} ${d[0].replace(/<[^>]+>/g, "").replace(/^\S+\s/, "")}` }); gdSave(s); scToast(`+${uy} Uy Tín`); dsDonate(); renderDaiSanh();
 }
 /* ---- Tụ Bảo Bồn ---- */
 const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị Linh', '🎭', 1], ['Đá Nữ Oa', '🔻', 20]];
