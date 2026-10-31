@@ -38,7 +38,7 @@ const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị 
 function openBasin() { renderBasin(); document.getElementById('qs-modal').style.display = 'flex'; }
 function renderBasin() {
   const s = gdBang(), v = s.bang.basin, m = document.getElementById('qs-modal');
-  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><img class="bz-pic" src="assets/images/items/tu-bao-bon.webp" alt="Tụ Bảo Bồn"><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
+  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Tụ Bảo Bồn</div><img class="bz-pic" src="assets/images/items/tu-bao-bon.webp" alt="Tụ Bảo Bồn"><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
   <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${v / 10}%"></i></div><div class="dv-uy">${v}/1000</div>
   <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
 }

@@ -25,7 +25,7 @@ function qsManual(id) { if (confirm('Chế độ này chưa mở trong game. T�
 function qsChest(th) {
   const s = qsSt(), c = QS_CHESTS.find(x => x[0] === th); if (s.claimed[th]) return scToast('Đã nhận rồi');
   const m = document.getElementById('qs-modal'), ok = qsPts(s) >= th;
-  m.innerHTML = `<div class="md-box"><div class="hd-name" style="text-align:center;color:#fde047">Quà Tích Cực (${th} điểm)</div><div class="qs-gifts">${c[1].map(g => `<div>${g[1]}<em>${fmtN(g[2])}</em><small>${g[0] === '@gold' ? 'Vàng' : g[0]}</small></div>`).join('')}</div>
+  m.innerHTML = `<div class="md-box"><div class="hd-name" style="text-align:center;color:#fde047">Quà Tích Cực (${th} điểm)</div><div class="qs-gifts">${c[1].map(g => `<div>${gdIco(g[0], g[1])}<em>${fmtN(g[2])}</em><small>${g[0] === '@gold' ? 'Vàng' : g[0]}</small></div>`).join('')}</div>
     <div class="gs-act"><button style="margin:auto" ${ok ? '' : 'disabled'} onclick="qsClaim(${th})">${ok ? 'Nhận' : 'Chưa đủ điểm'}</button></div></div>`; m.style.display = 'flex';
 }
 function qsClaim(th) { const s = qsSt(); if (s.claimed[th] || qsPts(s) < th) return; QS_CHESTS.find(x => x[0] === th)[1].forEach(g => qsKho(g[0], g[1], g[2])); const s2 = qsSt(); s2.claimed[th] = 1; saveJSON('quest_state', s2); document.getElementById('qs-modal').style.display = 'none'; renderQuest(); scToast('Đã nhận quà, xem trong Túi Đồ'); }
