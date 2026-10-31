@@ -25,11 +25,11 @@ Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });
 const seqT = ms => (typeof battleFast !== 'undefined' && battleFast) ? 0 : ms * (typeof ultTimeScale === 'number' ? ultTimeScale : 1);
 
 // HTML dáng đứng (thay ảnh thân tĩnh) — gọi từ applyRole trong battle/engine.js
-// side: 'hero' = đội ta (đứng bên trái, nhìn sang phải) • khác = đội địch (bên phải) → lật ngang để 2 đội nhìn vào nhau
+// Ảnh gốc các chuỗi khung quay mặt sang TRÁI: đội ta (bên trái) phải lật ngang để nhìn sang phải, đội địch (bên phải) giữ nguyên → 2 đội nhìn vào nhau
 function seqIdleHTML(id, hb, side) {
   const c = SEQ_IDLE[id]; if (!c) return '';
   const s = SEQ[c.sheet], h = c.h, w = Math.round(h * s.cw / s.ch), lift = h - ((hb && hb.bodyH) || 76);
-  return '<div class="hero-seq" style="width:' + w + 'px;height:' + h + 'px;margin:' + (-lift) + 'px 0 0 ' + (-w / 2) + 'px;' + (side && side !== 'hero' ? 'transform:scaleX(-1);' : '') + 'background-image:url(' + s.src + ');background-size:' + (w * s.n) + 'px ' + h + 'px;--end:' + (-w * s.n) + 'px;--ms:' + c.ms + 'ms"></div>';
+  return '<div class="hero-seq" style="width:' + w + 'px;height:' + h + 'px;margin:' + (-lift) + 'px 0 0 ' + (-w / 2) + 'px;' + (side === 'hero' ? 'transform:scaleX(-1);' : '') + 'background-image:url(' + s.src + ');background-size:' + (w * s.n) + 'px ' + h + 'px;--end:' + (-w * s.n) + 'px;--ms:' + c.ms + 'ms"></div>';
 }
 // Phần tử hiển thị chuỗi khung, rộng w px. d.show(i) = dừng ở khung i; d.loop(ms) = lặp liên tục.
 function seqEl(s, w) {
@@ -42,7 +42,7 @@ function seqEl(s, w) {
 }
 // Phủ chuỗi khung lên tướng u (ẩn ảnh thân/dáng đứng trong lúc diễn, căn đáy giữa). end() trả lại như cũ.
 function seqOverlay(u, s, w) {
-  const d = seqEl(s, w); d.classList.add('seq-over'); if (u.side !== 'hero') d.style.transform = 'translateX(-50%) scaleX(-1)'; u.el.appendChild(d);   // đội địch lật ngang để nhìn về phía đội ta
+  const d = seqEl(s, w); d.classList.add('seq-over'); if (u.side === 'hero') d.style.transform = 'translateX(-50%) scaleX(-1)'; u.el.appendChild(d);   // đội ta lật ngang để nhìn sang phải (về phía địch)
   const hid = u.el.querySelectorAll('.hero-body, .hero-img, .bf-emo, .bf-sprite .hero-seq'); hid.forEach(b => { b.style.visibility = 'hidden'; });
   return { el: d, show: i => d.show(i), end() { d.remove(); hid.forEach(b => { b.style.visibility = ''; }); } };
 }
