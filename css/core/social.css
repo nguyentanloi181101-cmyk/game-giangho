@@ -30,7 +30,7 @@
 .vh-btn .bd{position:absolute;top:-6px;right:-4px;background:#dc2626;color:#fff;border-radius:10px;min-width:20px;height:20px;line-height:20px;font-size:11px;text-align:center}
 /* bang hội */
 #screen-guild{background:linear-gradient(180deg,#1e3a5f 0%,#3b6b8f 38%,#2d5a2d 38%,#1b3a1b 100%)}
-.gd-scene{position:relative;flex:1;min-height:420px}
+.gd-scene{position:relative;flex:1;min-height:1000px}
 .gd-loc{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer;color:#fff}
 .gd-loc .ic{font-size:42px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.7))}
 .gd-loc .lb{display:inline-block;margin-top:2px;background:rgba(0,0,0,.65);border:1px solid #fde047;border-radius:10px;padding:1px 9px;font-size:12px;font-weight:900;color:#fde047}

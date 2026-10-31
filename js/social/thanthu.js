@@ -13,7 +13,7 @@ const TT_BEASTS = [   // [tên, hạng, mảnh cần, icon, [hiệu quả phụ 
 const TT_PT = ['Huyết Bạo', 'Ngự Thuẫn', 'Hoạt Khí', 'Cường Công', 'Sát Lục', 'Thần Huyết', 'Tái Sinh', 'Thần Thuẫn', 'Chiến Thuẫn', 'Bá Thuẫn', 'Bạo Nộ', 'Bạo Tức', 'Tinh Chuẩn', 'Cấp Tốc', 'Ẩn Thân', 'Kích Sát', 'Kích Phá', 'Đẩy Lui', 'Trợ Thuẫn', 'Tàn Ảnh', 'Kỳ Thuẫn', 'Thần Tốc', 'Trợ Tốc', 'Hộ Tốc', 'Gia Tốc'];
 const TT_PT_ICO = ['🩸', '🛡️', '💠', '⚔️', '🗡️', '❤️‍🔥', '💚', '🔰', '🧱', '🐯', '💪', '⚡', '🎯', '🏃', '🌫️', '🔪', '👹', '💨', '🛡️', '👤', '☯️', '👢', '👟', '👞', '🥾'];
 const TT_QC = ['#9ca3af', '#22c55e', '#3b82f6', '#a855f7', '#f59e0b'], TT_FEED = { 'Thú Hồn': 100, 'Thú Linh': 500 };
-const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su' };
+const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su', 'Khổng Tước': 'khong-tuoc', 'Cửu Vỹ Hồ': 'cuu-vi-ho', 'Kim Sư': 'kim-su', 'Hỏa Kỳ Lân': 'hoa-ky-lan' };
 function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? (ct ? `<span class="ct-wrap"><img class="tt-img ct" alt="${n}" src="assets/images/thanthu/${sl}.webp"><i class="ct-crown">👑</i></span>` : `<img class="tt-img" alt="${n}" src="assets/images/thanthu/${sl}.webp">`) : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
 const ttBeast = n => TT_BEASTS.find(b => b[0] === n);
 function ttSt() {
