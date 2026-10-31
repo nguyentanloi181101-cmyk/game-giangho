@@ -129,3 +129,4 @@ img.gi-g{height:1.15em;width:auto;vertical-align:-.2em;display:inline-block}.bm-
 .bg-q{display:flex;align-items:center;gap:4px;margin-top:4px}.bg-q button{padding:2px 8px;font-size:12px}.bg-q span{min-width:28px;text-align:center;color:#fff;font-weight:900}
 .bg-d{grid-column:1/-1;color:#e2e8f0;font-size:12px;border-top:1px dashed #fde04755;padding-top:5px}
 .bg-pass{width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border-radius:8px;border:2px solid #fde047;background:#111827;color:#fff;font-size:18px;text-align:center;letter-spacing:6px}
+.bm-drops div img.gi{width:36px;height:36px;object-fit:contain;display:block}
