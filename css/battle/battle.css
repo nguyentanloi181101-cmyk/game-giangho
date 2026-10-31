@@ -184,7 +184,7 @@
 @keyframes wanPulse{50%{filter:brightness(1.4)}}
 .bf-taiji{position:absolute;font-size:96px;line-height:1;z-index:75;pointer-events:none;color:#fff;text-shadow:0 0 18px #60a5fa,0 0 38px #fde047;filter:drop-shadow(0 0 10px #60a5fa)}
 /* Thần thú ra trận */
-.bf-bst{position:absolute;top:70px;width:50%;height:min(230px,34vh);z-index:5;pointer-events:none}
+.bf-bst{position:absolute;top:34px;width:50%;height:min(196px,29vh);z-index:5;pointer-events:none}
 .bf-bst.l{left:0}.bf-bst.r{right:0}
 .bf-bst-pl{position:absolute;left:6%;right:6%;bottom:0;height:26px;border-radius:50%;background:radial-gradient(ellipse,#d9b96a 0,#8a6a2a 70%);box-shadow:0 4px 10px #000a}
 .bf-bst-sp{position:absolute;left:0;right:0;top:0;bottom:12px;display:flex;align-items:flex-end;justify-content:center;z-index:1;filter:drop-shadow(0 6px 8px #000a)}
