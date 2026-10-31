@@ -1,4 +1,4 @@
-/* BANG HỘI: Thần Thú, Diễn Võ Trường, Bang Chiến (Boss bang)
+/* BANG HỘI: Thần Thú, Lò Bát Quái (trước là Diễn Võ Trường), Bang Chiến (Boss bang)
    Boss thứ 1 = 2.000.000 HP, mỗi boss sau nhân đôi; Chí Tôn = HP & sát thương x2. Kỹ năng boss: chờ mô tả. */
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng 1000 điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng 50 điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng 50 điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng 800 điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng 40 điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp tăng hồi máu'],
@@ -21,10 +21,10 @@ const gdSave = s => saveJSON('guild_state', s);
   const mc = document.querySelector('.main-content'), add = (id, html) => { const d = document.createElement('div'); d.className = 'screen'; d.id = 'screen-' + id; d.innerHTML = html; mc.appendChild(d); };
   const hd = (t, back) => `<div class="pve-header"><button class="btn-back" onclick="${back || "openGuild()"}">Trở về</button><h2 class="pve-title">${t}</h2></div>`;
   add('thanthu', hd('Thần Thú') + '<div class="gs-tabs" id="tt-tabs"></div><div id="tt-body"></div>');
-  add('dienvo', hd('Diễn Võ Trường') + '<div id="dv-body"></div>');
-  add('bangboss', hd('Cấm Địa') + '<div class="gs-tabs" id="bb-tabs"></div><div id="bb-body"></div>');
+  add('dienvo', hd('Lò Bát Quái') + '<img class="gs-ban" src="assets/images/guild/lo-bat-quai.webp" alt="Lò Bát Quái"><div id="dv-body"></div>');
+  add('bangboss', hd('Cấm Địa') + '<img class="gs-ban" src="assets/images/guild/cam-dia.webp" alt="Cấm Địa"><div class="gs-tabs" id="bb-tabs"></div><div id="bb-body"></div>');
 })();
-/* ---- Diễn Võ Trường ---- */
+/* ---- Lò Bát Quái (trước là Diễn Võ Trường) ---- */
 let dvSel = 0;
 function openDienVo() { renderDienVo(); switchScreen('dienvo'); }
 function dvPick(i) { dvSel = i; renderDienVo(); }

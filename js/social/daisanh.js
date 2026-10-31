@@ -48,7 +48,7 @@ const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị 
 function openBasin() { renderBasin(); document.getElementById('qs-modal').style.display = 'flex'; }
 function renderBasin() {
   const s = gdBang(), v = s.bang.basin, m = document.getElementById('qs-modal');
-  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><img class="bz-pic" src="assets/images/items/tu-bao-bon.webp" alt="Tụ Bảo Bồn"><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
+  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">Tụ Bảo Bồn</div><img class="bz-pic" src="assets/images/guild/tu-bao-bon.webp" alt="Tụ Bảo Bồn"><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
   <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${v / 10}%"></i></div><div class="dv-uy">${v}/1000</div>
   <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
 }
@@ -59,4 +59,4 @@ function basinPut(k) {
   s.bang.basin += add; if (s.bang.basin >= 1000) { s.bang.basin -= 1000; s.kho['Thú Linh'] = s.kho['Thú Linh'] || { ico: '🔥', qty: 0 }; s.kho['Thú Linh'].qty += 50; gold += 100; resSave(); msg += ' • BỒN ĐẦY: +50 Thú Linh, +100 vàng'; s.bang.news.unshift({ t: Date.now(), x: pvName() + ' làm đầy Tụ Bảo Bồn' }); }
   gdSave(s); renderBasin(); scToast(msg);
 }
-(function () { const sc = document.createElement('div'); sc.className = 'screen'; sc.id = 'screen-daisanh'; sc.innerHTML = `<div class="pve-header"><button class="btn-back" onclick="openGuild()">Trở về</button><h2 class="pve-title">Đại Sảnh</h2></div><div class="gs-tabs" id="ds-tabs"></div><div id="ds-body"></div>`; document.querySelector('.main-content').appendChild(sc); })();
+(function () { const sc = document.createElement('div'); sc.className = 'screen'; sc.id = 'screen-daisanh'; sc.innerHTML = `<div class="pve-header"><button class="btn-back" onclick="openGuild()">Trở về</button><h2 class="pve-title">Đại Sảnh</h2></div><img class="gs-ban" src="assets/images/guild/dai-sanh.webp" alt="Đại Sảnh"><div class="gs-tabs" id="ds-tabs"></div><div id="ds-body"></div>`; document.querySelector('.main-content').appendChild(sc); })();
