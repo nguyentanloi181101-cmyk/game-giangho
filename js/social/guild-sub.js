@@ -1,4 +1,4 @@
-/* BANG HỘI: Thần Thú, Lò Bát Quái (trước là Diễn Võ Trường), Bang Chiến (Boss bang)
+/* BANG HỘI: Thần Thú, Diễn Võ Trường, Bang Chiến (Boss bang)
    Boss thứ 1 = 2.000.000 HP, mỗi boss sau nhân đôi; Chí Tôn = HP & sát thương x2. Kỹ năng boss: chờ mô tả. */
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng 1000 điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng 50 điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng 50 điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng 800 điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng 40 điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp tăng hồi máu'],
@@ -21,10 +21,10 @@ const gdSave = s => saveJSON('guild_state', s);
   const mc = document.querySelector('.main-content'), add = (id, html) => { const d = document.createElement('div'); d.className = 'screen'; d.id = 'screen-' + id; d.innerHTML = html; mc.appendChild(d); };
   const hd = (t, back) => `<div class="pve-header"><button class="btn-back" onclick="${back || "openGuild()"}">Trở về</button><h2 class="pve-title">${t}</h2></div>`;
   add('thanthu', hd('Thần Thú') + '<div class="gs-tabs" id="tt-tabs"></div><div id="tt-body"></div>');
-  add('dienvo', hd('Lò Bát Quái') + '<img class="gs-ban" src="assets/images/guild/lo-bat-quai.webp" alt="Lò Bát Quái"><div id="dv-body"></div>');
-  add('bangboss', hd('Cấm Địa') + '<img class="gs-ban" src="assets/images/guild/cam-dia.webp" alt="Cấm Địa"><div class="gs-tabs" id="bb-tabs"></div><div id="bb-body"></div>');
+  add('dienvo', hd('Diễn Võ Trường') + '<div id="dv-body"></div>');
+  add('bangboss', hd('Cấm Địa') + '<div class="gs-tabs" id="bb-tabs"></div><div id="bb-body"></div>');
 })();
-/* ---- Lò Bát Quái (trước là Diễn Võ Trường) ---- */
+/* ---- Diễn Võ Trường ---- */
 let dvSel = 0;
 function openDienVo() { renderDienVo(); switchScreen('dienvo'); }
 function dvPick(i) { dvSel = i; renderDienVo(); }
@@ -46,13 +46,13 @@ function renderDienVo() {
 }
 /* ---- Bang Chiến / Boss ---- */
 const GD_BOSS = [   // [tên, bang cấp, icon, cách đánh, đặc điểm, [4 kỹ năng], tên Chí Tôn]
-  ['Kỳ Lân', 2, '', 'Đơn công', 'Có kỹ năng choáng và miễn dịch', ['Dẫn Lôi', 'Thiết Mã', 'Mã Đề Tiễn', 'Tất Sát'], 'Thiên Lân'],
-  ['Xích Vũ', 3, '', 'Đơn công', 'Có kỹ năng né tránh và miễn dịch', ['Hạc Minh', 'Nhàn Vân', 'Hạc Sí', 'Tất Sát'], 'Xích Tinh'],
-  ['Tiên Lộc', 4, '', 'Đơn công', 'Có kỹ năng trị liệu và miễn dịch', ['Tùng Lâm', 'Câu Hồn', 'Trường Xuân', 'Tất Sát'], 'Chí Tôn Tiên Lộc'],
-  ['Long Quy', 5, '', 'Đơn công', 'Có kỹ năng thôn phệ và miễn dịch', ['Quy Giáp', 'Phong Vân', 'Thôn Phệ', 'Tất Sát'], 'Kim Quy'],
-  ['Báo Tuyết', 7, '', 'Chủ yếu là tấn công đơn', 'Quái vật này có đặc điểm nổi bật là rất xấu và rất mạnh', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Báo Tuyết'],
-  ['Hắc Điêu', 8, '', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Hắc Điêu'],
-  ['Cuồng Ngưu', 9, '', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Cuồng Ngưu']];
+  ['Kỳ Lân', 2, '🦄', 'Đơn công', 'Có kỹ năng choáng và miễn dịch', ['Dẫn Lôi', 'Thiết Mã', 'Mã Đề Tiễn', 'Tất Sát'], 'Thiên Lân'],
+  ['Xích Vũ', 3, '🦅', 'Đơn công', 'Có kỹ năng né tránh và miễn dịch', ['Hạc Minh', 'Nhàn Vân', 'Hạc Sí', 'Tất Sát'], 'Xích Tinh'],
+  ['Tiên Lộc', 4, '🦌', 'Đơn công', 'Có kỹ năng trị liệu và miễn dịch', ['Tùng Lâm', 'Câu Hồn', 'Trường Xuân', 'Tất Sát'], 'Chí Tôn Tiên Lộc'],
+  ['Long Quy', 5, '🐢', 'Đơn công', 'Có kỹ năng thôn phệ và miễn dịch', ['Quy Giáp', 'Phong Vân', 'Thôn Phệ', 'Tất Sát'], 'Kim Quy'],
+  ['Báo Tuyết', 7, '🐆', 'Chủ yếu là tấn công đơn', 'Quái vật này có đặc điểm nổi bật là rất xấu và rất mạnh', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Báo Tuyết'],
+  ['Hắc Điêu', 8, '🦅', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Hắc Điêu'],
+  ['Cuồng Ngưu', 9, '🐂', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Cuồng Ngưu']];
 const gdBossHp = (k, ct) => 2000000 * Math.pow(2, k) * (ct ? 2 : 1);
 const gdBossAtk = (k, ct) => Math.round(gdBossHp(k, 0) / 4000) * (ct ? 2 : 1);   // sát thương 1 đòn lên 1 tướng
 const gdDrops = k => { const b = GD_BOSS[k][0]; return k < 4

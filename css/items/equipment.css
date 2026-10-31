@@ -37,6 +37,3 @@
     .eq-tab.on{border-color:#fde047;background:#4d2d14}
     .eq-tab small{color:#fde047}
     .eq-empty{font-size:13px;color:#cbd5e1;text-align:center;padding:18px 8px;line-height:1.6}
-
-    /* ảnh trang bị đã tách nền: hiện đủ, không cắt */
-    .eq-img{object-fit:contain}

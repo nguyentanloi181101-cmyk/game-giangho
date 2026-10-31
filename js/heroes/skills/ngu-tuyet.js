@@ -2,6 +2,10 @@
    Tăng/giảm chỉ số dùng addMod (engine.js): hết hạn tự trả lại đúng số đã cộng/trừ. */
 
     const BC_IMG = 'assets/images/fx/bac-cai-bamboo.webp';   // ảnh cây tre Bắc Cái (Đả Cẩu Bổng)
+    // Chuỗi 13 khung hành động khi tung tuyệt kỹ (lưới 5 cột x 3 hàng, mỗi ô cw x ch px, k = hệ số phóng khi hiển thị)
+    //  khung 0-4 chạy đà • 5-7 bật lên, vung gậy • 8-9 đập đất • 10-12 thu thế
+    const BC_SEQ = { src: 'assets/images/heroes/bac-cai-ult.webp', cw: 280, ch: 200, cols: 5, k: 0.78 };
+    { const im = new Image(); im.src = BC_SEQ.src; }
     ['assets/images/fx/dt-burst.webp', 'assets/images/fx/td-toad3d.webp', 'assets/images/fx/td-coin.webp', 'assets/images/fx/bac-cai-bamboo.webp', 'assets/images/fx/vtd-taiji-vortex.webp', 'assets/images/fx/vtd-taiji-core.webp'].forEach(src => { const im = new Image(); im.src = src; });   // nạp sẵn để lần đầu thi triển không bị giật
 
     // Bộ dựng chung cho các chiêu: sân đấu, kích thước, danh sách địch/ta còn sống, tạo hiệu ứng tạm
@@ -24,16 +28,37 @@
     const sayLater = (t, txt, ms) => setTimeout(() => { if (t.el.isConnected) floatText(t, txt); }, ms || 300);
 
     // ---------- BẮC CÁI: bay qua đội hình địch, phóng 18 cây tre từ góc chéo trên xuống ----------
+    // Phủ chuỗi khung lên tướng (ẩn ảnh thân thường trong lúc diễn). show(i, lật?) đổi khung; end() trả lại ảnh thân.
+    function bcSeq(u) {
+      const S = BC_SEQ, d = document.createElement('div'); d.className = 'bc-seq';
+      d.style.width = S.cw * S.k + 'px'; d.style.height = S.ch * S.k + 'px';
+      d.style.backgroundImage = 'url(' + S.src + ')'; d.style.backgroundSize = (S.cw * S.cols * S.k) + 'px ' + (S.ch * 3 * S.k) + 'px';
+      u.el.appendChild(d);
+      const bodies = u.el.querySelectorAll('.hero-body, .hero-img, .bf-emo'); bodies.forEach(b => { b.style.visibility = 'hidden'; });
+      const api = {
+        show(i, flip) {   // ảnh gốc quay mặt sang PHẢI: đội trái giữ nguyên, đội phải lật
+          if (flip === undefined) flip = u.side !== 'hero';
+          d.style.backgroundPosition = (-(i % S.cols) * S.cw * S.k) + 'px ' + (-Math.floor(i / S.cols) * S.ch * S.k) + 'px';
+          d.style.transform = 'translateX(-50%) scaleX(' + (flip ? -1 : 1) + ')';
+        },
+        end() { d.remove(); bodies.forEach(b => { b.style.visibility = ''; }); }
+      };
+      api.show(0); return api;
+    }
     async function bacCaiUlt(u, tok) {
       const g = nt(u), { f, W, H, base, made } = g, es0 = g.es(); if (!es0.length) return;
       const b = g.box0(es0), landX = u.side === 'hero' ? Math.min(94, b.maxX + 9) : Math.max(6, b.minX - 9), landY = b.cy;
       const dx = (landX - u.x) * W / 100, dy = (landY - u.y) * H / 100, oldZ = u.el.style.zIndex;
       const mid = `translate(calc(-50% + ${dx / 2}px),calc(-50% + ${dy / 2 - 130}px))`, land = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
       const per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS, dir = u.side === 'hero' ? 1 : -1;
+      const seq = bcSeq(u), timers = [], at = (ms, i, flip) => timers.push(setTimeout(() => { if (tok === battleToken) seq.show(i, flip); }, ms));
       try {
         u.el.style.zIndex = 99;
         u.el.animate([{ transform: base }, { transform: mid, offset: .5 }, { transform: land }], { duration: 650, easing: 'ease-in-out', fill: 'forwards' });
+        [0, 80, 160, 240, 320, 400, 480, 560].forEach((ms, i) => at(ms, i));   // chạy đà → bật lên → vung gậy
         await sleep(680); if (tok !== battleToken) return;
+        seq.show(8);                                                          // chạm đất, bung hào quang vàng
+        at(120, 9); at(380, 10); at(640, 11); at(900, 12);                    // đập gậy → thu thế trong lúc tre rơi
         g.ring(landX, landY, '#84cc16');
         for (let k = 0; k < BC_HITS; k++) {
           const es = g.es(); if (!es.length) break;
@@ -65,8 +90,10 @@
         refreshPanel(); await sleep(450); if (tok !== battleToken) return;
         u.el.getAnimations().forEach(a => a.cancel());
         u.el.animate([{ transform: land }, { transform: mid, offset: .5 }, { transform: base }], { duration: 450, easing: 'ease-in-out', fill: 'forwards' });
+        const back = u.side === 'hero';                                       // quay đầu chạy về: lật ngược hướng nhìn
+        [1, 2, 1, 2].forEach((fr, i) => at(i * 110, fr, back));
         await sleep(480);
-      } finally { made.forEach(d => d.remove()); u.el.getAnimations().forEach(a => a.cancel()); u.el.style.zIndex = oldZ; }
+      } finally { timers.forEach(clearTimeout); seq.end(); made.forEach(d => d.remove()); u.el.getAnimations().forEach(a => a.cancel()); u.el.style.zIndex = oldZ; }
     }
 
     // ---------- ĐÔNG TÀ: nhảy lên cao thổi sóng âm 4 lần ----------

@@ -1,5 +1,9 @@
 /* NGŨ TUYỆT — hiệu ứng 3D: Bắc Cái (tre Đả Cẩu Bổng) • Vương Trùng Dương (lốc xoáy Thái Cực) */
 
+/* ===== BẮC CÁI: chuỗi khung hành động tuyệt kỹ (js/heroes/skills/ngu-tuyet.js · bcSeq) ===== */
+.bc-seq{position:absolute;left:50%;bottom:2px;z-index:3;pointer-events:none;background-repeat:no-repeat;
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.45));will-change:background-position,transform}
+
 /* ===== BẮC CÁI: tre 3D rơi chéo ===== */
 .bf-bamboo3d{position:absolute;transform:translate(-50%,-50%);z-index:105;pointer-events:none;will-change:transform,opacity}
 .bf-bamboo3d img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;

@@ -141,3 +141,10 @@ Tăng/giảm chỉ số theo hiệp dùng `addMod` (engine.js), hết hạn tự
 - Tụ Bảo Bồn: ảnh `assets/images/items/tu-bao-bon.webp`.
 - Đông Tà: nốt nhạc `dt-burst.webp` bung ra từ tâm rồi tan biến, 4 nhịp (`dongTaUlt`).
 - Thần thú ra trận: .bf-bst top:34px, cao min(196px,29vh) (đã đưa sát lên và thu nhỏ).
+
+## Chuỗi khung hành động tuyệt kỹ (sprite sheet) — mẫu cho tướng khác
+- Bắc Cái: `assets/images/heroes/bac-cai-ult.webp` = 13 khung nền trong suốt, lưới **5 cột × 3 hàng**, mỗi ô 280×200 px (căn đáy, giữa ô).
+  Khung 0-4 chạy đà · 5-7 bật lên, vung gậy · 8-9 đập đất · 10-12 thu thế. Ảnh gốc quay mặt sang phải (đội phải được lật tự động).
+- Code: `bcSeq(u)` + `BC_SEQ` + lịch đổi khung trong `bacCaiUlt` (`js/heroes/skills/ngu-tuyet.js`); CSS `.bc-seq` ở `css/heroes/ngu-tuyet.css`.
+- Muốn đổi tốc độ: sửa các mốc ms trong `[0, 80, 160, ...]` và `at(120, 9); at(380, 10)...`. Muốn nhân vật to/nhỏ hơn: sửa `k` trong `BC_SEQ`.
+- Thêm chuỗi khung cho tướng khác: tạo sheet cùng quy cách, copy `bcSeq` đổi hằng số, gọi `show(i)` theo mốc thời gian trong hàm tuyệt kỹ của tướng đó.
