@@ -2,11 +2,26 @@
    (tách từ index.html cũ — script) */
 
     // Cứ 10 cấp tướng được tăng thêm 1 sao (cấp 150 → tối đa ★15); thấp nhất vẫn là ★6 như cũ
-    const starCapOf = lv => Math.max(STAR_MAX, Math.floor(lv / 10));
-    // Thẻ tướng ngoài trang chủ: tối đa 5 ô sao; từ 6 sao trở lên thì 1 sao lớn = 2 sao (6★ = 1 lớn + 4 nhỏ)
-    const homeStars = n => { n = Math.max(0, Math.min(10, n | 0)); const b = Math.max(0, n - 5), sm = n - 2 * b;
-      return '<span style="font-size:12px;letter-spacing:0">★</span>'.repeat(b) + '★'.repeat(sm); };
-    const starStr = n => n <= STAR_MAX ? '★'.repeat(n) : '★×' + n;
+    const STAR_ABS_MAX = 15;   // tối đa 15 sao, không tăng thêm
+    const starCapOf = lv => Math.min(STAR_ABS_MAX, Math.max(STAR_MAX, Math.floor(lv / 10)));
+    // CÁCH HIỂN THỊ SAO (dùng chung thẻ tướng, Tỷ Võ, Tăng Sao):
+    //  ★1-5  : n sao thường (vàng)
+    //  ★6-10 : sao LỚN = 2 sao → ★6 = 1 lớn + 4 nhỏ, ★7 = 2 lớn + 3 nhỏ … ★10 = 5 lớn
+    //  ★11-15: luôn 5 sao lớn, đổi dần từ vàng sang ĐỎ → ★11 = 1 đỏ + 4 vàng, ★12 = 2 đỏ + 3 vàng … ★15 = 5 đỏ (tối đa)
+    // opt.off: luôn hiện đủ 5 ô (sao chưa đạt mờ) • opt.bigPx: cỡ chữ sao lớn (mặc định 12)
+    const heroStarsHTML = (n, opt) => {
+      opt = opt || {}; n = Math.max(0, Math.min(STAR_ABS_MAX, n | 0));
+      const big = n <= 5 ? 0 : Math.min(5, n - 5), red = n > 10 ? n - 10 : 0, px = opt.bigPx || 12;
+      const one = (cls, bigStar) => '<i class="hs ' + cls + '"' + (bigStar ? ' style="font-size:' + px + 'px"' : '') + '>★</i>';
+      let h = '';
+      for (let k = 0; k < big; k++) h += one('b' + (k < red ? ' r' : ''), true);
+      const sm = n <= 5 ? n : 5 - big;
+      for (let k = 0; k < sm; k++) h += one('', false);
+      if (opt.off && n < 5) for (let k = n; k < 5; k++) h += one('off', false);
+      return h;
+    };
+    const homeStars = n => heroStarsHTML(n);
+    const starStr = n => n <= STAR_MAX ? '★'.repeat(n) : '★×' + Math.min(n, STAR_ABS_MAX);
     function getProg(id) {
       const s = START_PROG[id] || { lv:1, star:1 }, p = heroProg[id] || {};
       const lv = Math.min(LV_MAX, Math.max(s.lv, p.lv || s.lv));

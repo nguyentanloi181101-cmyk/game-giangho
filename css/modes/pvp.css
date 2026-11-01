@@ -49,7 +49,7 @@
     .pv-p{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;overflow:hidden;border-radius:4px}
     .pv-st{display:flex;align-items:center;justify-content:center;gap:1px;height:16px;line-height:1;color:#fbbf24;white-space:nowrap;text-shadow:0 1px 1px #000}
     .pv-st i{font-style:normal;font-size:12px;line-height:1}
-    .pv-st i.big{font-size:20px;filter:drop-shadow(0 0 3px rgba(251,191,36,.9))}
+    .pv-st i.hs{color:#fbbf24}.pv-st i.hs.r{color:#ef4444}
     .pv-st i.off{opacity:.3}
     .pv-st b{font-size:11px;margin-left:1px}
     .pv-b{width:100%;height:5px;background:#0a0f20;border:1px solid #000;border-radius:3px;overflow:hidden}

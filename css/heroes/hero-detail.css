@@ -36,3 +36,9 @@
     .hd-line>span:first-child{white-space:nowrap;flex-shrink:0}
     .hd-line>span:last-child{text-align:right}
     .hd-line em{white-space:nowrap}
+
+/* ===== SAO TƯỚNG: nhỏ / lớn / đỏ (js/heroes/hero-progress.js · heroStarsHTML) ===== */
+.hs{font-style:normal;color:#fbbf24}
+.hs.b{line-height:1;filter:drop-shadow(0 0 3px rgba(251,191,36,.9))}
+.hs.r{color:#ef4444;filter:drop-shadow(0 0 3px rgba(239,68,68,.95))}
+.hs.off{opacity:.3}

@@ -2,12 +2,10 @@
    (tách từ index.html cũ — script) */
 
     // ---- Panel chiến đấu Tỷ Võ: hàng đội địch (trên) + hàng đội ta (dưới), tướng + sao + máu + nộ + Tốc ----
-    // Sao hiển thị luôn 5 ô: ★1-5 = số sao sáng (sao mờ là ô còn thiếu) • ★6 trở lên = 1 sao TO + 4 sao nhỏ (★7+ thêm "×số")
+    // Sao hiển thị luôn 5 ô: ★1-5 = số sao sáng (sao mờ là ô còn thiếu) • ★6-10 = sao lớn thay dần sao nhỏ • ★11-15 = 5 sao lớn, đỏ dần (xem heroStarsHTML)
     function pvStars(star) {
-      let h = '';
-      if (star >= STAR_MAX) { h = '<i class="big">★</i>' + '<i>★</i>'.repeat(4); if (star > STAR_MAX) h += '<b>×' + star + '</b>'; }
-      else for (let k = 0; k < 5; k++) h += '<i class="' + (k < star ? '' : 'off') + '">★</i>';
-      return h;
+      const b = star > 5 ? Math.min(5, star - 5) : 0;   // số sao lớn → thu nhỏ dần cho vừa thẻ
+      return heroStarsHTML(star, { off: true, bigPx: b <= 1 ? 20 : b === 2 ? 17 : b === 3 ? 15 : 13 });
     }
     function pvCard(u, opp, pve, idx) {
       const h = heroById(u.id);

@@ -1,7 +1,7 @@
 /* VÔ NHAI TỬ (id 11): tuyệt kỹ cờ vây
    (tách từ index.html cũ — script) */
 
-    // Vô Nhai Tử: ném hủ cờ vây lên phía địch -> 1 bàn cờ lớn trùm cả đội địch, 5 quân cờ trắng/đen rơi từ trên xuống từng quân (nhanh)
+    // Vô Nhai Tử: đứng TẠI CHỖ tung tuyệt kỹ (chuỗi SEQ.vntCast) -> 5 cây cờ Thái Cực phóng nhanh xuống đội địch, từng cây (chuỗi SEQ.vntFlag)
     // Sau đó SAO CHÉP chỉ số của boss mạnh nhất (boss giữ nguyên): lần 1 nhận hết; lần sau so từng chỉ số với lần trước, lấy số cao hơn
     async function goUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
@@ -10,56 +10,31 @@
       if (!foes.length) return;
       const allies = alliesOf(u).filter(h => h.alive);
       const boss = foes.reduce((b, e) => e.max > b.max ? e : b, foes[0]);        // boss mạnh nhất = nhiều HP tối đa nhất
-      const dir = foes[0].x >= u.x ? 1 : -1;
-      const xs = foes.map(e => e.x), ys = foes.map(e => e.y);
-      const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-      const round = curRound();
       const add = (cls, txt, x, y) => { const d = document.createElement('div'); d.className = cls; if (txt) d.textContent = txt; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
+      const cast = seqOverlay(u, SEQ.vntCast, 190), timers = [];
+      const at = (ms, fn) => timers.push(setTimeout(() => { if (tok === battleToken) fn(); }, seqT(ms)));
       try {
         u.el.style.zIndex = 95;
-        // 1. Vung tay ném hủ cờ vây lên phía địch
-        u.el.animate([{ transform: base }, { transform: `translate(calc(-50% + ${dir * 14}px),calc(-50% - 6px)) scale(1.12)` }, { transform: base }], { duration: 420, easing: 'ease-out' });
-        await sleep(150); if (tok !== battleToken) return;
-        const pot = add('bf-gopot', '', u.x, u.y - 4);
-        const dx = (cx - u.x) * W / 100, dy = (cy - u.y) * H / 100;
-        pot.animate([
-          { transform: base + ' rotate(0deg)' },
-          { transform: `translate(calc(-50% + ${dx / 2}px),calc(-50% + ${dy / 2 - 150}px)) rotate(200deg)`, offset: .5 },
-          { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(420deg)` }
-        ], { duration: 620, easing: 'ease-in-out', fill: 'forwards' });
-        await sleep(640); if (tok !== battleToken) return;
-        // 2. Hủ vỡ -> 1 bàn cờ lớn hiện ra trùm cả đội địch
-        pot.remove();
-        const wv = add('bf-wave', '', cx, cy); wv.style.borderColor = '#fde047'; wv.style.boxShadow = '0 0 24px #f59e0b, inset 0 0 24px #fde047'; setTimeout(() => wv.remove(), 650);
-        {   // 1 bàn cờ lớn duy nhất trùm TOÀN BỘ đội địch (tính cả thân sprite của từng tướng, kể cả tướng đã gục)
-          const all = foesOf(u).length ? foesOf(u) : foes;
-          const px = all.map(e => e.x / 100 * W), py = all.map(e => e.y / 100 * H);
-          const padX = 62, padTop = 62, padBot = 52;                       // nửa bề ngang sprite + thanh máu / đầu / chân
-          let L = Math.min(...px) - padX, R = Math.max(...px) + padX;
-          let T = Math.min(...py) - padTop, B = Math.max(...py) + padBot;
-          L = Math.max(4, L); R = Math.min(W - 4, R); T = Math.max(4, T); B = Math.min(H - 4, B);   // không tràn ra ngoài sân đấu
-          const bw = Math.max(160, R - L), bh = Math.max(120, B - T);        // kích thước THẤY ĐƯỢC của bàn cờ
-          const cell = Math.max(18, Math.round(bw / 13));
-          const b = add('bf-goboard', '', 0, 0);
-          b.style.left = L + 'px'; b.style.top = (T + bh / 2 - bh) + 'px';  // phần tử cao bh*2 (bị ép scaleY .5) nên căn tâm theo bh
-          b.style.width = bw + 'px'; b.style.height = (bh * 2) + 'px'; b.style.margin = '0';
-          b.style.backgroundSize = `${cell}px ${cell}px,${cell}px ${cell}px,auto`;
-          b.animate([{ opacity: 0, transform: 'scale(.2,.1)' }, { opacity: 1, transform: 'scale(1,.5)' }], { duration: 260, easing: 'ease-out', fill: 'forwards' });
-        }
-        await sleep(300); if (tok !== battleToken) return;
-        // 3. 5 quân cờ trắng/đen ngẫu nhiên rơi từ trên đầu xuống, từng quân nhanh
-        const stones = Array.from({ length: GO_STONES }, () => ({ t: rand(foes), w: Math.random() < 0.5 }));
-        await Promise.all(stones.map(async (st, k) => {
-          await sleep(k * 120); if (tok !== battleToken) return;
+        // 1. Đứng yên tung chiêu: 15 khung, cờ bay lên rồi tỏa ra
+        for (let i = 0; i < 15; i++) at(i * 80, () => cast.show(i));
+        await sleep(900); if (tok !== battleToken) return;
+        // 2. 5 cây cờ phóng nhanh xuống địch (mỗi cây chọn ngẫu nhiên 1 địch), từng cây cách nhau ~130ms
+        const FW = 170, FH = Math.round(FW * SEQ.vntFlag.ch / SEQ.vntFlag.cw), FR = 46;   // FR = ms mỗi khung
+        const strikes = Array.from({ length: GO_STONES }, () => ({ t: rand(foes) }));
+        await Promise.all(strikes.map(async (st, k) => {
+          await sleep(k * 130); if (tok !== battleToken) return;
           const e = st.t, sx = e.x + (Math.random() - 0.5) * 5, sy = e.y + (Math.random() - 0.5) * 3;
-          const el = add('bf-gostone ' + (st.w ? 'w' : 'b'), '', sx, sy); el.style.top = `calc(${sy}% + 30px)`;
-          const fall = -(sy / 100 * H + 90);
-          el.animate([{ transform: base + ` translateY(${fall}px) scale(1.5)` }, { transform: base + ' translateY(0) scale(1)' }], { duration: 230, easing: 'cubic-bezier(.5,0,1,.6)', fill: 'both' });
-          await sleep(230); if (tok !== battleToken) return;
-          playGoStone();                                   // viên cờ chạm bàn -> 1 tiếng
-          el.animate([{ transform: base + ' scale(1.3,.8)' }, { transform: base + ' scale(1)' }], { duration: 120, fill: 'both' });
+          const el = add('bf-seq-fx', '', sx, sy); el.style.top = `calc(${sy}% + 34px)`; el.style.width = FW + 'px'; el.style.height = FH + 'px'; el.style.transform = 'translate(-50%,-90%)';
+          const sc = seqEl(SEQ.vntFlag, FW); el.appendChild(sc);
+          for (let i = 0; i < 15; i++) setTimeout(() => { if (tok === battleToken) sc.show(i); }, seqT(i * FR));
+          sc.animate([{ transform: 'translateY(-300px)', opacity: .2 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 5 * FR, easing: 'cubic-bezier(.5,0,1,.6)', fill: 'both' });   // phóng từ trên xuống trong 5 khung đầu
+          await sleep(5 * FR); if (tok !== battleToken) return;
+          playGoStone();                                   // cờ cắm xuống -> 1 tiếng
           if (e.alive) hit(e, Math.max(1, Math.round(e.hp * GO_STONE_PCT)), false, u);
+          await sleep(10 * FR); if (tok !== battleToken) return;
+          el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' });
         }));
+        cast.end();
         await sleep(350); if (tok !== battleToken) return;
         // 4. Sao chép chỉ số của boss mạnh nhất (boss không đổi)
         if (boss.alive) {
@@ -84,9 +59,10 @@
           refreshPanel();
           await sleep(700); if (tok !== battleToken) return;
         }
-        made.forEach(d => d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 280, fill: 'forwards' }));   // bàn cờ + quân cờ mờ dần
+        made.forEach(d => d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 280, fill: 'forwards' }));   // hiệu ứng mờ dần
         await sleep(300);
       } finally {
+        timers.forEach(clearTimeout); cast.end();
         made.forEach(d => d.remove());
         u.el.getAnimations().forEach(x => x.cancel());
         u.el.style.zIndex = oldZ;

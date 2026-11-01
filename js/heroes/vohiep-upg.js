@@ -36,7 +36,7 @@
         const f = (k, fn) => row(k[0], (fn || fmtN)(cs[k[1]]), (fn || fmtN)(ns[k[1]]));
         rows = row('Cấp', p.lv, np.lv) + [['HP', 'hp'], ['Công', 'atk'], ['Thủ', 'def'], ['Tốc', 'spd'], ['Bạo', 'crit'], ['Bạo Sát', 'critDmg'], ['Bền', 'tough'], ['Chuẩn', 'acc'], ['Né', 'dodge'], ['Phá giáp', 'pierce'], ['Đỡ đòn', 'block']].map(k => f(k, k[1] === 'block' ? (v => tsFmt(v) + '%') : (v => (k[1] === 'hp' || k[1] === 'atk' || k[1] === 'def' || k[1] === 'pierce') ? fmtN(v) : tsFmt(v)))).join('');
       }
-      const art = (star, cls) => `<div class="up-hero ${cls}"><div class="up-fig">${h.body ? `<img src="${h.body}" alt="${h.name}">` : heroIcon(h)}</div><div class="up-plat"></div><div class="up-stars">${'★'.repeat(Math.min(star, 5)) + '☆'.repeat(Math.max(0, 5 - star))}${star > 5 ? ' ×' + star : ''}</div></div>`;
+      const art = (star, cls) => `<div class="up-hero ${cls}"><div class="up-fig">${h.body ? `<img src="${h.body}" alt="${h.name}">` : heroIcon(h)}</div><div class="up-plat"></div><div class="up-stars">${heroStarsHTML(star, { off: true, bigPx: 15 })}</div></div>`;
       let cost = '', btns = '';
       if (mode === 'sao') {
         const need = starCost(p.star + 1), have = shardsOf(upgId), ok = have >= need;
