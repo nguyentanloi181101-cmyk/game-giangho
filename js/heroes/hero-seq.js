@@ -14,8 +14,8 @@ const SEQ = {
   acCast:   { src: 'assets/images/seq/au-co-ult.webp',               cw: 304, ch: 201, n: 16 },   // hoa sen hồng nở rồi tan cánh (Âu Cơ ulti)
   tyCast:   { src: 'assets/images/seq/thanh-y-ult.webp',             cw: 304, ch: 201, n: 16 },   // hoa sen xanh nở (Thanh Y hồi sinh)
   ndIdle:   { src: 'assets/images/seq/nam-de-idle.webp?v=23',             cw: 227, ch: 201, n: 12 },   // Nam Đế đứng tụ cầu Thái Cực
-  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=24',    cw: 381, ch: 253, n: 16 },   // Trương Tam Phong đứng, cầu Thái Cực quay quanh (16 khung)
-  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=24',     cw: 381, ch: 253, n: 16 },   // Trương Tam Phong tụ cầu, nhảy lên, chọi xuống (16 khung)
+  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=26',    cw: 378, ch: 250, n: 14 },   // Trương Tam Phong đứng, cầu Thái Cực quay quanh (16 khung)
+  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=26',     cw: 378, ch: 250, n: 16 },   // Trương Tam Phong tụ cầu, nhảy lên, chọi xuống (16 khung)
   acIdle:   { src: 'assets/images/seq/au-co-idle.webp?v=23',               cw: 227, ch: 201, n: 12 }    // Âu Cơ đứng trên đài sen cùng hạc
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }

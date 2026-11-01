@@ -1,8 +1,7 @@
-/* PVE: kho địch (12 con giáp, khủng long, tướng làm địch), ảnh nền
+/* PVE: kho địch (khủng long, tướng làm địch), ảnh nền
    (tách từ index.html cũ — script) */
 
-    // Địch thường = 12 con giáp ngẫu nhiên; boss = khủng long ngẫu nhiên
-    const ZODIAC = [['🐭','Tý'],['🐮','Sửu'],['🐯','Dần'],['🐱','Mão'],['🐲','Thìn'],['🐍','Tỵ'],['🐴','Ngọ'],['🐐','Mùi'],['🐵','Thân'],['🐔','Dậu'],['🐶','Tuất'],['🐷','Hợi']];
+    // Địch = tướng ngẫu nhiên; boss = khủng long ngẫu nhiên
     const DINOS = [['🦖','Khủng Long Bạo Chúa',0],['🦕','Khủng Long Cổ Dài',0],['🦖','Khủng Long Tím',120],['🦕','Khủng Long Lam',200]];
     const dinoIcon = d => d[2] ? `<span style="display:inline-block;filter:hue-rotate(${d[2]}deg)">${d[0]}</span>` : d[0];
     const shuffled = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };

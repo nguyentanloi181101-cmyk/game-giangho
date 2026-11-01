@@ -14,16 +14,12 @@
       mult = Math.pow(1.32, B - 1);
       const m2 = mult * 1.2;
 
-      if (currentWave === 1 || currentWave === 2 || currentWave === 4) {
-        // Trận 1: 2 tướng ngẫu nhiên • Trận 2: 3 tướng • Trận 4 (boss): 5 tướng (chỉ số theo ải)
-        const n = currentWave === 1 ? 2 : currentWave === 2 ? 3 : 5;
+      {
+        // Trận 1: 2 tướng ngẫu nhiên • Trận 2: 3 tướng • Trận 3: 4 tướng • Trận 4 (boss): 5 tướng (chỉ số theo ải)
+        const n = currentWave === 1 ? 2 : currentWave === 2 ? 3 : currentWave === 3 ? 4 : 5;
         const r = heroFoes(n, currentWave === 4 ? m2 : mult);
         waveUnits.enemies = r.foes;
         document.getElementById('ui-enemy-name').innerText = (currentWave === 4 ? 'BOSS: ' : '') + r.picks.map(h => h.name.toUpperCase()).join(' • ');
-      } else {
-        const zs = shuffled(ZODIAC);
-        document.getElementById('ui-enemy-name').innerText = '5 CON GIÁP: ' + zs.slice(0, 5).map(z => z[1].toUpperCase()).join(' • ');
-        waveUnits.enemies = HERO_POS[5].map((p, i) => makeUnit('enemy', zs[i][0], 100 - p[0], p[1] + HERO_DY, 40 * mult, 20 * mult, false, zs[i][1]));
       }
       waveRound = 1;
     // Quân ta đánh trước: sang trận mới thì hồi lại lượt cho cả đội, xóa choáng / chảy máu / buff cũ
