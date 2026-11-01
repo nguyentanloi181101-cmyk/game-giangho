@@ -257,9 +257,11 @@
         await sleep(2000 + (targets.length - 1) * 350); if (tok !== battleToken) return;
         // 2. Hoa sen xanh nở ra tại chỗ tướng gục, tướng sống lại
         for (const t of targets) {
-          const lt = mk('bf-lotus', '🪷', t.x, t.y);
-          lt.animate([{ transform: 'translate(-50%,-50%) scale(0) rotate(-40deg)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.7) rotate(0deg)', opacity: 1, offset: 0.55 },
-                      { transform: 'translate(-50%,-50%) scale(2.1) rotate(0deg)', opacity: 0 }], { duration: 1100, easing: 'ease-out', fill: 'forwards' });
+          const LW = Math.round(Math.max(120, Math.min(W * 0.3, 190))), lt = mk('bf-seq-fx', '', t.x, t.y - 4);
+          lt.style.width = LW + 'px'; lt.style.height = Math.round(LW * SEQ.tyCast.ch / SEQ.tyCast.cw) + 'px';
+          const ls = seqEl(SEQ.tyCast, LW); lt.appendChild(ls);
+          for (let i = 0; i < 16; i++) setTimeout(() => { if (tok === battleToken) ls.show(i); }, seqT(i * 80));
+          setTimeout(() => lt.remove(), seqT(1400));
           const w = mk('bf-wave', '', t.x, t.y); w.style.borderColor = '#4ade80'; w.style.boxShadow = '0 0 22px #22c55e, inset 0 0 22px #22c55e'; setTimeout(() => w.remove(), 650);
           sfxBell();
           t.alive = true; t.hp = Math.max(1, Math.round(t.max * REVIVE_HP_PCT)); t.rage = 0; t.stun = 0; t.bleed = 0; t.bleedPct = 0;

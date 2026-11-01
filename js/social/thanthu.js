@@ -13,8 +13,14 @@ const TT_BEASTS = [   // [tên, hạng, mảnh cần, icon, [hiệu quả phụ 
 const TT_PT = ['Huyết Bạo', 'Ngự Thuẫn', 'Hoạt Khí', 'Cường Công', 'Sát Lục', 'Thần Huyết', 'Tái Sinh', 'Thần Thuẫn', 'Chiến Thuẫn', 'Bá Thuẫn', 'Bạo Nộ', 'Bạo Tức', 'Tinh Chuẩn', 'Cấp Tốc', 'Ẩn Thân', 'Kích Sát', 'Kích Phá', 'Đẩy Lui', 'Trợ Thuẫn', 'Tàn Ảnh', 'Kỳ Thuẫn', 'Thần Tốc', 'Trợ Tốc', 'Hộ Tốc', 'Gia Tốc'];
 const TT_PT_ICO = ['🩸', '🛡️', '💠', '⚔️', '🗡️', '❤️‍🔥', '💚', '🔰', '🧱', '🐯', '💪', '⚡', '🎯', '🏃', '🌫️', '🔪', '👹', '💨', '🛡️', '👤', '☯️', '👢', '👟', '👞', '🥾'];
 const TT_QC = ['#9ca3af', '#22c55e', '#3b82f6', '#a855f7', '#f59e0b'], TT_FEED = { 'Thú Hồn': 100, 'Thú Linh': 500 };
-const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su', 'Khổng Tước': 'khong-tuoc', 'Cửu Vỹ Hồ': 'cuu-vi-ho', 'Hỏa Kỳ Lân': 'hoa-ky-lan', 'Kim Sư': 'kim-su' };
-function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); return sl ? (ct ? `<span class="ct-wrap"><img class="tt-img ct" alt="${n}" src="assets/images/thanthu/${sl}.webp"><i class="ct-crown">👑</i></span>` : `<img class="tt-img" alt="${n}" src="assets/images/thanthu/${sl}.webp">`) : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
+const TT_SLUG = { 'Kỳ Lân': 'ky-lan', 'Xích Vũ': 'xich-vu', 'Tiên Lộc': 'tien-loc', 'Long Quy': 'long-quy', 'Báo Tuyết': 'bao-tuyet', 'Hắc Điêu': 'hac-dieu', 'Cuồng Ngưu': 'cuong-nguu', 'Lân Sư': 'lan-su', 'Khổng Tước': 'khong-tuoc', 'Cửu Vỹ Hồ': 'cuu-vi-ho', 'Hỏa Kỳ Lân': 'hoa-ky-lan', 'Kim Sư': 'kim-su', 'Thiên Lân': 'thien-lan' };
+// Thần thú có chuỗi 16 khung (assets/images/thanthu/seq/<slug>-00..15.webp, ảnh gốc đều quay mặt sang PHẢI). Muốn thêm: bỏ đủ 16 khung vào thư mục seq rồi thêm slug vào TT_SEQ.
+const TT_SEQ = ['hac-dieu', 'long-quy', 'bao-tuyet', 'tien-loc', 'xich-vu', 'thien-lan', 'lan-su', 'cuu-vi-ho'], TT_SEQ_N = 16, TT_SEQ_MS = 110;
+const ttFrame = (sl, i) => `assets/images/thanthu/seq/${sl}-${String(i).padStart(2, '0')}.webp?v=23`;
+TT_SEQ.forEach(sl => { for (let i = 0; i < TT_SEQ_N; i++) { const im = new Image(); im.src = ttFrame(sl, i); } });   // nạp sẵn để khỏi chớp
+let ttSeqI = 0;
+setInterval(() => { const l = document.querySelectorAll('img[data-seq]'); if (!l.length) return; ttSeqI = (ttSeqI + 1) % TT_SEQ_N; l.forEach(im => { im.src = ttFrame(im.dataset.seq, ttSeqI); }); }, TT_SEQ_MS);
+function ttImg(n, ct) { const sl = TT_SLUG[n], b = TT_BEASTS.find(x => x[0] === n); const sq = sl && TT_SEQ.includes(sl) ? ` data-seq="${sl}" data-f="0"` : ''; const src0 = sq ? ttFrame(sl, ttSeqI) : `assets/images/thanthu/${sl}.webp`; return sl ? (ct ? `<span class="ct-wrap"><img class="tt-img ct"${sq} alt="${n}" src="${src0}"><i class="ct-crown">👑</i></span>` : `<img class="tt-img"${sq} alt="${n}" src="${src0}">`) : `<span class="tt-emo">${b ? b[3] : '❔'}</span>`; }
 const ttBeast = n => TT_BEASTS.find(b => b[0] === n);
 function ttSt() {
   const s = gdSt();

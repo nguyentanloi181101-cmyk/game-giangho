@@ -143,10 +143,10 @@
       const timers = [];
       try {
         // Cóc độc (chuỗi 12 khung): trồi từ đất lên (khung 1-5) → há miệng (6-7) → phun bong bóng độc (8-12). Đội phải thì lật để cóc nhìn về phía ta.
-        const TW = Math.round(Math.max(190, Math.min(W * 0.46, H * 0.8))), sc = seqEl(SEQ.tdToad, TW), TH = parseInt(sc.style.height);
+        const TW = Math.round(Math.max(150, Math.min(W * 0.36, H * 0.62))), sc = seqEl(SEQ.tdToad, TW), TH = parseInt(sc.style.height);
         const cx0 = Math.max(TW * 0.5 / W * 100, Math.min(100 - TW * 0.5 / W * 100, tx0 + dir * 0.12 * TW / W * 100)), cy0 = Math.max(TH * 0.5 / H * 100 + 1, u.y + 40 / H * 100 - TH * 0.5 / H * 100 + 3);
         const toad = g.mk('bf-seq-fx' + (dir > 0 ? '' : ' mir'), '', cx0, cy0); toad.style.width = TW + 'px'; toad.style.height = TH + 'px'; toad.appendChild(sc);
-        const mx0 = cx0 + dir * 0.1 * TW / W * 100, my0 = cy0 - 0.12 * TH / H * 100;   // miệng cóc: nơi bong bóng độc bắn ra
+        const mx0 = cx0 + dir * 0.03 * TW / W * 100, my0 = cy0 - 0.3 * TH / H * 100;   // miệng cóc: nơi bong bóng độc bắn ra
         toad.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, fill: 'forwards' });
         for (let i = 0; i < 12; i++) timers.push(setTimeout(() => { if (tok === battleToken) sc.show(i); }, seqT(i * 110)));
         g.ring(tx0, ty0, '#84cc16'); await sleep(770); if (tok !== battleToken) return;

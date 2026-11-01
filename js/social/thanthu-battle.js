@@ -25,7 +25,7 @@ function ttApply(u, bonus) {
   return u;
 }
 const ttPtIco = n => TT_PT_ICO[TT_PT.indexOf(n)] || '✨';
-const TT_FACE_LEFT = ['Tiên Lộc', 'Kim Sư'];   // thần thú có ảnh gốc quay mặt sang TRÁI (các con khác quay sang phải)
+const TT_FACE_LEFT = ['Kim Sư', 'Cửu Vỹ Hồ'];   // thần thú có ảnh gốc quay mặt sang TRÁI (các con khác quay sang phải)
 function ttSetupUI(my, foe) {
   const ar = document.getElementById('battle-arena'); if (!ar) return;
   ar.querySelectorAll('.bf-bst, .bf-ptrow').forEach(e => e.remove());
