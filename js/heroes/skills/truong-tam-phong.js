@@ -29,56 +29,31 @@
       } catch (e) {}
     }
     async function taichiUlt(u, tok) {
-      const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
-      const W = f.clientWidth, H = f.clientHeight;
-      const alive = () => foesOf(u).filter(e => e.alive);
-      const base = 'translate(-50%,-50%)';
-      const ju = u.y * H / 100 + 120;
-      const up = `translate(-50%, calc(-50% - ${ju}px))`;
-      const anim = (el, kf, d, e) => el.animate(kf, { duration: d, easing: e || 'ease-in-out', fill: 'forwards' });
-      const quick = !!u.qRepeat, keep = !!u.qKeep;   // quick: đang lơ lửng trên trời -> chọi tiếp ngay, không nhảy lại
-      const ball = document.createElement('div');
-      ball.className = 'bf-yy';
-      ball.style.left = u.x + '%'; ball.style.top = (u.y - 10) + '%'; ball.style.zIndex = 90;
-      box.appendChild(ball);
-      // Chuỗi 16 khung (SEQ.ttpCast) phủ lên tướng: 0-7 tụ cầu Thái Cực • 8-11 nhảy lên • 12-15 chọi xuống. Quả cầu bay chỉ hiện lúc chọi (trong khung hình đã có sẵn cầu).
-      const cast = seqOverlay(u, SEQ.ttpCast, 250), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
-      ball.style.visibility = 'hidden';
+      // Đứng TẠI CHỖ tung tuyệt kỹ (không nhảy): chuỗi 16 khung SEQ.ttpCast phủ lên tướng, lốc xoáy SEQ.ttpStorm mở ra bên địch rồi gây sát thương toàn địch + choáng
+      const g = nt(u), { f, W, H, made } = g, es0 = g.es(); if (!es0.length) return;
+      const b = g.box0(es0), S = SEQ.ttpStorm;
+      const SW = Math.round(Math.max(190, Math.min(W * 0.5, H * 0.85))), SH = Math.round(SW * S.ch / S.cw), hw = SW * 0.5 / W * 100, hh = SH * 0.5 / H * 100;
+      const cx = Math.max(hw + 1, Math.min(99 - hw, b.cx)), cy = Math.max(hh + 2, Math.min(98 - hh, b.cy - 3));
+      const cast = seqOverlay(u, SEQ.ttpCast, 270), timers = [], oldZ = u.el.style.zIndex; let storm = null;
+      const at = (ms, fn) => timers.push(setTimeout(() => { if (tok === battleToken) fn(); }, seqT(ms)));
       try {
-        if (quick) {
-          [[0, 13], [110, 14], [220, 15]].forEach(a => fr(a[0], a[1]));
-          anim(ball, [{ transform: up + ' scale(.6)', opacity: 0 }, { transform: up + ' scale(1.8)', opacity: 1 }], 220, 'ease-out');
-          await sleep(240); if (tok !== battleToken) return;
-        } else {
-          [0, 95, 190, 285, 380, 475, 570, 665].forEach((ms, i) => fr(ms, i)); [[750, 8], [830, 9], [910, 10], [990, 11], [1100, 12], [1300, 13], [1450, 14], [1620, 15]].forEach(a => fr(a[0], a[1]));
-          // 1. Tụ khối cầu Thái Cực
-          anim(ball, [{ transform: base + ' scale(.1) rotate(0deg)', opacity: 0 }, { transform: base + ' scale(1.4) rotate(540deg)', opacity: 1 }], 700, 'ease-out');
-          await sleep(750); if (tok !== battleToken) return;
-          // 2. Nhảy lên trời cùng khối cầu
-          anim(u.el, [{ transform: base }, { transform: up }], 450, 'ease-in');
-          anim(ball, [{ transform: base + ' scale(1.4)' }, { transform: up + ' scale(1.8)' }], 450, 'ease-in');
-          await sleep(550); if (tok !== battleToken) return;
-        }
-        // 3. Chọi xuống giữa đám địch
-        const es = alive(); if (!es.length) return;
-        const cx = es.reduce((a, e) => a + e.x, 0) / es.length, cy = es.reduce((a, e) => a + e.y, 0) / es.length;
-        const dx = (cx - u.x) * W / 100, dy = (cy - (u.y - 10)) * H / 100;
-        ball.style.visibility = '';
-        anim(ball, [{ transform: up + ' scale(1.8)' }, { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(2.6)` }], 320, 'ease-in');
-        await sleep(320); if (tok !== battleToken) return;
-        ball.remove(); sfxGlassBreak();
-        // Va chạm trắng đen: 2 sóng trắng/đen lan ra + cả sàn đấu chớp đơn sắc
-        [0, 160].forEach(d => setTimeout(() => {
-          const w = document.createElement('div'); w.className = 'bf-yyfx'; w.style.left = cx + '%'; w.style.top = cy + '%';
-          if (d) { w.style.borderColor = '#000'; w.style.boxShadow = '0 0 24px #000, inset 0 0 26px #fff'; }
-          box.appendChild(w); setTimeout(() => w.remove(), 850);
-        }, d));
+        u.el.style.zIndex = 99;
+        for (let i = 0; i < 16; i++) at(i * 100, () => cast.show(i));          // 16 khung: tụ cầu → tung ra
+        at(780, () => {                                                         // cầu Thái Cực đã lớn → lốc xoáy mở ra bên địch
+          storm = g.mk('bf-seq-fx', '', cx, cy); storm.style.width = SW + 'px'; storm.style.height = SH + 'px';
+          const sc = seqEl(S, SW); sc.loop(1300); storm.appendChild(sc);
+          storm.animate([{ transform: 'translate(-50%,-50%) scale(.15,.05)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.08,1.12)', opacity: 1, offset: .65 }, { transform: 'translate(-50%,-50%) scale(1,1)', opacity: 1 }], { duration: 700, easing: 'ease-out', fill: 'forwards' });
+        });
+        await sleep(1450); if (tok !== battleToken) return;
+        // Lốc xoáy giáng xuống: va chạm
+        const es = g.es(); if (!es.length) return;
+        sfxGlassBreak();
         f.style.transition = 'filter .08s'; f.style.filter = 'contrast(1.35) brightness(1.25)';
         setTimeout(() => { f.style.filter = 'contrast(1.2) brightness(.8)'; }, 90);
         setTimeout(() => { f.style.filter = ''; }, 380);
         f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 400);
         es.forEach(e => skillHit(e, u.atk * TAICHI_MULT * (u.sk || 1), u));              // sát thương toàn địch
-        const left = alive();
+        const left = g.es();
         // ★5: choáng 1 địch ngẫu nhiên 2 hiệp, không chảy máu • ★6: choáng 2 địch ngẫu nhiên 2 hiệp + chảy máu 40%
         const six = (u.side === 'hero' ? getProg(4).star : (u.star || 0)) >= STAR_MAX;
         shuffled(left).slice(0, six ? 2 : 1).forEach(v => { stunEnemy(v, Math.max(2, v.stun || 0)); floatText(v, 'CHOÁNG 2 HIỆP'); });
@@ -87,15 +62,10 @@
           if (!e.el.querySelector('.bf-bleed')) { const ic = document.createElement('div'); ic.className = 'bf-bleed'; ic.textContent = '🩸'; e.el.appendChild(ic); }
           floatText(e, 'CHẢY MÁU ' + Math.round(TAICHI_BLEED_PCT * 100) + '%');
         });
-        await sleep(keep ? 120 : 350); if (tok !== battleToken) return;
-        if (!keep) {
-          // 4. Hạ xuống
-          anim(u.el, [{ transform: up }, { transform: base }], 350, 'ease-out');
-          await sleep(380);
-        }
+        await sleep(900); if (tok !== battleToken) return;
+        if (storm) storm.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1,1)' }, { opacity: 0, transform: 'translate(-50%,-50%) scale(.6,1.25)' }], { duration: 480, fill: 'forwards' });
+        await sleep(500);
       } finally {
-        timers.forEach(clearTimeout); cast.end();
-        ball.remove();
-        if (!keep) u.el.getAnimations().forEach(a => a.cancel());
+        timers.forEach(clearTimeout); cast.end(); u.el.style.zIndex = oldZ; made.forEach(d => d.remove());
       }
     }

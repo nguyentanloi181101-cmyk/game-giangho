@@ -14,12 +14,13 @@ const SEQ = {
   acCast:   { src: 'assets/images/seq/au-co-ult.webp',               cw: 304, ch: 201, n: 16 },   // hoa sen hồng nở rồi tan cánh (Âu Cơ ulti)
   tyCast:   { src: 'assets/images/seq/thanh-y-ult.webp',             cw: 304, ch: 201, n: 16 },   // hoa sen xanh nở (Thanh Y hồi sinh)
   ndIdle:   { src: 'assets/images/seq/nam-de-idle.webp?v=23',             cw: 227, ch: 201, n: 12 },   // Nam Đế đứng tụ cầu Thái Cực
-  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=27',    cw: 378, ch: 250, n: 14 },   // Trương Tam Phong đứng, cầu Thái Cực quay quanh (16 khung)
-  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=27',     cw: 378, ch: 250, n: 16 },   // Trương Tam Phong tụ cầu, nhảy lên, chọi xuống (16 khung)
+  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=28',    cw: 317, ch: 256, n: 16 },   // Trương Tam Phong đứng tại chỗ, cầu Thái Cực quay quanh (16 khung)
+  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=28',     cw: 354, ch: 256, n: 16 },   // Trương Tam Phong đứng tại chỗ tung Thái Cực (16 khung, không nhảy)
+  ttpStorm: { src: 'assets/images/seq/truong-tam-phong-storm.webp?v=28',   cw: 283, ch: 256, n: 17 },   // lốc xoáy Thái Cực bên địch khi Trương Tam Phong ulti (17 khung, lặp)
   acIdle:   { src: 'assets/images/seq/au-co-idle.webp?v=23',               cw: 227, ch: 201, n: 12 }    // Âu Cơ đứng trên đài sen cùng hạc
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 116, ms: 1500 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 
