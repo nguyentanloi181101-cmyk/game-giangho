@@ -21,10 +21,10 @@ const gdSave = s => saveJSON('guild_state', s);
   const mc = document.querySelector('.main-content'), add = (id, html) => { const d = document.createElement('div'); d.className = 'screen'; d.id = 'screen-' + id; d.innerHTML = html; mc.appendChild(d); };
   const hd = (t, back) => `<div class="pve-header"><button class="btn-back" onclick="${back || "openGuild()"}">Trở về</button><h2 class="pve-title">${t}</h2></div>`;
   add('thanthu', hd('Thần Thú') + '<div class="gs-tabs" id="tt-tabs"></div><div id="tt-body"></div>');
-  add('dienvo', hd('Diễn Võ Trường') + '<div id="dv-body"></div>');
+  add('dienvo', hd('Lò Luyện Hỏa') + '<div id="dv-body"></div>');
   add('bangboss', hd('Cấm Địa') + '<div class="gs-tabs" id="bb-tabs"></div><div id="bb-body"></div>');
 })();
-/* ---- Diễn Võ Trường ---- */
+/* ---- Lò Luyện Hỏa (trước là Diễn Võ Trường) ---- */
 let dvSel = 0;
 function openDienVo() { renderDienVo(); switchScreen('dienvo'); }
 function dvPick(i) { dvSel = i; renderDienVo(); }
