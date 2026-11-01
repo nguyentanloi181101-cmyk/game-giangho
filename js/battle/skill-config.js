@@ -5,7 +5,6 @@
     // Trận 4: 3 tướng ngẫu nhiên của địch dùng chỉ số THEO ẢI (nhân hệ số ải), không dùng cấp/sao/kỹ năng đã nâng của bạn
     const B4_HERO_HP = 1000, B4_HERO_ATK = 200, B4_HERO_DEF = 30, B4_HERO_DODGE = 0;
     const GO_STONES = 5, GO_STONE_PCT = 0.06;   // Vô Nhai Tử: 5 quân cờ, mỗi quân trúng gây 6% HP hiện tại của địch bị rơi trúng
-    const GO_STUN_ROUNDS = [2, 3, 4], GO_STUN_COUNT = 3;   // hiệp 2-4: choáng 3 địch ngẫu nhiên 1 hiệp
     // Ma Đao Thánh Nữ: mốc thời gian (ms tính từ lúc bắt đầu tiếng) của 7 nhát chém – khớp 7 nhịp đập trong file âm thanh
     const MADAO_T = [2900, 3150, 3300, 3450, 3650, 3800, 4100];
     const SKULL_IMG = 'assets/images/fx/skull.webp';

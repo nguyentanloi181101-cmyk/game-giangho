@@ -41,16 +41,16 @@
       ball.className = 'bf-yy';
       ball.style.left = u.x + '%'; ball.style.top = (u.y - 10) + '%'; ball.style.zIndex = 90;
       box.appendChild(ball);
-      // Chuỗi 12 khung (SEQ.ttpCast) phủ lên tướng: 0-4 tụ cầu Thái Cực • 5-7 nhảy lên • 8-11 vung tay chọi xuống. Quả cầu bay chỉ hiện lúc chọi (trong khung hình đã có sẵn cầu).
-      const cast = seqOverlay(u, SEQ.ttpCast, 190), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
+      // Chuỗi 16 khung (SEQ.ttpCast) phủ lên tướng: 0-7 tụ cầu Thái Cực • 8-11 nhảy lên • 12-15 chọi xuống. Quả cầu bay chỉ hiện lúc chọi (trong khung hình đã có sẵn cầu).
+      const cast = seqOverlay(u, SEQ.ttpCast, 250), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
       ball.style.visibility = 'hidden';
       try {
         if (quick) {
-          [[0, 9], [110, 10], [220, 11]].forEach(a => fr(a[0], a[1]));
+          [[0, 13], [110, 14], [220, 15]].forEach(a => fr(a[0], a[1]));
           anim(ball, [{ transform: up + ' scale(.6)', opacity: 0 }, { transform: up + ' scale(1.8)', opacity: 1 }], 220, 'ease-out');
           await sleep(240); if (tok !== battleToken) return;
         } else {
-          [0, 150, 300, 450, 600].forEach((ms, i) => fr(ms, i)); [[750, 5], [850, 6], [950, 7], [1100, 8], [1300, 9], [1450, 10], [1620, 11]].forEach(a => fr(a[0], a[1]));
+          [0, 95, 190, 285, 380, 475, 570, 665].forEach((ms, i) => fr(ms, i)); [[750, 8], [830, 9], [910, 10], [990, 11], [1100, 12], [1300, 13], [1450, 14], [1620, 15]].forEach(a => fr(a[0], a[1]));
           // 1. Tụ khối cầu Thái Cực
           anim(ball, [{ transform: base + ' scale(.1) rotate(0deg)', opacity: 0 }, { transform: base + ' scale(1.4) rotate(540deg)', opacity: 1 }], 700, 'ease-out');
           await sleep(750); if (tok !== battleToken) return;

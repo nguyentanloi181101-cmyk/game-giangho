@@ -2,7 +2,7 @@
    (tách từ index.html cũ — script) */
 
     // Vô Nhai Tử: ném hủ cờ vây lên phía địch -> 1 bàn cờ lớn trùm cả đội địch, 5 quân cờ trắng/đen rơi từ trên xuống từng quân (nhanh)
-    // Hiệp 2-4: choáng 3 địch 1 hiệp. Sau đó HOÁN ĐỔI với boss mạnh nhất: lần 1 nhận hết; lần sau so từng chỉ số với lần trước, lấy số cao hơn
+    // Sau đó SAO CHÉP chỉ số của boss mạnh nhất (boss giữ nguyên): lần 1 nhận hết; lần sau so từng chỉ số với lần trước, lấy số cao hơn
     async function goUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
       const W = f.clientWidth, H = f.clientHeight, base = 'translate(-50%,-50%)', made = [], oldZ = u.el.style.zIndex;
@@ -13,8 +13,6 @@
       const dir = foes[0].x >= u.x ? 1 : -1;
       const xs = foes.map(e => e.x), ys = foes.map(e => e.y);
       const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;
-      const own = u.gob || { atk: 0, def: 0, max: 0 };
-      const orig = { atk: u.atk - own.atk, def: (u.def || 0) - own.def, max: u.max - own.max };   // chỉ số gốc của Vô Nhai Tử (không tính phần nhận từ boss)
       const round = curRound();
       const add = (cls, txt, x, y) => { const d = document.createElement('div'); d.className = cls; if (txt) d.textContent = txt; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
       try {
@@ -63,16 +61,10 @@
           if (e.alive) hit(e, Math.max(1, Math.round(e.hp * GO_STONE_PCT)), false, u);
         }));
         await sleep(350); if (tok !== battleToken) return;
-        // 4. Hiệp 2, 3, 4: choáng 3 địch ngẫu nhiên 1 hiệp
-        if (GO_STUN_ROUNDS.includes(round)) {
-          const pick = shuffled(foes.filter(e => e.alive)).slice(0, GO_STUN_COUNT);
-          pick.forEach(e => { stunEnemy(e, Math.max(1, e.stun || 0)); floatText(e, '💫 CHOÁNG 1 HIỆP'); });
-          if (pick.length) { await sleep(500); if (tok !== battleToken) return; }
-        }
-        // 5. Hoán đổi chỉ số với boss mạnh nhất
+        // 4. Sao chép chỉ số của boss mạnh nhất (boss không đổi)
         if (boss.alive) {
           const sa = boss.atk, sd = boss.def || 0, sm = boss.max;
-          floatText(boss, '⭐ HOÁN ĐỔI');
+          floatText(boss, '⭐ SAO CHÉP');
           allies.forEach((a, i) => {
             const o = add('bf-fxorb', rand(['⚫', '⚪']), boss.x, boss.y);
             o.animate([{ transform: base + ' scale(1.2)', opacity: 1 }, { transform: `translate(calc(-50% + ${(a.x - boss.x) * W / 100}px),calc(-50% + ${(a.y - boss.y) * H / 100}px)) scale(.8)`, opacity: 1 }], { duration: 650, delay: i * 90, easing: 'ease-in', fill: 'both' });
@@ -89,10 +81,6 @@
             if (dD) setTimeout(() => floatText(a, '+' + formatNumber(dD) + ' THỦ'), d), d += 220;
             if (dM) setTimeout(() => floatText(a, '+' + formatNumber(dM) + ' HP'), d);
           });
-          if (boss.alive) {                                                       // boss nhận chỉ số gốc của Vô Nhai Tử
-            boss.atk = orig.atk; boss.def = orig.def; boss.max = orig.max; boss.hp = Math.min(boss.hp, boss.max); setHpBar(boss);
-            floatText(boss, '🔄 HOÁN ĐỔI');
-          }
           refreshPanel();
           await sleep(700); if (tok !== battleToken) return;
         }

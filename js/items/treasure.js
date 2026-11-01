@@ -20,7 +20,7 @@
       9: { name:'Kim Giao Tiễn',   stats:[ ['spd', 20, .02],    ['critDmg', 500, .15],  ['pierce', 10000, .15] ] }
     };
     const TS_LABEL = { dodge:'Né', acc:'Chuẩn', crit:'Bạo', critDmg:'Bạo Sát', tough:'Bền', atkFlat:'Công', hpFlat:'HP', pierce:'Phá giáp', spd:'Tốc' };
-    const TS_IMG = { 6:'assets/images/items/treasure-06.jpg', 7:'assets/images/items/treasure-07.jpg', 8:'assets/images/items/treasure-08.jpg', 9:'assets/images/items/treasure-09.webp' };
+    const TS_IMG = { 6:'assets/images/items/treasure-06.webp?v=24', 7:'assets/images/items/treasure-07.webp?v=24', 8:'assets/images/items/treasure-08.webp?v=24', 9:'assets/images/items/treasure-09.webp' };
     const TS_EMO = {};   // loại nào chưa có ảnh thì khai biểu tượng ở đây
     const tsName = id => TS_DEFS[id] ? TS_DEFS[id].name : TS_NAME;
     const tsIcon = id => TS_IMG[id] ? `<img class="eq-img" src="${TS_IMG[id]}">` : (TS_EMO[id] ? `<span style="font-size:30px;line-height:1">${TS_EMO[id]}</span>` : '📜');

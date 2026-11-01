@@ -7,7 +7,7 @@
     .hd-ts-row .hd-slot small.st{color:#fbbf24;margin-top:1px}
     .hd-slots{display:flex;flex-direction:column;gap:6px;width:64px;flex-shrink:0}
     .hd-slot{height:62px;border:2px solid #fde047;border-radius:8px;background:radial-gradient(circle,#5a3a22,#1e120a);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:28px;line-height:1}
-    .eq-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:5px}
+    .eq-img{width:100%;height:100%;object-fit:contain;display:block;background:none}
     .hd-slot .eq-img{width:38px;height:38px}
     .eq-tab .eq-img{width:18px;height:18px;display:inline-block;vertical-align:middle}
     .hd-slot small{font-size:10px;color:#fff;background:rgba(0,0,0,.65);border-radius:3px;padding:0 4px;margin-top:2px;font-weight:bold}

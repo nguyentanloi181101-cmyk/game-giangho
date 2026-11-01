@@ -25,7 +25,7 @@
       // Bạch Ma Vương: tuyệt kỹ không cần nộ – triệu hồi 3 bộ xương khô, mỗi địch mất 50% HP hiện tại (bỏ qua mọi thứ trừ Né); bản thân không bị trừ máu
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4 (đấm 1 phát chết 3 tướng ta)
       {id:10,name:'Bạch Ma Vương',emoji:'💀',img:'assets/images/heroes/bach-ma-vuong.webp',body:'assets/images/heroes/bach-ma-vuong-body.webp',hp:3600,atk:320,def:50,spd:58,dodge:8,startRage:100,alwaysUlt:true,noEnemy:true},
-      // Vô Nhai Tử: tướng hỗ trợ – tuyệt kỹ không cần nộ (alwaysUlt), hiệp nào cũng ulti. Chiêu: ném hủ cờ vây lên phía địch, 5 quân cờ trắng/đen rơi xuống bàn cờ dưới chân địch; hiệp 2-4 choáng 3 địch 1 hiệp; hoán đổi chỉ số với boss mạnh nhất (lần sau so chỉ số, giữ số cao hơn)
+      // Vô Nhai Tử: tướng hỗ trợ – tuyệt kỹ không cần nộ (alwaysUlt), hiệp nào cũng ulti. Chiêu: ném hủ cờ vây lên phía địch, 5 quân cờ trắng/đen rơi xuống bàn cờ dưới chân địch; sao chép chỉ số boss mạnh nhất (boss giữ nguyên; lần sau so chỉ số, giữ số cao hơn)
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
       {id:11,name:'Vô Nhai Tử',emoji:'♟️',img:'assets/images/heroes/vo-nhai-tu.webp',body:'assets/images/heroes/vo-nhai-tu-body.webp',bodyH:80,hp:3200,atk:260,def:45,spd:62,dodge:12,startRage:100,alwaysUlt:true,noEnemy:true},
       // Đoàn Dự: ra trận ĐẦY NỘ. Lăng Ba Vi Bộ – 18 tàn ảnh lao từ đội ta sang đội địch; toàn đội 3 hiệp: +300% Né, +150% Tốc, hồi 300% máu (theo chỉ số Đoàn Dự)

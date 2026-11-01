@@ -14,12 +14,12 @@ const SEQ = {
   acCast:   { src: 'assets/images/seq/au-co-ult.webp',               cw: 304, ch: 201, n: 16 },   // hoa sen hồng nở rồi tan cánh (Âu Cơ ulti)
   tyCast:   { src: 'assets/images/seq/thanh-y-ult.webp',             cw: 304, ch: 201, n: 16 },   // hoa sen xanh nở (Thanh Y hồi sinh)
   ndIdle:   { src: 'assets/images/seq/nam-de-idle.webp?v=23',             cw: 227, ch: 201, n: 12 },   // Nam Đế đứng tụ cầu Thái Cực
-  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=23',    cw: 227, ch: 201, n: 12 },   // Trương Tam Phong đứng, 4 cầu Thái Cực quay quanh
-  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=23',     cw: 227, ch: 201, n: 12 },   // Trương Tam Phong tụ cầu, nhảy lên, chọi xuống
+  ttpIdle:  { src: 'assets/images/seq/truong-tam-phong-idle.webp?v=24',    cw: 381, ch: 253, n: 16 },   // Trương Tam Phong đứng, cầu Thái Cực quay quanh (16 khung)
+  ttpCast:  { src: 'assets/images/seq/truong-tam-phong-ult.webp?v=24',     cw: 381, ch: 253, n: 16 },   // Trương Tam Phong tụ cầu, nhảy lên, chọi xuống (16 khung)
   acIdle:   { src: 'assets/images/seq/au-co-idle.webp?v=23',               cw: 227, ch: 201, n: 12 }    // Âu Cơ đứng trên đài sen cùng hạc
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 104, ms: 1300 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 116, ms: 1500 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 
