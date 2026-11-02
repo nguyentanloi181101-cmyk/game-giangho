@@ -7,8 +7,7 @@
     const GO_STONES = 5, GO_STONE_PCT = 0.06;   // Vô Nhai Tử: 5 quân cờ, mỗi quân trúng gây 6% HP hiện tại của địch bị rơi trúng
     // Ma Đao Thánh Nữ: mốc thời gian (ms tính từ lúc bắt đầu tiếng) của 7 nhát chém – khớp 7 nhịp đập trong file âm thanh
     const MADAO_T = [2900, 3150, 3300, 3450, 3650, 3800, 4100];
-    const SKULL_IMG = 'assets/images/fx/skull.webp';
-    const SKEL_COUNT = 3, SKEL_PCT = 0.5;   // Bạch Ma Vương: 3 bộ xương, mỗi địch mất 50% HP hiện tại (chỉ né được, bỏ qua giáp/khiên)
+    const SKEL_PCT = 0.5, EXEC_PCT = 0.1;   // Tiểu Yêu: đầu lâu lửa đánh TOÀN địch, mỗi địch mất 50% HP hiện tại (chỉ né được, bỏ qua giáp/khiên); sau đòn còn ≤10% HP tối đa -> TẤT SÁT kết liễu
     const MOON_TURNS = 2, MOON_REFLECT = 0.5, MOON_TAKE = 0.3;   // Chu Nguyên Chương: khiên 2 hiệp, phản 50% sát thương cho địch, đồng đội chỉ nhận 30%
     const ULT_HITS = 3, ULT_MULT = 1.2, TAICHI_MULT = 1.5, HEAL_MULT = 1.5, RAGE_ATK = 34;
     const HTT_FLAT = 33333, HTT_LINES = 18, HTT_HP_PCT = 0.5;   // Hỏa Thiên Tướng: 33333 chuẩn (bỏ qua giáp) + Công bản thân, 18 đường lửa, giảm 50% HP hiện tại của địch

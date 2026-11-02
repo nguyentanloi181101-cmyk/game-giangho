@@ -2,8 +2,8 @@
    (tách từ index.html cũ — script) */
 
     // Chiêu cuối: tướng thường dùng kiểu lao vào đánh 3 đòn, Trương Tam Phong có chiêu riêng
-    // Âm thanh tuyệt kỹ theo tướng (nhúng sẵn): id 0 = Ma Đao Thánh Nữ, id 2 = Chu Nguyên Chương, id 5 = Âu Cơ, id 8 = Lạc Long Quân, id 9 = Hỏa Thiên Tướng, id 10 = Bạch Ma Vương (Vô Nhai Tử: không có âm lúc bắt đầu chiêu, mỗi viên cờ rơi kêu 1 tiếng – xem playGoStone)
-    const HERO_SND_SRC = { 0: 'assets/audio/heroes/00-ma-dao-thanh-nu.mp3', 2: 'assets/audio/heroes/02-chu-nguyen-chuong.mp3', 5: 'assets/audio/heroes/05-au-co.mp3', 9: 'assets/audio/heroes/09-dong-phuong-co-nuong.mp3', 8: 'assets/audio/heroes/08-lac-long-quan.mp3', 10: 'assets/audio/heroes/10-bach-ma-vuong.mp3' };
+    // Âm thanh tuyệt kỹ theo tướng (nhúng sẵn): id 0 = Ma Đao Thánh Nữ, id 2 = Chu Nguyên Chương, id 5 = Âu Cơ, id 8 = Lạc Long Quân, id 9 = Hỏa Thiên Tướng, id 10 = Tiểu Yêu (Vô Nhai Tử: không có âm lúc bắt đầu chiêu, mỗi viên cờ rơi kêu 1 tiếng – xem playGoStone)
+    const HERO_SND_SRC = { 0: 'assets/audio/heroes/00-ma-dao-thanh-nu.mp3', 2: 'assets/audio/heroes/02-chu-nguyen-chuong.mp3', 5: 'assets/audio/heroes/05-au-co.mp3', 9: 'assets/audio/heroes/09-dong-phuong-co-nuong.mp3', 8: 'assets/audio/heroes/08-lac-long-quan.mp3', 10: 'assets/audio/heroes/10-tieu-yeu.mp3' };
     const heroSnd = {};
     Object.keys(HERO_SND_SRC).forEach(id => { try { const a = new Audio(HERO_SND_SRC[id]); a.preload = 'auto'; heroSnd[id] = a; } catch (e) {} });
     function playHeroSound(id) {

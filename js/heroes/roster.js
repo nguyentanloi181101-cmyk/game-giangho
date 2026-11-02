@@ -22,9 +22,9 @@
       // Hỏa Thiên Tướng: tuyệt kỹ không cần nộ – 18 đường lửa chồng chéo như tơ nhện, sát thương chuẩn bỏ qua giáp + giảm 50% HP địch
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4 (33333 sát thương chuẩn sẽ diệt cả đội ngay)
       {id:9,name:'Đông Phương Cô Nương',emoji:'🔥',img:'assets/images/heroes/dong-phuong-co-nuong.webp',body:'assets/images/heroes/dong-phuong-co-nuong-body.webp',bodyH:80,hp:3000,atk:300,def:500,spd:50,dodge:20,acc:300,startRage:100,alwaysUlt:true,noEnemy:true},
-      // Bạch Ma Vương: tuyệt kỹ không cần nộ – triệu hồi 3 bộ xương khô, mỗi địch mất 50% HP hiện tại (bỏ qua mọi thứ trừ Né); bản thân không bị trừ máu
+      // Tiểu Yêu: tuyệt kỹ không cần nộ – đầu lâu lửa phun lên TOÀN BỘ địch, mỗi địch mất 50% HP hiện tại; còn ≤10% HP tối đa thì bị TẤT SÁT kết liễu (bỏ qua mọi thứ trừ Né); bản thân không bị trừ máu
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4 (đấm 1 phát chết 3 tướng ta)
-      {id:10,name:'Bạch Ma Vương',emoji:'💀',img:'assets/images/heroes/bach-ma-vuong.webp',body:'assets/images/heroes/bach-ma-vuong-body.webp',hp:3600,atk:320,def:50,spd:58,dodge:8,startRage:100,alwaysUlt:true,noEnemy:true},
+      {id:10,name:'Tiểu Yêu',emoji:'🎭',img:'assets/images/heroes/tieu-yeu.webp',body:'assets/images/heroes/tieu-yeu-body.webp',hp:3600,atk:320,def:50,spd:58,dodge:8,startRage:100,alwaysUlt:true,noEnemy:true},
       // Vô Nhai Tử: tướng hỗ trợ – tuyệt kỹ không cần nộ (alwaysUlt), hiệp nào cũng ulti. Chiêu: ném hủ cờ vây lên phía địch, 5 quân cờ trắng/đen rơi xuống bàn cờ dưới chân địch; sao chép chỉ số boss mạnh nhất (boss giữ nguyên; lần sau so chỉ số, giữ số cao hơn)
       // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
       {id:11,name:'Vô Nhai Tử',emoji:'♟️',img:'assets/images/heroes/vo-nhai-tu.webp',body:'assets/images/heroes/vo-nhai-tu-body.webp',bodyH:80,hp:3200,atk:260,def:45,spd:62,dodge:12,startRage:100,alwaysUlt:true,noEnemy:true},

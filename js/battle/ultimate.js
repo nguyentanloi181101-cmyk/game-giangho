@@ -30,7 +30,7 @@
     function ultimateOnce(u, tok) {
       if (!(u.qRepeat && u.id === 0)) playHeroSound(u.id);   // Mã Đạo: tiếng dài, lần lặp không phát lại để khỏi cắt tiếng
       if (u.id === 2) return moonUlt(u, tok);
-      if (u.id === 10) return skullUlt(u, tok);
+      if (u.id === 10) return tieuYeuUlt(u, tok);
       if (u.id === 11) return goUlt(u, tok);
       if (u.id === 12) return lingBaUlt(u, tok);
       if (u.id === 0) return madaoUlt(u, tok);

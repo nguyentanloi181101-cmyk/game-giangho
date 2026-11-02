@@ -10,7 +10,7 @@ assets/               ảnh + âm thanh (trước đây nhúng base64 trong code
   images/items/       Bảo Vật (treasure-*), trang bị (equipment-*)
   images/giangho/     banner Giang Hồ
   images/fx/          ảnh hiệu ứng
-  images/seq/         chuỗi khung hình (sprite sheet 1 hàng × 12 khung): dáng đứng + tuyệt kỹ của Vương Trùng Dương, Tây Độc
+  images/seq/         chuỗi khung hình (sprite sheet 1 hàng × N khung): dáng đứng + tuyệt kỹ của các tướng (Tiểu Yêu: tieu-yeu-idle/ult/skull · Đoàn Dự: doan-du-idle/ult/run · Vương Trùng Dương, Tây Độc…)
   audio/              nhạc nền, âm đánh thường, âm mở trận, âm theo tướng
 css/
   core/               nền, thanh trên, trang chủ, cài đặt, thể lực
@@ -172,3 +172,11 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 ## Hoa Mãn Lâu (v38)
 - Dáng đứng: `SEQ.hmlIdle` (+ `SEQ_IDLE[6]`) • Tung tuyệt kỹ: `SEQ.hmlCast` • 7 chuỗi bướm ulti: `SEQ.hmlRed → hmlOrange → hmlYellow → hmlGreen → hmlBlue → hmlIndigo → hmlPurple` (đỏ, cam, vàng, lục, lam, chàm, tím), ảnh ở `assets/images/seq/hoa-man-lau-*.webp`.
 - Nền đã xóa sạch (trong suốt), thân căn cố định giữa khung; đã bỏ hoàn toàn emoji bướm.
+
+
+## Cập nhật v45: Tiểu Yêu (id 10, trước là Bạch Ma Vương) + Đoàn Dự (id 12)
+- **Tiểu Yêu**: đứng yên = `SEQ.tyIdle` (20 khung) · tung chiêu = `SEQ.tyCast` (20 khung) · đầu lâu lửa = `SEQ.tySkull` (20 khung).
+  Đánh **TOÀN BỘ địch còn sống**, mỗi địch mất **50% HP hiện tại** (bỏ qua giáp/khiên/bất tử, chỉ Né mới tránh được).
+  Sau đòn nếu HP còn **≤ 10% HP tối đa** (`EXEC_PCT` trong `js/battle/skill-config.js`) → **TẤT SÁT** kết liễu ngay (bỏ qua cả bất tử). Code: `js/heroes/skills/tieu-yeu.js`.
+- **Đoàn Dự**: đứng yên = `SEQ.ddIdle` (17 khung) · tung chiêu = `SEQ.ddCast` (16 khung) · 18 đạo tàn ảnh chạy = `SEQ.ddRun` (17 khung). Code: `js/heroes/skills/doan-du.js`.
+- Đã xóa hiệu ứng/ảnh cũ: bộ xương + lửa CSS + `fx/skull.webp`, emoji/ảnh tàn ảnh chạy cũ, ảnh Bạch Ma Vương cũ.

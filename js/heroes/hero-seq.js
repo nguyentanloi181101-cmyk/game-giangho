@@ -25,6 +25,14 @@ const SEQ = {
   hmlIdle:  { src: 'assets/images/seq/hoa-man-lau-idle.webp?v=40',          cw: 320, ch: 250, n: 16, drop: .04  },   // đứng yên cùng sư tử (lặp)
   hmlCast:  { src: 'assets/images/seq/hoa-man-lau-ult.webp?v=40',           cw: 560, ch: 300, n: 16, drop: .033 },   // tung tuyệt kỹ: bướm cuộn bay ra phía địch (cùng tỉ lệ + điểm neo với hmlIdle)
   // 7 chuỗi bướm ulti (16 khung) theo thứ tự đỏ-cam-vàng-lục-lam-chàm-tím: bướm rơi (0-3) → chạm đất (4-11) → bung tia nhiều hướng (12-15)
+  // ===== Tiểu Yêu (id 10) — 20 khung, nền đã xóa; idle + ult cùng khung/tỉ lệ để phủ khớp nhau =====
+  tyIdle:   { src: 'assets/images/seq/tieu-yeu-idle.webp?v=50',  cw: 269, ch: 202, n: 20, drop: .03 },   // đứng yên, hào quang đổi màu (lặp)
+  tyCast:   { src: 'assets/images/seq/tieu-yeu-ult.webp?v=50',   cw: 269, ch: 202, n: 20, drop: .03 },   // tung tuyệt kỹ: dang tay, hào quang xoáy
+  tySkull:  { src: 'assets/images/seq/tieu-yeu-skull.webp?v=50', cw: 297, ch: 228, n: 20 },               // đầu lâu lửa phun lửa xuống địch (đầu ở góc trên-trái, lửa tuôn xuống phải)
+  // ===== Đoàn Dự (id 12) — nền đã xóa =====
+  ddIdle:   { src: 'assets/images/seq/doan-du-idle.webp?v=50',   cw: 204, ch: 225, n: 17, drop: .03 },   // đứng yên (17 khung, lặp)
+  ddCast:   { src: 'assets/images/seq/doan-du-ult.webp?v=50',    cw: 335, ch: 221, n: 16, drop: .03 },   // tung tuyệt kỹ: vung kiếm, xoáy nước (cùng tỉ lệ người với ddIdle)
+  ddRun:    { src: 'assets/images/seq/doan-du-run.webp?v=50',    cw: 236, ch: 181, n: 17 },               // 1 đạo tàn ảnh lao đi (17 khung, nhìn sang PHẢI)
   hmlRed:    { src: 'assets/images/seq/hoa-man-lau-buom-red.webp?v=42',     cw: 384, ch: 256, n: 16 },   // Đỏ
   hmlOrange: { src: 'assets/images/seq/hoa-man-lau-buom-orange.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Cam
   hmlYellow: { src: 'assets/images/seq/hoa-man-lau-buom-yellow.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Vàng
@@ -34,7 +42,7 @@ const SEQ = {
   hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=42',  cw: 384, ch: 256, n: 16 }    // Tím
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 }, 10: { sheet: 'tyIdle', h: 124, ms: 1800 }, 12: { sheet: 'ddIdle', h: 128, ms: 1500 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 
