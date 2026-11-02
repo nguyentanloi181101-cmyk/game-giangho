@@ -180,3 +180,7 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
   Sau đòn nếu HP còn **≤ 10% HP tối đa** (`EXEC_PCT` trong `js/battle/skill-config.js`) → **TẤT SÁT** kết liễu ngay (bỏ qua cả bất tử). Code: `js/heroes/skills/tieu-yeu.js`.
 - **Đoàn Dự**: đứng yên = `SEQ.ddIdle` (17 khung) · tung chiêu = `SEQ.ddCast` (16 khung) · 18 đạo tàn ảnh chạy = `SEQ.ddRun` (17 khung). Code: `js/heroes/skills/doan-du.js`.
 - Đã xóa hiệu ứng/ảnh cũ: bộ xương + lửa CSS + `fx/skull.webp`, emoji/ảnh tàn ảnh chạy cũ, ảnh Bạch Ma Vương cũ.
+
+## Cập nhật v46: Đông Phương Cô Nương (id 9)
+- Đứng yên = `SEQ.dpIdle` (20 khung) · tung chiêu = `SEQ.dpCast` (16 khung) · phân thân chạy sang địch = `SEQ.dpClone` (18 khung) · lốc lửa trên địch = `SEQ.dpFire` (20 khung). Code: `js/heroes/skills/dong-phuong-co-nuong.js`.
+- Đã xóa mạng lửa 3D (canvas), ngọn lửa và đốm lửa trên đầu cũ. Cơ chế sát thương giữ nguyên (HTT_FLAT + Công chuẩn bỏ qua giáp, mất thêm 50% HP hiện tại, hiệu ứng vòng sóng khi trúng).

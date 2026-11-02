@@ -33,6 +33,11 @@ const SEQ = {
   ddIdle:   { src: 'assets/images/seq/doan-du-idle.webp?v=50',   cw: 204, ch: 225, n: 17, drop: .03 },   // đứng yên (17 khung, lặp)
   ddCast:   { src: 'assets/images/seq/doan-du-ult.webp?v=50',    cw: 335, ch: 221, n: 16, drop: .03 },   // tung tuyệt kỹ: vung kiếm, xoáy nước (cùng tỉ lệ người với ddIdle)
   ddRun:    { src: 'assets/images/seq/doan-du-run.webp?v=50',    cw: 236, ch: 181, n: 17 },               // 1 đạo tàn ảnh lao đi (17 khung, nhìn sang PHẢI)
+  // ===== Đông Phương Cô Nương (id 9) — nền đã xóa; idle + ult cùng khung/tỉ lệ =====
+  dpIdle:   { src: 'assets/images/seq/dong-phuong-idle.webp?v=51',  cw: 334, ch: 225, n: 20, drop: .03 },   // đứng yên cố định 1 chỗ (20 khung, lặp)
+  dpCast:   { src: 'assets/images/seq/dong-phuong-ult.webp?v=51',   cw: 334, ch: 225, n: 16, drop: .03 },   // tung tuyệt kỹ: lụa lửa xoáy quanh người (16 khung)
+  dpClone:  { src: 'assets/images/seq/dong-phuong-clone.webp?v=51', cw: 366, ch: 217, n: 18 },               // phân thân lao sang địch (18 khung, nhìn sang PHẢI)
+  dpFire:   { src: 'assets/images/seq/dong-phuong-fire.webp?v=51',  cw: 260, ch: 206, n: 20 },               // lốc lửa bùng lên ở bên địch (20 khung)
   hmlRed:    { src: 'assets/images/seq/hoa-man-lau-buom-red.webp?v=42',     cw: 384, ch: 256, n: 16 },   // Đỏ
   hmlOrange: { src: 'assets/images/seq/hoa-man-lau-buom-orange.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Cam
   hmlYellow: { src: 'assets/images/seq/hoa-man-lau-buom-yellow.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Vàng
@@ -42,7 +47,7 @@ const SEQ = {
   hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=42',  cw: 384, ch: 256, n: 16 }    // Tím
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 }, 10: { sheet: 'tyIdle', h: 124, ms: 1800 }, 12: { sheet: 'ddIdle', h: 128, ms: 1500 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 }, 10: { sheet: 'tyIdle', h: 124, ms: 1800 }, 9: { sheet: 'dpIdle', h: 138, ms: 1800 }, 12: { sheet: 'ddIdle', h: 128, ms: 1500 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 
