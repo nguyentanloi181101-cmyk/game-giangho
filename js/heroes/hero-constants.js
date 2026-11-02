@@ -19,6 +19,7 @@
       { k:'tough', label:'Bền',        min:0, max:99999 },
       { k:'pierce', label:'Phá giáp',  min:0, max:9999999 },
       { k:'block', label:'Đỡ đòn (%)', min:0, max:100 },
+      { k:'heal',  label:'Hồi máu (mỗi hiệp)', min:0, max:99999999 },
       { k:'spd',   label:'Tốc',        min:0, max:99999 },
       { k:'startRage', label:'Nộ khởi đầu', min:0, max:100 }
     ];

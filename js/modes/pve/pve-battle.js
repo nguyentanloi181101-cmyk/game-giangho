@@ -73,6 +73,7 @@
       clearDefBuff(waveUnits.heroes);
       tickMoon(waveUnits.heroes);                            // khiên Trăng Khuyết bên ta giảm 1 hiệp
       tickLB(waveUnits.heroes);                              // buff Lăng Ba Vi Bộ giảm 1 hiệp (+ hồi máu)
+      waveUnits.heroes.forEach(h => { if (h.alive && h.regen) heal(h, h.regen); });   // hồi máu (cơ bản + Bảo Vật + kỹ năng bang): hết hiệp 2 bên
       if (waveUnits.heroes.every(h => !h.alive)) { loseBattle(); return; }
       if (waveUnits.enemies.every(e => !e.alive)) { await sleep(400); if (tok !== battleToken) return; nextWave(); return; }   // địch gục vì sát thương phản
       // Tướng ta dính chảy máu từ chiêu của địch

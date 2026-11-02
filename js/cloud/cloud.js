@@ -124,7 +124,7 @@ async function clPublishPvp() {
   if (!clUser || !clDb) return;
   const ids = (team || []).filter(id => heroById(id)); if (!ids.length) return;
   const _tt = (typeof ttMine === 'function' && ttMine()) || null, _bn = _tt ? ttBonus(_tt.pt) : {};
-  const tm = ids.map(id => { const s = ttApply(Object.assign({}, heroStats(id, true)), _bn); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, block: s.block, star: getProg(id).star, sk: skillMult(id) }; });
+  const tm = ids.map(id => { const s = ttApply(Object.assign({}, heroStats(id, true)), _bn); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, block: s.block, heal: s.heal || 0, star: getProg(id).star, sk: skillMult(id) }; });
   const ref = clDb.collection('pvp_players').doc(clUser.uid);
   const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins,
     power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm, beast: _tt ? _tt.beast : '', pt: _tt ? _tt.pt : [] };

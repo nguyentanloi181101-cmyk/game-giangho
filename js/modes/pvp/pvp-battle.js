@@ -61,7 +61,7 @@
         heroes: sel.map((h, k) => {
           const s = ttApply(Object.assign({}, heroStats(h.id, true)), ttBonus(_tm && _tm.pt));   // Tỷ Võ: chỉ chỉ số cơ bản + trang bị/Bảo Vật/cộng dồn, không lấy số chỉnh trong Cài đặt
           const u = makeUnit('hero', heroIcon(h), pos[k][0], pos[k][1], s.hp, s.atk, false, h.name);
-          u.id = h.id; u.emoji = heroIcon(h); u.def = s.def; u.spd = s.spd; u.dodge = s.dodge; u.acc = s.acc; u.crit = s.crit; u.critDmg = s.critDmg; u.tough = s.tough; u.pierce = s.pierce; u.block = s.block; u.sk = skillMult(h.id); u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2;
+          u.id = h.id; u.emoji = heroIcon(h); u.def = s.def; u.spd = s.spd; u.dodge = s.dodge; u.acc = s.acc; u.crit = s.crit; u.critDmg = s.critDmg; u.tough = s.tough; u.pierce = s.pierce; u.block = s.block; u.regen = s.heal || 0; u.sk = skillMult(h.id); u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2;
           u.rage = h.startRage || 0; grantStart(u); u.acted = false;
           return u;
         }),
@@ -79,7 +79,7 @@
       const S = HERO_POS[5].map(p => [100 - p[0], p[1] + HERO_DY]);
       waveUnits.enemies = o.stats.map((x, i) => {
         const h = x.h, u = makeUnit('enemy', heroIcon(h), S[i][0], S[i][1], x.hp, x.atk, false, h.name);
-        u.id = h.id; u.isHero = true; u.def = x.def; u.spd = x.spd !== undefined ? x.spd : h.spd; u.dodge = x.dodge !== undefined ? x.dodge : h.dodge; u.acc = x.acc !== undefined ? x.acc : (h.acc || 0); u.crit = x.crit || 0; u.critDmg = x.critDmg || 0; u.tough = x.tough || 0; u.pierce = x.pierce || 0; u.block = x.block || 0; u.sk = x.sk || 1; if (x.star) u.star = x.star;
+        u.id = h.id; u.isHero = true; u.def = x.def; u.spd = x.spd !== undefined ? x.spd : h.spd; u.dodge = x.dodge !== undefined ? x.dodge : h.dodge; u.acc = x.acc !== undefined ? x.acc : (h.acc || 0); u.crit = x.crit || 0; u.critDmg = x.critDmg || 0; u.tough = x.tough || 0; u.pierce = x.pierce || 0; u.block = x.block || 0; u.regen = x.heal || 0; u.sk = x.sk || 1; if (x.star) u.star = x.star;
         u.alwaysUlt = !!h.alwaysUlt; u.taunt = !!h.taunt; u.prio2 = !!h.prio2; u.rage = h.startRage || 0; grantStart(u);
         return u;
       });
@@ -133,6 +133,8 @@
           await sleep(250); if (tok !== battleToken) return;
           if (ended()) return;
         }
+        // hết hiệp (2 bên đã ra đòn xong): mọi tướng còn sống hồi máu theo chỉ số hồi máu
+        [...H, ...E].forEach(u => { if (u.alive && u.regen) heal(u, u.regen); });
       }
     }
     function pvpTimeout() {          // hết 10 lượt chưa phân thắng bại: bên gây nhiều sát thương hơn thắng

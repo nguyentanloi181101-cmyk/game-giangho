@@ -1,8 +1,12 @@
 /* BANG HỘI: Thần Thú, Diễn Võ Trường, Bang Chiến (Boss bang)
    Boss thứ 1 = 2.000.000 HP, mỗi boss sau nhân đôi; Chí Tôn = HP & sát thương x2. Kỹ năng boss: chờ mô tả. */
-const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng 1000 điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng 50 điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng 50 điểm công'],
-  ['Cường Thân', '💪', 'Mỗi cấp tăng 800 điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng 40 điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp tăng hồi máu'],
-  ['Thần Tốc', '⚡', 'Mỗi cấp tăng tốc độ'], ['Bạo Kích', '💥', 'Mỗi cấp tăng bạo kích'], ['Chí Tôn', '👑', 'Mỗi cấp tăng sát thương lên boss']];
+/* Mỗi cấp kỹ năng Lò Luyện Hỏa cộng cho TƯỚNG (theo đúng thứ tự ô: trái→phải, trên→dưới).
+   GD_HEAL_PER_LV: máu hồi mỗi cấp, cuối mỗi hiệp (2 bên đánh xong). Chỉnh số ở đây nếu cần. */
+const GD_HEAL_PER_LV = 1000;
+const GD_PER = { hp1: 3000, def1: 500, atk: 1000, hp2: 6000, def2: 1000, pierce: 1000, heal: GD_HEAL_PER_LV, spd: 2, critDmg: 20, boss: 10000 };
+const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng ' + GD_PER.hp1 + ' điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng ' + GD_PER.def1 + ' điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng ' + GD_PER.atk + ' điểm công'],
+  ['Cường Thân', '💪', 'Mỗi cấp tăng ' + GD_PER.hp2 + ' điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng ' + GD_PER.def2 + ' điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng ' + GD_PER.pierce + ' điểm phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp hồi ' + GD_PER.heal + ' máu cho tướng sau khi kết thúc lượt đánh của 2 bên'],
+  ['Thần Tốc', '⚡', 'Mỗi cấp tăng ' + GD_PER.spd + ' điểm tốc độ'], ['Bạo Kích', '💥', 'Mỗi cấp tăng ' + GD_PER.critDmg + ' điểm bạo sát'], ['Chí Tôn', '👑', 'Mỗi cấp tăng ' + GD_PER.boss + ' sát thương lên boss bang']];
 const GD_SKILL_UNLOCK = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10], GD_SKILL_MAX = [60, 60, 60, 60, 60, 60, 60, 60, 60, 40];
 const GD_ICO = { 'Thú Noãn': 'thu-noan', 'Thú Hồn': 'thu-hon', 'Thú Linh': 'thu-linh', 'Đá Nữ Oa': 'da-nu-oa', 'Dị Linh': 'di-linh', 'Đào Tiên': 'dao-tien', 'Đào Tiên Vương': 'dao-tien', 'Tử Linh Thạch': 'tu-linh-thach' };
 function gdIco(name, ico) { const f = GD_ICO[name] || (String(name).indexOf('Châu ') === 0 ? 'chau' : ''); return f ? `<img class="gi" src="assets/images/items/${f}.webp" alt="${name}">` : ico; }
@@ -17,6 +21,13 @@ function gdSt() {
   return s;
 }
 const gdSave = s => saveJSON('guild_state', s);
+/* Cộng chỉ số từ kỹ năng Lò Luyện Hỏa cho tướng (đọc trực tiếp guild_state, không bị lỗi nếu chưa học) */
+function gdBonus() {
+  let dv; try { dv = (loadJSON('guild_state') || {}).dv; } catch (e) {}
+  const L = i => Math.max(0, Math.min(GD_SKILL_MAX[i], Math.floor((dv && dv[i]) || 0)));
+  return { hp: L(0) * GD_PER.hp1 + L(3) * GD_PER.hp2, def: L(1) * GD_PER.def1 + L(4) * GD_PER.def2, atk: L(2) * GD_PER.atk, pierce: L(5) * GD_PER.pierce,
+    heal: L(6) * GD_PER.heal, spd: L(7) * GD_PER.spd, critDmg: L(8) * GD_PER.critDmg, boss: L(9) * GD_PER.boss };
+}
 (function mk() {
   const mc = document.querySelector('.main-content'), add = (id, html) => { const d = document.createElement('div'); d.className = 'screen'; d.id = 'screen-' + id; d.innerHTML = html; mc.appendChild(d); };
   const hd = (t, back) => `<div class="pve-header"><button class="btn-back" onclick="${back || "openGuild()"}">Trở về</button><h2 class="pve-title">${t}</h2></div>`;
@@ -86,15 +97,16 @@ function bbInfo(k, ct) {
 function bbFight() {   // trận tự động mô phỏng bằng chỉ số đội hình (kỹ năng boss sẽ cập nhật khi có mô tả)
   const [k, ct] = bbCur, s = gdTick(), key = ct ? 'bossCt' : 'boss', mx = gdBossHp(k, ct), cur = s[key][k] === undefined ? mx : s[key][k];
   if (s.left < 1) return scToast('Hết lượt hôm nay'); if (cur <= 0) return scToast('Boss đã bị hạ');
-  const heroes = team.map(id => { const t = heroStats(id); return { hp: t.hp, atk: t.atk, def: t.def }; });
+  const gb = gdBonus(), heroes = team.map(id => { const t = heroStats(id); return { hp: t.hp, max: t.hp, atk: t.atk, def: t.def, heal: gb.heal }; });
   if (!heroes.length) return scToast('Chưa có tướng trong đội');
   let boss = cur, dmgDone = 0, rounds = 0; const bAtk = gdBossAtk(k, ct);
   while (boss > 0 && rounds < 30 && heroes.some(h => h.hp > 0)) {
     rounds++;
-    heroes.forEach(h => { if (h.hp > 0) { const d = Math.round(h.atk * 3 * (.9 + Math.random() * .2)); boss -= d; dmgDone += d; } });
+    heroes.forEach(h => { if (h.hp > 0) { const d = Math.round(h.atk * 3 * (.9 + Math.random() * .2)) + gb.boss; boss -= d; dmgDone += d; } });
     if (boss <= 0) break;
     const alive = heroes.filter(h => h.hp > 0), tgt = alive[Math.floor(Math.random() * alive.length)];
     tgt.hp -= Math.max(1, bAtk - Math.round(tgt.def * .5));
+    heroes.forEach(h => { if (h.hp > 0 && h.heal) h.hp = Math.min(h.max, h.hp + h.heal); });   // Hồi Phục: hết hiệp 2 bên
   }
   const killed = boss <= 0; boss = Math.max(0, boss); dmgDone = Math.min(dmgDone, cur);
   s[key][k] = boss; s.left--; const pts = Math.floor(dmgDone / 20000) + (killed ? 100 : 0); s.pts += pts;

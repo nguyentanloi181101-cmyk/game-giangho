@@ -19,7 +19,7 @@
       8: { name:'Trống Lôi Âm',    stats:[ ['crit', 50, .05],   ['atkFlat', 2000, .15], ['atkFlat', 1500, .15] ] },
       9: { name:'Kim Giao Tiễn',   stats:[ ['spd', 20, .02],    ['critDmg', 500, .15],  ['pierce', 10000, .15] ] }
     };
-    const TS_LABEL = { dodge:'Né', acc:'Chuẩn', crit:'Bạo', critDmg:'Bạo Sát', tough:'Bền', atkFlat:'Công', hpFlat:'HP', pierce:'Phá giáp', spd:'Tốc' };
+    const TS_LABEL = { dodge:'Né', acc:'Chuẩn', crit:'Bạo', critDmg:'Bạo Sát', tough:'Bền', heal:'Hồi máu', atkFlat:'Công', hpFlat:'HP', pierce:'Phá giáp', spd:'Tốc' };
     const TS_IMG = { 6:'assets/images/items/treasure-06.webp?v=24', 7:'assets/images/items/treasure-07.webp?v=24', 8:'assets/images/items/treasure-08.webp?v=24', 9:'assets/images/items/treasure-09.webp' };
     const TS_EMO = {};   // loại nào chưa có ảnh thì khai biểu tượng ở đây
     const tsName = id => TS_DEFS[id] ? TS_DEFS[id].name : TS_NAME;
@@ -27,7 +27,7 @@
     let tsRefund = 0;   // búa hoàn lại cho Bảo Vật đang quá 10★ (dữ liệu cũ)
     const tsVal = (st, t) => st[1] * (1 + TS_STAR_ADD * (t.star | 0)) * (1 + st[2] * (t.lv | 0));
     function tsStatOf(t) {
-      const o = { dodge:0, atk:0, hp:0, acc:0, crit:0, critDmg:0, tough:0, atkFlat:0, hpFlat:0, pierce:0, spd:0 }, d = TS_DEFS[tsKindOf(t.id)];
+      const o = { dodge:0, atk:0, hp:0, acc:0, crit:0, critDmg:0, tough:0, atkFlat:0, hpFlat:0, pierce:0, spd:0, heal:0 }, d = TS_DEFS[tsKindOf(t.id)];
       if (d) d.stats.forEach(st => { o[st[0]] += tsVal(st, t); });
       return o;
     }
@@ -92,7 +92,7 @@
     const tsOfFrame = f => f >= 0 ? tsBag.filter(t => t.f === f) : [];
     const tsOf = heroId => tsOfFrame(frameOf(heroId));   // Bảo Vật của khung mà tướng đang đứng
     function tsBonus(heroId) {
-      const b = { dodge: 0, atk: 0, hp: 0, acc: 0, crit: 0, critDmg: 0, tough: 0, atkFlat: 0, hpFlat: 0, pierce: 0, spd: 0 };
+      const b = { dodge: 0, atk: 0, hp: 0, acc: 0, crit: 0, critDmg: 0, tough: 0, atkFlat: 0, hpFlat: 0, pierce: 0, spd: 0, heal: 0 };
       tsOf(heroId).forEach(t => { const s = tsStatOf(t); Object.keys(b).forEach(k => { b[k] += s[k]; }); });
       return b;
     }

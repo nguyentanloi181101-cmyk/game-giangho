@@ -3,9 +3,9 @@
 
     // Chỉ số cấp/sao nhân trước, trang bị của khung cộng thẳng lên trên
     function heroStats(id, base) {   // base = true (Tỷ Võ): chỉ lấy chỉ số cơ bản gốc, không lấy số chỉnh trong Cài đặt
-      const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id);
-      return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + tb.hpFlat + eb.hp + pb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk, def:Math.round(h.def * g) + eb.def + pb.def,
-               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:(h.pierce || 0) + tb.pierce, block:h.block || 0, spd:h.spd + eb.spd + tb.spd, rage:h.startRage || 0 };
+      const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id), gb = (typeof gdBonus === 'function') ? gdBonus() : { hp:0, atk:0, def:0, pierce:0, spd:0, critDmg:0, heal:0 };
+      return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + tb.hpFlat + eb.hp + pb.hp + gb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk + gb.atk, def:Math.round(h.def * g) + eb.def + pb.def + gb.def,
+               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg + gb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:(h.pierce || 0) + tb.pierce + gb.pierce, block:h.block || 0, spd:h.spd + eb.spd + tb.spd + gb.spd, heal:(h.heal || 0) + (tb.heal || 0) + gb.heal, healGuild:gb.heal, rage:h.startRage || 0 };
     }
 
     // ---- Mô tả kỹ năng (số liệu lấy đúng theo cơ chế trận đấu + cấp kỹ năng hiện tại) ----
