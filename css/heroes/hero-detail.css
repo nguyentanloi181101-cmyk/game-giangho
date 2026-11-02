@@ -33,6 +33,7 @@
     .hd-line em{font-style:normal;color:#4ade80;font-weight:bold}
     .hd-line em.pv{color:#fde047}
 .hd-line em.ts{color:#c084fc}
+.hd-line em.gd{color:#fb923c}
     .hd-line>span:first-child{white-space:nowrap;flex-shrink:0}
     .hd-line>span:last-child{text-align:right}
     .hd-line em{white-space:nowrap}

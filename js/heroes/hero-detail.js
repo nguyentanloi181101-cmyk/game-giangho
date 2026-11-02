@@ -19,11 +19,12 @@
       document.getElementById('hd-ico').innerHTML = heroIcon(h);
       document.getElementById('hd-name').innerHTML = h.name + (f >= 0 ? `<span class="hd-frame">Khung ${f + 1}</span>` : '');
       document.getElementById('hd-sub').innerText = `Cấp ${p.lv}/${LV_MAX} • ${starStr(p.star)} (${p.star}/${starCapOf(p.lv)}) • Kỹ năng ${p.sk}/${SKILL_MAX}`;
-      const line = (label, val, bonus, pv, ts) => `<div class="hd-line"><span>${label}</span><span>${val}${bonus ? ` <em>+${fmtN(bonus)}</em>` : ''}${pv ? ` <em class="pv" title="Cộng từ Tỷ Võ">+${fmtN(pv)}🏅</em>` : ''}${ts ? ` <em class="ts" title="Cộng từ Bảo Vật">+${fmtN(ts)}🔮</em>` : ''}</span></div>`;
+      const gb = (typeof gdBonus === 'function') ? gdBonus() : {};   // cộng từ Lò Luyện Hỏa của bang (đã nằm sẵn trong heroStats → dùng cho cả PVE lẫn Tỷ Võ)
+      const line = (label, val, bonus, pv, ts, gd) => `<div class="hd-line"><span>${label}</span><span>${val}${bonus ? ` <em>+${fmtN(bonus)}</em>` : ''}${pv ? ` <em class="pv" title="Cộng từ Tỷ Võ">+${fmtN(pv)}🏅</em>` : ''}${ts ? ` <em class="ts" title="Cộng từ Bảo Vật">+${fmtN(ts)}🔮</em>` : ''}${gd ? ` <em class="gd" title="Cộng từ Bang (Lò Luyện Hỏa)">+${fmtN(gd)}🏰</em>` : ''}</span></div>`;
       const tb = tsBonus(id);
       document.getElementById('hd-stats').innerHTML =
-        line('❤️ HP', fmtN(st.hp), eb.hp, pb.hp, tb.hpFlat) + line('⚔️ Công', fmtN(st.atk), eb.atk, pb.atk, tb.atkFlat) + line('🛡️ Thủ', fmtN(st.def), eb.def, pb.def) +
-        line('⚡ Tốc', st.spd, eb.spd, 0, tb.spd) + line('💨 Né', tsFmt(st.dodge)) + line('🎯 Chuẩn', tsFmt(st.acc)) + line('💥 Bạo', tsFmt(st.crit)) + line('🔥 Bạo Sát', tsFmt(st.critDmg)) + line('🧱 Bền', tsFmt(st.tough)) + line('🗡️ Phá giáp', fmtN(st.pierce)) + line('💚 Hồi máu', fmtN(st.heal || 0) + '/hiệp', st.healGuild) + line('🛡️ Đỡ đòn', tsFmt(st.block) + '%') +
+        line('❤️ HP', fmtN(st.hp), eb.hp, pb.hp, tb.hpFlat, gb.hp) + line('⚔️ Công', fmtN(st.atk), eb.atk, pb.atk, tb.atkFlat, gb.atk) + line('🛡️ Thủ', fmtN(st.def), eb.def, pb.def, 0, gb.def) +
+        line('⚡ Tốc', st.spd, eb.spd, 0, tb.spd, gb.spd) + line('💨 Né', tsFmt(st.dodge)) + line('🎯 Chuẩn', tsFmt(st.acc)) + line('💥 Bạo', tsFmt(st.crit)) + line('🔥 Bạo Sát', tsFmt(st.critDmg), 0, 0, 0, gb.critDmg) + line('🧱 Bền', tsFmt(st.tough)) + line('🗡️ Phá giáp', fmtN(st.pierce), 0, 0, 0, gb.pierce) + line('💚 Hồi máu', fmtN(st.heal || 0) + '/hiệp', 0, 0, 0, gb.heal) + line('🛡️ Đỡ đòn', tsFmt(st.block) + '%') +
         line('🎭 Chất tướng', ROLE_ICON[HERO_ROLE[id]] + ' ' + ROLE_NAME[HERO_ROLE[id]]) + line('🔥 Nộ khởi đầu', st.rage) +
         line('📈 Hệ số cấp/sao', '×' + g.toFixed(2)) +
         (f < 0 ? '<div class="set-note" style="margin-top:6px">Tướng chưa ra trận nên không có khung để gắn trang bị.</div>' : '');
