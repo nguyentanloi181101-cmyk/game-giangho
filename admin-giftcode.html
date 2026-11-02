@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin · Tạo Gift Code</title>
+<style>
+  :root{--bg:#0f1220;--card:#1a1f36;--line:#2d3556;--gold:#fde047;--txt:#e5e7f0;--mut:#8b93b3;--ok:#4ade80;--bad:#f87171}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;padding:16px}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:20px;color:var(--gold);margin:0 0 4px}
+  h2{font-size:15px;margin:0 0 10px;color:var(--gold)}
+  .sub{color:var(--mut);margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+  input,select{width:100%;background:#0f1220;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+  input:focus,select:focus{outline:1px solid var(--gold)}
+  .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+  button{background:#334;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+  button:hover{border-color:var(--gold)}
+  button.pri{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+  button.dng{color:var(--bad)}
+  button:disabled{opacity:.5;cursor:default}
+  .rw{display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .rw select{flex:2;min-width:140px}.rw input{flex:1;min-width:90px}.rw .x{flex:0 0 auto;width:auto}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mut);font-size:12px;font-weight:600}
+  code{background:#0f1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--gold);font-weight:700}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line)}
+  .on{color:var(--ok);border-color:var(--ok)}.off{color:var(--bad);border-color:var(--bad)}
+  .msg{min-height:20px;margin-top:8px}
+  .hide{display:none}
+  .acts{display:flex;gap:4px;flex-wrap:wrap}
+  .acts button{padding:4px 8px;font-size:12px}
+  .scroll{overflow-x:auto}
+  .uid{user-select:all;background:#0f1220;padding:2px 6px;border-radius:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎁 Admin · Gift Code</h1>
+  <div class="sub">Tạo mã quà tặng cho game. Mã lưu trên Firestore, người chơi nhập trong Túi Đồ → Gift Code.</div>
+
+  <!-- ĐĂNG NHẬP -->
+  <div id="v-login" class="card">
+    <h2>Đăng nhập admin</h2>
+    <label>Tên tài khoản (tài khoản đã đăng ký trong game)</label>
+    <input id="lg-user" autocapitalize="none" autocomplete="username" placeholder="vd: admin">
+    <label>Mật khẩu</label>
+    <input id="lg-pass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    <div style="margin-top:10px"><button class="pri" onclick="login()">Đăng nhập</button></div>
+    <div id="lg-msg" class="msg"></div>
+  </div>
+
+  <!-- KHÔNG PHẢI ADMIN -->
+  <div id="v-noadmin" class="card hide">
+    <h2>⚠️ Tài khoản này chưa có quyền admin</h2>
+    <p>Vào <b>Firebase Console → Firestore Database</b>, tạo collection <code>admins</code>, thêm 1 document có
+      <b>Document ID</b> đúng bằng UID bên dưới (nội dung tuỳ ý, ví dụ trường <code>ok</code> = true). Rồi tải lại trang này.</p>
+    <p>UID của bạn: <span id="my-uid" class="uid"></span></p>
+    <button onclick="logout()">Đăng xuất</button>
+  </div>
+
+  <!-- BẢNG ĐIỀU KHIỂN -->
+  <div id="v-panel" class="hide">
+    <div class="card">
+      <div class="row" style="align-items:center">
+        <div>Đang đăng nhập: <b id="who"></b></div>
+        <div style="text-align:right;flex:0 0 auto"><button onclick="logout()">Đăng xuất</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tạo mã mới</h2>
+      <div class="row">
+        <div><label>Mã (A-Z, 0-9, _ -, 4–32 ký tự)</label>
+          <div style="display:flex;gap:6px"><input id="f-code" maxlength="32" placeholder="vd: TETMOI2026" style="text-transform:uppercase"><button onclick="genCode()" style="flex:0 0 auto">🎲 Ngẫu nhiên</button></div></div>
+        <div><label>Số lượt dùng tối đa (0 = không giới hạn)</label><input id="f-max" type="number" min="0" value="0"></div>
+        <div><label>Hết hạn (bỏ trống = vô thời hạn)</label><input id="f-exp" type="datetime-local"></div>
+      </div>
+      <label>Ghi chú (chỉ admin thấy)</label>
+      <input id="f-note" maxlength="100" placeholder="vd: Quà bù bảo trì 02/11">
+
+      <label style="margin-top:14px">Phần thưởng</label>
+      <div id="rw-list"></div>
+      <button onclick="addRw()">＋ Thêm phần thưởng</button>
+
+      <div style="margin-top:14px"><button class="pri" id="btn-create" onclick="createCode()">Tạo Gift Code</button></div>
+      <div id="f-msg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="align-items:center"><h2 style="margin:0">Danh sách mã</h2>
+        <div style="text-align:right;flex:0 0 auto"><button onclick="loadList()">↻ Tải lại</button></div></div>
+      <div class="scroll"><table>
+        <thead><tr><th>Mã</th><th>Quà</th><th>Đã dùng</th><th>Hết hạn</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody id="tb"><tr><td colspan="6" style="color:var(--mut)">Đang tải…</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* Cùng cấu hình Firebase với game (js/cloud/cloud.js). Dùng app tên riêng 'admin' để phiên đăng nhập admin
+   KHÔNG đè lên phiên đăng nhập của game trên cùng trình duyệt. */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDOWlrfsWTx0HNWQAYvPHw7fWHlFP3UNu4",
+  authDomain: "game-118e8.firebaseapp.com",
+  projectId: "game-118e8",
+  storageBucket: "game-118e8.firebasestorage.app",
+  messagingSenderId: "612432319937",
+  appId: "1:612432319937:web:0e2ba2a7ecc032d8150b40"
+};
+const CL_DOMAIN = '@mhgh-game.app';
+const fbApp = firebase.initializeApp(FIREBASE_CONFIG, 'admin');
+const auth = fbApp.auth(), db = fbApp.firestore();
+
+/* Danh mục quà — khớp với hàm gcGrant trong js/core/giftcode.js */
+const HEROES = [[0,'Ma Đao Thánh Nữ'],[1,'Thanh Y Tiên Tử'],[2,'Chu Nguyên Chương'],[3,'Độc Cô Cầu Bại'],[4,'Trương Tam Phong'],[5,'Âu Cơ'],[6,'Hoa Mãn Lâu'],[7,'Kiều Phong'],[8,'Lạc Long Quân'],[9,'Đông Phương Cô Nương'],[10,'Tiểu Yêu'],[11,'Vô Nhai Tử'],[12,'Đoàn Dự'],[13,'Bắc Cái'],[14,'Đông Tà'],[15,'Tây Độc'],[16,'Nam Đế'],[17,'Vương Trùng Dương']];
+const TREASURES = [[1,'Tôn Sư Ký'],[6,'Bá Vương Kiếm'],[7,'Thủy Hoàng Đăng'],[8,'Trống Lôi Âm'],[9,'Kim Giao Tiễn']];
+const ITEMS = { 'Thú Noãn':'🥚','Thú Hồn':'👻','Thú Linh':'🔥','Đá Nữ Oa':'💎','Dị Linh':'✨','Đào Tiên':'🍑','Đào Tiên Vương':'🍑','Tử Linh Thạch':'🪨' };
+const TYPES = [['pill','💊 Viên Thể Lực'],['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['item','🎒 Vật phẩm Bang Hội']];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('vi-VN');
+function say(id, t, ok) { const e = $(id); e.style.color = ok === false ? 'var(--bad)' : 'var(--ok)'; e.textContent = t || ''; }
+function show(v) { ['v-login', 'v-noadmin', 'v-panel'].forEach(x => $(x).classList.toggle('hide', x !== v)); }
+
+/* ---------- Đăng nhập ---------- */
+async function login() {
+  const u = ($('lg-user').value || '').trim().toLowerCase(), p = $('lg-pass').value || '';
+  if (!/^[a-z0-9_]{3,20}$/.test(u) || p.length < 6) return say('lg-msg', 'Tên tài khoản hoặc mật khẩu không hợp lệ.', false);
+  say('lg-msg', 'Đang đăng nhập…');
+  try { await auth.signInWithEmailAndPassword(u + CL_DOMAIN, p); say('lg-msg', ''); }
+  catch (e) { say('lg-msg', 'Sai tên tài khoản hoặc mật khẩu.', false); }
+}
+function logout() { auth.signOut(); }
+auth.onAuthStateChanged(async u => {
+  if (!u) return show('v-login');
+  try {
+    const a = await db.collection('admins').doc(u.uid).get();
+    if (!a.exists) { $('my-uid').textContent = u.uid; return show('v-noadmin'); }
+  } catch (e) { $('my-uid').textContent = u.uid; return show('v-noadmin'); }
+  $('who').textContent = (u.email || '').replace(CL_DOMAIN, '');
+  show('v-panel'); if (!rw.length) addRw(); loadList();
+});
+
+/* ---------- Form phần thưởng ---------- */
+let rw = [];
+function addRw() { rw.push({ t: 'silver', n: 100000 }); renderRw(); }
+function delRw(i) { rw.splice(i, 1); renderRw(); }
+function setRw(i, k, v) {
+  const r = rw[i];
+  if (k === 't') { rw[i] = { t: v, n: r.n || 1 }; if (v === 'shard') rw[i].id = 0; if (v === 'treasure') rw[i].id = 1; if (v === 'item') { rw[i].name = 'Thú Linh'; rw[i].ico = ITEMS['Thú Linh']; } renderRw(); return; }
+  r[k] = (k === 'n' || k === 'id') ? Number(v) : v;
+  if (k === 'name') r.ico = ITEMS[v] || '🎁';
+}
+function opts(list, cur) { return list.map(x => `<option value="${esc(x[0])}" ${String(x[0]) === String(cur) ? 'selected' : ''}>${esc(x[1])}</option>`).join(''); }
+function renderRw() {
+  $('rw-list').innerHTML = rw.map((r, i) => {
+    let mid = '';
+    if (r.t === 'shard') mid = `<select onchange="setRw(${i},'id',this.value)">${opts(HEROES, r.id)}</select>`;
+    else if (r.t === 'treasure') mid = `<select onchange="setRw(${i},'id',this.value)">${opts(TREASURES, r.id)}</select>`;
+    else if (r.t === 'item') mid = `<select onchange="setRw(${i},'name',this.value)">${opts(Object.keys(ITEMS).map(k => [k, ITEMS[k] + ' ' + k]), r.name)}</select>`;
+    return `<div class="rw"><select onchange="setRw(${i},'t',this.value)">${opts(TYPES, r.t)}</select>${mid}
+      <input type="number" min="1" value="${r.n}" onchange="setRw(${i},'n',this.value)" placeholder="Số lượng">
+      <button class="x dng" onclick="delRw(${i})">✕</button></div>`;
+  }).join('') || '<div style="color:var(--mut);margin-bottom:6px">Chưa có phần thưởng.</div>';
+}
+function rwText(r) {
+  const n = fmt(r.n);
+  switch (r.t) {
+    case 'pill': return n + ' Viên Thể Lực';
+    case 'silver': return n + ' bạc';
+    case 'rice': return n + ' gạo';
+    case 'gold': return n + ' vàng';
+    case 'shard': return n + ' mảnh ' + ((HEROES.find(h => h[0] === r.id) || [0, 'tướng #' + r.id])[1]);
+    case 'treasure': return n + ' ' + ((TREASURES.find(h => h[0] === r.id) || [0, 'Bảo Vật'])[1]);
+    case 'item': return n + ' ' + r.name;
+  }
+  return '?';
+}
+
+/* ---------- Tạo mã ---------- */
+function genCode() {
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b = new Uint32Array(10); crypto.getRandomValues(b);
+  $('f-code').value = Array.from(b, x => A[x % A.length]).join('');
+}
+async function createCode() {
+  const code = ($('f-code').value || '').replace(/\s+/g, '').toUpperCase();
+  if (!/^[A-Z0-9_-]{4,32}$/.test(code)) return say('f-msg', 'Mã chỉ gồm A-Z, 0-9, _ - và dài 4–32 ký tự.', false);
+  const rewards = rw.filter(r => Number(r.n) >= 1).map(r => Object.assign({}, r, { n: Math.floor(r.n) }));
+  if (!rewards.length) return say('f-msg', 'Hãy thêm ít nhất 1 phần thưởng (số lượng ≥ 1).', false);
+  const max = Math.max(0, Math.floor(Number($('f-max').value) || 0));
+  const expV = $('f-exp').value, exp = expV ? new Date(expV).getTime() : 0;
+  if (expV && !(exp > Date.now())) return say('f-msg', 'Ngày hết hạn phải ở tương lai.', false);
+  const ref = db.collection('gift_codes').doc(code);
+  $('btn-create').disabled = true;
+  try {
+    if ((await ref.get()).exists) { say('f-msg', 'Mã này đã tồn tại. Hãy chọn mã khác.', false); return; }
+    await ref.set({ rewards, max, used: 0, exp, enabled: true, note: ($('f-note').value || '').trim(), created: Date.now(), by: auth.currentUser.uid });
+    say('f-msg', '✔ Đã tạo mã ' + code + ' — ' + rewards.map(rwText).join(', '));
+    $('f-code').value = ''; $('f-note').value = ''; loadList();
+  } catch (e) { say('f-msg', 'Lỗi: ' + (e.code || e.message) + (e.code === 'permission-denied' ? ' (kiểm tra quy tắc Firestore + document admins/UID)' : ''), false); }
+  finally { $('btn-create').disabled = false; }
+}
+
+/* ---------- Danh sách / bật-tắt / xoá ---------- */
+let cache = {};
+async function loadList() {
+  $('tb').innerHTML = '<tr><td colspan="6" style="color:var(--mut)">Đang tải…</td></tr>';
+  try {
+    const s = await db.collection('gift_codes').orderBy('created', 'desc').get();
+    cache = {}; s.forEach(d => cache[d.id] = d.data());
+    const ids = Object.keys(cache);
+    if (!ids.length) { $('tb').innerHTML = '<tr><td colspan="6" style="color:var(--mut)">Chưa có mã nào.</td></tr>'; return; }
+    $('tb').innerHTML = ids.map(id => {
+      const d = cache[id], expired = d.exp && Date.now() > d.exp, full = d.max && d.used >= d.max;
+      const st = !d.enabled ? '<span class="tag off">Đã tắt</span>' : expired ? '<span class="tag off">Hết hạn</span>' : full ? '<span class="tag off">Hết lượt</span>' : '<span class="tag on">Đang hoạt động</span>';
+      return `<tr><td><code>${esc(id)}</code>${d.note ? `<div style="color:var(--mut);font-size:12px">${esc(d.note)}</div>` : ''}</td>
+        <td>${esc((d.rewards || []).map(rwText).join(', '))}</td>
+        <td>${fmt(d.used || 0)}${d.max ? ' / ' + fmt(d.max) : ' / ∞'}</td>
+        <td>${d.exp ? esc(new Date(d.exp).toLocaleString('vi-VN')) : '—'}</td><td>${st}</td>
+        <td><div class="acts"><button data-a="copy" data-id="${esc(id)}">Copy</button>
+          <button data-a="toggle" data-id="${esc(id)}">${d.enabled ? 'Tắt' : 'Bật'}</button>
+          <button class="dng" data-a="del" data-id="${esc(id)}">Xoá</button></div></td></tr>`;
+    }).join('');
+  } catch (e) { $('tb').innerHTML = `<tr><td colspan="6" style="color:var(--bad)">Không tải được: ${esc(e.code || e.message)}</td></tr>`; }
+}
+$('tb').addEventListener('click', async ev => {
+  const b = ev.target.closest('button[data-a]'); if (!b) return;
+  const id = b.dataset.id, d = cache[id]; if (!d) return;
+  try {
+    if (b.dataset.a === 'copy') { await navigator.clipboard.writeText(id); b.textContent = '✔'; setTimeout(() => b.textContent = 'Copy', 1000); }
+    else if (b.dataset.a === 'toggle') { await db.collection('gift_codes').doc(id).update({ enabled: !d.enabled }); loadList(); }
+    else if (b.dataset.a === 'del') {
+      if (!confirm('Xoá mã ' + id + '? Lịch sử người đã nhập mã này cũng bị xoá (mã tạo lại cùng tên sẽ dùng được lại).')) return;
+      const ref = db.collection('gift_codes').doc(id), used = await ref.collection('redeemed').get();
+      for (let i = 0; i < used.docs.length; i += 400) { const w = db.batch(); used.docs.slice(i, i + 400).forEach(x => w.delete(x.ref)); await w.commit(); }
+      await ref.delete(); loadList();
+    }
+  } catch (e) { alert('Lỗi: ' + (e.code || e.message)); }
+});
+renderRw();
+</script>
+</body>
+</html>

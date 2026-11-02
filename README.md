@@ -189,3 +189,12 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 - Tỷ Võ: bục dưới chân tướng đổi thành **đài sen** (`assets/images/fx/lotus.webp`, tướng đứng trên nhụy vàng); hạng 2 và hạng 3 đứng cùng hàng, hạng 4 và 5 cùng hàng.
 - PVE: nút **Quét ×10** cạnh nút Đánh (chỉ hiện ở Bàn đã thắng): tốn 10 × 4 = 40 thể lực, nhận thưởng x10 (bạc, gạo, Viên Thể Lực). Code: `sweepBattle` trong `js/modes/pve/pve-stages.js`.
 - Trang chủ: **Lực chiến** (số vàng dưới Thể Lực) = tổng Công của toàn đội đang ra trận (`teamAtkTotal` trong `js/modes/pvp/pvp-state.js`), tự cập nhật mỗi giây.
+
+## Gift Code (admin tạo mã trên máy chủ)
+- **Trang admin**: `admin-giftcode.html` (mở trực tiếp hoặc đưa lên cùng hosting). Đăng nhập bằng tài khoản game của bạn, tạo mã, chọn quà
+  (Thể Lực, Bạc, Gạo, Vàng, Mảnh tướng, Bảo Vật, vật phẩm Bang), đặt số lượt tối đa / hạn dùng, bật-tắt hoặc xoá mã. Dùng app Firebase tên riêng nên **không** làm văng đăng nhập game trên cùng trình duyệt.
+- **Cài đặt 1 lần**: (1) dán quy tắc trong `firestore-giftcode.rules.txt` vào Firestore Rules; (2) tạo collection `admins`, thêm document có ID = UID tài khoản admin
+  (trang admin tự hiện UID nếu tài khoản chưa có quyền).
+- **Người chơi**: Túi Đồ → 🎁 Gift Code. `js/core/giftcode.js` kiểm tra mã bằng transaction Firestore (đúng lượt, đúng hạn, mỗi tài khoản 1 lần qua `gift_codes/{MÃ}/redeemed/{uid}`).
+  Mã viết cứng `GIFT_CODES` vẫn dùng được làm dự phòng.
+- **Thêm loại quà mới**: thêm 1 nhánh trong `gcGrant` (giftcode.js) + 1 mục trong `TYPES` / `renderRw` / `rwText` (admin-giftcode.html).
