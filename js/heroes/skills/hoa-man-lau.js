@@ -33,8 +33,8 @@
         nz.connect(lp); lp.connect(ng); ng.connect(out); nz.start(t); nz.stop(t + 0.06);
       } catch (e) {}
     }
-    // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast). 3 chuỗi bướm màu ngẫu nhiên (trong 7 màu, mỗi chuỗi 16 khung) lần lượt RƠI CHÉO từ góc trên màn hình
-    // xuống đội địch (nhỏ -> to dần, nghiêng theo đường rơi); phát hết các khung rơi, chạm đất mới bung tia nhiều hướng (khung 12-15)
+    // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast). 3 chuỗi bướm màu ngẫu nhiên (trong 7 màu, mỗi chuỗi 16 khung) lần lượt RƠI THẲNG ĐỨNG từ mép trên màn hình
+    // xuống đội địch (nhỏ -> to dần); phát hết các khung rơi, chạm đất mới bung tia nhiều hướng (khung 12-15)
     // + sát thương TOÀN địch + hiệu ứng theo màu; cuối cùng +50% Công toàn đội
     const BFLY_SEQ = { red: 'hmlRed', orange: 'hmlOrange', yellow: 'hmlYellow', green: 'hmlGreen', blue: 'hmlBlue', indigo: 'hmlIndigo', purple: 'hmlPurple' };
     async function butterflyUlt(u, tok) {
@@ -50,14 +50,13 @@
       const cast = seqOverlay(u, SEQ.hmlCast, CAST_W);
       const FR = 50, FALL = 8, DIVE = 12, BFR = 70, GAP = 420;   // khung 0-7 = rơi chéo (bay tới đích) • khung 8-11 = chạm đất, đứng yên tại đích • khung 12-15 = bung tia; GAP = ms giữa 2 con
       const FW = Math.round(Math.max(260, Math.min(W * 0.66, 470))), FH = Math.round(FW * 256 / 384);
-      const fromX = u.side === 'hero' ? 7 : 93;               // góc trên màn hình, phía tướng ra đòn (đội ta: góc trên-trái)
-      const fromY = 8;
+      const fromY = 4;                                        // % chiều cao sân: điểm xuất phát sát mép trên màn hình
       const strike = async (c, i) => {
         await sleep(i * GAP); if (tok !== battleToken) return;
         const es1 = alive(); if (!es1.length) return;
         const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length + (i - 1) * 4, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length + (i - 1) * 2;
-        const sx = (fromX - tx) * W / 100, sy = (fromY - ty) * H / 100;       // điểm xuất phát so với đích (px)
-        const ang = Math.atan2(sx, -sy) * 180 / Math.PI;                      // nghiêng theo đường chéo
+        const sx = 0, sy = (fromY - ty) * H / 100;                              // rơi THẲNG ĐỨNG: xuất phát ngay phía trên đích, sát mép trên màn hình (px)
+        const ang = 0;                                                        // không nghiêng
         const el = document.createElement('div'); el.className = 'bf-seq-fx';
         el.style.left = tx + '%'; el.style.top = `calc(${ty}% + 10px)`; el.style.width = FW + 'px'; el.style.height = FH + 'px';
         const sc = seqEl(SEQ[BFLY_SEQ[c.k]], FW); el.appendChild(sc); box.appendChild(el); made.push(el);
@@ -97,7 +96,7 @@
         sfxRocket();
         await sleep(400); if (tok !== battleToken) return;
 
-        // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi chéo từ góc trên màn hình xuống đội địch
+        // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi thẳng đứng từ mép trên màn hình xuống đội địch
         const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
         await Promise.all(picks.map((c, i) => strike(c, i)));
         if (tok !== battleToken) return;
