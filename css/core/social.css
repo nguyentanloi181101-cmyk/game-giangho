@@ -140,3 +140,6 @@ img.gi-g{height:1.15em;width:auto;vertical-align:-.2em;display:inline-block}.bm-
 .tt-save{padding:8px 28px;border:2px solid #86efac;border-radius:10px;background:linear-gradient(#22c55e,#15803d);color:#fff;font-weight:900;font-size:16px}.tt-save:disabled{opacity:.4}
 
 .tt-img[data-seq]{animation:none}   /* thần thú đã có chuỗi khung hình thì khỏi nhún nhảy */
+
+.bg-gift{margin-top:10px;text-align:center}.bg-gift button{padding:9px 26px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(180deg,#f59e0b,#b45309);color:#fff;font-size:14px;font-weight:900;cursor:pointer}.bg-gift button:active{transform:scale(.97)}
+.gc-input{width:100%;box-sizing:border-box;margin:8px 0;padding:10px;border-radius:8px;border:2px solid #fde047;background:#111827;color:#fff;font-size:18px;text-align:center;letter-spacing:2px;text-transform:uppercase}

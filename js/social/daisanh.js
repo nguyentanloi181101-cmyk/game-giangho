@@ -2,7 +2,7 @@
 function gdBang() {
   const s = gdSt(); s.bang = Object.assign({ name: 'Văn Lang', notice: 'Chạm vào đây để sửa công cáo bang.', exp: 0, news: [], basin: 0 }, s.bang || {}); return s;
 }
-const gdExpMax = lv => 500000 * lv;
+const gdExpMax = lv => 5000 * Math.pow(2, Math.max(0, lv - 1));   // cấp 1 = 5.000 EXP, mỗi cấp sau nhân 2, không giới hạn cấp
 function gdNews(text) { try { const s = gdBang(); s.bang.news.unshift({ t: Date.now(), x: text }); s.bang.news.length = Math.min(s.bang.news.length, 30); gdSave(s); } catch (e) {} }
 let dsTab = 'bang';
 function openDaiSanh() { renderDaiSanh(); switchScreen('daisanh'); }
@@ -14,7 +14,7 @@ function renderDaiSanh() {
   document.getElementById('ds-tabs').innerHTML = [['bang', 'Bang Hội'], ['tv', 'Thành Viên'], ['tin', 'Tin Tức']].map(([k, n]) => `<button class="${dsTab === k ? 'on' : ''}" onclick="dsTabSet('${k}')">${n}</button>`).join('');
   let body = '';
   if (dsTab === 'bang') body = `<div class="ds-head"><div class="ds-logo">🔥</div><div class="ds-nm"><b><i class="lvb">${s.bangLv}</i> ${chEsc(b.name)}</b><div>Nhân Số 1/45 <small>(Cần cấp 60)</small></div></div><button class="ds-leave" onclick="dsLeave()">Rời Bang</button></div>
-    <div class="ds-body"><div class="ds-paper"><div onclick="dsNotice()" style="cursor:pointer"><span class="k">Công Cáo :</span> ${chEsc(b.notice)}</div><div><span class="k">Chức Vụ :</span> Bang Chủ</div><div><span class="k">Uy Tín :</span> ${fmtN(s.uytin)}/${fmtN(s.uyMax)}</div><div><span class="k">EXP Bang :</span> ${fmtN(b.exp)}/${fmtN(max)}</div>
+    <div class="ds-body"><div class="ds-paper"><div onclick="dsNotice()" style="cursor:pointer"><span class="k">Công Cáo :</span> ${chEsc(b.notice)}</div><div><span class="k">Chức Vụ :</span> Bang Chủ</div><div><span class="k">Uy Tín :</span> ${fmtN(s.uytin)}</div><div><span class="k">EXP Bang :</span> ${fmtN(b.exp)}/${fmtN(max)}</div>
       <div><span class="k">Kỹ Năng :</span></div><div class="ds-sk">${GD_SKILLS.slice(0, 6).map((k, i) => { const lock = GD_SKILL_UNLOCK[i] > s.bangLv; return `<i class="${lock ? 'lock' : ''}">${lock ? GD_SKILL_UNLOCK[i] + ' Cấp Mở' : k[1]}</i>`; }).join('')}</div></div>
       <div class="ds-side"><button onclick="scToast('Tiệm Bang — sắp ra mắt')">Tiệm Bang</button><button onclick="openDienVo()">Kỹ Năng</button><button onclick="openBasin()">Tụ Bảo Bồn</button><button onclick="scToast('Xếp Hạng bang — sắp ra mắt')">Xếp Hạng</button></div></div>
     <div class="ds-foot"><button onclick="dsDonate()">🏅 Quyên Góp</button><button onclick="openDienVo()">💪 Cường Thân</button></div>`;
@@ -39,8 +39,8 @@ function dsDonate() {
 }
 function dsGive(i) {
   const d = DS_DONATE[i], q = dsQtyGet(i), cost = d[2] * q; if (d[1]() < cost) return scToast('Không đủ tài nguyên');
-  d[3](cost); resSave(); const s = gdBang(), uy = d[4] * q, ex = d[5] * q; s.uytin = Math.min(s.uyMax, s.uytin + uy); s.bang.exp += ex;
-  while (s.bangLv < 10 && s.bang.exp >= gdExpMax(s.bangLv)) { s.bang.exp -= gdExpMax(s.bangLv); s.bangLv++; s.bang.news.unshift({ t: Date.now(), x: 'Bang lên cấp ' + s.bangLv + '!' }); }
+  d[3](cost); resSave(); const s = gdBang(), uy = d[4] * q, ex = d[5] * q; s.uytin = s.uytin + uy; s.bang.exp += ex;
+  while (s.bang.exp >= gdExpMax(s.bangLv)) { s.bang.exp -= gdExpMax(s.bangLv); s.bangLv++; s.bang.news.unshift({ t: Date.now(), x: 'Bang lên cấp ' + s.bangLv + '!' }); }
   s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${fmtN(cost)} ${d[0].replace(/<[^>]+>/g, "").replace(/^\S+\s/, "")}` }); gdSave(s); scToast(`+${uy} Uy Tín`); dsDonate(); renderDaiSanh();
 }
 /* ---- Tụ Bảo Bồn ---- */
@@ -48,7 +48,7 @@ const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị 
 function openBasin() { renderBasin(); document.getElementById('qs-modal').style.display = 'flex'; }
 function renderBasin() {
   const s = gdBang(), v = s.bang.basin, m = document.getElementById('qs-modal');
-  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><div class="gd-img bz-pic" style="--a:0.894;width:58%;margin:6px auto"><div class="gd-spr" style="--n:28;--ms:3.6s;background-image:url(assets/images/guild/tu-bao-bon.webp?v=25)"></div></div><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
+  m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><div class="gd-img bz-pic" style="--a:1.475;width:72%;margin:6px auto"><img src="assets/images/guild/tu-bao-bon.webp?v=28" alt="Tụ Bảo Bồn"></div><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
   <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${v / 10}%"></i></div><div class="dv-uy">${v}/1000</div>
   <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
 }

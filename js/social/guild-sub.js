@@ -12,7 +12,7 @@ function gdSt() {
   Object.keys(s.kho).forEach(k => { if (k.indexOf('Thạch ') === 0) { s.kho['Tử Linh Thạch'] = s.kho['Tử Linh Thạch'] || { ico: '🪨', qty: 0 }; s.kho['Tử Linh Thạch'].qty += s.kho[k].qty; delete s.kho[k]; } });
   (s.lots || []).forEach(l => { if (l.name === 'Quỷ Linh') l.name = 'Dị Linh'; if (l.name === 'Hỏa Tinh') l.name = 'Thú Noãn'; if (l.name.indexOf('Thạch ') === 0) l.name = 'Tử Linh Thạch'; });
   s.beast = Object.assign({ lv: 1, star: 1, name: 'Kỳ Lân' }, s.beast || {});
-  s.uytin = s.uytin === undefined ? 3000 : s.uytin; s.uyMax = 9500; s.bangLv = s.bangLv || 5;
+  s.uytin = s.uytin === undefined ? 3000 : s.uytin; s.bangLv = s.bangLv || 5;
   s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? 2 : s.left;
   return s;
 }
@@ -39,7 +39,7 @@ function dvLearn() {
 }
 function renderDienVo() {
   const s = gdSt(), i = dvSel, lv = s.dv[i], c = dvCost(lv);
-  document.getElementById('dv-body').innerHTML = `<div class="dv-uy">🏅 Uy Tín: ${fmtN(s.uytin)}/${fmtN(s.uyMax)}</div>
+  document.getElementById('dv-body').innerHTML = `<div class="dv-uy">🏅 Uy Tín: ${fmtN(s.uytin)}</div>
   <div class="dv-grid">${GD_SKILLS.map((k, j) => { const lock = GD_SKILL_UNLOCK[j] > s.bangLv; return `<div class="dv-sk ${j === i ? 'sel' : ''} ${lock ? 'lock' : ''}" onclick="dvPick(${j})"><i>${lock ? 'Cấp ' + GD_SKILL_UNLOCK[j] + ' mở' : k[1]}</i><span>${s.dv[j]}/${GD_SKILL_MAX[j]}</span></div>`; }).join('')}</div>
   <div class="dv-desc"><b>${GD_SKILLS[i][0]}</b><p>${GD_SKILLS[i][2]}</p><p>Kỹ năng cấp ${lv} → cấp ${lv + 1}</p></div>
   <div class="gs-act"><div>Cần 🏅 ${c.uy} &nbsp; 🥈 ${fmtN(c.silver)}</div><button onclick="dvLearn()">Học</button></div>`;
