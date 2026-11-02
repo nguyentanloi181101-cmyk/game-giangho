@@ -48,7 +48,7 @@
       // khung tung chiêu phủ lên tướng: cùng tỉ lệ & điểm neo với dáng đứng (SEQ_IDLE[6]) nên thân không xê dịch
       const CAST_W = Math.round(SEQ.hmlCast.cw * SEQ_IDLE[6].h / SEQ.hmlIdle.ch), CAST_FR = 75;
       const cast = seqOverlay(u, SEQ.hmlCast, CAST_W);
-      const FR = 50, DIVE = 12, BFR = 70, GAP = 420;          // khung 0-11 (50ms/khung) = rơi; khung 12-15 (70ms/khung) = bung tia khi chạm đất; GAP = ms giữa 2 con
+      const FR = 50, FALL = 8, DIVE = 12, BFR = 70, GAP = 420;   // khung 0-7 = rơi chéo (bay tới đích) • khung 8-11 = chạm đất, đứng yên tại đích • khung 12-15 = bung tia; GAP = ms giữa 2 con
       const FW = Math.round(Math.max(260, Math.min(W * 0.66, 470))), FH = Math.round(FW * 256 / 384);
       const fromX = u.side === 'hero' ? 7 : 93;               // góc trên màn hình, phía tướng ra đòn (đội ta: góc trên-trái)
       const fromY = 8;
@@ -66,11 +66,11 @@
           { transform: `translate(calc(-50% + ${sx * 0.88}px),calc(-50% + ${sy * 0.88}px)) scale(.34) rotate(${ang}deg)`, opacity: 1, offset: 0.06 },
           { transform: `translate(calc(-50% + ${sx * 0.35}px),calc(-50% + ${sy * 0.35}px)) scale(.7) rotate(${ang * 0.55}deg)`, opacity: 1, offset: 0.65 },
           { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 }
-        ], { duration: battleFast ? 1 : DIVE * FR, easing: 'ease-in', fill: 'both' });
-        for (let k = 0; k < DIVE; k++) at(k * FR, () => sc.show(k));          // phát các khung bướm rơi + chạm
+        ], { duration: battleFast ? 1 : FALL * FR, easing: 'ease-in', fill: 'both' });   // bay tới đích đúng lúc hết khung 7; khung 8-11 phát tại chỗ
+        for (let k = 0; k < DIVE; k++) at(k * FR, () => sc.show(k));          // khung 0-7 rơi, 8-11 chạm đất
         await sleep(DIVE * FR); if (tok !== battleToken) return;
 
-        // Chạm đất: BUNG TIA nhiều hướng (khung 12-15) + chuông + chớp sáng + sóng + sát thương toàn địch + hiệu ứng theo màu
+        // Sau khi chạm đất (khung 8-11): BUNG TIA nhiều hướng (khung 12-15) + chuông + chớp sáng + sóng + sát thương toàn địch + hiệu ứng theo màu
         for (let k = 0; k < 4; k++) at(k * BFR, () => sc.show(DIVE + k));
         at(4 * BFR + 80, () => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' }));
         sfxBell();
