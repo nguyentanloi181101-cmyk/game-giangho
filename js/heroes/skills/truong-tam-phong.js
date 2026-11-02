@@ -32,9 +32,9 @@
       // Đứng TẠI CHỖ tung tuyệt kỹ (không nhảy): chuỗi 16 khung SEQ.ttpCast phủ lên tướng, lốc xoáy SEQ.ttpStorm mở ra bên địch rồi gây sát thương toàn địch + choáng
       const g = nt(u), { f, W, H, made } = g, es0 = g.es(); if (!es0.length) return;
       const b = g.box0(es0), S = SEQ.ttpStorm;
-      const SW = Math.round(Math.max(190, Math.min(W * 0.5, H * 0.85))), SH = Math.round(SW * S.ch / S.cw), hw = SW * 0.5 / W * 100, hh = SH * 0.5 / H * 100;
+      const SW = Math.round(Math.max(190, Math.min(W * 0.5, H * 0.85)) * 1.4), SH = Math.round(SW * S.ch / S.cw), hw = SW * 0.5 / W * 100, hh = SH * 0.5 / H * 100;
       const cx = Math.max(hw + 1, Math.min(99 - hw, b.cx)), cy = Math.max(hh + 2, Math.min(98 - hh, b.cy - 3));
-      const cast = seqOverlay(u, SEQ.ttpCast, 270), timers = [], oldZ = u.el.style.zIndex; let storm = null;
+      const cast = seqOverlay(u, SEQ.ttpCast, 172), timers = [], oldZ = u.el.style.zIndex; let storm = null;
       const at = (ms, fn) => timers.push(setTimeout(() => { if (tok === battleToken) fn(); }, seqT(ms)));
       try {
         u.el.style.zIndex = 99;

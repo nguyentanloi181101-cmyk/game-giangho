@@ -101,7 +101,7 @@
       const g = nt(u), { H, base, made } = g, es0 = g.es(); if (!es0.length) return;
       const b = g.box0(es0), oldZ = u.el.style.zIndex, per = u.atk * DT_MULT * (u.sk || 1) / DT_HITS;
       // Chuỗi 12 khung (SEQ.dtCast) phủ lên tướng: khung 0-3 nhảy lên • 4-10 xoáy vàng, thổi sáo • 11 đáp đất bung hào quang
-      const cast = seqOverlay(u, SEQ.dtCast, 170), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
+      const cast = seqOverlay(u, SEQ.dtCast, 122), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
       try {
         u.el.style.zIndex = 99;
         [0, 110, 220, 330].forEach((ms, i) => fr(ms, i));
