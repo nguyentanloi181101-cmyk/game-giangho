@@ -66,6 +66,14 @@
           const el = document.createElement('div'); el.className = 'bf-seq-fx';
           el.style.left = tx + '%'; el.style.top = `calc(${ty}% + 10px)`; el.style.width = FW + 'px'; el.style.height = FH + 'px';
           const sc = seqEl(SEQ[BFLY_SEQ[c.k]], FW); el.appendChild(sc); box.appendChild(el); made.push(el);
+          // Bướm xuất hiện NHỎ trên trời ngay chỗ đầu Hoa Mãn Lâu, rơi CHÉO xuống giữa đội địch và to dần (nghiêng theo hướng rơi, thẳng lại khi chạm đất)
+          const sx = (u.x - tx) * W / 100 + (i - 1) * 14, sy = (u.y - ty) * H / 100 - 120 + FH * 0.08;
+          const ang = Math.atan2(sx, -sy) * 180 / Math.PI;   // hướng từ đầu tướng tới địch so với phương thẳng đứng
+          el.animate([
+            { transform: `translate(calc(-50% + ${sx}px),calc(-50% + ${sy}px)) scale(.16) rotate(${ang}deg)`, opacity: 0 },
+            { transform: `translate(calc(-50% + ${sx * 0.55}px),calc(-50% + ${sy * 0.55}px)) scale(.5) rotate(${ang * 0.6}deg)`, opacity: 1, offset: 0.35 },
+            { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 }
+          ], { duration: Math.max(1, seqT(HIT * FR)), easing: 'ease-in', fill: 'both' });
           for (let k = 0; k < 16; k++) at(k * FR, () => sc.show(k));
           at(16 * FR + 60, () => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
           await sleep(HIT * FR); if (tok !== battleToken) return;

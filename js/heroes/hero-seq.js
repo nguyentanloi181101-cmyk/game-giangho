@@ -39,7 +39,7 @@ const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdId
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 
 // Đổi mili-giây theo tốc độ trận (cùng quy tắc với sleep của engine) để khung hình không lệch nhịp khi tua nhanh
-const seqT = ms => (typeof battleFast !== 'undefined' && battleFast) ? 0 : ms * (typeof ultTimeScale === 'number' ? ultTimeScale : 1);
+const seqT = ms => (typeof battleFast !== 'undefined' && battleFast) ? 0 : ms * (typeof ultTimeScale === 'number' ? ultTimeScale : 1) * (typeof battleSlow === 'number' ? battleSlow : 1);
 
 // HTML dáng đứng (thay ảnh thân tĩnh) — gọi từ applyRole trong battle/engine.js
 // Ảnh gốc các chuỗi khung quay mặt sang TRÁI: đội ta (bên trái) phải lật ngang để nhìn sang phải, đội địch (bên phải) giữ nguyên → 2 đội nhìn vào nhau

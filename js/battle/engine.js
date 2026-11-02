@@ -36,17 +36,27 @@
     })();
     let battleFast = false;   // Tỷ Võ: bấm "Bỏ Qua" để tua nhanh trận đấu
     let ultTimeScale = 1;   // các lần ulti lặp (lần 2, 3) chạy nhanh gấp đôi: thu ngắn cả thời gian chờ lẫn hoạt ảnh
-    const sleep = ms => new Promise(r => setTimeout(r, battleFast ? 0 : ms * ultTimeScale));
+    let battleSlow = 1;     // PvE: nút "Chậm" -> 2 = mọi thứ (chờ + hoạt ảnh) chậm gấp đôi; 1 = bình thường
+    const sleep = ms => new Promise(r => setTimeout(r, battleFast ? 0 : ms * ultTimeScale * battleSlow));
     (() => {
       const _an = Element.prototype.animate;
       Element.prototype.animate = function (kf, opt) {
-        if (ultTimeScale !== 1) {
-          if (typeof opt === 'number') opt *= ultTimeScale;
-          else if (opt && typeof opt === 'object') { opt = Object.assign({}, opt); ['duration', 'delay', 'endDelay'].forEach(k => { if (typeof opt[k] === 'number') opt[k] *= ultTimeScale; }); }
+        const ts = ultTimeScale * battleSlow;
+        if (ts !== 1) {
+          if (typeof opt === 'number') opt *= ts;
+          else if (opt && typeof opt === 'object') { opt = Object.assign({}, opt); ['duration', 'delay', 'endDelay'].forEach(k => { if (typeof opt[k] === 'number') opt[k] *= ts; }); }
         }
         return _an.call(this, kf, opt);
       };
     })();
+    function toggleSlow() {
+      battleSlow = battleSlow === 1 ? 2 : 1;
+      try { localStorage.setItem('battle_slow', battleSlow === 2 ? '1' : '0'); } catch (e) {}
+      updateSlowBtn();
+    }
+    function updateSlowBtn() { const b = document.getElementById('btn-slow'); if (!b) return; b.textContent = 'Chậm: ' + (battleSlow === 2 ? 'BẬT' : 'TẮT'); b.classList.toggle('on', battleSlow === 2); }
+    try { if (localStorage.getItem('battle_slow') === '1') battleSlow = 2; } catch (e) {}
+    window.addEventListener('DOMContentLoaded', updateSlowBtn);
     const rand = arr => arr[Math.floor(Math.random() * arr.length)];
 
     function formatNumber(num) {

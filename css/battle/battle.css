@@ -155,7 +155,7 @@
     #battle-overlay:not(.pvp-mode) #bf-orbs{gap:4px}
     #battle-overlay:not(.pvp-mode) #pv-panel .pv-row,#battle-overlay:not(.pvp-mode) #bf-orbs{padding:0 14px}
     #battle-overlay:not(.pvp-mode) .pv-c.empty{visibility:hidden}
-    #battle-overlay.pvp-mode #bf-orbs,#battle-overlay.pvp-mode #btn-all,#battle-overlay.pvp-mode #btn-end,#battle-overlay.pvp-mode #btn-auto{display:none}
+    #battle-overlay.pvp-mode #bf-orbs,#battle-overlay.pvp-mode #btn-all,#battle-overlay.pvp-mode #btn-end,#battle-overlay.pvp-mode #btn-auto,#battle-overlay.pvp-mode #btn-slow{display:none}
     #battle-overlay.pvp-mode #pv-skip{display:block}
     #battle-overlay.pvp-mode #ui-stage-title,#battle-overlay.pvp-mode #ui-enemy-name{display:none}
     #battle-overlay.pvp-mode .battle-header-info{min-height:44px}
@@ -195,3 +195,5 @@
 /* hai bên quay mặt vào nhau: hình gốc hướng sang trái -> lật phe mình + thần thú trái */
 .bf-unit.hero .bf-sprite .hero-body,.bf-unit.hero .bf-sprite .hero-img,.bf-unit.hero .bf-sprite .hero-portrait{transform:scaleX(-1)}
 .bf-bst.flip .bf-bst-sp{transform:scaleX(-1)}   /* thần thú trái nhìn sang phải, phải nhìn sang trái (lật theo hướng gốc của từng ảnh) */
+
+#btn-slow.on{background:linear-gradient(#38bdf8,#0369a1);color:#fff}
