@@ -33,10 +33,10 @@
         nz.connect(lp); lp.connect(ng); ng.connect(out); nz.start(t); nz.stop(t + 0.06);
       } catch (e) {}
     }
-    // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast). 3 con bướm màu ngẫu nhiên (trong 7 màu) lần lượt bay ra từ thần thú trên đầu Hoa Mãn Lâu,
-    // lao CHÉO xuống đội địch (nhỏ -> to dần, có vệt sáng); chạm đất mới bung tia ra nhiều hướng (SEQ.hmlRed…hmlPurple) + sát thương TOÀN địch + hiệu ứng theo màu; cuối cùng +50% Công toàn đội
+    // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast). 3 chuỗi bướm màu ngẫu nhiên (trong 7 màu, mỗi chuỗi 16 khung) lần lượt RƠI CHÉO từ góc trên màn hình
+    // xuống đội địch (nhỏ -> to dần, nghiêng theo đường rơi); phát hết các khung rơi, chạm đất mới bung tia nhiều hướng (khung 12-15)
+    // + sát thương TOÀN địch + hiệu ứng theo màu; cuối cùng +50% Công toàn đội
     const BFLY_SEQ = { red: 'hmlRed', orange: 'hmlOrange', yellow: 'hmlYellow', green: 'hmlGreen', blue: 'hmlBlue', indigo: 'hmlIndigo', purple: 'hmlPurple' };
-    const BFLY_IDX = { red: 0, orange: 1, yellow: 2, green: 3, blue: 4, indigo: 5, purple: 6 };   // khung trong SEQ.hmlProj
     async function butterflyUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
       const W = f.clientWidth, H = f.clientHeight;
@@ -48,65 +48,59 @@
       // khung tung chiêu phủ lên tướng: cùng tỉ lệ & điểm neo với dáng đứng (SEQ_IDLE[6]) nên thân không xê dịch
       const CAST_W = Math.round(SEQ.hmlCast.cw * SEQ_IDLE[6].h / SEQ.hmlIdle.ch), CAST_FR = 75;
       const cast = seqOverlay(u, SEQ.hmlCast, CAST_W);
-      const FLY = 400, BFR = 70;                              // FLY = ms bướm lao từ đầu thần thú xuống đất; BFR = ms mỗi khung bung tia
-      const PW = 118;                                         // bề rộng con bướm bay (px)
+      const FR = 50, DIVE = 12, BFR = 70, GAP = 420;          // khung 0-11 (50ms/khung) = rơi; khung 12-15 (70ms/khung) = bung tia khi chạm đất; GAP = ms giữa 2 con
       const FW = Math.round(Math.max(260, Math.min(W * 0.66, 470))), FH = Math.round(FW * 256 / 384);
-      const sgn = u.side === 'hero' ? 1 : -1;                 // thần thú nằm lệch về phía địch (đội ta lật ngang)
+      const fromX = u.side === 'hero' ? 7 : 93;               // góc trên màn hình, phía tướng ra đòn (đội ta: góc trên-trái)
+      const fromY = 8;
+      const strike = async (c, i) => {
+        await sleep(i * GAP); if (tok !== battleToken) return;
+        const es1 = alive(); if (!es1.length) return;
+        const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length + (i - 1) * 4, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length + (i - 1) * 2;
+        const sx = (fromX - tx) * W / 100, sy = (fromY - ty) * H / 100;       // điểm xuất phát so với đích (px)
+        const ang = Math.atan2(sx, -sy) * 180 / Math.PI;                      // nghiêng theo đường chéo
+        const el = document.createElement('div'); el.className = 'bf-seq-fx';
+        el.style.left = tx + '%'; el.style.top = `calc(${ty}% + 10px)`; el.style.width = FW + 'px'; el.style.height = FH + 'px';
+        const sc = seqEl(SEQ[BFLY_SEQ[c.k]], FW); el.appendChild(sc); box.appendChild(el); made.push(el);
+        el.animate([
+          { transform: `translate(calc(-50% + ${sx}px),calc(-50% + ${sy}px)) scale(.28) rotate(${ang}deg)`, opacity: 0 },
+          { transform: `translate(calc(-50% + ${sx * 0.88}px),calc(-50% + ${sy * 0.88}px)) scale(.34) rotate(${ang}deg)`, opacity: 1, offset: 0.06 },
+          { transform: `translate(calc(-50% + ${sx * 0.35}px),calc(-50% + ${sy * 0.35}px)) scale(.7) rotate(${ang * 0.55}deg)`, opacity: 1, offset: 0.65 },
+          { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 }
+        ], { duration: battleFast ? 1 : DIVE * FR, easing: 'ease-in', fill: 'both' });
+        for (let k = 0; k < DIVE; k++) at(k * FR, () => sc.show(k));          // phát các khung bướm rơi + chạm
+        await sleep(DIVE * FR); if (tok !== battleToken) return;
+
+        // Chạm đất: BUNG TIA nhiều hướng (khung 12-15) + chuông + chớp sáng + sóng + sát thương toàn địch + hiệu ứng theo màu
+        for (let k = 0; k < 4; k++) at(k * BFR, () => sc.show(DIVE + k));
+        at(4 * BFR + 80, () => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' }));
+        sfxBell();
+        const col = c.css;
+        const fx = document.createElement('div'); fx.className = 'bf-bflash'; fx.style.left = tx + '%'; fx.style.top = ty + '%'; fx.style.setProperty('--fc', col);
+        box.appendChild(fx); made.push(fx); setTimeout(() => fx.remove(), 400);
+        fx.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], { duration: 350, easing: 'ease-out', fill: 'forwards' });
+        const es = alive(); if (!es.length) return;
+        es.forEach(e => {
+          skillHit(e, dmg, u);
+          const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = e.x + '%'; w.style.top = e.y + '%';
+          w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
+          box.appendChild(w); setTimeout(() => w.remove(), 650);
+        });
+        bflyEffect(c, es);                                     // hiệu ứng theo màu
+        f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
+        await sleep(4 * BFR + 200);
+      };
       try {
         u.el.style.zIndex = 95;
         // 1. Đứng yên tung chiêu (16 khung)
         for (let i = 0; i < 16; i++) at(i * CAST_FR, () => cast.show(i));
         at(16 * CAST_FR, () => cast.end());
         sfxRocket();
-        await sleep(450); if (tok !== battleToken) return;
+        await sleep(400); if (tok !== battleToken) return;
 
-        // 2. 3 màu khác nhau trong 7 màu, lần lượt bay từ đầu thần thú đập xuống địch
+        // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi chéo từ góc trên màn hình xuống đội địch
         const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
-        for (let i = 0; i < picks.length; i++) {
-          const c = picks[i];
-          const es1 = alive(); if (!es1.length) break;
-          const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length + (i - 1) * 4, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length + (i - 1) * 2;
-          // điểm xuất phát (so với đích, px): phía trên đầu, chỗ thần thú
-          const sx = (u.x - tx) * W / 100 + sgn * 34, sy = (u.y - ty) * H / 100 - 105;
-          const ang = Math.atan2(sx, -sy) * 180 / Math.PI;     // xoay để "đầu" bướm hướng về phía địch, vệt sáng kéo ngược lại
-          const pr = document.createElement('div'); pr.className = 'bf-seq-fx';
-          pr.style.left = tx + '%'; pr.style.top = ty + '%'; pr.style.width = PW + 'px'; pr.style.height = Math.round(PW * 112 / 160) + 'px';
-          const trail = document.createElement('div');
-          trail.style.cssText = `position:absolute;left:50%;bottom:55%;width:34px;height:150px;transform:translateX(-50%);border-radius:50%;background:linear-gradient(to top,${c.css},transparent);opacity:.75;filter:blur(7px)`;
-          const bf = seqEl(SEQ.hmlProj, PW); bf.show(BFLY_IDX[c.k]); bf.style.filter = `drop-shadow(0 0 8px ${c.css}) drop-shadow(0 0 18px ${c.css})`;
-          pr.appendChild(trail); pr.appendChild(bf); box.appendChild(pr); made.push(pr);
-          pr.animate([
-            { transform: `translate(calc(-50% + ${sx}px),calc(-50% + ${sy}px)) scale(.3) rotate(${ang}deg)`, opacity: 0 },
-            { transform: `translate(calc(-50% + ${sx * 0.8}px),calc(-50% + ${sy * 0.8}px)) scale(.45) rotate(${ang}deg)`, opacity: 1, offset: 0.12 },
-            { transform: `translate(-50%,-50%) scale(1.35) rotate(${ang}deg)`, opacity: 1 }
-          ], { duration: Math.max(1, seqT(FLY)), easing: 'cubic-bezier(.45,0,.9,.6)', fill: 'both' });   // lao nhanh dần
-          await sleep(FLY); if (tok !== battleToken) return;
-          pr.remove();
-
-          // 3. Chạm đất: BUNG TIA nhiều hướng (4 khung) + chuông + chớp sáng + sóng + sát thương toàn địch + hiệu ứng theo màu
-          sfxBell();
-          const col = c.css;
-          const el = document.createElement('div'); el.className = 'bf-seq-fx';
-          el.style.left = tx + '%'; el.style.top = ty + '%'; el.style.width = FW + 'px'; el.style.height = FH + 'px';
-          const sc = seqEl(SEQ[BFLY_SEQ[c.k]], FW); el.appendChild(sc); box.appendChild(el); made.push(el);
-          for (let k = 0; k < 4; k++) at(k * BFR, () => sc.show(k));
-          el.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(1.08)', opacity: 1, offset: 0.55 }, { transform: 'translate(-50%,-50%) scale(1.15)', opacity: 0 }], { duration: 4 * BFR + 220, easing: 'ease-out', fill: 'forwards' });
-          const fx = document.createElement('div'); fx.className = 'bf-bflash'; fx.style.left = tx + '%'; fx.style.top = ty + '%'; fx.style.setProperty('--fc', col);
-          box.appendChild(fx); made.push(fx); setTimeout(() => fx.remove(), 400);
-          fx.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], { duration: 350, easing: 'ease-out', fill: 'forwards' });
-          const es = alive(); if (!es.length) break;
-          es.forEach(e => {
-            skillHit(e, dmg, u);
-            const w = document.createElement('div'); w.className = 'bf-wave'; w.style.left = e.x + '%'; w.style.top = e.y + '%';
-            w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
-            box.appendChild(w); setTimeout(() => w.remove(), 650);
-          });
-          bflyEffect(c, es);                                     // hiệu ứng theo màu
-          f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
-          if (i < picks.length - 1) await sleep(170);            // con kế tiếp xuất phát khi tia nổ còn đang tan
-          if (tok !== battleToken) return;
-        }
-        await sleep(4 * BFR + 120); if (tok !== battleToken) return;   // chờ tia cuối tan hết
+        await Promise.all(picks.map((c, i) => strike(c, i)));
+        if (tok !== battleToken) return;
         cast.end();
 
         // 4. Tăng 50% Công cho toàn đội (không cộng dồn)
