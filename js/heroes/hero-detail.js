@@ -7,7 +7,7 @@
       row.innerHTML = team.map(id => {
         const h = heroById(id); if (!h) return '';
         const p = getProg(id), b = HERO_BORDER[id] || 'orange';
-        return `<div class="hero-card border-${b}" onclick="openHeroDetail(${id})"><div class="hero-top-star"></div><div class="hero-bg-sprite">${heroIcon(h)}</div><div class="hero-bottom-bar"><div class="hero-lvl">${p.lv}</div><div class="hero-stars">${homeStars(p.star)}</div></div></div>`;
+        return `<div class="hero-card border-${b}" onclick="openHeroDetail(${id})"><div class="hero-top-star"></div>${SEQ_IDLE[id] ? `<div class="hero-bg-sprite has-seq"><img class="hero-av-bg" src="${h.img || h.body}">${seqAvatarHTML(id, '185%')}</div>` : `<div class="hero-bg-sprite">${heroIcon(h)}</div>`}<div class="hero-bottom-bar"><div class="hero-lvl">${p.lv}</div><div class="hero-stars">${homeStars(p.star)}</div></div></div>`;
       }).join('');
     }
 

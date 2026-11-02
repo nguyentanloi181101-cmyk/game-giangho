@@ -3,7 +3,9 @@
 
     const SPOTS = [[50, 15], [19, 29], [81, 37], [26, 54], [76, 65]];     // 5 đối thủ, vị trí như cảnh núi mây
     const ME_SPOT = [50, 82];
-    const pvBody = h => !h ? '❔' : h.body ? `<img class="pv-body" style="height:${Math.round((h.bodyH || 76) * 1.55)}px" src="${h.body}">` : h.img ? `<img class="pv-body" style="height:118px" src="${h.img}">` : h.emoji;   // tướng đứng nguyên hình (không khung tròn)
+    const pvSeq = h => { const c = h && SEQ_IDLE[h.id]; if (!c) return ''; const s = SEQ[c.sheet], ph = Math.round(c.h * 1.55);   // cùng tỉ lệ phóng 1.55 như ảnh thân tĩnh
+      return seqAvatarHTML(h.id, Math.round(ph * s.cw / s.ch), 'margin:0 auto -' + Math.round((s.drop || 0) * ph) + 'px'); };
+    const pvBody = h => !h ? '❔' : pvSeq(h) ? pvSeq(h) : h.body ? `<img class="pv-body" style="height:${Math.round((h.bodyH || 76) * 1.55)}px" src="${h.body}">` : h.img ? `<img class="pv-body" style="height:118px" src="${h.img}">` : h.emoji;   // tướng đứng nguyên hình (không khung tròn)
     const pvMainOf = stats => stats.reduce((b, x) => unitPower(x) > unitPower(b) ? x : b, stats[0]).h;   // tướng mạnh nhất làm đại diện
     function pvClose() { document.getElementById('pv-modal').style.display = 'none'; }
     function pvShow(html) { document.getElementById('pv-box').innerHTML = html; document.getElementById('pv-modal').style.display = 'flex'; }

@@ -52,3 +52,11 @@ function seqOverlay(u, s, w) {
   const hid = u.el.querySelectorAll('.hero-body, .hero-img, .bf-emo, .bf-sprite .hero-seq'); hid.forEach(b => { b.style.visibility = 'hidden'; });
   return { el: d, show: i => d.show(i), end() { d.remove(); hid.forEach(b => { b.style.visibility = ''; }); } };
 }
+
+// ẢNH ĐẠI DIỆN ĐỘNG: dáng đứng (SEQ_IDLE) dùng làm người đại diện ở Tỷ Võ + thẻ tướng trang chủ. Kích thước theo % nên co giãn theo khung chứa.
+// w: số px hoặc chuỗi CSS (vd '150%'). Trả '' nếu tướng chưa có chuỗi đứng → nơi gọi dùng ảnh tĩnh như cũ.
+function seqAvatarHTML(id, w, extraStyle) {
+  const c = SEQ_IDLE[id]; if (!c) return '';
+  const s = SEQ[c.sheet];
+  return '<div class="seq-av" style="width:' + (typeof w === 'number' ? w + 'px' : w) + ';aspect-ratio:' + s.cw + '/' + s.ch + ';background-image:url(' + s.src + ');background-size:' + (s.n * 100) + '% 100%;--ms:' + c.ms + 'ms;--stp:' + (s.n - 1) + ';' + (extraStyle || '') + '"></div>';
+}

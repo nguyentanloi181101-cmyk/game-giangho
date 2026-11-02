@@ -85,3 +85,10 @@
 
 /* hiệu ứng Ngũ Tuyệt luôn nằm TRÊN tướng (tướng có z-index = vị trí dọc 0–100, Bắc Cái khi bay là 99) */
 .bf-sonic,.bf-venom{z-index:106}
+
+/* Ảnh đại diện động (Tỷ Võ + thẻ tướng trang chủ): chạy theo % để co giãn theo khung */
+.seq-av{display:block;flex:none;background-repeat:no-repeat;pointer-events:none;animation:seqPct var(--ms,1300ms) steps(var(--stp,11),end) infinite}
+@keyframes seqPct{from{background-position:0 0}to{background-position:100% 0}}
+.hero-card .hero-bg-sprite.has-seq{align-items:flex-end;background:radial-gradient(ellipse at 50% 70%,rgba(80,130,150,.35),rgba(0,0,0,.8) 75%)}
+.hero-card .hero-bg-sprite.has-seq .hero-av-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:.35;filter:blur(1px)}
+.hero-card .hero-bg-sprite.has-seq .seq-av{position:relative;z-index:1;margin-bottom:12%}
