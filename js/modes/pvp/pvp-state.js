@@ -26,7 +26,10 @@
     function pvpRefreshWindow() { if (pvpState.used > 0 && Date.now() - pvpState.winStart >= 86400000) { pvpState.used = 0; pvpState.winStart = 0; pvpSave(); } }
     const pvpLeft = () => Infinity;   // PvP không giới hạn lượt
     const fmtClock = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, '0')).join(':'); };
-    function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = BASE_POWER + pvPow(pvpState.wins); }
+    // Lực chiến ở trang chủ (vàng, dưới Thể Lực) = TỔNG CÔNG của toàn đội đang ra trận
+    function teamAtkTotal() { try { return team.reduce((a, id) => a + Math.round(heroStats(id).atk || 0), 0); } catch (e) { return 0; } }
+    function updatePower() { const el = document.querySelector('.power-total'); if (el) el.innerText = fmtN(teamAtkTotal()); }
+    setInterval(updatePower, 1000);   // đổi đội hình / nâng cấp / đổi trang bị đều tự cập nhật
     const unitPower = s => Math.round(s.hp / 5 + s.atk * 2 + s.def * 3 + (s.pierce || 0) * 2 + (s.crit || 0) * (s.critDmg || 0));
     const pvpMyPower = () => team.reduce((a, id) => a + unitPower(heroStats(id, true)), 0);
 

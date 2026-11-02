@@ -16,3 +16,8 @@
     .battle-item-btn { font-size: 13px; font-weight: bold; color: #fff; background: #ea580c; padding: 4px 10px; border-radius: 4px;}
     .stage-item.locked, .battle-item.locked { filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; }
     .battle-item-btn.disabled { background: #4a5568; color: #a0aec0; }
+
+    /* Nút Quét ×10 cạnh nút Đánh */
+    .battle-btns{display:flex;gap:6px;align-items:stretch;flex:none}
+    .battle-item-btn.sweep{background:#2563eb;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;white-space:nowrap}
+    .battle-item-btn.sweep small{font-size:10px;font-weight:700;color:#fde68a}

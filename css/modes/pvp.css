@@ -19,11 +19,10 @@
     .pv-hero.full{width:auto;height:auto;border:0;border-radius:0;background:none;box-shadow:none;margin:0 auto -22px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.55))}
     .pv-spot.me .pv-hero.full{box-shadow:none;border:0}
     .pv-hero.full .pv-body{display:block;width:auto;max-width:none;margin:0 auto}
-    .pv-lotus{position:relative;width:124px;height:46px;margin:0 auto}
-    .pv-lotus::before{content:'';position:absolute;left:0;right:0;bottom:0;height:34px;border-radius:50% 50% 46% 46%/78% 78% 22% 22%;background:linear-gradient(180deg,#f8f6ec,#cbd8c0);
-      box-shadow:inset 0 -7px 0 #aebfa5,-30px 6px 0 -8px #e6ecdc,30px 6px 0 -8px #e6ecdc,-52px 10px 0 -14px #d7e2cd,52px 10px 0 -14px #d7e2cd,0 8px 14px rgba(0,0,0,.28)}
-    .pv-lotus::after{content:'';position:absolute;left:20px;right:20px;top:2px;height:18px;border-radius:50%;background:radial-gradient(ellipse,#ffffff,#dfeadb 70%);border:1px solid #9bb08f}
-    .pv-name{margin-top:2px;font-size:14px;font-weight:800;line-height:1.15;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 4px rgba(0,0,0,.6)}
+    /* Đài sen: tướng đứng trên nhụy vàng (ảnh assets/images/fx/lotus.webp, nhụy ở ~31% chiều cao) */
+    .pv-lotus{position:relative;z-index:0;width:128px;height:102px;margin:-32px auto 0;background:url(../../assets/images/fx/lotus.webp?v=52) center/contain no-repeat;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+    .pv-hero.full{position:relative;z-index:1}
+    .pv-name{position:relative;z-index:2;margin-top:2px;font-size:14px;font-weight:800;line-height:1.15;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 2px 4px rgba(0,0,0,.6)}
     .pv-spot.me .pv-hero{border-color:#7dd3fc;box-shadow:0 10px 16px rgba(0,0,0,.35),0 0 18px #38bdf8}
     .pv-info{position:absolute;left:10px;bottom:10px;z-index:3;font-size:15px;font-weight:800;color:#fff;line-height:1.35;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
     .pv-info b{display:block;font-size:20px;color:#fde68a}

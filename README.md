@@ -184,3 +184,8 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 ## Cập nhật v46: Đông Phương Cô Nương (id 9)
 - Đứng yên = `SEQ.dpIdle` (20 khung) · tung chiêu = `SEQ.dpCast` (16 khung) · phân thân chạy sang địch = `SEQ.dpClone` (18 khung) · lốc lửa trên địch = `SEQ.dpFire` (20 khung). Code: `js/heroes/skills/dong-phuong-co-nuong.js`.
 - Đã xóa mạng lửa 3D (canvas), ngọn lửa và đốm lửa trên đầu cũ. Cơ chế sát thương giữ nguyên (HTT_FLAT + Công chuẩn bỏ qua giáp, mất thêm 50% HP hiện tại, hiệu ứng vòng sóng khi trúng).
+
+## Cập nhật v47
+- Tỷ Võ: bục dưới chân tướng đổi thành **đài sen** (`assets/images/fx/lotus.webp`, tướng đứng trên nhụy vàng); hạng 2 và hạng 3 đứng cùng hàng, hạng 4 và 5 cùng hàng.
+- PVE: nút **Quét ×10** cạnh nút Đánh (chỉ hiện ở Bàn đã thắng): tốn 10 × 4 = 40 thể lực, nhận thưởng x10 (bạc, gạo, Viên Thể Lực). Code: `sweepBattle` trong `js/modes/pve/pve-stages.js`.
+- Trang chủ: **Lực chiến** (số vàng dưới Thể Lực) = tổng Công của toàn đội đang ra trận (`teamAtkTotal` trong `js/modes/pvp/pvp-state.js`), tự cập nhật mỗi giây.

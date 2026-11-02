@@ -15,11 +15,11 @@
       const el = document.getElementById('pvp-body'); if (!el) return;
       const st = pvpState, my = pvpMyPower();
       // Sắp xếp từ trên xuống: hạng nhỏ (mạnh nhất) ở trên cùng, hạng lớn dần xuống dưới (gồm cả bản thân)
-      const SLOTS = [[50, 13], [19, 27], [81, 37], [26, 53], [76, 64], [50, 82]];
+      const SLOTS = [[50, 13], [22, 29], [78, 29], [24, 55], [76, 55], [50, 82]];   // hạng 2 và 3 cùng hàng; hạng 4 và 5 cùng hàng
       const entries = pvpOpps.slice(0, 5).map((o, i) => ({ me: false, o, i, rank: o.rank }));
       entries.push({ me: true, rank: st.rank });
       entries.sort((x, y) => x.rank - y.rank || (x.me ? 1 : -1));
-      const pos = entries.length === SLOTS.length ? SLOTS : [...SLOTS.slice(0, entries.length - 1), SLOTS[SLOTS.length - 1]];
+      const pos = SLOTS.slice(0, entries.length);   // đúng thứ hạng: hạng k đứng ô k (kể cả bản thân)
       const mainId = team.length ? team.reduce((b, id) => unitPower(heroStats(id, true)) > unitPower(heroStats(b, true)) ? id : b, team[0]) : null;
       const me = mainId !== null ? heroById(mainId) : null;
       const spots = entries.map((e, k) => {
