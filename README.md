@@ -167,3 +167,8 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 - `dong-ta-ult.webp` (`dtCast`): tuyệt kỹ Đông Tà (`dongTaUlt`): khung 0-3 nhảy lên, 4-10 xoáy vàng theo 4 nhịp sóng âm, 11 đáp đất. Bắc Cái vẫn dùng `bac-cai-ult.webp` cũ cho tuyệt kỹ.
 - Nam Đế (16): `nam-de-idle.webp` (`ndIdle`, dáng đứng). Tuyệt kỹ giữ hiệu ứng cũ (chữ Vạn + vòng sáng).
 - Trương Tam Phong (4): `truong-tam-phong-idle.webp` (`ttpIdle`) + `truong-tam-phong-ult.webp` (`ttpCast`, dùng trong `taichiUlt`: khung 0-4 tụ cầu, 5-7 nhảy lên, 8-11 chọi xuống; quả cầu bay chỉ hiện lúc chọi). Âu Cơ (5): `au-co-idle.webp` (`acIdle`, dáng đứng).
+
+
+## Hoa Mãn Lâu (v38)
+- Dáng đứng: `SEQ.hmlIdle` (+ `SEQ_IDLE[6]`) • Tung tuyệt kỹ: `SEQ.hmlCast` • 7 chuỗi bướm ulti: `SEQ.hmlRed → hmlOrange → hmlYellow → hmlGreen → hmlBlue → hmlIndigo → hmlPurple` (đỏ, cam, vàng, lục, lam, chàm, tím), ảnh ở `assets/images/seq/hoa-man-lau-*.webp`.
+- Nền đã xóa sạch (trong suốt), thân căn cố định giữa khung; đã bỏ hoàn toàn emoji bướm.

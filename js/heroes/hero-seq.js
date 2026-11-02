@@ -20,10 +20,21 @@ const SEQ = {
   vntIdle:  { src: 'assets/images/seq/vo-nhai-tu-idle.webp?v=33',  cw: 288, ch: 300, n: 32, drop: .137 },   // Vô Nhai Tử đứng im 1 chỗ: 17 khung đã căn cố định thân, đi tới rồi quay lại (32), lặp êm
   vntCast:  { src: 'assets/images/seq/vo-nhai-tu-ult.webp?v=29',   cw: 398, ch: 355, n: 15, drop: .15 },   // Vô Nhai Tử đứng tại chỗ tung tuyệt kỹ (15 khung)
   vntFlag:  { src: 'assets/images/seq/vo-nhai-tu-flag.webp?v=29',  cw: 339, ch: 361, n: 15 },               // cây cờ phóng xuống địch (15 khung, đánh 5 lần)
-  acIdle:   { src: 'assets/images/seq/au-co-idle.webp?v=23',               cw: 227, ch: 201, n: 12 }    // Âu Cơ đứng trên đài sen cùng hạc
+  acIdle:   { src: 'assets/images/seq/au-co-idle.webp?v=23',               cw: 227, ch: 201, n: 12 },   // Âu Cơ đứng trên đài sen cùng hạc
+  // ===== Hoa Mãn Lâu (id 6) — nền đã xóa sạch, thân cố định giữa khung, tất cả đều 16 khung =====
+  hmlIdle:  { src: 'assets/images/seq/hoa-man-lau-idle.webp?v=40',          cw: 320, ch: 250, n: 16, drop: .04  },   // đứng yên cùng sư tử (lặp)
+  hmlCast:  { src: 'assets/images/seq/hoa-man-lau-ult.webp?v=40',           cw: 560, ch: 300, n: 16, drop: .033 },   // tung tuyệt kỹ: bướm cuộn bay ra phía địch (cùng tỉ lệ + điểm neo với hmlIdle)
+  // 7 chuỗi bướm ulti theo thứ tự cầu vồng; đặt giữa đội địch: bướm rơi (0-3) → chạm đất (4-11) → nổ tia (12-15)
+  hmlRed:    { src: 'assets/images/seq/hoa-man-lau-buom-red.webp?v=40',     cw: 384, ch: 256, n: 16 },   // Đỏ
+  hmlOrange: { src: 'assets/images/seq/hoa-man-lau-buom-orange.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Cam
+  hmlYellow: { src: 'assets/images/seq/hoa-man-lau-buom-yellow.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Vàng
+  hmlGreen:  { src: 'assets/images/seq/hoa-man-lau-buom-green.webp?v=40',   cw: 384, ch: 256, n: 16 },   // Lục
+  hmlBlue:   { src: 'assets/images/seq/hoa-man-lau-buom-blue.webp?v=40',    cw: 384, ch: 256, n: 16 },   // Lam
+  hmlIndigo: { src: 'assets/images/seq/hoa-man-lau-buom-indigo.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Chàm
+  hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=40',  cw: 384, ch: 256, n: 16 }    // Tím
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 

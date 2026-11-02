@@ -16,15 +16,15 @@
     // Hoa Mãn Lâu: mỗi màu bướm kèm 1 hiệu ứng lên địch. Mọi hiệu ứng 25%, kéo dài 2 hiệp (Chàm: choáng 2 địch ngẫu nhiên 1 hiệp)
     const REVIVE_COUNT = 2, REVIVE_HP_PCT = 0.5, IMMORTAL_TURNS = 3;   // Thanh Y Tiên Tử: hồi sinh 2 đồng đội với 50% HP; bất tử 3 hiệp đầu mỗi trận
     const BF_PCT = 0.25, BF_TURNS = 2, BF_STUN_TURNS = 1, BF_STUN_TARGETS = 2, BF_SILENCE_TARGETS = 2, BF_POISON_PCT = 0.25;
-    // hue = độ xoay màu so với 🦋 gốc (xanh lam ~210°); css = màu hào quang/sóng
+    // css = màu chớp sáng/sóng khi bướm chạm đất; ảnh bướm từng màu: SEQ.hmlRed…hmlPurple (hero-seq.js)
     const BFLY_COLORS = [
-      { k: 'red',    hue: 150, css: '#ef4444' },   // Đỏ: chảy máu
-      { k: 'orange', hue: 178, css: '#f97316' },   // Cam: giảm sát thương
-      { k: 'yellow', hue: 202, css: '#facc15' },   // Vàng: giảm Thủ
-      { k: 'green',  hue: 270, css: '#22c55e' },   // Lục: giảm hồi máu
-      { k: 'blue',   hue: 0,   css: '#38bdf8' },   // Lam: giảm nộ
-      { k: 'indigo', hue: 45,  css: '#6366f1' },   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
-      { k: 'purple', hue: 80,  css: '#a855f7' }    // Tím: trúng độc + câm lặng (không dùng được tuyệt kỹ)
+      { k: 'red',    css: '#ef4444' },   // Đỏ: chảy máu
+      { k: 'orange', css: '#f97316' },   // Cam: giảm sát thương
+      { k: 'yellow', css: '#facc15' },   // Vàng: giảm Thủ
+      { k: 'green',  css: '#22c55e' },   // Lục: giảm hồi máu
+      { k: 'blue',   css: '#38bdf8' },   // Lam: giảm nộ
+      { k: 'indigo', css: '#6366f1' },   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
+      { k: 'purple', css: '#a855f7' }    // Tím: trúng độc + câm lặng (không dùng được tuyệt kỹ)
     ];   // Hoa Mãn Lâu: 3 bướm, mỗi con rơi gây 100% Công lên TOÀN địch; +50% Công toàn đội
     const DUCO_TWISTERS = 3, DUCO_MULT = 3.6, DUCO_NOBUFF = 2;   // Độc Cô Cầu Bại: 3 lốc xoáy tím, tổng 360% Công lên toàn địch, xóa tăng phúc & khóa tăng phúc 2 hiệp
     const MADAO_SLASHES = 7, MADAO_MULT = 3.5, MADAO_GAP = 95;   // Ma Đao Thánh Nữ: 7 nhát chém tím chồng lên nhau, tổng 350% Công lên toàn địch, mỗi nhát cách nhau ~95ms

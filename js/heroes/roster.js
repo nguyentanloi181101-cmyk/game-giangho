@@ -14,7 +14,7 @@
       {id:4,name:'Trương Tam Phong',emoji:'🧙🏻‍♂️',img:'assets/images/heroes/truong-tam-phong.webp',body:'assets/images/heroes/truong-tam-phong-body.webp',bodyH:80,hp:3500,atk:290,def:60,spd:40,dodge:5,startRage:100,alwaysUlt:true},
       {id:5,name:'Âu Cơ',emoji:'🪷',img:'assets/images/heroes/au-co.webp',body:'assets/images/heroes/au-co-body.webp',bodyH:74,hp:3000,atk:300,def:50,spd:50,dodge:10,startRage:50},
       // Hoa Mãn Lâu: tuyệt kỹ không cần nộ (alwaysUlt) – lượt nào cũng ulti được
-      {id:6,name:'Hoa Mãn Lâu',emoji:'🦋',img:'assets/images/heroes/hoa-man-lau.webp',body:'assets/images/heroes/hoa-man-lau-body.webp',bodyH:80,hp:2000,atk:500,def:500,spd:77,dodge:50,startRage:100,alwaysUlt:true},
+      {id:6,name:'Hoa Mãn Lâu',emoji:'🌸',img:'assets/images/heroes/hoa-man-lau.webp',body:'assets/images/heroes/hoa-man-lau-body.webp',bodyH:80,hp:2000,atk:500,def:500,spd:77,dodge:50,startRage:100,alwaysUlt:true},
       // Kiều Phong: nhảy qua địch, 2 hỏa long quấn chéo (3 tầng sát thương) + chảy máu 3 hiệp
       {id:7,name:'Kiều Phong',emoji:'🐉',img:'assets/images/heroes/kieu-phong.webp',body:'assets/images/heroes/kieu-phong-body.webp',bodyH:84,hp:1000,atk:2500,def:500,spd:65,dodge:2,startRage:0},
       // Lạc Long Quân: tướng thủ (bị đánh đầu tiên), tuyệt kỹ không cần nộ – buff nộ + thủ cho 2 đồng đội

@@ -1,4 +1,4 @@
-/* HOA MÃN LÂU (id 6): tuyệt kỹ bướm
+/* HOA MÃN LÂU (id 6): tuyệt kỹ bướm (dùng ảnh chuỗi khung, không còn emoji)
    (tách từ index.html cũ — script) */
 
     // Pháo xẹt: tiếng gió rít tăng dần + tiếng huýt cao dần, vút lên rồi tắt
@@ -33,77 +33,49 @@
         nz.connect(lp); lp.connect(ng); ng.connect(out); nz.start(t); nz.stop(t + 0.06);
       } catch (e) {}
     }
+    // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast, bướm cuộn bay ra phía địch) -> 3 chuỗi bướm màu ngẫu nhiên (SEQ.hmlRed…hmlPurple)
+    // lần lượt rơi xuống giữa đội địch, nổ tia sáng, mỗi lần gây sát thương TOÀN địch + hiệu ứng theo màu; cuối cùng +50% Công toàn đội
+    const BFLY_SEQ = { red: 'hmlRed', orange: 'hmlOrange', yellow: 'hmlYellow', green: 'hmlGreen', blue: 'hmlBlue', indigo: 'hmlIndigo', purple: 'hmlPurple' };
     async function butterflyUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
       const W = f.clientWidth, H = f.clientHeight;
       const alive = () => foesOf(u).filter(e => e.alive);
-      const anim = (el, kf, d, e) => el.animate(kf, { duration: d, easing: e || 'ease-in-out', fill: 'forwards' });
       const es0 = alive(); if (!es0.length) return;
-      const cx = es0.reduce((a, e) => a + e.x, 0) / es0.length, cy = es0.reduce((a, e) => a + e.y, 0) / es0.length;
       const dmg = u.atk * BFLY_MULT * (u.sk || 1);          // chốt sát thương trước khi buff Công
-      const made = [];
-      const mk = (cls, txt, x, y) => { const d = document.createElement('div'); d.className = cls; d.textContent = txt; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
+      const made = [], timers = [], oldZ = u.el.style.zIndex;
+      const at = (ms, fn) => timers.push(setTimeout(() => { if (tok === battleToken) fn(); }, seqT(ms)));
+      // khung tung chiêu phủ lên tướng: cùng tỉ lệ & điểm neo với dáng đứng (SEQ_IDLE[6]) nên thân không xê dịch
+      const CAST_W = Math.round(SEQ.hmlCast.cw * SEQ_IDLE[6].h / SEQ.hmlIdle.ch), CAST_FR = 75;
+      const cast = seqOverlay(u, SEQ.hmlCast, CAST_W);
+      const FR = 48, HIT = 12;                               // 48ms/khung; khung 12 = bướm chạm đất, nổ tia -> gây sát thương
+      const FW = Math.round(Math.max(240, Math.min(W * 0.62, 440))), FH = Math.round(FW * 256 / 384);
       try {
-        // 1. Triệu hồi 3 con bướm phát sáng, xoay quanh thân (orbit) – chuyển thể từ ButterflySkill.cs
-        const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);   // 3 màu khác nhau trong 7 màu
-        const flies = picks.map((c, i) => {
-          const b = mk('bf-bfly flap', '🦋', u.x, u.y - 4);
-          b.style.filter = `hue-rotate(${c.hue}deg) saturate(1.8) brightness(1.15) drop-shadow(0 0 8px ${c.css}) drop-shadow(0 0 16px ${c.css})`;
-          return { b, c, hue: c.hue, off: i * (Math.PI * 2 / BFLY_HITS), px: 0, py: 0 };
-        });
-        u.el.animate([{ transform: 'translate(-50%,-50%)' }, { transform: 'translate(-50%,calc(-50% - 12px))' }, { transform: 'translate(-50%,-50%)' }], { duration: 300 });
-        const t0 = performance.now(), ORBIT = 750;
-        await new Promise(res => {
-          const step = now => {
-            const k = (now - t0) / ORBIT;
-            if (tok !== battleToken || k >= 1) return res();
-            flies.forEach((fl, i) => {
-              const a = fl.off + k * ORBIT / 1000 * 5.6;                 // tốc độ xoay 2.8 rad/s như Unity
-              fl.px = Math.cos(a) * 44; fl.py = Math.sin(a) * 26 - 8 + Math.sin(a * 2 + i) * 4;
-              fl.b.style.transform = `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(${1 + Math.sin(a) * 0.22}) rotate(${Math.cos(a) * 14}deg)`;
-              fl.b.style.zIndex = Math.sin(a) > 0 ? 95 : 5;
-            });
-            requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        });
-        if (tok !== battleToken) return;
-
-        // 2. Cả 3 con cùng bay vút lên trời (smooth-step + cung vòng nhẹ)
-        const SKY_Y = 3;
-        const skyX = i => u.x + (i - (flies.length - 1) / 2) * 12;
-        flies.forEach((fl, i) => {
-          const dx = (skyX(i) - u.x) * W / 100, dy = (SKY_Y - (u.y - 4)) * H / 100;
-          fl.b.style.zIndex = 95;
-          fl.sky = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(2.2)`;
-          anim(fl.b, [
-            { transform: `translate(calc(-50% + ${fl.px}px),calc(-50% + ${fl.py}px)) scale(1)` },
-            { transform: `translate(calc(-50% + ${dx * 0.4}px),calc(-50% + ${dy * 0.55}px)) scale(1.6) rotate(-14deg)`, offset: 0.55 },
-            { transform: fl.sky }
-          ], 500, 'ease-in-out');
-        });
+        u.el.style.zIndex = 95;
+        // 1. Đứng yên tung chiêu (16 khung): bướm cuộn bay ra phía địch
+        for (let i = 0; i < 16; i++) at(i * CAST_FR, () => cast.show(i));
+        at(16 * CAST_FR, () => cast.end());
         sfxRocket();
-        await sleep(525); if (tok !== battleToken) return;
+        await sleep(600); if (tok !== battleToken) return;
 
-        // 3. Lần lượt từng con lao xuống đất (cung vòng), nổ ánh sáng ma thuật rồi gây sát thương
-        for (let i = 0; i < flies.length; i++) {
-          const fl = flies[i];
-          const es1 = alive(); if (!es1.length) { fl.b.remove(); break; }
-          const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length + (i - 1) * 7, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length;
-          const sx = (skyX(i) - u.x) * W / 100, sy = (SKY_Y - (u.y - 4)) * H / 100;
-          const ex = (tx - u.x) * W / 100, ey = (ty - (u.y - 4)) * H / 100;
-          const at = (t, sc, rot) => `translate(calc(-50% + ${sx + (ex - sx) * t}px),calc(-50% + ${sy + (ey - sy) * t - Math.sin(t * Math.PI) * 26}px)) scale(${sc}) rotate(${rot}deg)`;
-          anim(fl.b, [
-            { transform: fl.sky }, { transform: at(0.25, 2.0, 12) }, { transform: at(0.5, 1.8, -12) },
-            { transform: at(0.75, 1.6, 8) }, { transform: at(1, 1.4, 0) }
-          ], 325, 'ease-in');
-          await sleep(330); if (tok !== battleToken) return;
+        // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi xuống giữa đội địch
+        const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
+        for (let i = 0; i < picks.length; i++) {
+          const c = picks[i];
+          const es1 = alive(); if (!es1.length) break;
+          const tx = es1.reduce((a, e) => a + e.x, 0) / es1.length, ty = es1.reduce((a, e) => a + e.y, 0) / es1.length;
+          const el = document.createElement('div'); el.className = 'bf-seq-fx';
+          el.style.left = tx + '%'; el.style.top = `calc(${ty}% + 10px)`; el.style.width = FW + 'px'; el.style.height = FH + 'px';
+          const sc = seqEl(SEQ[BFLY_SEQ[c.k]], FW); el.appendChild(sc); box.appendChild(el); made.push(el);
+          for (let k = 0; k < 16; k++) at(k * FR, () => sc.show(k));
+          at(16 * FR + 60, () => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
+          await sleep(HIT * FR); if (tok !== battleToken) return;
+
+          // 3. Chạm đất: chuông + chớp sáng + sóng + sát thương toàn địch + hiệu ứng theo màu
           sfxBell();
-          fl.b.remove();
-          const col = fl.c.css;
+          const col = c.css;
           const fx = document.createElement('div'); fx.className = 'bf-bflash'; fx.style.left = tx + '%'; fx.style.top = ty + '%'; fx.style.setProperty('--fc', col);
           box.appendChild(fx); made.push(fx); setTimeout(() => fx.remove(), 400);
-          anim(fx, [{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], 350, 'ease-out');   // nổ to dần ×8 như ExpandImpact
+          fx.animate([{ transform: 'translate(-50%,-50%) scale(.5)', opacity: 1 }, { transform: 'translate(-50%,-50%) scale(8)', opacity: 0 }], { duration: 350, easing: 'ease-out', fill: 'forwards' });
           const es = alive(); if (!es.length) break;
           es.forEach(e => {
             skillHit(e, dmg, u);
@@ -111,11 +83,13 @@
             w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
             box.appendChild(w); setTimeout(() => w.remove(), 650);
           });
-          bflyEffect(fl.c, es);                                   // hiệu ứng theo màu bướm
+          bflyEffect(c, es);                                     // hiệu ứng theo màu
           f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
-          if (i < flies.length - 1) await sleep(175);              // delayBetweenDives
+          if (i < picks.length - 1) await sleep(110);            // chuỗi kế tiếp bắt đầu khi tia nổ còn đang tan
           if (tok !== battleToken) return;
         }
+        await sleep((16 - HIT) * FR); if (tok !== battleToken) return;   // chờ chuỗi cuối nổ hết
+        cast.end();
 
         // 4. Tăng 50% Công cho toàn đội (không cộng dồn)
         alliesOf(u).filter(h => h.alive).forEach(h => {
@@ -130,6 +104,8 @@
         refreshPanel();
         await sleep(225);
       } finally {
+        timers.forEach(clearTimeout); cast.end();
         made.forEach(d => d.remove());
+        u.el.style.zIndex = oldZ;
       }
     }
