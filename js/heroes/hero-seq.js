@@ -24,14 +24,15 @@ const SEQ = {
   // ===== Hoa Mãn Lâu (id 6) — nền đã xóa sạch, thân cố định giữa khung, tất cả đều 16 khung =====
   hmlIdle:  { src: 'assets/images/seq/hoa-man-lau-idle.webp?v=40',          cw: 320, ch: 250, n: 16, drop: .04  },   // đứng yên cùng sư tử (lặp)
   hmlCast:  { src: 'assets/images/seq/hoa-man-lau-ult.webp?v=40',           cw: 560, ch: 300, n: 16, drop: .033 },   // tung tuyệt kỹ: bướm cuộn bay ra phía địch (cùng tỉ lệ + điểm neo với hmlIdle)
-  // 7 chuỗi bướm ulti theo thứ tự cầu vồng; đặt giữa đội địch: bướm rơi (0-3) → chạm đất (4-11) → nổ tia (12-15)
-  hmlRed:    { src: 'assets/images/seq/hoa-man-lau-buom-red.webp?v=40',     cw: 384, ch: 256, n: 16 },   // Đỏ
-  hmlOrange: { src: 'assets/images/seq/hoa-man-lau-buom-orange.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Cam
-  hmlYellow: { src: 'assets/images/seq/hoa-man-lau-buom-yellow.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Vàng
-  hmlGreen:  { src: 'assets/images/seq/hoa-man-lau-buom-green.webp?v=40',   cw: 384, ch: 256, n: 16 },   // Lục
-  hmlBlue:   { src: 'assets/images/seq/hoa-man-lau-buom-blue.webp?v=40',    cw: 384, ch: 256, n: 16 },   // Lam
-  hmlIndigo: { src: 'assets/images/seq/hoa-man-lau-buom-indigo.webp?v=40',  cw: 384, ch: 256, n: 16 },   // Chàm
-  hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=40',  cw: 384, ch: 256, n: 16 }    // Tím
+  // Bướm ulti: hmlProj = 7 con bướm bay (đạn) theo thứ tự đỏ-cam-vàng-lục-lam-chàm-tím (khung i = màu i); 7 chuỗi hmlRed…hmlPurple = 4 khung bung tia nhiều hướng khi chạm đất
+  hmlProj:   { src: 'assets/images/seq/hoa-man-lau-buom-bay.webp?v=41',     cw: 160, ch: 112, n: 7  },
+  hmlRed:    { src: 'assets/images/seq/hoa-man-lau-buom-red.webp?v=41',     cw: 384, ch: 256, n: 4 },   // Đỏ
+  hmlOrange: { src: 'assets/images/seq/hoa-man-lau-buom-orange.webp?v=41',  cw: 384, ch: 256, n: 4 },   // Cam
+  hmlYellow: { src: 'assets/images/seq/hoa-man-lau-buom-yellow.webp?v=41',  cw: 384, ch: 256, n: 4 },   // Vàng
+  hmlGreen:  { src: 'assets/images/seq/hoa-man-lau-buom-green.webp?v=41',   cw: 384, ch: 256, n: 4 },   // Lục
+  hmlBlue:   { src: 'assets/images/seq/hoa-man-lau-buom-blue.webp?v=41',    cw: 384, ch: 256, n: 4 },   // Lam
+  hmlIndigo: { src: 'assets/images/seq/hoa-man-lau-buom-indigo.webp?v=41',  cw: 384, ch: 256, n: 4 },   // Chàm
+  hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=41',  cw: 384, ch: 256, n: 4 }    // Tím
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
 const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 } };
