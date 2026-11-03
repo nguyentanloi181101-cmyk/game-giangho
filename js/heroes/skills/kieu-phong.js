@@ -24,7 +24,7 @@
         // 2. Hai hỏa long quấn chéo nhau 2 vòng (xoắn đôi), mỗi 1/3 hành trình là 1 tầng sát thương
         const dA = mk('bf-dragon', '🐉'), dB = mk('bf-dragon', '🐉');
         const yT = Math.max(12, cy - 24), yB = Math.min(88, cy + 10), R = Math.min(70, W * 0.16);
-        const total = u.atk * DRAGON_MULT * (u.sk || 1), per = total / DRAGON_TIERS;
+        const total = u.atk * DRAGON_MULT * (u.sk || 1), per = total / DRAGON_TIERS, NT = tiaOf(u, DRAGON_TIERS);   // NT = số tia (tầng sát thương)
         let tier = 0, lastEmber = 0;
         const doTier = () => {
           tier++;
@@ -51,14 +51,14 @@
               }
             });
             if (now - lastEmber > 70) lastEmber = now;
-            while (tier < DRAGON_TIERS && k >= (tier + 1) / DRAGON_TIERS - 0.001) doTier();
+            while (tier < NT && k >= (tier + 1) / NT - 0.001) doTier();
             if (k >= 1) return res();
             requestAnimationFrame(step);
           };
           requestAnimationFrame(step);
         });
         if (tok !== battleToken) return;
-        while (tier < DRAGON_TIERS) doTier();
+        while (tier < NT) doTier();
         // 3. Chảy máu 3 hiệp
         alive().forEach(e => {
           e.bleed = BLEED_TURNS;

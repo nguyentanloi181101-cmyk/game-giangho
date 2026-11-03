@@ -20,7 +20,7 @@
         await sleep(900); if (tok !== battleToken) return;
         // 2. 5 cây cờ phóng nhanh xuống địch (mỗi cây chọn ngẫu nhiên 1 địch), từng cây cách nhau ~130ms
         const FW = 170, FH = Math.round(FW * SEQ.vntFlag.ch / SEQ.vntFlag.cw), FR = 46;   // FR = ms mỗi khung
-        const strikes = Array.from({ length: GO_STONES }, () => ({ t: rand(foes) }));
+        const strikes = Array.from({ length: tiaOf(u, GO_STONES) }, () => ({ t: rand(foes) }));   // số tia = số cờ, mỗi cờ vẫn 6% HP
         await Promise.all(strikes.map(async (st, k) => {
           await sleep(k * 130); if (tok !== battleToken) return;
           const e = st.t, sx = e.x + (Math.random() - 0.5) * 5, sy = e.y + (Math.random() - 0.5) * 3;

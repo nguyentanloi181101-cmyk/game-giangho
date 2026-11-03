@@ -50,7 +50,7 @@
       const b = g.box0(es0), landX = u.side === 'hero' ? Math.min(94, b.maxX + 9) : Math.max(6, b.minX - 9), landY = b.cy;
       const dx = (landX - u.x) * W / 100, dy = (landY - u.y) * H / 100, oldZ = u.el.style.zIndex;
       const mid = `translate(calc(-50% + ${dx / 2}px),calc(-50% + ${dy / 2 - 130}px))`, land = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
-      const per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS, dir = u.side === 'hero' ? 1 : -1;
+      const per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS, NT = tiaOf(u, BC_HITS), dir = u.side === 'hero' ? 1 : -1;
       const seq = bcSeq(u), timers = [], at = (ms, i, flip) => timers.push(setTimeout(() => { if (tok === battleToken) seq.show(i, flip); }, seqT(ms)));
       try {
         u.el.style.zIndex = 99;
@@ -60,7 +60,7 @@
         seq.show(8);                                                          // chạm đất, bung hào quang vàng
         at(120, 9); at(380, 10); at(640, 11); at(900, 12);                    // đập gậy → thu thế trong lúc tre rơi
         g.ring(landX, landY, '#84cc16');
-        for (let k = 0; k < BC_HITS; k++) {
+        for (let k = 0; k < NT; k++) {
           const es = g.es(); if (!es.length) break;
           const tx = Math.max(6, Math.min(94, b.cx + (Math.random() - 0.5) * (b.maxX - b.minX + 16))), ty = Math.max(12, Math.min(88, b.cy + (Math.random() - 0.5) * (b.maxY - b.minY + 18)));
           // Tre 3D: đội TRÁI (hero) rơi từ trên-trái xuống địch; đội PHẢI rơi từ trên-phải xuống ta. Trục tre nghiêng ~25° nên rơi đúng theo trục.
@@ -99,7 +99,7 @@
     // ---------- ĐÔNG TÀ: nhảy lên cao thổi sóng âm 4 lần ----------
     async function dongTaUlt(u, tok) {
       const g = nt(u), { H, base, made } = g, es0 = g.es(); if (!es0.length) return;
-      const b = g.box0(es0), oldZ = u.el.style.zIndex, per = u.atk * DT_MULT * (u.sk || 1) / DT_HITS;
+      const b = g.box0(es0), oldZ = u.el.style.zIndex, per = u.atk * DT_MULT * (u.sk || 1) / DT_HITS, NT = tiaOf(u, DT_HITS);
       // Chuỗi 12 khung (SEQ.dtCast) phủ lên tướng: khung 0-3 nhảy lên • 4-10 xoáy vàng, thổi sáo • 11 đáp đất bung hào quang
       const cast = seqOverlay(u, SEQ.dtCast, 122), timers = [], fr = (ms, i) => timers.push(setTimeout(() => { if (tok === battleToken) cast.show(i); }, seqT(ms)));
       try {
@@ -109,7 +109,7 @@
         await sleep(450); if (tok !== battleToken) return;
         // Mỗi nhịp: nốt nhạc vàng bung ra từ tâm (chữ ♪ lớn ở giữa) lan rộng khắp đội địch rồi tan biến; thêm nốt ♪ bắn tỏa tròn theo mọi hướng
         const BW = Math.round(Math.max(240, Math.min(g.W * 0.62, 520)));
-        for (let k = 0; k < DT_HITS; k++) {
+        for (let k = 0; k < NT; k++) {
           const es = g.es(); if (!es.length) break;
           const tilt = (k % 2 ? -1 : 1) * 14;
           const bu = g.mk('bf-notesburst', '<img src="assets/images/fx/dt-burst.webp" alt="">', b.cx, b.cy);

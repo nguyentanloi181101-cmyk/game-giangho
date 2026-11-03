@@ -166,7 +166,6 @@
     
     // ===== HỆ THỐNG TÍNH SÁT THƯƠNG =====
     // • Trúng: Chuẩn của người đánh ≥ Né của mục tiêu + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: không mất máu nhưng hiệu ứng của chiêu vẫn dính.
-    // • TIA ĐÁNH (u.tia, mặc định 1): mỗi tia gồm đủ 3 loại sát thương, mỗi loại 100% — tướng 3 tia = 3 lần cả 3 loại.
     // • 1 tia gồm 3 loại sát thương riêng: Công − Thủ • (Bạo − Bền) × Bạo Sát • Phá giáp (bỏ qua mọi giáp).
     // • Đỡ đòn (%) giảm sát thương Công và Bạo (không giảm Phá giáp).  Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
     const HIT_GAP = 200, MIN_DMG_PCT = 0.1;   // sát thương Công tối thiểu 10% (tránh đánh vào giáp quá cao mà chỉ còn 1)
@@ -179,16 +178,13 @@
         crit: Math.round(Math.max(0, (u.crit || 0) - (t.tough || 0)) * (u.critDmg || 0) * keep),
         pierce: Math.round(u.pierce || 0) };
     }
-    // TIA ĐÁNH: mỗi tia = 1 lần đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%. Tướng N tia = N lần như vậy.
-    const rayCount = u => Math.max(1, Math.floor(u.tia || 1));
-    function strike(u, t, raw) {   // false = trượt (trượt thì cả đòn trượt)
+    // TIA ĐÁNH: MỖI TIA = 1 lần đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%. Mỗi lần skillHit/strike là 1 tia.
+    // Số tia của tuyệt kỹ = u.tia (admin chỉnh / HERO_TIA trong roster.js; mặc định = số nhịp đánh gốc trong code). Sát thương MỖI tia giữ nguyên
+    // (chia theo số tia mặc định), nên tổng sát thương = sát thương mỗi tia × số tia.
+    const tiaOf = (u, def) => Math.min(100, Math.max(1, Math.floor(u.tia || def || 1)));
+    function strike(u, t, raw) {   // false = trượt
       if (missed(u, t)) return false;
-      const n = rayCount(u);
-      for (let i = 0; i < n && t.alive; i++) {
-        const p = calcDmg(u, t, raw);   // tính lại mỗi tia (Thủ/Đỡ đòn/khiên của mục tiêu có thể đổi)
-        hit(t, p.main + p.crit + p.pierce, false, u, false, p, { i, wait: battleFast ? 0 : i * 170 * ultTimeScale * battleSlow });
-      }
-      return true;
+      const p = calcDmg(u, t, raw); hit(t, p.main + p.crit + p.pierce, false, u, false, p); return true;
     }
     function floatText(u, t) {
       const d = document.createElement('div'); d.className = 'bf-dmg'; d.style.fontSize = '16px'; d.textContent = t;
