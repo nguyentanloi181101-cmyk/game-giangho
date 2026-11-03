@@ -11,6 +11,11 @@
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
         { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
+      // Hai loại đan của Ải Giang Hồ: đọc an toàn để túi đồ vẫn mở nếu game chưa nạp module thưởng.
+      const td = (typeof thanDan === 'number' && Number.isFinite(thanDan)) ? Math.max(0, Math.floor(thanDan)) : 0;
+      const xd = (typeof tienDan === 'number' && Number.isFinite(tienDan)) ? Math.max(0, Math.floor(tienDan)) : 0;
+      if (td > 0) it.push({ k: 'than-dan', name: 'Thần Đan', ico: '🔴', qty: td, price: 0, desc: 'Đan dược nhận từ Ải Giang Hồ.', use: 'dan' });
+      if (xd > 0) it.push({ k: 'tien-dan', name: 'Tiên Đan', ico: '🟡', qty: xd, price: 0, desc: 'Đan dược nhận từ Ải Giang Hồ.', use: 'dan' });
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
     }
@@ -39,6 +44,8 @@
     function bagUse() {
       const c = bagCur(); if (!c) return; const n = Math.min(bagQty, c.qty);
       if (c.use === 'pill') { usePills(n); renderBag(); return; }
+      // Đan hiện chỉ được tích trữ; chưa tự ý trừ số lượng khi bấm Sử Dụng.
+      if (c.use === 'dan') { if (typeof scToast === 'function') scToast('Đan dược đã nằm trong Túi đồ; chức năng sử dụng sẽ được nối sau.'); return; }
       if (c.use === 'hammer' || c.use === 'key') { closeBag(); if (typeof tsOpen === 'function') tsOpen(); return; }
       closeBag(); if (c.name === 'Đá Nữ Oa' || c.name === 'Dị Linh') { if (typeof openThanThu === 'function') { ttTab = 'star'; openThanThu(); } } else if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') { ttTab = 'lv'; openThanThu(); } } else if (typeof openBangBoss === 'function') openBangBoss();
     }
