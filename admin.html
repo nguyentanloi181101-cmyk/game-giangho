@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin – Chỉnh số tia đánh</title>
+<style>
+  :root { --bg:#f5f5f7; --card:#fff; --text:#1d1d1f; --muted:#6e6e73; --line:#d2d2d7; --accent:#c0392b; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#1c1c1e; --card:#2c2c2e; --text:#f5f5f7; --muted:#98989d; --line:#48484a; --accent:#e5594a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; }
+  .wrap { max-width:640px; margin:0 auto; }
+  h1 { font-size:22px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .name { font-weight:600; font-size:17px; flex:1 1 100%; }
+  .muted { color:var(--muted); font-size:14px; }
+  input[type=number], input[type=password] { padding:8px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--text); font-size:16px; }
+  input[type=number] { width:80px; text-align:center; }
+  button { padding:8px 14px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--text); font-size:16px; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .total { margin-top:8px; font-size:15px; }
+  #msg { min-height:22px; margin:8px 0; font-size:14px; }
+  .ok { color:#2e8b57; } .err { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Chỉnh số tia đánh của tướng</h1>
+
+  <div class="card">
+    <div class="row">
+      <input type="password" id="pw" placeholder="Mật khẩu admin">
+      <button class="primary" onclick="login()">Đăng nhập</button>
+    </div>
+  </div>
+
+  <div id="msg"></div>
+  <div id="list"></div>
+</div>
+
+<script>
+let heroes = [];
+const $ = (id) => document.getElementById(id);
+
+function say(text, ok) {
+  $('msg').textContent = text;
+  $('msg').className = ok ? 'ok' : 'err';
+}
+
+async function login() {
+  const r = await fetch('/api/admin/check', { headers: { 'x-admin-password': $('pw').value } });
+  if (!r.ok) return say('Sai mật khẩu', false);
+  say('Đã đăng nhập', true);
+  heroes = await (await fetch('/api/heroes')).json();
+  render();
+}
+
+function render() {
+  $('list').innerHTML = '';
+  heroes.forEach((h) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="row">
+        <div class="name">${h.name}</div>
+        <span class="muted">Dame mỗi tia: ${h.damage_per_hit}</span>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button data-d="-1">−</button>
+        <input type="number" min="1" max="100" value="${h.hit_count}">
+        <button data-d="1">+</button>
+        <button class="primary" data-save>Lưu</button>
+      </div>
+      <div class="total">Tổng dame: <b>${h.hit_count * h.damage_per_hit}</b></div>`;
+    const input = el.querySelector('input');
+    const total = el.querySelector('.total b');
+    const refresh = () => { total.textContent = (+input.value || 0) * h.damage_per_hit; };
+    el.querySelectorAll('[data-d]').forEach((b) => b.onclick = () => {
+      input.value = Math.min(100, Math.max(1, (+input.value || 1) + +b.dataset.d));
+      refresh();
+    });
+    input.oninput = refresh;
+    el.querySelector('[data-save]').onclick = async () => {
+      const r = await fetch(`/api/admin/heroes/${h.id}/hit-count`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': $('pw').value },
+        body: JSON.stringify({ hit_count: +input.value })
+      });
+      const data = await r.json();
+      if (r.ok) { h.hit_count = data.hit_count; say(`Đã lưu ${h.name}: ${data.hit_count} tia`, true); }
+      else say(data.error || 'Lỗi', false);
+    };
+    $('list').appendChild(el);
+  });
+}
+</script>
+</body>
+</html>

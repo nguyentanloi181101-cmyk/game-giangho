@@ -1,0 +1,5 @@
+[
+  { "id": "bac-cai", "name": "Bắc Cái", "hit_count": 18, "damage_per_hit": 50 },
+  { "id": "dong-ta", "name": "Đông Tà", "hit_count": 10, "damage_per_hit": 80 },
+  { "id": "tay-doc", "name": "Tây Độc", "hit_count": 12, "damage_per_hit": 60 }
+]
