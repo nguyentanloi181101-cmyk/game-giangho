@@ -1,43 +1,26 @@
-/* ================= QUẢN LÝ VÕ HIỆP SCRIPT ================= */
+/* QUẢN LÝ VÕ HIỆP: chọn tướng, tăng cấp
+   (tách từ index.html cũ — script) */
 
-// Chuyển về trang chủ
-function goToHome() {
-  // Thử chuyển hướng sang index.html, nếu không được sẽ dùng lịch sử trình duyệt quay lại
-  try {
-    window.location.href = 'index.html';
-  } catch (e) {
-    window.history.back();
-  }
-}
-
-// Xử lý khi nhấn vào từng tính năng trong Quản lý Võ Hiệp
-function openVoHiepFeature(featureKey) {
-  switch (featureKey) {
-    case 'manh_vo_hiep':
-      alert("Mở giao diện: Mảnh Võ Hiệp");
-      break;
-    case 'ghep_manh':
-      alert("Mở giao diện: Ghép Mảnh Võ Hiệp (Đang có 4 mảnh có thể ghép)");
-      break;
-    case 'tang_sao':
-      alert("Mở giao diện: Tăng Sao Võ Hiệp");
-      break;
-    case 'boi_duong':
-      alert("Mở giao diện: Bồi Dưỡng Võ Hiệp");
-      break;
-    case 'dot_pha':
-      alert("Mở giao diện: Đột Phá Võ Hiệp");
-      break;
-    case 'ky_nang':
-      alert("Mở giao diện: Kỹ Năng Võ Hiệp");
-      break;
-    case 'kinh_mach':
-      alert("Mở giao diện: Kinh Mạch Võ Hiệp");
-      break;
-    case 'giang_ho_ky':
-      alert("Mở giao diện: Giang Hồ Ký");
-      break;
-    default:
-      console.log("Chức năng chưa phát triển:", featureKey);
-  }
-}
+    // ---- Quản lý Võ Hiệp: tăng cấp / tăng sao / tăng cấp kỹ năng ----
+    let vmId = 0;
+    function openVoHiep(id) {
+      vmId = (id !== undefined && heroById(id)) ? id : (team.length ? team[0] : HEROES[0].id);
+      renderVoHiep(); switchScreen('vohiep');
+    }
+    function vmSelect(id) { vmId = id; renderVoHiep(); }
+    function upgradeHero(kind, n) {
+      const cap = { lv:heroCap(vmId), star:starCapOf(getProg(vmId).lv), sk:SKILL_MAX }[kind], p = getProg(vmId);
+      if (p[kind] >= cap) return;
+      if (kind === 'star') {   // tăng sao tốn mảnh tướng
+        const need = starCost(p.star + 1);
+        if (shardsOf(vmId) < need) { alert(`Cần ${need} mảnh ${heroById(vmId).name} để lên ★${p.star + 1} (có ${shardsOf(vmId)}).\nQuay Chiêu Mộ để nhận mảnh tướng.`); return; }
+        heroShards[vmId] = shardsOf(vmId) - need; saveJSON('hero_shards', heroShards); n = 1;
+      }
+      if (kind === 'lv') {     // tăng cấp tốn bạc + gạo; +10 cấp thì lên tối đa 10 cấp trong khả năng chi trả
+        const k = lvAffordable(p.lv, Math.min(n, cap - p.lv));
+        if (k < 1) { const c = lvCost(p.lv + 1); alert(`Không đủ bạc/gạo!\nLên cấp ${p.lv + 1} cần ${fmtN(c.silver)} bạc + ${fmtN(c.rice)} gạo\n(đang có ${fmtN(silver)} bạc, ${fmtN(rice)} gạo).\nĐánh PVE thắng từng Bàn để nhận thêm.`); return; }
+        const tot = lvCostRange(p.lv, k); silver -= tot.silver; rice -= tot.rice; resSave(); n = k;
+      }
+      heroProg[vmId] = Object.assign({}, p, { [kind]: Math.min(cap, p[kind] + n) });
+      saveJSON('hero_prog', heroProg); renderVoHiep(); renderHomeTeam(); if (typeof renderUpg === 'function') renderUpg();
+    }
