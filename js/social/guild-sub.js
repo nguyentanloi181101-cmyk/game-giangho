@@ -56,7 +56,18 @@ function renderDienVo() {
   const s = gdSt(), i = dvSel, lv = s.dv[i], c = dvCost(lv);
   document.getElementById('dv-body').innerHTML = `<div class="dv-uy">🏅 Uy Tín: ${fmtN(s.uytin)}</div>
   <div class="dv-grid">${GD_SKILLS.map((k, j) => { const lock = GD_SKILL_UNLOCK[j] > s.bangLv; return `<div class="dv-sk ${j === i ? 'sel' : ''} ${lock ? 'lock' : ''}" onclick="dvPick(${j})"><i>${lock ? 'Cấp ' + GD_SKILL_UNLOCK[j] + ' mở' : k[1]}</i><span>Lv.${s.dv[j]}</span></div>`; }).join('')}</div>
-  <div class="dv-desc"><b>${GD_SKILLS[i][0]}</b><p>${GD_SKILLS[i][2]}</p><p>Kỹ năng cấp ${lv} → cấp ${lv + 1}</p></div>
+  
+<div class="dv-desc">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+    <b>${GD_SKILLS[i][0]}</b>
+    <b style="color:#fde047">
+      Đã tăng: ${fmtN(lv * [GD_PER.hp1, GD_PER.def1, GD_PER.atk, GD_PER.hp2, GD_PER.def2, GD_PER.pierce, GD_PER.heal, GD_PER.spd, GD_PER.critDmg, GD_PER.boss][i])}
+    </b>
+  </div>
+  <p>${GD_SKILLS[i][2]}</p>
+  <p>Kỹ năng cấp ${lv} → cấp ${lv + 1}</p>
+</div>
+
   <div class="gs-act"><div>Cần 🏅 ${c.uy} &nbsp; 🥈 ${fmtN(c.silver)}</div><button onclick="dvLearn()">Học</button></div>`;
 }
 /* ---- Bang Chiến / Boss ---- */
