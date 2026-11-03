@@ -43,7 +43,12 @@ function gdBonus() {
 let dvSel = 0;
 function openDienVo() { renderDienVo(); switchScreen('dienvo'); }
 function dvPick(i) { dvSel = i; renderDienVo(); }
-const dvCost = lv => ({ uy: 300, silver: 50000 * (lv + 1) });
+
+const dvCost = lv => ({
+  uy: Math.ceil(300 * Math.pow(1.02, lv)),
+  silver: Math.ceil(50000 * Math.pow(1.05, lv))
+});
+
 function dvLearn() {
   const s = gdSt(), i = dvSel, lv = s.dv[i];
   if (GD_SKILL_UNLOCK[i] > s.bangLv) return scToast('Chưa mở');
