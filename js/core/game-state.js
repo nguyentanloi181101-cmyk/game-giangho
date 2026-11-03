@@ -1,33 +1,7 @@
 /* TRẠNG THÁI CHUNG: tiện ích loadJSON/saveJSON/fmtN, vàng, mảnh tướng, bản gốc chỉ số
    (tách từ index.html cũ — script) */
 
-   
-const fmtN = n => {
-  const v = Number(n);
-  if (!Number.isFinite(v)) return '0';
-
-  const a = Math.abs(v);
-  const units = [
-    [1e15, 'MB'],
-    [1e12, 'T'],
-    [1e9, 'B'],
-    [1e6, 'M'],
-    [1e3, 'K']
-  ];
-
-  for (const [size, suffix] of units) {
-    if (a >= size) {
-      const x = v / size;
-      const digits = Math.abs(x) >= 100 ? 0
-        : Math.abs(x) >= 10 ? 1 : 2;
-
-      return Number(x.toFixed(digits)).toString() + suffix;
-    }
-  }
-
-  return Math.round(v).toLocaleString('vi-VN');
-};
-
+    const fmtN = n => Math.round(n).toLocaleString('vi-VN');
     const heroById = id => HEROES.find(h => h.id === id);
 
     const HERO_DEFAULTS = {};
