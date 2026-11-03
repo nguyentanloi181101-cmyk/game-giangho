@@ -1,0 +1,5 @@
+/* HIỆU ỨNG TUYỆT KỸ: Tiểu Yêu (id 10)
+   Toàn bộ hình ảnh nay là chuỗi khung (SEQ.tyIdle / tyCast / tySkull trong js/heroes/hero-seq.js).
+   Đã xóa hiệu ứng cũ (bộ xương, lửa CSS, vòng sáng tím). */
+.bf-ty-skull{position:absolute;z-index:96;pointer-events:none}
+.bf-ty-skull .hero-seq{position:absolute;left:0;top:0}

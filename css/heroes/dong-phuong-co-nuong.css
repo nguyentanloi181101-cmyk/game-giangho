@@ -1,0 +1,9 @@
+/* HIỆU ỨNG TUYỆT KỸ: dong-phuong-co-nuong
+   (tách từ index.html cũ — style) */
+
+    .lg-cloud.c1{left:6%;top:30%}
+    .lg-cloud.c2{left:58%;top:40%;transform:scale(.8);animation-duration:34s}
+
+    /* Phân thân (SEQ.dpClone) – chuỗi khung, không còn canvas lửa */
+    .bf-dp-clone{position:absolute;z-index:97;pointer-events:none;transform:translate(-50%,-50%)}
+    .bf-dp-clone .hero-seq{position:absolute;left:0;top:0}

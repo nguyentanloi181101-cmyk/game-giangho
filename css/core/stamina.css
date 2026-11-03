@@ -1,0 +1,8 @@
+/* THỂ LỰC: hộp viên thể lực
+   (tách từ index.html cũ — style) */
+
+  
+    .pill-box { margin: 6px 8px; padding: 8px 10px; border: 1px solid var(--gold-border); border-radius: 8px; background: rgba(0,0,0,0.35); display: flex; align-items: center; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+    .pill-box .pb-info { flex: 1; min-width: 150px; }
+    .pill-box button { background: linear-gradient(180deg,#22c55e,#15803d); border: 1px solid #86efac; color: #fff; font-weight: 800; font-size: 12px; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+    .pill-box button:disabled { opacity: .4; cursor: default; }

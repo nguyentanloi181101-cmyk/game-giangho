@@ -1,0 +1,13 @@
+/* TÚI ĐỒ + HỘP THƯ
+   (viết mới) */
+
+.bm-sec { font-size: 13px; font-weight: 900; color: #fde047; margin: 10px 0 6px; border-bottom: 1px dashed rgba(253,224,71,.35); padding-bottom: 3px; }
+.bm-row { display: flex; align-items: center; gap: 8px; background: linear-gradient(180deg,#4d2d14 0%,#29170a 100%); border: 2px solid #fde047; border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; }
+.bm-row.done { filter: grayscale(.7); opacity: .6; }
+.bm-ico { font-size: 26px; width: 38px; text-align: center; flex-shrink: 0; }
+.bm-info { flex: 1; min-width: 0; font-size: 12px; color: #e2e8f0; }
+.bm-info b { display: block; color: #fde047; font-size: 14px; }
+.bm-info small { display: block; color: #a0aec0; font-size: 10px; margin-top: 1px; line-height: 1.3; }
+.bm-qty { font-size: 14px; font-weight: 900; color: #fff; white-space: nowrap; }
+.bm-row .btn-attack, .bm-row .btn-close-battle { padding: 6px 10px; font-size: 12px; border-radius: 8px; flex-shrink: 0; }
+#mail-badge { display: none; }

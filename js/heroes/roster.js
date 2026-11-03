@@ -1,0 +1,79 @@
+/* TƯỚNG: danh sách HEROES (dữ liệu gốc) và Đội ngũ
+   (tách từ index.html cũ — script) */
+
+    // --- ĐỘI NGŨ ---
+    const HEROES = [
+      // hp: máu • atk: công • def: thủ • spd: tốc • dodge: né (%) • startRage: nộ khi vào trận
+      {id:0,name:'Ma Đao Thánh Nữ',emoji:'⚔️',img:'assets/images/heroes/ma-dao-thanh-nu.webp',body:'assets/images/heroes/ma-dao-thanh-nu-body.webp',bodyH:82,hp:2800,atk:340,def:30,spd:60,dodge:10},
+      // Thanh Y Tiên Tử: vào trận KHÔNG có nộ, BẤT TỬ 3 hiệp đầu mỗi trận; tuyệt kỹ (đủ 100 nộ): mưa cánh hoa sen hồi sinh tối đa 2 đồng đội đã gục
+      {id:1,name:'Thanh Y Tiên Tử',emoji:'🧔🏻',img:'assets/images/heroes/thanh-y-tien-tu.webp',body:'assets/images/heroes/thanh-y-tien-tu-body.webp',bodyH:80,hp:3200,atk:280,def:45,spd:45,dodge:5},
+      // Chu Nguyên Chương: tuyệt kỹ không cần nộ (alwaysUlt) – lượt nào cũng ulti: giải hiệu ứng bất lợi + khiên Trăng Khuyết phản 50% sát thương, nhận 30% (2 hiệp)
+      {id:2,name:'Chu Nguyên Chương',emoji:'🌊',img:'assets/images/heroes/chu-nguyen-chuong.webp',body:'assets/images/heroes/chu-nguyen-chuong-body.webp',bodyH:82,hp:3000,atk:300,def:40,spd:55,dodge:8,startRage:100,alwaysUlt:true},
+      {id:3,name:'Độc Cô Cầu Bại',emoji:'🧔🏻‍♂️',img:'assets/images/heroes/doc-co-cau-bai.webp',body:'assets/images/heroes/doc-co-cau-bai-body.webp',bodyH:80,hp:2900,atk:360,def:35,spd:50,dodge:10},
+      // Trương Tam Phong: tuyệt kỹ không cần nộ (alwaysUlt) – lượt nào cũng ulti được; đạt 6 sao thì gây chảy máu
+      {id:4,name:'Trương Tam Phong',emoji:'🧙🏻‍♂️',img:'assets/images/heroes/truong-tam-phong.webp',body:'assets/images/heroes/truong-tam-phong-body.webp',bodyH:80,hp:3500,atk:290,def:60,spd:40,dodge:5,startRage:100,alwaysUlt:true},
+      {id:5,name:'Âu Cơ',emoji:'🪷',img:'assets/images/heroes/au-co.webp',body:'assets/images/heroes/au-co-body.webp',bodyH:74,hp:3000,atk:300,def:50,spd:50,dodge:10,startRage:50},
+      // Hoa Mãn Lâu: tuyệt kỹ không cần nộ (alwaysUlt) – lượt nào cũng ulti được
+      {id:6,name:'Hoa Mãn Lâu',emoji:'🌸',img:'assets/images/heroes/hoa-man-lau.webp',body:'assets/images/heroes/hoa-man-lau-body.webp',bodyH:80,hp:2000,atk:500,def:500,spd:77,dodge:50,startRage:100,alwaysUlt:true},
+      // Kiều Phong: nhảy qua địch, 2 hỏa long quấn chéo (3 tầng sát thương) + chảy máu 3 hiệp
+      {id:7,name:'Kiều Phong',emoji:'🐉',img:'assets/images/heroes/kieu-phong.webp',body:'assets/images/heroes/kieu-phong-body.webp',bodyH:84,hp:1000,atk:2500,def:500,spd:65,dodge:2,startRage:0},
+      // Lạc Long Quân: tướng thủ (bị đánh đầu tiên), tuyệt kỹ không cần nộ – buff nộ + thủ cho 2 đồng đội
+      {id:8,name:'Lạc Long Quân',emoji:'🐲',img:'assets/images/heroes/lac-long-quan.webp',body:'assets/images/heroes/lac-long-quan-body.webp',bodyH:80,hp:5000,atk:300,def:2000,spd:1000,dodge:70,startRage:100,alwaysUlt:true,taunt:true},
+      // Hỏa Thiên Tướng: tuyệt kỹ không cần nộ – 18 đường lửa chồng chéo như tơ nhện, sát thương chuẩn bỏ qua giáp + giảm 50% HP địch
+      // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4 (33333 sát thương chuẩn sẽ diệt cả đội ngay)
+      {id:9,name:'Đông Phương Cô Nương',emoji:'🔥',img:'assets/images/heroes/dong-phuong-co-nuong.webp',body:'assets/images/heroes/dong-phuong-co-nuong-body.webp',bodyH:80,hp:3000,atk:300,def:500,spd:50,dodge:20,acc:300,startRage:100,alwaysUlt:true,noEnemy:true},
+      // Tiểu Yêu: tuyệt kỹ không cần nộ – đầu lâu lửa phun lên TOÀN BỘ địch, mỗi địch mất 50% HP hiện tại; còn ≤10% HP tối đa thì bị TẤT SÁT kết liễu (bỏ qua mọi thứ trừ Né); bản thân không bị trừ máu
+      // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4 (đấm 1 phát chết 3 tướng ta)
+      {id:10,name:'Tiểu Yêu',emoji:'🎭',img:'assets/images/heroes/tieu-yeu.webp',body:'assets/images/heroes/tieu-yeu-body.webp',hp:3600,atk:320,def:50,spd:58,dodge:8,startRage:100,alwaysUlt:true,noEnemy:true},
+      // Vô Nhai Tử: tướng hỗ trợ – tuyệt kỹ không cần nộ (alwaysUlt), hiệp nào cũng ulti. Chiêu: ném hủ cờ vây lên phía địch, 5 quân cờ trắng/đen rơi xuống bàn cờ dưới chân địch; sao chép chỉ số boss mạnh nhất (boss giữ nguyên; lần sau so chỉ số, giữ số cao hơn)
+      // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
+      {id:11,name:'Vô Nhai Tử',emoji:'♟️',img:'assets/images/heroes/vo-nhai-tu.webp',body:'assets/images/heroes/vo-nhai-tu-body.webp',bodyH:80,hp:3200,atk:260,def:45,spd:62,dodge:12,startRage:100,alwaysUlt:true,noEnemy:true},
+      // Đoàn Dự: ra trận ĐẦY NỘ. Lăng Ba Vi Bộ – 18 tàn ảnh lao từ đội ta sang đội địch; toàn đội 3 hiệp: +300% Né, +150% Tốc, hồi 300% máu (theo chỉ số Đoàn Dự)
+      // noEnemy: không nằm trong 3 tướng ngẫu nhiên của boss trận 4
+      {id:12,name:'Đoàn Dự',emoji:'🪭',img:'assets/images/heroes/doan-du.webp',body:'assets/images/heroes/doan-du-body.webp',bodyH:80,hp:3000,atk:300,def:40,spd:70,dodge:30,startRage:100,noEnemy:true},
+      // ===== NGŨ TUYỆT (chất tướng trong hero-roles.js): Bắc Cái / Đông Tà = Kỹ năng • Tây Độc = Thủ • Nam Đế / Vương Trùng Dương = Hỗ trợ =====
+      // Bắc Cái: bay qua đội địch, 18 cây tre từ góc chéo trên xuống (mỗi cây trúng toàn địch), -30% Thủ địch, +30% Công đội
+      {id:13,name:'Bắc Cái',emoji:'🍶',img:'assets/images/heroes/bac-cai.webp',body:'assets/images/heroes/bac-cai-body.webp',bodyH:82,hp:3000,atk:330,def:40,spd:56,dodge:15},
+      // Đông Tà: nhảy lên cao thổi sóng âm 4 lần lên toàn địch, -30% Bạo địch, +30% Bạo đội 2 hiệp
+      {id:14,name:'Đông Tà',emoji:'🎋',img:'assets/images/heroes/dong-ta.webp',body:'assets/images/heroes/dong-ta-body.webp',bodyH:82,hp:2800,atk:350,def:35,spd:60,dodge:20},
+      // Tây Độc: tướng thủ – cóc độc phun độc: địch -70% Thủ, -50% máu, -20% Tốc trong 3 hiệp
+      {id:15,name:'Tây Độc',emoji:'🐍',img:'assets/images/heroes/tay-doc.webp',body:'assets/images/heroes/tay-doc-body.webp',bodyH:84,hp:4200,atk:280,def:80,spd:48,dodge:10},
+      // Nam Đế: chưởng ấn chữ Vạn rơi từ trời xuống, toàn địch giảm 50% tất cả thuộc tính 2 hiệp
+      {id:16,name:'Nam Đế',emoji:'🙏',img:'assets/images/heroes/nam-de.webp',body:'assets/images/heroes/nam-de-body.webp',bodyH:82,hp:3300,atk:270,def:50,spd:52,dodge:15},
+      // Vương Trùng Dương: toàn đội +300% tất cả thuộc tính (theo thuộc tính từng người) 2 hiệp
+      {id:17,name:'Vương Trùng Dương',emoji:'☯️',img:'assets/images/heroes/vuong-trung-duong.webp',body:'assets/images/heroes/vuong-trung-duong-body.webp',bodyH:82,hp:3200,atk:280,def:45,spd:54,dodge:12},
+    ];
+    // CHỈ SỐ CHIẾN ĐẤU (hệ thống sát thương mới): Thủ trừ thẳng vào Công • Né/Chuẩn tính theo điểm (Chuẩn ≥ Né + 200 mới trúng)
+    // Bạo × Bạo Sát = sát thương thêm (trừ Bền của địch) • Phá giáp bỏ qua mọi giáp • Đỡ đòn (%) giảm sát thương trừ Phá giáp
+    const HERO_COMBAT = {   // def, dodge, acc, crit(Bạo), critDmg(Bạo Sát), tough(Bền), pierce(Phá giáp), block(Đỡ đòn %)
+      0: [30, 10, 300, 40, 4, 5, 30, 0],   1: [45, 5, 300, 10, 2, 10, 10, 5],    2: [40, 8, 300, 15, 3, 15, 15, 10],
+      3: [35, 10, 300, 50, 5, 5, 40, 0],   4: [60, 5, 300, 10, 2, 20, 20, 15],   5: [50, 10, 300, 10, 2, 10, 10, 5],
+      6: [60, 50, 300, 40, 4, 10, 30, 0],  7: [100, 2, 300, 30, 3, 5, 100, 0],   8: [120, 70, 300, 10, 2, 30, 10, 30],
+      9: [80, 20, 300, 30, 3, 10, 50, 5],  10: [50, 8, 300, 30, 3, 10, 25, 5],   11: [45, 12, 300, 15, 2, 10, 15, 5],
+      12: [40, 30, 300, 20, 3, 10, 20, 5],
+      13: [40, 15, 300, 30, 3, 10, 30, 5], 14: [35, 20, 300, 40, 4, 10, 30, 0], 15: [80, 10, 300, 15, 2, 25, 20, 25],
+      16: [50, 15, 300, 15, 2, 15, 15, 10], 17: [45, 12, 300, 20, 3, 10, 20, 10] };
+    HEROES.forEach(h => { const c = HERO_COMBAT[h.id]; if (c) { h.def = c[0]; h.dodge = c[1]; h.acc = c[2]; h.crit = c[3]; h.critDmg = c[4]; h.tough = c[5]; h.pierce = c[6]; h.block = c[7]; } });
+    const heroIcon = h => h.img ? `<img class="hero-img" src="${h.img}">` : h.emoji;
+    let team = [];
+    try { team = JSON.parse(localStorage.getItem('team_ids')) || []; } catch (e) {}
+    team = team.filter(id => HEROES.some(h => h.id === id));
+    if (!team.length) team = [0,1,2,3,4];
+    team.sort((a, b) => a - b);
+
+    function renderTeam() {
+      document.getElementById('tm-list').innerHTML = HEROES.map(h => {
+        const on = team.includes(h.id);
+        return `<div class="tm-card ${on ? 'on' : ''}" onclick="toggleHero(${h.id})"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="s">${on ? 'Ra trận' : 'Dự bị'}</div></div>`;
+      }).join('');
+      document.getElementById('tm-sub').innerText = `Đang ra trận: ${team.length}/5 tướng (tối thiểu 1)`;
+    }
+    function toggleHero(id) {
+      if (team.includes(id)) { if (team.length === 1) return; team = team.filter(x => x !== id); }
+      else { if (team.length >= 5) return; team.push(id); }
+      team.sort((a, b) => a - b);
+      try { localStorage.setItem('team_ids', JSON.stringify(team)); } catch (e) {}
+      renderTeam();
+    }
+    function openTeam() { renderTeam(); document.getElementById('team-modal').style.display = 'flex'; }
+    function closeTeam() { document.getElementById('team-modal').style.display = 'none'; renderHomeTeam(); }

@@ -1,0 +1,6 @@
+/* HIỆU ỨNG TUYỆT KỸ: kieu-phong
+   (tách từ index.html cũ — style) */
+
+    .bf-dragon{position:absolute;font-size:54px;line-height:1;pointer-events:none;z-index:93;filter:hue-rotate(-95deg) saturate(3) brightness(1.15) drop-shadow(0 0 10px #f97316) drop-shadow(0 0 22px #ef4444)}
+    .bf-ember{position:absolute;font-size:22px;transform:translate(-50%,-50%);pointer-events:none;z-index:70;animation:bfEmber .45s ease-out forwards}
+    @keyframes bfEmber{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-90%) scale(.4)}}

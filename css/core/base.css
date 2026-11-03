@@ -1,0 +1,30 @@
+/* NỀN: biến màu, reset, khung #app, màn hình
+   (tách từ index.html cũ — style) */
+
+    /* ================= CSS GỘP CHUNG ================= */
+    :root {
+      --gold-primary: #fce055;
+      --gold-border: #ffd700;
+      --purple-border: #c084fc;
+      --orange-border: #f97316;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body {
+      background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden;
+    }
+    #app {
+      width: 100%; max-width: 450px; height: 100vh; max-height: 920px; position: relative;
+      background: radial-gradient(circle at center, #2e5f48 0%, #0d241a 100%);
+      overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.9);
+    }
+    /* --- MAIN SCREENS --- */
+    .main-content { flex: 1; position: relative; overflow-y: auto; display: flex; flex-direction: column; }
+    .screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; flex-direction: column;}
+    .screen.active { display: flex; }
+    .main-modes-section { display: flex; justify-content: center; align-items: center; gap: 1%; margin: 6px 0; flex: 1; min-height: 0; padding: 0 1%; container-type: size; }
+    .screen-shake { animation: screenShakeAnim 0.5s ease-in-out infinite; }
+    @keyframes screenShakeAnim { 0% { transform: rotateX(15deg) translate(0, 0); } 25% { transform: rotateX(15deg) translate(-4px, 4px); } 50% { transform: rotateX(15deg) translate(4px, -3px); } 75% { transform: rotateX(15deg) translate(-3px, -4px); } 100% { transform: rotateX(15deg) translate(0, 0); } }
+    /* ===== MỚI: CÀI ĐẶT / CHI TIẾT TƯỚNG / QUẢN LÝ VÕ HIỆP ===== */
+    input{user-select:text;-webkit-user-select:text}
+    input,textarea{-webkit-user-select:text;user-select:text}

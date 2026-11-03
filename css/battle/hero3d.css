@@ -1,0 +1,32 @@
+/* HERO 3D + bệ xoay
+   (tách từ index.html cũ — style) */
+
+    /* --- HERO 3D CSS --- */
+    .hero-3d-stage { position: relative; width: 100%; height: 100%; min-height: 280px; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; perspective: 1000px; transform: rotateX(15deg) rotateY(0deg); transition: transform 0.1s linear; }
+    .hero-3d-pedestal { position: absolute; bottom: 20px; width: 180px; height: 180px; border-radius: 50%; transform: rotateX(75deg) translateZ(-20px); transform-style: preserve-3d; background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, rgba(184,134,11,0.85) 70%, #000 100%); border: 4px solid #ffd700; box-shadow: 0 0 30px #ffd700, inset 0 0 20px #ffaa00; animation: spinPedestal 10s linear infinite; }
+    .pedestal-ring { position: absolute; inset: 10px; border-radius: 50%; border: 2px dashed #ffe600; animation: spinPedestalReverse 15s linear infinite; }
+    .taichi-symbol { position: absolute; top: 50%; left: 50%; width: 90px; height: 90px; margin-left: -45px; margin-top: -45px; border-radius: 50%; background: linear-gradient(to right, #fff 50%, #000 50%); border: 2px solid #ffd700; box-shadow: 0 0 20px #fff; }
+    .taichi-symbol::before, .taichi-symbol::after { content: ''; position: absolute; width: 45px; height: 45px; border-radius: 50%; }
+    .taichi-symbol::before { top: 0; left: 50%; transform: translateX(-50%); background: #000; box-shadow: inset 0 10px 0 #fff; }
+    .taichi-symbol::after { bottom: 0; left: 50%; transform: translateX(-50%); background: #fff; box-shadow: inset 0 10px 0 #000; }
+    .hero-3d-shadow { position: absolute; bottom: 35px; width: 140px; height: 40px; background: rgba(0,0,0,0.7); border-radius: 50%; filter: blur(8px); transform: rotateX(75deg); }
+    .hero-3d-sprite { position: absolute; width: 220px; height: 240px; background-size: contain; background-repeat: no-repeat; background-position: center bottom; transform-style: preserve-3d; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(255,215,0,0.5)); z-index: 10; display: flex; align-items: center; justify-content: center; font-size: 100px; }
+    .hero-3d-aura { position: absolute; width: 240px; height: 240px; transform-style: preserve-3d; pointer-events: none; z-index: 12; }
+    .yin-yang-ball { position: absolute; font-size: 28px; filter: drop-shadow(0 0 10px #ffd700); animation: orbitBall 3s ease-in-out infinite alternate; }
+    .ball-left { top: 20px; left: 10px; }
+    .ball-right { top: 20px; right: 10px; animation-delay: -1.5s; }
+    .hero-3d-sprite.idle { animation: heroIdle 2.5s ease-in-out infinite; }
+    @keyframes heroIdle { 0%, 100% { transform: translateY(0) scale(1) rotateZ(0deg); } 50% { transform: translateY(-12px) scale(1.02) rotateZ(1deg); } }
+    @keyframes spinPedestal { 0% { transform: rotateX(75deg) rotateZ(0deg); } 100% { transform: rotateX(75deg) rotateZ(360deg); } }
+    @keyframes spinPedestalReverse { 0% { transform: rotateZ(360deg); } 100% { transform: rotateZ(0deg); } }
+    @keyframes orbitBall { 0% { transform: translateY(0) translateZ(20px) scale(0.9); } 100% { transform: translateY(-25px) translateZ(50px) scale(1.2); } }
+    .hero-3d-sprite.skill { animation: heroUltimateSkill 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    @keyframes heroUltimateSkill {
+      0% { transform: scale(1) translateY(0) translateZ(0) rotateZ(0deg); filter: brightness(1); }
+      20% { transform: scale(1.2) translateY(-40px) translateZ(50px) rotateZ(-30deg); filter: brightness(1.8) drop-shadow(0 0 30px #00ffff); }
+      50% { transform: scale(1.5) translateY(-100px) translateZ(150px) rotateZ(360deg); filter: brightness(2.5) drop-shadow(0 0 80px #ffd700); }
+      80% { transform: scale(1.1) translateY(-20px) translateZ(30px) rotateZ(720deg); filter: brightness(1.5); }
+      100% { transform: scale(1) translateY(0) translateZ(0) rotateZ(720deg); filter: brightness(1); }
+    }
+    .hero-3d-pedestal.ultimate-active { animation: spinPedestal 0.5s linear infinite, pulsePedestal 0.5s ease-in-out infinite alternate !important; box-shadow: 0 0 50px #00ffff, inset 0 0 30px #ffd700 !important; border-color: #00ffff !important; }
+    @keyframes pulsePedestal { 0% { transform: rotateX(75deg) scale(1); } 100% { transform: rotateX(75deg) scale(1.3); } }
