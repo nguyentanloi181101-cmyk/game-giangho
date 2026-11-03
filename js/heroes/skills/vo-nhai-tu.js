@@ -20,7 +20,7 @@
         await sleep(900); if (tok !== battleToken) return;
         // 2. 5 cây cờ phóng nhanh xuống địch (mỗi cây chọn ngẫu nhiên 1 địch), từng cây cách nhau ~130ms
         const FW = 170, FH = Math.round(FW * SEQ.vntFlag.ch / SEQ.vntFlag.cw), FR = 46;   // FR = ms mỗi khung
-        const strikes = Array.from({ length: tiaOf(u, GO_STONES) }, () => ({ t: rand(foes) }));   // số tia = số cờ, mỗi cờ vẫn 6% HP
+        const strikes = Array.from({ length: GO_STONES }, () => ({ t: rand(foes) }));
         await Promise.all(strikes.map(async (st, k) => {
           await sleep(k * 130); if (tok !== battleToken) return;
           const e = st.t, sx = e.x + (Math.random() - 0.5) * 5, sy = e.y + (Math.random() - 0.5) * 3;
@@ -30,7 +30,7 @@
           sc.animate([{ transform: 'translateY(-300px)', opacity: .2 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 5 * FR, easing: 'cubic-bezier(.5,0,1,.6)', fill: 'both' });   // phóng từ trên xuống trong 5 khung đầu
           await sleep(5 * FR); if (tok !== battleToken) return;
           playGoStone();                                   // cờ cắm xuống -> 1 tiếng
-          if (e.alive) hit(e, Math.max(1, Math.round(e.hp * GO_STONE_PCT)), false, u);
+          for (let r = 0, n = tiaOf(u); r < n && e.alive; r++) hit(e, Math.max(1, Math.round(e.hp * GO_STONE_PCT)), false, u, false, undefined, { i: r, wait: rayWait(r) });   // mỗi tia 1 lần trừ 6% HP hiện tại
           await sleep(10 * FR); if (tok !== battleToken) return;
           el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' });
         }));

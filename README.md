@@ -119,7 +119,7 @@ match /chat_messages/{id} {
 ## Hệ thống tính sát thương (theo bảng của bạn)
 Code: `js/battle/engine.js` (`calcDmg`, `strike`, `missed`), dữ liệu: `HERO_COMBAT` trong `js/heroes/roster.js`.
 - Trúng khi Chuẩn ≥ Né + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: hiện "NÉ", không mất máu, hiệu ứng chiêu vẫn dính.
-- **Tia đánh (`tia`)**: số tia của TUYỆT KỸ mỗi tướng. Mỗi tia gây đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%; sát thương mỗi tia giữ nguyên nên tổng = mỗi tia × số tia. Mặc định = số nhịp gốc của chiêu (Ma Đao 7, Độc Cô 3, Hoa Mãn Lâu 3, Kiều Phong 3, Vô Nhai Tử 5, Bắc Cái 18, Đông Tà 4, còn lại 1). Sửa trong `HERO_TIA` (`js/heroes/roster.js`) hoặc ô "Số tia đánh" ở admin-config (khóa `heroes.<id>.tia`). Code: `tiaOf` trong `js/battle/engine.js`; các file `js/heroes/skills/*.js` lặp theo số tia.
+- **Tia đánh (`tia`)**: số lần sát thương của MỖI nhịp đánh (đòn thường và từng nhịp tuyệt kỹ), mặc định 1. Mỗi tia = đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp) mỗi loại 100%, hiện từng con số riêng (không cộng dồn). Số nhịp của chiêu giữ nguyên (Bắc Cái 18 cây tre, 5 tia = mỗi cây 5 lần). Sửa trong `HERO_TIA` (`js/heroes/roster.js`) hoặc ô "Số tia đánh" ở admin-config (`heroes.<id>.tia`). Code: `strike`/`tiaOf` trong `js/battle/engine.js`; Vô Nhai Tử và Đông Phương (sát thương % HP) lặp riêng trong file kỹ năng.
 - 1 tia = 3 loại sát thương riêng: Công − Thủ (trắng) • (Bạo − Bền) × Bạo Sát (vàng) • Phá giáp (tím, bỏ qua giáp).
 - Đỡ đòn (%) giảm sát thương Công và Bạo, không giảm Phá giáp. Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
 - Sát thương Công tối thiểu 10% (tránh còn 1 khi Thủ quá cao).

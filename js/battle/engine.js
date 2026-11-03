@@ -178,13 +178,19 @@
         crit: Math.round(Math.max(0, (u.crit || 0) - (t.tough || 0)) * (u.critDmg || 0) * keep),
         pierce: Math.round(u.pierce || 0) };
     }
-    // TIA ĐÁNH: MỖI TIA = 1 lần đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%. Mỗi lần skillHit/strike là 1 tia.
-    // Số tia của tuyệt kỹ = u.tia (admin chỉnh / HERO_TIA trong roster.js; mặc định = số nhịp đánh gốc trong code). Sát thương MỖI tia giữ nguyên
-    // (chia theo số tia mặc định), nên tổng sát thương = sát thương mỗi tia × số tia.
-    const tiaOf = (u, def) => Math.min(100, Math.max(1, Math.floor(u.tia || def || 1)));
-    function strike(u, t, raw) {   // false = trượt
+    // TIA ĐÁNH: số lần sát thương của MỖI nhịp đánh (đòn thường, từng cây tre / bướm / nhát chém / lốc xoáy…). Số nhịp của chiêu giữ nguyên.
+    // MỖI TIA = 1 lần ĐỦ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%, hiện thành từng con số riêng (KHÔNG cộng dồn thành 1).
+    // VD Bắc Cái cố định 18 cây tre, 5 tia → mỗi cây trúng 5 lần; Hoa Mãn Lâu 3 bướm, 5 tia → mỗi bướm 5 lần; Trương Tam Phong 5 tia → lốc xoáy 5 lần.
+    const tiaOf = u => Math.min(100, Math.max(1, Math.floor((u && u.tia) || 1)));
+    const rayWait = i => (battleFast ? 0 : i * 170 * ultTimeScale * battleSlow);
+    function strike(u, t, raw) {   // false = trượt (trượt thì cả nhịp trượt)
       if (missed(u, t)) return false;
-      const p = calcDmg(u, t, raw); hit(t, p.main + p.crit + p.pierce, false, u, false, p); return true;
+      const n = tiaOf(u);
+      for (let i = 0; i < n && t.alive; i++) {
+        const p = calcDmg(u, t, raw);   // tính lại mỗi tia (Thủ / Đỡ đòn / khiên của mục tiêu có thể đổi)
+        hit(t, p.main + p.crit + p.pierce, false, u, false, p, { i, wait: rayWait(i) });
+      }
+      return true;
     }
     function floatText(u, t) {
       const d = document.createElement('div'); d.className = 'bf-dmg'; d.style.fontSize = '16px'; d.textContent = t;

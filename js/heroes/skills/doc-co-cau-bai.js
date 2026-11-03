@@ -100,7 +100,7 @@
       const ex = clamp((dir > 0 ? Math.max(...fx) : Math.min(...fx)) + dir * 10, 4, 96);
       const hitFrac = clamp((cx - sx) / (ex - sx), 0.35, 0.8);
       const lanes = [-7, 7, 0];
-      const per = u.atk * DUCO_MULT * (u.sk || 1) / DUCO_TWISTERS, NT = tiaOf(u, DUCO_TWISTERS);   // NT = số tia (lốc xoáy)
+      const per = u.atk * DUCO_MULT * (u.sk || 1) / DUCO_TWISTERS;
       const made = [], oldZ = u.el.style.zIndex;
       const strike = list => {      // sét tím giáng xuống từng địch
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -125,7 +125,7 @@
         box.appendChild(ring); setTimeout(() => ring.remove(), 650);
         await wait(450); if (tok !== battleToken) return;
         // 2. Lần lượt từng lốc xoáy quét từ đội ta sang đội địch
-        for (let i = 0; i < NT; i++) {
+        for (let i = 0; i < DUCO_TWISTERS; i++) {
           const tw = makeTwister(), ly = clamp(cy + lanes[i % lanes.length], 18, 78);
           tw.style.left = sx + '%'; tw.style.top = ly + '%'; tw.style.opacity = 0;
           box.appendChild(tw); made.push(tw);
@@ -154,7 +154,7 @@
           await wait(dur * (1 - hitFrac)); if (tok !== battleToken) return;
           clearInterval(tw._iv); tw.remove();
           if (!alive().length) break;
-          if (i < NT - 1) await wait(120);
+          if (i < DUCO_TWISTERS - 1) await wait(120);
         }
         // 3. Xóa sạch tăng phúc của địch + khóa tăng phúc 2 hiệp
         alive().forEach(e => stripBuffs(e));

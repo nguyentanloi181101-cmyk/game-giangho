@@ -97,9 +97,7 @@
         await sleep(400); if (tok !== battleToken) return;
 
         // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi thẳng đứng từ mép trên màn hình xuống đội địch
-        const NT = tiaOf(u, BFLY_HITS), picks = [];   // NT = số tia (số bướm); nhiều hơn 7 thì lặp lại màu
-        while (picks.length < NT) picks.push(...BFLY_COLORS.slice().sort(() => Math.random() - 0.5));
-        picks.length = NT;
+        const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
         await Promise.all(picks.map((c, i) => strike(c, i)));
         if (tok !== battleToken) return;
         cast.end();

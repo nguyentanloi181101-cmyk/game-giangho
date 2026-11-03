@@ -48,7 +48,7 @@
           for (let i = 0; i < SEQ.dpFire.n; i++) setTimeout(() => { if (tok === battleToken) fs.show(i); }, seqT(i * FIRE_FR));
           await sleep(HIT_FRAME * FIRE_FR); if (tok !== battleToken) return;
           if (e.alive) {                                             // sát thương chuẩn + 50% HP hiện tại (như cũ)
-            hit(e, flat + Math.round(e.hp * HTT_HP_PCT));
+            for (let r = 0, n = tiaOf(u); r < n && e.alive; r++) hit(e, flat + Math.round(e.hp * HTT_HP_PCT), false, undefined, false, undefined, { i: r, wait: rayWait(r) });   // mỗi tia 1 lần
             const w = add('bf-wave', e.x, e.y);
             w.style.borderColor = '#fb923c'; w.style.boxShadow = '0 0 24px #ef4444, inset 0 0 24px #f97316';
             setTimeout(() => w.remove(), 650);

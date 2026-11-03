@@ -52,8 +52,7 @@
         setTimeout(() => { f.style.filter = 'contrast(1.2) brightness(.8)'; }, 90);
         setTimeout(() => { f.style.filter = ''; }, 380);
         f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 400);
-        { const NT = tiaOf(u, 1);   // số tia: mỗi tia = 1 lần sát thương toàn địch (mặc định 1)
-          for (let r = 0; r < NT; r++) { const tg = r ? g.es() : es; if (!tg.length) break; tg.forEach(e => skillHit(e, u.atk * TAICHI_MULT * (u.sk || 1), u)); } }              // sát thương toàn địch
+        es.forEach(e => skillHit(e, u.atk * TAICHI_MULT * (u.sk || 1), u));              // sát thương toàn địch
         const left = g.es();
         // ★5: choáng 1 địch ngẫu nhiên 2 hiệp, không chảy máu • ★6: choáng 2 địch ngẫu nhiên 2 hiệp + chảy máu 40%
         const six = (u.side === 'hero' ? getProg(4).star : (u.star || 0)) >= STAR_MAX;

@@ -39,7 +39,7 @@
       const dx = (landX - u.x) * W / 100, dy = (landY - u.y) * H / 100;
       const mid = `translate(calc(-50% + ${dx / 2}px),calc(-50% + ${dy / 2 - 140}px))`, land = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
       const made = [], oldZ = u.el.style.zIndex, crack = { svg: null }, quick = !!u.qRepeat, keep = !!u.qKeep;   // quick: đã đứng sẵn giữa đội địch -> chém tiếp ngay
-      const per = u.atk * MADAO_MULT * (u.sk || 1) / MADAO_SLASHES, NT = tiaOf(u, MADAO_SLASHES);   // NT = số tia (nhát chém)
+      const per = u.atk * MADAO_MULT * (u.sk || 1) / MADAO_SLASHES;
       const ANG = [-32, 38, -62, 18, -80, 58, -8];                    // mỗi nhát một góc khác nhau -> đan chéo
       const spanX = (Math.max(...xs) - Math.min(...xs)) * W / 100 + 140, spanY = (Math.max(...ys) - Math.min(...ys)) * H / 100 + 140;
       const len = Math.max(190, Math.min(W * 0.85, Math.max(spanX, spanY) * 1.25));
@@ -63,18 +63,18 @@
         }
         const tS = quick ? performance.now() : 0, gapQ = k => tS + (k + 1) * 150;   // lần lặp: 7 nhát chém dồn dập, cách nhau 150ms
         // 3. 7 nhát chém tím, mỗi nhát rơi đúng 1 nhịp đập trong tiếng (2.9s … 4.1s)
-        for (let k = 0; k < NT; k++) {
+        for (let k = 0; k < MADAO_SLASHES; k++) {
           const sl = document.createElement('div'); sl.className = 'bf-mdslash';
           sl.style.left = (cx + (Math.random() - 0.5) * 6) + '%'; sl.style.top = (cy + (Math.random() - 0.5) * 8) + '%';
           sl.style.width = len + 'px'; sl.style.setProperty('--r', (ANG[k % ANG.length] + (Math.random() - 0.5) * 8) + 'deg');
           box.appendChild(sl); made.push(sl); setTimeout(() => sl.remove(), 420);
           alive().forEach(e => skillHit(e, per, u));
           f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 120);
-          crackFx(f, W, H, (cx + (Math.random() - 0.5) * 16) / 100 * W, (cy + (Math.random() - 0.5) * 20) / 100 * H, k === NT - 1, crack);   // nứt màn hình
+          crackFx(f, W, H, (cx + (Math.random() - 0.5) * 16) / 100 * W, (cy + (Math.random() - 0.5) * 20) / 100 * H, k === MADAO_SLASHES - 1, crack);   // nứt màn hình
           if (!alive().length) break;
-          if (k < NT - 1) {
+          if (k < MADAO_SLASHES - 1) {
             if (quick) await sleep(Math.max(0, (gapQ(k) - performance.now()) / (ultTimeScale || 1)));
-            else await at((k + 1 < MADAO_T.length ? MADAO_T[k + 1] : MADAO_T[MADAO_T.length - 1] + (k + 2 - MADAO_T.length) * MADAO_GAP) - 30);
+            else await at((MADAO_T[k + 1] || (MADAO_T[k] + MADAO_GAP)) - 30);
             if (tok !== battleToken) return;
           }
         }
