@@ -6,7 +6,7 @@
 (function () {
 
   /* ================= CẤU HÌNH (sửa số ở đây) ================= */
-  const DP_MAX      = 10;       // đột phá tối đa +10 (cấp n -> n+1 tốn 2^n Thần Đan: 1, 2, 4, 8, 16, ...)
+  const DP_MAX      = Infinity; // KHÔNG giới hạn cấp đột phá (cấp n -> n+1 tốn 2^n Thần Đan: 1, 2, 4, 8, 16, ...)
   const DP_EXP_BASE = 10000;    // giới hạn exp bồi dưỡng khi chưa đột phá (+0)
   const DP_EXP_UP   = 10000;    // mỗi cấp đột phá mở thêm bấy nhiêu exp
   const DP_ATTR_PCT = 5;        // mỗi cấp đột phá cộng % HP/Công/Thủ/Hồi (theo hình "Thuộc tính +5%"); đặt 0 nếu không muốn
@@ -175,7 +175,7 @@
     if (p.bp >= DP_MAX) return renderDP('Đã đột phá tối đa.');
     if (!hasKho()) return renderDP('Chưa nạp kho vật phẩm.');
     const need = dpCost(p.bp), have = itemQty(DP_GOD);
-    if (have < need) return renderDP(`Thiếu ${DP_GOD}: cần ${need}, đang có ${have}.`);
+    if (have < need) return renderDP(`Thiếu ${DP_GOD}: cần ${fmtN(need)}, đang có ${fmtN(have)}.`);
     itemAdd(DP_GOD, -need);
     dpSet(id, { bp: p.bp + 1, exp: p.exp });
     refresh(); scToast('Đột phá thành công! ' + nameOf(heroById(id), p.bp + 1));
