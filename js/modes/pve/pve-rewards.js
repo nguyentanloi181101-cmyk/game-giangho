@@ -1,24 +1,88 @@
-/* PVE: thưởng BẠC 🥈 và GẠO 🌾 khi thắng mỗi Bàn
-   (viết mới) */
 
-    // Bàn 1 Ải 1: 3000 bạc + 2500 gạo. Mỗi Bàn sau nhận nhiều hơn Bàn trước 10%
-    // (Ải 1: Bàn 2 = 3300 bạc / 2750 gạo, Bàn 3 = 3630 bạc / 3025 gạo, ...). Bàn 1 của Ải 2 là Bàn thứ 11, v.v.
-    const BAN_SILVER_BASE = 3000, BAN_RICE_BASE = 2500, BAN_REWARD_GROWTH = 1.1;
-    // Thần Đan 🔮 & Tiên Đan 🔴: Ải 1 Bàn 1 = 2 Thần Đan + 100 Tiên Đan, tăng ×1,1 mỗi Bàn như bạc/gạo.
-    // Ghi vào kho Túi Đồ (cùng kho mà Đột Phá / Bồi Dưỡng đang đọc).
-    const BAN_THAN_BASE = 2, BAN_TIEN_BASE = 100;
-    function danAdd(name, ico, n) {
-      if (!(n > 0)) return;
-      try { const s = gdSt(); const k = (s.kho[name] = s.kho[name] || { ico, qty: 0 }); k.qty = Math.max(0, k.qty + n); gdSave(s); } catch (e) {}
+/* PVE: Thưởng BẠC, GẠO, THẦN ĐAN, TIÊN ĐAN */
+
+// Bàn 1 Ải 1: 3000 bạc + 2500 gạo
+// Mỗi Bàn tiếp theo tăng 10%.
+// Bàn 1 Ải 2 là Bàn thứ 11.
+
+// Rút gọn số: K, M, B, T, MB
+function fmtRewardN(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return '0';
+
+  const a = Math.abs(v);
+  const units = [
+    [1e15, 'MB'],
+    [1e12, 'T'],
+    [1e9, 'B'],
+    [1e6, 'M'],
+    [1e3, 'K']
+  ];
+
+  for (const [size, suffix] of units) {
+    if (a >= size) {
+      const x = v / size;
+      const digits = Math.abs(x) >= 100 ? 0
+        : Math.abs(x) >= 10 ? 1 : 2;
+
+      return Number(x.toFixed(digits)).toString() + suffix;
     }
-    const banIndex = (stage, battle) => (stage - 1) * 10 + battle;
-    function banReward(stage, battle) {
-      const m = Math.pow(BAN_REWARD_GROWTH, banIndex(stage, battle) - 1);
-      return { silver: Math.round(BAN_SILVER_BASE * m), rice: Math.round(BAN_RICE_BASE * m), than: Math.round(BAN_THAN_BASE * m), tien: Math.round(BAN_TIEN_BASE * m) };
-    }
-    function grantBanReward(stage, battle) {
-      const r = banReward(stage, battle);
-      silver += r.silver; rice += r.rice; resSave();
-      danAdd('Thần Đan', '🔮', r.than); danAdd('Tiên Đan', '🔴', r.tien);
-      return `\n\n🥈 +${fmtN(r.silver)} bạc • 🌾 +${fmtN(r.rice)} gạo\n🔮 +${fmtN(r.than)} Thần Đan • 🔴 +${fmtN(r.tien)} Tiên Đan`;
-    }
+  }
+
+  return Math.round(v).toLocaleString('vi-VN');
+}
+
+// Phần thưởng cơ bản
+const BAN_SILVER_BASE = 3000;
+ BAN_RICE_BASE = 2500;
+ BAN_REWARD_GROWTH = 1.005;
+
+const BAN_THAN_BASE = 2;
+const BAN_TIEN_BASE = 100;
+
+// Thêm đan vào kho Túi Đồ
+function danAdd(name, ico, n) {
+  if (!(n > 0)) return;
+
+  try {
+    const s = gdSt();
+    const k = (s.kho[name] =
+      s.kho[name] || { ico, qty: 0 });
+
+    k.qty = Math.max(0, k.qty + n);
+    gdSave(s);
+  } catch (e) {}
+}
+
+// Tính số thứ tự Bàn
+const banIndex = (stage, battle) =>
+  (stage - 1) * 10 + battle;
+
+// Tính phần thưởng
+function banReward(stage, battle) {
+  const m = Math.pow(
+    BAN_REWARD_GROWTH,
+    banIndex(stage, battle) - 1
+  );
+
+  return {
+    silver: Math.round(BAN_SILVER_BASE * m),
+    rice: Math.round(BAN_RICE_BASE * m),
+    than: Math.round(BAN_THAN_BASE * m),
+    tien: Math.round(BAN_TIEN_BASE * m)
+  };
+}
+
+// Nhận thưởng khi thắng PVE
+function grantBanReward(stage, battle) {
+  const r = banReward(stage, battle);
+
+  silver += r.silver;
+  rice += r.rice;
+  resSave();
+
+  danAdd('Thần Đan', '🔮', r.than);
+  danAdd('Tiên Đan', '🔴', r.tien);
+
+  return `\n\n🥈 +${fmtRewardN(r.silver)} bạc • 🌾 +${fmtRewardN(r.rice)} gạo\n🔮 +${fmtRewardN(r.than)} Thần Đan • 🔴 +${fmtRewardN(r.tien)} Tiên Đan`;
+}
