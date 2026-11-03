@@ -25,7 +25,7 @@
 
   /* ---- Vật phẩm: dùng kho sẵn có của game -> tự hiện trong Túi Đồ, nhập được bằng Gift Code ---- */
   const hasKho = () => typeof gdSt === 'function' && typeof gdSave === 'function';
-  const itemQty = n => { try { const k = gdSt().kho[n]; return k ? Math.max(0, k.qty | 0) : 0; } catch (e) { return 0; } };
+  const itemQty = n => { try { const k = gdSt().kho[n]; return k ? Math.max(0, Math.floor(k.qty)) : 0; } catch (e) { return 0; } };
   function itemAdd(n, d, ico) { const s = gdSt(); const k = (s.kho[n] = s.kho[n] || { ico: ico || '🎁', qty: 0 }); k.qty = Math.max(0, k.qty + d); gdSave(s); }
   window.dpAddItem = (name, n) => itemAdd(name, n, name === DP_GOD ? '🔮' : '🔴');   // dùng khi muốn cho đan từ PVE / cửa tiệm...
   try {

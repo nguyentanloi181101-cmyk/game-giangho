@@ -4,14 +4,13 @@
     const BAG_SELL_PASS = '0000';
     const BAG_PRICE = { 'Viên Thể Lực': 10, 'Thú Noãn': 50, 'Thú Hồn': 100, 'Thú Linh': 500, 'Đá Nữ Oa': 100, 'Dị Linh': 300, 'Đào Tiên': 200, 'Đào Tiên Vương': 1000, 'Tử Linh Thạch': 400, 'Lá Linh': 50, 'Hộp Linh': 200, 'Hộp Tinh': 400, 'Ngọc Tím': 300 };
     const BAG_DESC = { 'Thú Noãn': 'Nguyên liệu thần thú, rơi từ Boss bang.', 'Thú Hồn': 'Cho thần thú ăn: +100 EXP.', 'Thú Linh': 'Cho thần thú ăn: +500 EXP.', 'Đá Nữ Oa': 'Dùng tăng sao thần thú.', 'Dị Linh': 'Dùng tăng sao thần thú.', 'Đào Tiên': 'Vật phẩm rơi từ Boss bang.', 'Đào Tiên Vương': 'Vật phẩm rơi từ Boss bang.', 'Tử Linh Thạch': 'Vật phẩm rơi từ Boss bang.' };
+    const bagStackOf = x => /Đan$/.test(x.name) ? 1e300 : BAG_STACK;   // Thần Đan / Tiên Đan: gộp 1 ô (số rất lớn)
     const BAG_STACK = 999;   // mỗi ô tối đa 999, vượt thì tách ô mới (999 / 999 / 999 ...)
     let bagSel = null, bagQty = 1, bagStack = 0;
 
     function bagItems() {   // [{k, name, ico, qty, price, desc, use}]
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
         { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
-        { k: 'than', name: 'Thần Đan', ico: '💎', qty: Math.floor(typeof thanDan === 'number' ? thanDan : 0), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
-        { k: 'tien', name: 'Tiên Đan', ico: '🔮', qty: Math.floor(typeof tienDan === 'number' ? tienDan : 0), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
@@ -19,13 +18,13 @@
     // Ô đang chọn: món + số thứ tự ô (stack). qty = số lượng trong ô đó, total = tổng cả món.
     function bagCur() {
       const c = bagItems().find(x => x.k === bagSel); if (!c) return null;
-      const stacks = Math.ceil(c.qty / BAG_STACK); bagStack = Math.max(0, Math.min(bagStack, stacks - 1));
-      return Object.assign({}, c, { total: c.qty, stacks, qty: Math.min(BAG_STACK, c.qty - bagStack * BAG_STACK) });
+      const S = bagStackOf(c), stacks = Math.ceil(c.qty / S); bagStack = Math.max(0, Math.min(bagStack, stacks - 1));
+      return Object.assign({}, c, { total: c.qty, stacks, qty: Math.min(S, c.qty - bagStack * S) });
     }
     function renderBag() {
       const items = bagItems(); if (!items.some(x => x.k === bagSel)) { bagSel = items.length ? items[0].k : null; bagStack = 0; bagQty = 1; }
       const cur = bagCur(), list = [];
-      items.forEach(x => { for (let i = 0, n = Math.ceil(x.qty / BAG_STACK); i < n; i++) list.push({ x, i, q: Math.min(BAG_STACK, x.qty - i * BAG_STACK) }); });
+      items.forEach(x => { for (let i = 0, S = bagStackOf(x), n = Math.ceil(x.qty / S); i < n; i++) list.push({ x, i, q: Math.min(S, x.qty - i * S) }); });
       const cells = list.map(c => `<div class="bg-cell ${c.x.k === bagSel && c.i === bagStack ? 'sel' : ''}" onclick="bagPick('${c.x.k.replace(/'/g, "\\'")}',${c.i})"><span class="bg-i">${c.x.ico}</span><em>x${fmtN(c.q)}</em></div>`).join('');
       const blanks = '<div class="bg-cell empty"></div>'.repeat(Math.max(0, 20 - list.length));
       document.getElementById('bag-list').innerHTML =
@@ -40,7 +39,6 @@
     function bagStep(d) { const c = bagCur(); if (!c) return; bagQty = d === 0 ? c.qty : Math.max(1, Math.min(c.qty, Math.min(bagQty, c.qty) + d)); renderBag(); }
     function bagUse() {
       const c = bagCur(); if (!c) return; const n = Math.min(bagQty, c.qty);
-      if (c.use === 'dan') return;
       if (c.use === 'pill') { usePills(n); renderBag(); return; }
       if (c.use === 'hammer' || c.use === 'key') { closeBag(); if (typeof tsOpen === 'function') tsOpen(); return; }
       closeBag(); if (c.name === 'Đá Nữ Oa' || c.name === 'Dị Linh') { if (typeof openThanThu === 'function') { ttTab = 'star'; openThanThu(); } } else if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') { ttTab = 'lv'; openThanThu(); } } else if (typeof openBangBoss === 'function') openBangBoss();
