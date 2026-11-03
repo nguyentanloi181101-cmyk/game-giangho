@@ -6,6 +6,9 @@
     const BAN_SILVER_BASE = 3000, BAN_RICE_BASE = 2500, BAN_REWARD_GROWTH = 1.1;
     // Thần đan 💎 & Tiên đan 🔮: Ải 1 Bàn 1 = 2 thần đan + 100 tiên đan, tăng cấp số nhân ×1,1 mỗi Bàn như bạc/gạo
     const BAN_THAN_BASE = 2, BAN_TIEN_BASE = 100;
+    const _danLS = k => { try { const v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? 0 : Math.max(0, v); } catch (e) { return 0; } };
+    let thanDan = _danLS('thandan_val'), tienDan = _danLS('tiendan_val');
+    const danSave = () => { try { localStorage.setItem('thandan_val', String(Math.floor(thanDan))); localStorage.setItem('tiendan_val', String(Math.floor(tienDan))); } catch (e) {} };
     const banIndex = (stage, battle) => (stage - 1) * 10 + battle;
     function banReward(stage, battle) {
       const m = Math.pow(BAN_REWARD_GROWTH, banIndex(stage, battle) - 1);
@@ -13,6 +16,6 @@
     }
     function grantBanReward(stage, battle) {
       const r = banReward(stage, battle);
-      silver += r.silver; rice += r.rice; thanDan += r.than; tienDan += r.tien; resSave();
+      silver += r.silver; rice += r.rice; thanDan += r.than; tienDan += r.tien; resSave(); danSave();
       return `\n\n🥈 +${fmtN(r.silver)} bạc • 🌾 +${fmtN(r.rice)} gạo\n💎 +${fmtN(r.than)} thần đan • 🔮 +${fmtN(r.tien)} tiên đan`;
     }

@@ -10,8 +10,8 @@
     function bagItems() {   // [{k, name, ico, qty, price, desc, use}]
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
         { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
-        { k: 'than', name: 'Thần Đan', ico: '💎', qty: Math.floor(thanDan), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
-        { k: 'tien', name: 'Tiên Đan', ico: '🔮', qty: Math.floor(tienDan), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
+        { k: 'than', name: 'Thần Đan', ico: '💎', qty: Math.floor(typeof thanDan === 'number' ? thanDan : 0), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
+        { k: 'tien', name: 'Tiên Đan', ico: '🔮', qty: Math.floor(typeof tienDan === 'number' ? tienDan : 0), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
