@@ -16,7 +16,7 @@
     .vm-links button{flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:bold;cursor:pointer;border:1px solid #fde047;background:#1f2937;color:#fff}
 /* ===== Màn nâng cấp 1 tướng (Tăng Sao / Cấp / Kỹ Năng) ===== */
 .upg-body{flex:1;overflow-y:auto;padding:8px 8px 28px}
-.up-name{display:flex;align-items:center;justify-content:center;gap:14px;color:#fff;font-size:17px;margin-bottom:6px}.up-name button{background:#0006;border:2px solid #fde047;color:#fde047;border-radius:50%;width:32px;height:32px;font-weight:900}
+.up-name{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px;color:#fff;font-size:17px;margin-bottom:6px}.up-name b{flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.up-name button{flex:none;background:#0006;border:2px solid #fde047;color:#fde047;border-radius:50%;width:32px;height:32px;font-weight:900}
 .up-stage{display:grid;grid-template-columns:78px 1fr 78px;gap:4px;align-items:start;background:radial-gradient(ellipse at 50% 80%,#7c2d1288,#1c0a0a 70%);border:2px solid #fde04788;border-radius:12px;padding:8px 6px}
 .up-stage.boiduong{background:radial-gradient(ellipse at 50% 80%,#1d4ed888,#0a0f24 70%)}.up-stage.kynang{background:radial-gradient(ellipse at 50% 80%,#6d28d988,#150a24 70%)}
 .up-hero{text-align:center;padding-top:50px}.up-fig{height:92px;display:flex;align-items:flex-end;justify-content:center}.up-fig img{max-height:92px;max-width:78px;object-fit:contain;animation:ttIdle 3.2s ease-in-out infinite;transform-origin:50% 95%}

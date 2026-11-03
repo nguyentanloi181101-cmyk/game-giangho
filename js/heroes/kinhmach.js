@@ -110,8 +110,9 @@
 .km-sum{padding:6px 10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center;background:rgba(0,0,0,.35)}
 .km-sum span{font-size:11px;font-weight:800;color:#fde047;background:#0007;border:1px solid #fde04788;border-radius:10px;padding:2px 8px}
 .km-sum em{font-style:normal;color:#cbd5e1;font-size:11px}
-.km-nm{display:flex;align-items:center;justify-content:center;gap:14px;color:#fff;font-size:16px;padding:6px 0;background:rgba(0,0,0,.25)}
-.km-nm button{background:#0006;border:2px solid #fde047;color:#fde047;border-radius:50%;width:28px;height:28px;font-weight:900}
+.km-nm{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#fff;font-size:16px;padding:6px 8px;background:rgba(0,0,0,.25)}
+.km-nm b{flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.km-nm button{flex:none;background:#0006;border:2px solid #fde047;color:#fde047;border-radius:50%;width:28px;height:28px;font-weight:900}
 .kd{padding:6px 10px 20px;display:flex;flex-direction:column;align-items:center}
 .kd h3{margin:4px 0 6px;font-size:22px;color:#fff;text-shadow:0 2px 4px #000;text-align:center}
 .kd-ring{width:min(62vw,300px);aspect-ratio:1;border-radius:50%;padding:7px;background:conic-gradient(var(--c) calc(var(--p)*1%),rgba(255,255,255,.14) 0)}
