@@ -2,32 +2,15 @@
    Tiền tệ hiện ở thanh trên; mảnh tướng, trang bị, bảo vật không nằm ở đây. */
 
     const BAG_SELL_PASS = '0000';
-    const BAG_PRICE = { 'Thần Đan': 0, 'Tiên Đan': 0, 'Viên Thể Lực': 10, 'Thú Noãn': 50, 'Thú Hồn': 100, 'Thú Linh': 500, 'Đá Nữ Oa': 100, 'Dị Linh': 300, 'Đào Tiên': 200, 'Đào Tiên Vương': 1000, 'Tử Linh Thạch': 400, 'Lá Linh': 50, 'Hộp Linh': 200, 'Hộp Tinh': 400, 'Ngọc Tím': 300 };
-    const BAG_DESC = { 'Thần Đan': 'Dùng trong Võ Hiệp → Đột Phá.', 'Tiên Đan': 'Dùng trong Võ Hiệp → Bồi Dưỡng.', 'Thú Noãn': 'Nguyên liệu thần thú, rơi từ Boss bang.', 'Thú Hồn': 'Cho thần thú ăn: +100 EXP.', 'Thú Linh': 'Cho thần thú ăn: +500 EXP.', 'Đá Nữ Oa': 'Dùng tăng sao thần thú.', 'Dị Linh': 'Dùng tăng sao thần thú.', 'Đào Tiên': 'Vật phẩm rơi từ Boss bang.', 'Đào Tiên Vương': 'Vật phẩm rơi từ Boss bang.', 'Tử Linh Thạch': 'Vật phẩm rơi từ Boss bang.' };
+    const BAG_PRICE = { 'Viên Thể Lực': 10, 'Thú Noãn': 50, 'Thú Hồn': 100, 'Thú Linh': 500, 'Đá Nữ Oa': 100, 'Dị Linh': 300, 'Đào Tiên': 200, 'Đào Tiên Vương': 1000, 'Tử Linh Thạch': 400, 'Lá Linh': 50, 'Hộp Linh': 200, 'Hộp Tinh': 400, 'Ngọc Tím': 300 };
+    const BAG_DESC = { 'Thú Noãn': 'Nguyên liệu thần thú, rơi từ Boss bang.', 'Thú Hồn': 'Cho thần thú ăn: +100 EXP.', 'Thú Linh': 'Cho thần thú ăn: +500 EXP.', 'Đá Nữ Oa': 'Dùng tăng sao thần thú.', 'Dị Linh': 'Dùng tăng sao thần thú.', 'Đào Tiên': 'Vật phẩm rơi từ Boss bang.', 'Đào Tiên Vương': 'Vật phẩm rơi từ Boss bang.', 'Tử Linh Thạch': 'Vật phẩm rơi từ Boss bang.' };
     const BAG_STACK = 999;   // mỗi ô tối đa 999, vượt thì tách ô mới (999 / 999 / 999 ...)
     let bagSel = null, bagQty = 1, bagStack = 0;
 
-    // Migrate the old separate counters into the same inventory used by Đột Phá/Bồi Dưỡng. Run once per positive legacy balance.
-    function syncDanKho() {
-      try {
-        if (typeof gdSt !== 'function' || typeof gdSave !== 'function') return;
-        const s = gdSt(); s.kho = s.kho || {}; let changed = false;
-        [['Thần Đan','than_dan_val','🔴'], ['Tiên Đan','tien_dan_val','🟡']].forEach(([name,key,ico]) => {
-          const legacy = Math.max(0, Math.floor(Number(localStorage.getItem(key)) || 0));
-          if (legacy > 0) {
-            const item = s.kho[name] = s.kho[name] || { ico, qty: 0 };
-            item.qty = Math.max(0, Math.floor(Number(item.qty) || 0)) + legacy; item.ico = item.ico || ico;
-            localStorage.setItem(key, '0'); changed = true;
-          }
-        });
-        if (changed) gdSave(s);
-      } catch (e) { /* Keep the bag usable even if old data is malformed. */ }
-    }
     function bagItems() {   // [{k, name, ico, qty, price, desc, use}]
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
         { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
-      syncDanKho();
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
     }
@@ -56,10 +39,7 @@
     function bagUse() {
       const c = bagCur(); if (!c) return; const n = Math.min(bagQty, c.qty);
       if (c.use === 'pill') { usePills(n); renderBag(); return; }
-      // Đan hiện chỉ được tích trữ; chưa tự ý trừ số lượng khi bấm Sử Dụng.
-      if (c.use === 'dan') { if (typeof scToast === 'function') scToast('Đan dược đã nằm trong Túi đồ; chức năng sử dụng sẽ được nối sau.'); return; }
       if (c.use === 'hammer' || c.use === 'key') { closeBag(); if (typeof tsOpen === 'function') tsOpen(); return; }
-      if (c.name === 'Thần Đan' || c.name === 'Tiên Đan') { closeBag(); if (typeof dpOpenPicker === 'function') dpOpenPicker(c.name === 'Thần Đan' ? 'dp' : 'bd'); else if (typeof scToast === 'function') scToast('Hãy mở Võ Hiệp → Đột Phá/Bồi Dưỡng.'); return; }
       closeBag(); if (c.name === 'Đá Nữ Oa' || c.name === 'Dị Linh') { if (typeof openThanThu === 'function') { ttTab = 'star'; openThanThu(); } } else if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') { ttTab = 'lv'; openThanThu(); } } else if (typeof openBangBoss === 'function') openBangBoss();
     }
     function bagSellOpen() {
