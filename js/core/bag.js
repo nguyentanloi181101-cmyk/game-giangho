@@ -10,6 +10,8 @@
     function bagItems() {   // [{k, name, ico, qty, price, desc, use}]
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
         { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
+        { k: 'than', name: 'Thần Đan', ico: '💎', qty: Math.floor(thanDan), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
+        { k: 'tien', name: 'Tiên Đan', ico: '🔮', qty: Math.floor(tienDan), price: 0, desc: 'Thưởng khi thắng Bàn PVE (tăng ×1,1 mỗi Bàn).', use: 'dan' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
@@ -38,6 +40,7 @@
     function bagStep(d) { const c = bagCur(); if (!c) return; bagQty = d === 0 ? c.qty : Math.max(1, Math.min(c.qty, Math.min(bagQty, c.qty) + d)); renderBag(); }
     function bagUse() {
       const c = bagCur(); if (!c) return; const n = Math.min(bagQty, c.qty);
+      if (c.use === 'dan') return;
       if (c.use === 'pill') { usePills(n); renderBag(); return; }
       if (c.use === 'hammer' || c.use === 'key') { closeBag(); if (typeof tsOpen === 'function') tsOpen(); return; }
       closeBag(); if (c.name === 'Đá Nữ Oa' || c.name === 'Dị Linh') { if (typeof openThanThu === 'function') { ttTab = 'star'; openThanThu(); } } else if (c.name === 'Thú Hồn' || c.name === 'Thú Linh') { if (typeof openThanThu === 'function') { ttTab = 'lv'; openThanThu(); } } else if (typeof openBangBoss === 'function') openBangBoss();

@@ -16,8 +16,10 @@
     // BẠC 🥈 và GẠO 🌾: nhận khi thắng mỗi Bàn PVE, dùng để tăng cấp tướng. (VÀNG 🪙 ở trên: dùng Chiêu Mộ, nhận quà Hộp Thư mỗi ngày)
     const _numLS = (k, d) => { try { const v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? d : Math.max(0, v); } catch (e) { return d; } };
     let silver = _numLS('silver_val', 21873054), rice = _numLS('rice_val', 2549836);
+    // THẦN ĐAN 💎 và TIÊN ĐAN 🔮: thưởng khi thắng mỗi Bàn PVE (xem trong Túi Đồ)
+    let thanDan = _numLS('thandan_val', 0), tienDan = _numLS('tiendan_val', 0);
     const updateRes = () => { [['silver-val', silver], ['rice-val', rice]].forEach(([i, v]) => { const el = document.getElementById(i); if (el) el.innerText = fmtN(v); }); };
-    const resSave = () => { try { localStorage.setItem('silver_val', String(Math.floor(silver))); localStorage.setItem('rice_val', String(Math.floor(rice))); } catch (e) {} updateRes(); };
+    const resSave = () => { try { localStorage.setItem('silver_val', String(Math.floor(silver))); localStorage.setItem('rice_val', String(Math.floor(rice))); localStorage.setItem('thandan_val', String(Math.floor(thanDan))); localStorage.setItem('tiendan_val', String(Math.floor(tienDan))); } catch (e) {} updateRes(); };
     updateRes();
     let heroShards = loadJSON('hero_shards');   // mảnh tướng: { heroId: số mảnh }
     let recState = loadJSON('rec_state');       // thời điểm được quay miễn phí kế tiếp: { lam, tim, ten }
