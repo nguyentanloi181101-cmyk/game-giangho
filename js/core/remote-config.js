@@ -4,7 +4,7 @@
      Mất mạng vẫn dùng bản cache; chưa có cấu hình thì dùng số mặc định trong code.
    - File này nạp ĐẦU TIÊN. Các file dữ liệu gọi cfgSnap(...) để lưu bản mặc định, cfgApply() ghi đè lên đúng đối tượng.
    Cấu trúc JSON:
-     heroes:   { "<id>": { hp, atk, def, dodge, acc, crit, critDmg, tough, pierce, block, heal, spd, startRage, role } }  (chỉ trường nào khác mặc định)
+     heroes:   { "<id>": { hp, atk, def, dodge, acc, crit, critDmg, tough, pierce, block, heal, spd, startRage, tia, role } }  (chỉ trường nào khác mặc định)
      treasure: { starAdd, maxLv, maxStar, kinds: { "<loại>": [ {base, per} | null, ... 3 dòng ] } }
      equip:    { maxLv, rewardEach, rewardStartLv, per: { hat, armor, sword, boots } }
      boss:     { baseHp, hpMult, ctMult, atkDiv, heroDmgMult, maxRounds, ptsPerDmg, killPts }

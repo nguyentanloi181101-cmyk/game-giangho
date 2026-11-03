@@ -21,5 +21,6 @@
       { k:'block', label:'Đỡ đòn (%)', min:0, max:100 },
       { k:'heal',  label:'Hồi máu (mỗi hiệp)', min:0, max:99999999 },
       { k:'spd',   label:'Tốc',        min:0, max:99999 },
-      { k:'startRage', label:'Nộ khởi đầu', min:0, max:100 }
+      { k:'startRage', label:'Nộ khởi đầu', min:0, max:100 },
+      { k:'tia',   label:'Tia đánh',   min:1, max:99 }
     ];

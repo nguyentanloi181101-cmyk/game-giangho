@@ -5,7 +5,7 @@
     function heroStats(id, base) {   // base = true (Tỷ Võ): chỉ lấy chỉ số cơ bản gốc, không lấy số chỉnh trong Cài đặt
       const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id), gb = (typeof gdBonus === 'function') ? gdBonus() : { hp:0, atk:0, def:0, pierce:0, spd:0, critDmg:0, heal:0 };
       return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + tb.hpFlat + eb.hp + pb.hp + gb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk + gb.atk, def:Math.round(h.def * g) + eb.def + pb.def + gb.def,
-               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg + gb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:(h.pierce || 0) + tb.pierce + gb.pierce, block:h.block || 0, spd:h.spd + eb.spd + tb.spd + gb.spd, heal:(h.heal || 0) + (tb.heal || 0) + gb.heal, healGuild:gb.heal, rage:h.startRage || 0 };
+               dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg + gb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:(h.pierce || 0) + tb.pierce + gb.pierce, block:h.block || 0, spd:h.spd + eb.spd + tb.spd + gb.spd, heal:(h.heal || 0) + (tb.heal || 0) + gb.heal, healGuild:gb.heal, rage:h.startRage || 0, tia:Math.max(1, Math.floor(h.tia || 1)) };
     }
 
     // ---- Mô tả kỹ năng (số liệu lấy đúng theo cơ chế trận đấu + cấp kỹ năng hiện tại) ----
@@ -35,7 +35,7 @@
         if (hh.alwaysUlt) { if (!free.test(ult)) ult = 'KHÔNG TỐN NỘ – lượt nào cũng ulti được. ' + ult.replace(/Cần đầy 100 nộ[,.]?\s*/g, ''); }
         else if (free.test(ult)) ult = ult.replace(free, 'Cần đầy 100 nộ mới ulti được. '); }
       return [
-        { tag:'Đánh thường', name:'Đòn Thường', desc:`Lao vào 1 địch ngẫu nhiên, gây ${fmtN(st.atk)} sát thương (100% Công). Mỗi lần đánh thường +${RAGE_ATK} nộ.` },
+        { tag:'Đánh thường', name:'Đòn Thường', desc:`Lao vào 1 địch ngẫu nhiên, gây ${fmtN(st.atk)} sát thương (100% Công). Mỗi lần đánh thường +${RAGE_ATK} nộ. Đòn có ${st.tia} tia, mỗi tia gây đủ 3 loại sát thương (Công, Bạo, Phá giáp) 100%${st.tia > 1 ? ' → ' + st.tia + ' lần' : ''}.` },
         { tag:'Tuyệt kỹ', name:HERO_ULT_NAME[id] || 'Tuyệt Kỹ', lv:p.sk, desc:ult },
         { tag:'Nội tại', name:'Nộ Khí', desc:`Mỗi lần bị đánh trúng +20 nộ (đủ 100 nộ để ulti). Né ${tsFmt(st.dodge)} điểm; kẻ tấn công cần Chuẩn ≥ Né + ${HIT_GAP} mới đánh trúng (VD Né ${tsFmt(st.dodge)} → Chuẩn ${tsFmt(st.dodge + HIT_GAP)}).${st.rage ? ` Vào trận với sẵn ${st.rage} nộ.` : ''}` },
         ...(id === 1 ? [{ tag:'Nội tại', name:'Thanh Liên Bất Tử', desc:`Vào trận KHÔNG có nộ. BẤT TỬ trong ${IMMORTAL_TURNS} hiệp đầu mỗi trận: nhận sát thương nhưng máu không thể xuống dưới 1.` }] : []),

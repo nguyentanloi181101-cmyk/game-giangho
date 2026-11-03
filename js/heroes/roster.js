@@ -53,6 +53,10 @@
       12: [40, 30, 300, 20, 3, 10, 20, 5],
       13: [40, 15, 300, 30, 3, 10, 30, 5], 14: [35, 20, 300, 40, 4, 10, 30, 0], 15: [80, 10, 300, 15, 2, 25, 20, 25],
       16: [50, 15, 300, 15, 2, 15, 15, 10], 17: [45, 12, 300, 20, 3, 10, 20, 10] };
+    // TIA ĐÁNH: số tia mỗi lần ra đòn. MỖI TIA gây đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%.
+    // VD tướng 3 tia = 3 lần (Công + Bạo + Phá giáp). Mặc định mọi tướng 1 tia — sửa số ở đây (hoặc admin-config).
+    const HERO_TIA = { 0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1, 10:1, 11:1, 12:1, 13:1, 14:1, 15:1, 16:1, 17:1 };
+    HEROES.forEach(h => { h.tia = Math.max(1, Math.floor(HERO_TIA[h.id] || 1)); });
     HEROES.forEach(h => { const c = HERO_COMBAT[h.id]; if (c) { h.def = c[0]; h.dodge = c[1]; h.acc = c[2]; h.crit = c[3]; h.critDmg = c[4]; h.tough = c[5]; h.pierce = c[6]; h.block = c[7]; } });
     const heroIcon = h => h.img ? `<img class="hero-img" src="${h.img}">` : h.emoji;
     let team = [];

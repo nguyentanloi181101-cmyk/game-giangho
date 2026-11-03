@@ -73,7 +73,7 @@
       el.style.left = x + '%'; el.style.top = y + '%'; el.style.zIndex = Math.round(y);
       el.innerHTML = `<div class="bf-name">${name || ''}</div><div class="bf-hp"><i></i><b class="bf-hpn">${formatNumber(hp)}</b></div><div class="bf-sprite">${emoji}</div><div class="bf-shadow"></div>`;
       document.getElementById('bf-units').appendChild(el);
-      return { el, side, hp, max: hp, atk, x, y, alive: true, def: 0, dodge: 0, acc: 300, crit: 0, critDmg: 0, tough: 0, pierce: 0, block: 0 };
+      return { el, side, hp, max: hp, atk, x, y, alive: true, def: 0, dodge: 0, acc: 300, crit: 0, critDmg: 0, tough: 0, pierce: 0, tia: 1, block: 0 };
     }
 
     function setHpBar(u) {
@@ -103,7 +103,7 @@
         if (had) floatText(a, '✨ GIẢI HIỆU ỨNG');
       });
     }
-    function hit(u, dmg, noRage, src, noRefl, parts) {   // parts = {main, crit, pierce}: 3 loại sát thương của 1 tia (xem strike)
+    function hit(u, dmg, noRage, src, noRefl, parts, ray) {   // parts = {main, crit, pierce}: 3 loại sát thương của 1 tia (xem strike) • ray = {i, wait}: tia thứ i (i>0 không cộng thêm nộ, chữ sát thương hiện trễ)
       if (!u.alive) return;
       dmg = Math.round(dmg); const dmg0 = dmg;
       let refl = 0;
@@ -120,7 +120,10 @@
         const k = dmg0 > 0 ? dmg / dmg0 : 1;
         [['main', '', 'bf-d-main', -10, -28], ['crit', '💥 ', 'bf-d-crit', -34, 0], ['pierce', '🗡️ ', 'bf-d-pierce', -58, 28]].forEach(([n, ic, cl, top, dx]) => {
           if (!(parts[n] > 0)) return; const e = document.createElement('div'); e.className = 'bf-dmg ' + cl; e.textContent = ic + formatNumber(Math.max(1, Math.round(parts[n] * k)));
-          e.style.top = top + 'px'; e.style.marginLeft = dx + 'px'; u.el.appendChild(e); setTimeout(() => e.remove(), 900);
+          e.style.top = top + 'px'; e.style.marginLeft = dx + 'px';
+          const wait = (ray && ray.wait) || 0;   // nhiều tia: chữ sát thương của từng tia hiện lần lượt, không chồng lên nhau
+          if (wait > 0) setTimeout(() => { if (u.el.isConnected) { u.el.appendChild(e); setTimeout(() => e.remove(), 900); } }, wait);
+          else { u.el.appendChild(e); setTimeout(() => e.remove(), 900); }
         });
       } else {
         const d = document.createElement('div'); d.className = 'bf-dmg'; d.textContent = formatNumber(dmg);
@@ -130,7 +133,7 @@
       u.el.appendChild(fx); setTimeout(() => fx.remove(), 350);
       u.el.classList.add('hurt'); setTimeout(() => u.el.classList.remove('hurt'), 180);
       if (u.hp <= 0) { u.alive = false; u.el.classList.add('dead'); u.stun = 0; if (u.moon) removeMoon(u); const ic = u.el.querySelector('.bf-stun'); if (ic) ic.remove(); }
-      else if (u.rage != null && !noRage) gainRage(u, 20);
+      else if (u.rage != null && !noRage && !(ray && ray.i > 0)) gainRage(u, 20);   // nhiều tia cũng chỉ +20 nộ cho mỗi đòn
       refreshPanel();
       if (refl > 0) {
         const tgt = (src && src.alive && src.side !== u.side) ? src : rand(foesOf(u).filter(x => x.alive));
@@ -163,6 +166,7 @@
     
     // ===== HỆ THỐNG TÍNH SÁT THƯƠNG =====
     // • Trúng: Chuẩn của người đánh ≥ Né của mục tiêu + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: không mất máu nhưng hiệu ứng của chiêu vẫn dính.
+    // • TIA ĐÁNH (u.tia, mặc định 1): mỗi tia gồm đủ 3 loại sát thương, mỗi loại 100% — tướng 3 tia = 3 lần cả 3 loại.
     // • 1 tia gồm 3 loại sát thương riêng: Công − Thủ • (Bạo − Bền) × Bạo Sát • Phá giáp (bỏ qua mọi giáp).
     // • Đỡ đòn (%) giảm sát thương Công và Bạo (không giảm Phá giáp).  Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
     const HIT_GAP = 200, MIN_DMG_PCT = 0.1;   // sát thương Công tối thiểu 10% (tránh đánh vào giáp quá cao mà chỉ còn 1)
@@ -175,9 +179,16 @@
         crit: Math.round(Math.max(0, (u.crit || 0) - (t.tough || 0)) * (u.critDmg || 0) * keep),
         pierce: Math.round(u.pierce || 0) };
     }
-    function strike(u, t, raw) {   // false = trượt
+    // TIA ĐÁNH: mỗi tia = 1 lần đủ 3 loại sát thương (Công−Thủ • Bạo • Phá giáp), mỗi loại 100%. Tướng N tia = N lần như vậy.
+    const rayCount = u => Math.max(1, Math.floor(u.tia || 1));
+    function strike(u, t, raw) {   // false = trượt (trượt thì cả đòn trượt)
       if (missed(u, t)) return false;
-      const p = calcDmg(u, t, raw); hit(t, p.main + p.crit + p.pierce, false, u, false, p); return true;
+      const n = rayCount(u);
+      for (let i = 0; i < n && t.alive; i++) {
+        const p = calcDmg(u, t, raw);   // tính lại mỗi tia (Thủ/Đỡ đòn/khiên của mục tiêu có thể đổi)
+        hit(t, p.main + p.crit + p.pierce, false, u, false, p, { i, wait: battleFast ? 0 : i * 170 * ultTimeScale * battleSlow });
+      }
+      return true;
     }
     function floatText(u, t) {
       const d = document.createElement('div'); d.className = 'bf-dmg'; d.style.fontSize = '16px'; d.textContent = t;
