@@ -1,6 +1,6 @@
 /* KINH MẠCH — file lẻ, tự chứa cả giao diện + CSS + logic.
-   Cách gắn: chép file này vào js/heroes/kinhmach.js, thêm 1 dòng vào index.html (ngay TRƯỚC boot.js):
-       <script src="js/heroes/kinhmach.js?v=1"></script>
+   Cách gắn: chép file này vào js/heroes/kinhmach.js, thêm 1 dòng vào index.html SAU dotpha.js và TRƯỚC boot.js:
+       <script src="js/heroes/kinhmach.js?v=2"></script>
    Vào game: Võ Hiệp (thanh dưới) -> Kinh Mạch -> chọn tướng -> bản đồ 9 chấm mạch -> bấm chấm để tăng cấp. */
 (function () {
 
@@ -46,7 +46,8 @@
     return any ? t : null;
   }
 
-  /* ---- Gắn vào chỉ số tướng (mọi nơi dùng heroStats đều ăn: PVE, Tỷ Võ, chi tiết tướng...) ---- */
+  /* ---- Gắn vào chỉ số tướng (mọi nơi dùng heroStats đều ăn: PVE, Tỷ Võ, chi tiết tướng...).
+     Đột Phá/Bồi Dưỡng cũng bọc heroStats; hai phần cộng dồn khi nạp dotpha.js trước file này. ---- */
   const _heroStats = heroStats;
   heroStats = function (id, base) {
     const s = _heroStats(id, base), b = kmBonus(id);

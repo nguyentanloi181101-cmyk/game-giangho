@@ -1,6 +1,6 @@
 /* ĐỘT PHÁ + BỒI DƯỠNG — file lẻ, tự chứa giao diện + CSS + logic.
-   Cách gắn: chép vào js/heroes/dotpha.js, thêm 1 dòng vào index.html, đặt NGAY TRÊN dòng kinhmach.js (và trước boot.js):
-       <script src="js/heroes/dotpha.js?v=1"></script>
+   Cách gắn: chép vào js/heroes/dotpha.js, thêm 1 dòng vào index.html SAU core/bag.js + core/giftcode.js, đặt NGAY TRÊN kinhmach.js và TRƯỚC boot.js:
+       <script src="js/heroes/dotpha.js?v=2"></script>
    Vào game: Võ Hiệp (thanh dưới) -> Đột Phá  hoặc  Bồi Dưỡng -> chọn tướng.
    Trong màn Bồi Dưỡng bấm nút "Đột Phá" (góc phải) để sang Đột Phá, và ngược lại. */
 (function () {
@@ -25,16 +25,31 @@
 
   /* ---- Vật phẩm: dùng kho sẵn có của game -> tự hiện trong Túi Đồ, nhập được bằng Gift Code ---- */
   const hasKho = () => typeof gdSt === 'function' && typeof gdSave === 'function';
-  const itemQty = n => { try { const k = gdSt().kho[n]; return k ? Math.max(0, k.qty | 0) : 0; } catch (e) { return 0; } };
-  function itemAdd(n, d, ico) { const s = gdSt(); const k = (s.kho[n] = s.kho[n] || { ico: ico || '🎁', qty: 0 }); k.qty = Math.max(0, k.qty + d); gdSave(s); }
+  const itemQty = n => { try { const s = gdSt(); const k = s && s.kho && s.kho[n]; return k ? Math.max(0, k.qty | 0) : 0; } catch (e) { return 0; } };
+  function itemAdd(n, d, ico) { const s = gdSt(); if (!s || typeof s !== 'object') throw new Error('Kho vật phẩm chưa sẵn sàng'); s.kho = s.kho || {}; const k = (s.kho[n] = s.kho[n] || { ico: ico || '🎁', qty: 0 }); k.qty = Math.max(0, (Number(k.qty) || 0) + d); gdSave(s); }
   window.dpAddItem = (name, n) => itemAdd(name, n, name === DP_GOD ? '🔮' : '🔴');   // dùng khi muốn cho đan từ PVE / cửa tiệm...
+  /* ---- Tích hợp Túi Đồ: đan dùng trong màn Đột Phá/Bồi Dưỡng, không chuyển nhầm sang Bang Hội ---- */
+  if (typeof bagUse === 'function' && typeof bagCur === 'function') {
+    const _bagUse = bagUse;
+    bagUse = function () {
+      const c = bagCur();
+      if (!c) return;
+      if (c.name === DP_GOD || c.name === DP_PILL) {
+        if (typeof closeBag === 'function') closeBag();
+        dpOpenPicker(c.name === DP_GOD ? 'dp' : 'bd');
+        return;
+      }
+      return _bagUse();
+    };
+  }
   try {
     if (typeof BAG_PRICE !== 'undefined') { BAG_PRICE[DP_GOD] = 500; BAG_PRICE[DP_PILL] = 10; }
     if (typeof BAG_DESC !== 'undefined') { BAG_DESC[DP_GOD] = 'Dùng để Đột Phá tướng (Võ Hiệp → Đột Phá).'; BAG_DESC[DP_PILL] = 'Dùng để Bồi Dưỡng tướng: mỗi viên +' + DP_PER_PILL + ' exp.'; }
     if (typeof GIFT_CODES !== 'undefined') GIFT_CODES['DOTPHA'] = { rewards: [{ t: 'item', name: DP_GOD, ico: '🔮', n: 100 }, { t: 'item', name: DP_PILL, ico: '🔴', n: 5000 }] };   // mã thử
   } catch (e) {}
 
-  /* ---- Gắn vào chỉ số tướng (PVE, Tỷ Võ, chi tiết tướng đều ăn) ---- */
+  /* ---- Gắn vào chỉ số tướng (PVE, Tỷ Võ, chi tiết tướng đều ăn).
+     Kinh Mạch cũng bọc heroStats; hai phần cộng dồn khi nạp dotpha.js trước kinhmach.js. ---- */
   const _heroStats = heroStats;
   heroStats = function (id, base) {
     const s = _heroStats(id, base), p = dpGet(id);
