@@ -203,8 +203,6 @@
 
 <div class="bd-btns"><button class="dp-go" ${full ? 'disabled' : ''} onclick="dpTrain(10)">10 lần</button><button class="dp-go" ${full ? 'disabled' : ''} onclick="dpTrain(100)">100 lần</button><button class="dp-go" ${full ? 'disabled' : ''} onclick="dpTrain(1000)">1000 lần</button></div>
    
-{full ? 'disabled' : ''} onclick="dpTrain(10)">10 lần</button><button class="dp-go" ${full ? 'disabled' : ''} onclick="dpTrain(100)">100 lần</button></div>
-      <div class="dp-msg">${msg || ''}</div>`;
   }
   window.dpTrain = function (times) {
     const id = dpHero, p = dpGet(id), cap = dpCap(p.bp);
