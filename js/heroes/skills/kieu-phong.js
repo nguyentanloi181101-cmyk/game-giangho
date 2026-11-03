@@ -21,7 +21,13 @@
           u.el.animate([{ transform: base }, { transform: mid, offset: .5 }, { transform: land }], { duration: 650, easing: 'ease-in-out', fill: 'forwards' });
           await sleep(680); if (tok !== battleToken) return;
         }
-        // 2. Hai hỏa long quấn chéo nhau 2 vòng (xoắn đôi), mỗi 1/3 hành trình là 1 tầng sát thương
+        // 2. TRƯỚC KHI ULTI: hiệu ứng GIẢM — chảy máu 3 hiệp lên toàn địch
+        alive().forEach(e => {
+          e.bleed = BLEED_TURNS;
+          if (!e.el.querySelector('.bf-bleed')) { const ic = document.createElement('div'); ic.className = 'bf-bleed'; ic.textContent = '🩸'; e.el.appendChild(ic); }
+          floatText(e, 'CHẢY MÁU');
+        });
+        // 3. Hai hỏa long quấn chéo nhau 2 vòng (xoắn đôi), mỗi 1/3 hành trình là 1 tầng sát thương
         const dA = mk('bf-dragon', '🐉'), dB = mk('bf-dragon', '🐉');
         const yT = Math.max(12, cy - 24), yB = Math.min(88, cy + 10), R = Math.min(70, W * 0.16);
         const total = u.atk * DRAGON_MULT * (u.sk || 1), per = total / DRAGON_TIERS;
@@ -59,12 +65,7 @@
         });
         if (tok !== battleToken) return;
         while (tier < DRAGON_TIERS) doTier();
-        // 3. Chảy máu 3 hiệp
-        alive().forEach(e => {
-          e.bleed = BLEED_TURNS;
-          if (!e.el.querySelector('.bf-bleed')) { const ic = document.createElement('div'); ic.className = 'bf-bleed'; ic.textContent = '🩸'; e.el.appendChild(ic); }
-          floatText(e, 'CHẢY MÁU');
-        });
+        dropDeadEffects(es0);
         made.forEach(d => d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }));
         await sleep(keep ? 100 : 350); if (tok !== battleToken) return;
         if (!keep) {

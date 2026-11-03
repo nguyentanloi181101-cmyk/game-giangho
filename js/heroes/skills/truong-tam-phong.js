@@ -52,16 +52,18 @@
         setTimeout(() => { f.style.filter = 'contrast(1.2) brightness(.8)'; }, 90);
         setTimeout(() => { f.style.filter = ''; }, 380);
         f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 400);
-        es.forEach(e => skillHit(e, u.atk * TAICHI_MULT * (u.sk || 1), u));              // sát thương toàn địch
-        const left = g.es();
         // ★5: choáng 1 địch ngẫu nhiên 2 hiệp, không chảy máu • ★6: choáng 2 địch ngẫu nhiên 2 hiệp + chảy máu 40%
+        // THỨ TỰ: hiệu ứng GIẢM (chảy máu ★6) TRƯỚC khi ulti -> sát thương -> KHỐNG CHẾ (choáng) ngay sau khi ulti xong
         const six = (u.side === 'hero' ? getProg(4).star : (u.star || 0)) >= STAR_MAX;
-        shuffled(left).slice(0, six ? 2 : 1).forEach(v => { stunEnemy(v, Math.max(2, v.stun || 0)); floatText(v, 'CHOÁNG 2 HIỆP'); });
-        if (six) left.forEach(e => {
+        if (six) es.forEach(e => {
           e.bleed = Math.max(e.bleed || 0, TAICHI_BLEED_TURNS); e.bleedPct = Math.max(e.bleedPct || 0, TAICHI_BLEED_PCT);
           if (!e.el.querySelector('.bf-bleed')) { const ic = document.createElement('div'); ic.className = 'bf-bleed'; ic.textContent = '🩸'; e.el.appendChild(ic); }
           floatText(e, 'CHẢY MÁU ' + Math.round(TAICHI_BLEED_PCT * 100) + '%');
         });
+        es.forEach(e => skillHit(e, u.atk * TAICHI_MULT * (u.sk || 1), u));              // sát thương toàn địch
+        dropDeadEffects(es);
+        const left = g.es();
+        shuffled(left).slice(0, six ? 2 : 1).forEach(v => { stunEnemy(v, Math.max(2, v.stun || 0)); floatText(v, 'CHOÁNG 2 HIỆP'); });
         await sleep(900); if (tok !== battleToken) return;
         if (storm) storm.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1,1)' }, { opacity: 0, transform: 'translate(-50%,-50%) scale(.6,1.25)' }], { duration: 480, fill: 'forwards' });
         await sleep(500);

@@ -223,7 +223,7 @@
       return bled;
     }
     // ---- Hiệu ứng bất lợi của bướm Hoa Mãn Lâu (lưu trong u.dn: số hiệp còn lại theo từng loại) ----
-    const BF_DN_ICON = { atk: '⚔️↓', def: '🛡️↓', heal: '💔', rage: '⚡↓', silence: '🤐', poison: '☠️', immortal: '✨', nobuff: '🚫✨' };
+    const BF_DN_ICON = { atk: '⚔️↓', def: '🛡️↓', heal: '💔', rage: '⚡↓', silence: '🤐', poison: '☠️', immortal: '✨', nobuff: '🚫✨', hpcut: '🔥↓' };   // hpcut: Đông Phương đánh dấu "sẽ bị trừ 50% HP"
     function refreshDbf(u) {
       let ic = u.el.querySelector('.bf-dbf');
       const s = u.dn ? Object.keys(BF_DN_ICON).filter(k => u.dn[k] > 0).map(k => BF_DN_ICON[k]).join('') : '';
@@ -347,17 +347,29 @@
       if (!u.mods || !u.mods.length) return;
       u.mods = u.mods.filter(m => { if (kind && m.kind !== kind) return true; u[m.k] -= m.d; return false; }); refreshMods(u);
     }
-    // Hiệu ứng của 1 con bướm đáp xuống: targets = toàn bộ địch
-    function bflyEffect(c, targets) {
+    // Hiệu ứng của 1 con bướm: targets = toàn bộ địch
+    // phase = 'debuff': các hiệu ứng GIẢM (chảy máu, giảm sát thương/Thủ/hồi máu/nộ, độc) — áp TRƯỚC khi ulti
+    // phase = 'cc'    : KHỐNG CHẾ (Chàm choáng, Tím câm lặng) — áp NGAY SAU KHI ulti xong
+    // bỏ trống        : áp cả hai cùng lúc (kiểu cũ)
+    function bflyEffect(c, targets, phase) {
       const alive = targets.filter(e => e.alive);
       const say = (e, t) => setTimeout(() => { if (e.el.isConnected) floatText(e, t); }, 350);
+      const wantDebuff = phase !== 'cc', wantCC = phase !== 'debuff';
       if (c.k === 'indigo') {                                   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
+        if (!wantCC) return;
         alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_STUN_TARGETS).forEach(e => {
           stunEnemy(e, Math.max(BF_STUN_TURNS, e.stun || 0)); say(e, '💫 CHOÁNG ' + BF_STUN_TURNS + ' HIỆP');
         });
         return;
       }
-      const mute = c.k === 'purple' ? alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_SILENCE_TARGETS) : [];   // Tím: độc TOÀN địch, câm lặng chỉ 2 địch ngẫu nhiên
+      if (c.k === 'purple' && !wantDebuff) {                    // Tím (pha khống chế): câm lặng 2 địch ngẫu nhiên
+        alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_SILENCE_TARGETS).forEach(e => {
+          (e.dn || (e.dn = {})).silence = BF_TURNS; refreshDbf(e); say(e, '🤐 CÂM LẶNG');
+        });
+        return;
+      }
+      if (!wantDebuff) return;
+      const mute = (c.k === 'purple' && wantCC) ? alive.slice().sort(() => Math.random() - 0.5).slice(0, BF_SILENCE_TARGETS) : [];   // Tím: độc TOÀN địch (+ câm lặng 2 địch nếu không tách pha)
       alive.forEach(e => {
         const d = e.dn || (e.dn = {});
         if (c.k === 'red') {
@@ -378,6 +390,14 @@
           d.poison = BF_TURNS; if (mute.includes(e)) { d.silence = BF_TURNS; say(e, '☠️ ĐỘC + 🤐 CÂM LẶNG'); } else say(e, '☠️ TRÚNG ĐỘC');
         }
         refreshDbf(e);
+      });
+    }
+    // Địch gục ngay trong lúc ulti: gỡ biểu tượng chảy máu/choáng đã áp TRƯỚC sát thương (hiệu ứng giảm áp trước khi ulti)
+    function dropDeadEffects(list) {
+      list.forEach(e => {
+        if (e.alive) return;
+        e.bleed = 0; e.bleedPct = 0; e.stun = 0;
+        e.el.querySelectorAll('.bf-bleed, .bf-stun').forEach(ic => ic.remove());
       });
     }
     function stunEnemy(e, turns) {

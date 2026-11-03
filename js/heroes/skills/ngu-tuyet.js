@@ -50,7 +50,7 @@
       const b = g.box0(es0), landX = u.side === 'hero' ? Math.min(94, b.maxX + 9) : Math.max(6, b.minX - 9), landY = b.cy;
       const dx = (landX - u.x) * W / 100, dy = (landY - u.y) * H / 100, oldZ = u.el.style.zIndex;
       const mid = `translate(calc(-50% + ${dx / 2}px),calc(-50% + ${dy / 2 - 130}px))`, land = `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
-      const per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS, dir = u.side === 'hero' ? 1 : -1;
+      let per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS; const dir = u.side === 'hero' ? 1 : -1;
       const seq = bcSeq(u), timers = [], at = (ms, i, flip) => timers.push(setTimeout(() => { if (tok === battleToken) seq.show(i, flip); }, seqT(ms)));
       try {
         u.el.style.zIndex = 99;
@@ -60,6 +60,11 @@
         seq.show(8);                                                          // chạm đất, bung hào quang vàng
         at(120, 9); at(380, 10); at(640, 11); at(900, 12);                    // đập gậy → thu thế trong lúc tre rơi
         g.ring(landX, landY, '#84cc16');
+        // TRƯỚC KHI ULTI: hiệu ứng CỘNG THÊM (+Công đội) rồi hiệu ứng GIẢM (-Thủ địch) — sát thương các cây tre tính sau đó
+        g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'atk', BC_ATK_UP, BC_TURNS, 'buff', 'bc'); sayLater(a, '⚔️ CÔNG +' + Math.round(BC_ATK_UP * 100) + '%'); });
+        g.es().forEach(e => { pctMod(e, 'def', -BC_DEF_DOWN, BC_TURNS, 'debuff', 'bc'); sayLater(e, '🛡️ THỦ -' + Math.round(BC_DEF_DOWN * 100) + '%'); });
+        per = u.atk * BC_MULT * (u.sk || 1) / BC_HITS;          // Công đã cộng
+        refreshPanel(); await sleep(350); if (tok !== battleToken) return;
         for (let k = 0; k < BC_HITS; k++) {
           const es = g.es(); if (!es.length) break;
           const tx = Math.max(6, Math.min(94, b.cx + (Math.random() - 0.5) * (b.maxX - b.minX + 16))), ty = Math.max(12, Math.min(88, b.cy + (Math.random() - 0.5) * (b.maxY - b.minY + 18)));
@@ -85,9 +90,7 @@
           await sleep(75); if (tok !== battleToken) return;
         }
         await sleep(420); if (tok !== battleToken) return;
-        g.es().forEach(e => { const d = pctMod(e, 'def', -BC_DEF_DOWN, BC_TURNS, 'debuff', 'bc'); sayLater(e, '🛡️ THỦ -' + Math.round(BC_DEF_DOWN * 100) + '%'); });
-        g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'atk', BC_ATK_UP, BC_TURNS, 'buff', 'bc'); sayLater(a, '⚔️ CÔNG +' + Math.round(BC_ATK_UP * 100) + '%'); });
-        refreshPanel(); await sleep(450); if (tok !== battleToken) return;
+        refreshPanel(); await sleep(250); if (tok !== battleToken) return;
         u.el.getAnimations().forEach(a => a.cancel());
         u.el.animate([{ transform: land }, { transform: mid, offset: .5 }, { transform: base }], { duration: 450, easing: 'ease-in-out', fill: 'forwards' });
         const back = u.side === 'hero';                                       // quay đầu chạy về: lật ngược hướng nhìn
@@ -107,6 +110,10 @@
         [0, 110, 220, 330].forEach((ms, i) => fr(ms, i));
         [4, 5, 6, 7, 8, 9, 10].forEach((fi, i) => fr(450 + i * 340, fi));
         await sleep(450); if (tok !== battleToken) return;
+        // TRƯỚC KHI ULTI: hiệu ứng CỘNG THÊM (+Bạo đội) rồi hiệu ứng GIẢM (-Bạo địch) — 4 sóng âm tính sau đó
+        g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'crit', DT_CRIT, DT_TURNS, 'buff', 'dt'); sayLater(a, '💥 BẠO +' + Math.round(DT_CRIT * 100) + '%'); });
+        g.es().forEach(e => { pctMod(e, 'crit', -DT_CRIT, DT_TURNS, 'debuff', 'dt'); sayLater(e, '💥 BẠO -' + Math.round(DT_CRIT * 100) + '%'); });
+        refreshPanel(); await sleep(350); if (tok !== battleToken) return;
         // Mỗi nhịp: nốt nhạc vàng bung ra từ tâm (chữ ♪ lớn ở giữa) lan rộng khắp đội địch rồi tan biến; thêm nốt ♪ bắn tỏa tròn theo mọi hướng
         const BW = Math.round(Math.max(240, Math.min(g.W * 0.62, 520)));
         for (let k = 0; k < DT_HITS; k++) {
@@ -128,9 +135,7 @@
           g.ring(b.cx, b.cy, '#fde047'); g.shake(); g.es().forEach(e => { skillHit(e, per, u); g.ring(e.x, e.y, '#bef264'); });
           await sleep(320); if (tok !== battleToken) return;
         }
-        g.es().forEach(e => { pctMod(e, 'crit', -DT_CRIT, DT_TURNS, 'debuff', 'dt'); sayLater(e, '💥 BẠO -' + Math.round(DT_CRIT * 100) + '%'); });
-        g.as().forEach(a => { if (noBuff(a)) { floatText(a, '🚫 KHÓA TĂNG PHÚC'); return; } pctMod(a, 'crit', DT_CRIT, DT_TURNS, 'buff', 'dt'); sayLater(a, '💥 BẠO +' + Math.round(DT_CRIT * 100) + '%'); });
-        refreshPanel(); await sleep(450); if (tok !== battleToken) return;
+        refreshPanel(); await sleep(250); if (tok !== battleToken) return;
         cast.show(11);   // đáp đất
         await sleep(350);
       } finally { timers.forEach(clearTimeout); cast.end(); made.forEach(d => d.remove()); u.el.getAnimations().forEach(a => a.cancel()); u.el.style.zIndex = oldZ; }

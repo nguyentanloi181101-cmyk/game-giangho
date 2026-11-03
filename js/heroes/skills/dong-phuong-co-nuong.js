@@ -4,7 +4,9 @@
 
     // Đứng TẠI CHỖ tung chiêu (SEQ.dpCast, 16 khung) -> PHÂN THÂN (SEQ.dpClone, 18 khung) lao sang đội địch
     // -> phân thân tới nơi, lốc lửa (SEQ.dpFire, 20 khung) bùng lên trên MỖI địch.
-    // Cơ chế sát thương như cũ: mỗi địch chịu HTT_FLAT + Công bản thân (chuẩn, bỏ qua giáp) và mất thêm 50% HP hiện tại.
+    // Thứ tự: KHI BẮT ĐẦU ULTI toàn bộ địch dính hiệu ứng "giảm máu" (đánh dấu 🔥↓) -> các tia gây sát thương
+    // (mỗi địch chịu HTT_FLAT + Công bản thân, chuẩn, bỏ qua giáp, mỗi tia 1 lần) -> HẾT LƯỢT ĐÁNH mới trừ HTT_HP_PCT (50%) HP hiện tại.
+    // 50% HP là hiệu ứng CỘNG THÊM, không nằm trong sát thương của tia.
     async function fireWebUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
       const W = f.clientWidth, H = f.clientHeight, base = 'translate(-50%,-50%)';
@@ -20,6 +22,8 @@
       const add = (cls, x, y) => { const d = document.createElement('div'); d.className = cls; d.style.left = x + '%'; d.style.top = y + '%'; box.appendChild(d); made.push(d); return d; };
       try {
         u.el.style.zIndex = 95;
+        // 0. KHI BẮT ĐẦU ULTI: toàn bộ địch dính hiệu ứng giảm máu (chỉ đánh dấu, chưa trừ máu)
+        es0.forEach(e => { (e.dn = e.dn || {}).hpcut = 1; refreshDbf(e); floatText(e, '🔥 GIẢM ' + Math.round(HTT_HP_PCT * 100) + '% HP'); });
         // 1. Tung chiêu tại chỗ (16 khung)
         for (let i = 0; i < SEQ.dpCast.n; i++) at(i * CAST_FR, () => cast.show(i));
         at(SEQ.dpCast.n * CAST_FR, () => cast.end());
@@ -47,8 +51,8 @@
           const fs = seqEl(SEQ.dpFire, FW); el.appendChild(fs);
           for (let i = 0; i < SEQ.dpFire.n; i++) setTimeout(() => { if (tok === battleToken) fs.show(i); }, seqT(i * FIRE_FR));
           await sleep(HIT_FRAME * FIRE_FR); if (tok !== battleToken) return;
-          if (e.alive) {                                             // sát thương chuẩn + 50% HP hiện tại (như cũ)
-            for (let r = 0, n = tiaOf(u); r < n && e.alive; r++) hit(e, flat + Math.round(e.hp * HTT_HP_PCT), false, undefined, false, undefined, { i: r, wait: rayWait(r) });   // mỗi tia 1 lần
+          if (e.alive) {                                             // sát thương chuẩn của các tia (50% HP trừ riêng sau khi hết lượt đánh)
+            for (let r = 0, n = tiaOf(u); r < n && e.alive; r++) hit(e, flat, false, undefined, false, undefined, { i: r, wait: rayWait(r) });   // mỗi tia 1 lần
             const w = add('bf-wave', e.x, e.y);
             w.style.borderColor = '#fb923c'; w.style.boxShadow = '0 0 24px #ef4444, inset 0 0 24px #f97316';
             setTimeout(() => w.remove(), 650);
@@ -57,8 +61,18 @@
           el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: 'forwards' });
         });
         await Promise.all(strikes); if (tok !== battleToken) return;
-        await sleep(250);
+        // HẾT LƯỢT ĐÁNH: trừ 50% HP hiện tại của mọi địch đang dính hiệu ứng (bỏ qua giáp, không cộng nộ, không bị khiên phản)
+        await sleep(200); if (tok !== battleToken) return;
+        es0.forEach(e => {
+          if (!e.alive || !(e.dn && e.dn.hpcut > 0)) return;
+          e.dn.hpcut = 0; refreshDbf(e);
+          hit(e, Math.max(1, Math.round(e.hp * HTT_HP_PCT)), true, u, true);
+          if (e.alive) floatText(e, '💔 -' + Math.round(HTT_HP_PCT * 100) + '% HP');
+        });
+        refreshPanel();
+        await sleep(300);
       } finally {
+        es0.forEach(e => { if (e.dn && e.dn.hpcut) { e.dn.hpcut = 0; try { refreshDbf(e); } catch (x) {} } });   // dọn dấu nếu ulti bị ngắt giữa chừng
         timers.forEach(clearTimeout); cast.end();
         made.forEach(d => d.remove());
         u.el.getAnimations().forEach(a => a.cancel());

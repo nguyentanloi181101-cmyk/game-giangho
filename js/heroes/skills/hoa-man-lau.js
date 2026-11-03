@@ -35,14 +35,14 @@
     }
     // Hoa Mãn Lâu: đứng TẠI CHỖ tung tuyệt kỹ (SEQ.hmlCast). 3 chuỗi bướm màu ngẫu nhiên (trong 7 màu, mỗi chuỗi 16 khung) lần lượt RƠI THẲNG ĐỨNG từ mép trên màn hình
     // xuống đội địch (nhỏ -> to dần); phát hết các khung rơi, chạm đất mới bung tia nhiều hướng (khung 12-15)
-    // + sát thương TOÀN địch + hiệu ứng theo màu; cuối cùng +50% Công toàn đội
+    // + sát thương TOÀN địch. THỨ TỰ: (1) +Công toàn đội (cộng thêm) -> (2) hiệu ứng GIẢM theo màu lên toàn địch -> (3) ulti (bướm nổ) -> (4) KHỐNG CHẾ (choáng/câm lặng) ngay sau khi ulti xong
     const BFLY_SEQ = { red: 'hmlRed', orange: 'hmlOrange', yellow: 'hmlYellow', green: 'hmlGreen', blue: 'hmlBlue', indigo: 'hmlIndigo', purple: 'hmlPurple' };
     async function butterflyUlt(u, tok) {
       const f = document.getElementById('battle-arena'), box = document.getElementById('bf-units');
       const W = f.clientWidth, H = f.clientHeight;
       const alive = () => foesOf(u).filter(e => e.alive);
       const es0 = alive(); if (!es0.length) return;
-      const dmg = u.atk * BFLY_MULT * (u.sk || 1);          // chốt sát thương trước khi buff Công
+      let dmg = 0;                                           // chốt SAU khi cộng Công (hiệu ứng cộng thêm áp trước khi ulti)
       const made = [], timers = [], oldZ = u.el.style.zIndex;
       const at = (ms, fn) => timers.push(setTimeout(() => { if (tok === battleToken) fn(); }, seqT(ms)));
       // khung tung chiêu phủ lên tướng: cùng tỉ lệ & điểm neo với dáng đứng (SEQ_IDLE[6]) nên thân không xê dịch
@@ -84,25 +84,15 @@
           w.style.borderColor = col; w.style.boxShadow = `0 0 20px ${col}, inset 0 0 20px ${col}`;
           box.appendChild(w); setTimeout(() => w.remove(), 650);
         });
-        bflyEffect(c, es);                                     // hiệu ứng theo màu
+        // (hiệu ứng giảm đã áp trước khi ulti, khống chế áp sau khi ulti xong — xem butterflyUlt)
         f.classList.add('screen-shake'); setTimeout(() => f.classList.remove('screen-shake'), 200);
         await sleep(4 * BFR + 200);
       };
       try {
         u.el.style.zIndex = 95;
-        // 1. Đứng yên tung chiêu (16 khung)
-        for (let i = 0; i < 16; i++) at(i * CAST_FR, () => cast.show(i));
-        at(16 * CAST_FR, () => cast.end());
-        sfxRocket();
-        await sleep(400); if (tok !== battleToken) return;
-
-        // 2. 3 màu khác nhau trong 7 màu, lần lượt rơi thẳng đứng từ mép trên màn hình xuống đội địch
+        // 0. Chốt 3 màu bướm khác nhau trong 7 màu
         const picks = BFLY_COLORS.slice().sort(() => Math.random() - 0.5).slice(0, BFLY_HITS);
-        await Promise.all(picks.map((c, i) => strike(c, i)));
-        if (tok !== battleToken) return;
-        cast.end();
-
-        // 4. Tăng 50% Công cho toàn đội (không cộng dồn)
+        // 1. TRƯỚC KHI ULTI — (a) hiệu ứng CỘNG THÊM: +Công toàn đội (không cộng dồn)
         alliesOf(u).filter(h => h.alive).forEach(h => {
           if (noBuff(h)) { floatText(h, '🚫 KHÓA TĂNG PHÚC'); return; }
           if (!h.atkBuff) {
@@ -112,6 +102,24 @@
           }
           floatText(h, 'CÔNG +' + Math.round(BFLY_ATK_BUFF * 100) + '%');
         });
+        dmg = u.atk * BFLY_MULT * (u.sk || 1);                // sát thương tính trên Công đã cộng
+        //                  (b) hiệu ứng GIẢM theo màu bướm lên toàn địch (chảy máu, giảm sát thương/Thủ/hồi máu/nộ, độc)
+        picks.forEach(c => bflyEffect(c, es0, 'debuff'));
+        refreshPanel();
+        // 2. Đứng yên tung chiêu (16 khung)
+        for (let i = 0; i < 16; i++) at(i * CAST_FR, () => cast.show(i));
+        at(16 * CAST_FR, () => cast.end());
+        sfxRocket();
+        await sleep(400); if (tok !== battleToken) return;
+
+        // 3. 3 màu lần lượt rơi thẳng đứng từ mép trên màn hình xuống đội địch (ulti: chỉ gây sát thương)
+        await Promise.all(picks.map((c, i) => strike(c, i)));
+        if (tok !== battleToken) return;
+        cast.end();
+        dropDeadEffects(es0);
+
+        // 4. NGAY SAU KHI ULTI XONG: hiệu ứng KHỐNG CHẾ — Chàm choáng, Tím câm lặng
+        picks.forEach(c => bflyEffect(c, alive(), 'cc'));
         refreshPanel();
         await sleep(225);
       } finally {

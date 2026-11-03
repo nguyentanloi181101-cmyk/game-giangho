@@ -124,6 +124,10 @@
         ring.style.borderColor = '#a855f7'; ring.style.boxShadow = '0 0 24px #7e22ce, inset 0 0 24px #c084fc';
         box.appendChild(ring); setTimeout(() => ring.remove(), 650);
         await wait(450); if (tok !== battleToken) return;
+        // 1b. TRƯỚC KHI ULTI: hiệu ứng GIẢM — xóa sạch tăng phúc của địch + khóa tăng phúc 2 hiệp
+        alive().forEach(e => stripBuffs(e));
+        refreshPanel();
+        await wait(350); if (tok !== battleToken) return;
         // 2. Lần lượt từng lốc xoáy quét từ đội ta sang đội địch
         for (let i = 0; i < DUCO_TWISTERS; i++) {
           const tw = makeTwister(), ly = clamp(cy + lanes[i % lanes.length], 18, 78);
@@ -156,8 +160,6 @@
           if (!alive().length) break;
           if (i < DUCO_TWISTERS - 1) await wait(120);
         }
-        // 3. Xóa sạch tăng phúc của địch + khóa tăng phúc 2 hiệp
-        alive().forEach(e => stripBuffs(e));
         refreshPanel();
         await wait(500); if (tok !== battleToken) return;
       } finally {
