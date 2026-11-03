@@ -21,7 +21,7 @@
       tank: { startRage:100, alwaysUlt:false, taunt:true,  prio2:false }
     };
     const ROLE_DEFAULT = { 0:'atk', 1:'heal', 2:'sup', 3:'atk', 4:'skill', 5:'heal', 6:'skill', 7:'atk', 8:'tank', 9:'atk', 10:'skill', 11:'sup', 12:'sup', 13:'skill', 14:'skill', 15:'tank', 16:'sup', 17:'sup' };
-    let roleOv = loadJSON('hero_role');       // chất tướng người chơi đã chọn
+    let roleOv = cfgHeroPatch().role;       // chất tướng do ADMIN đặt (mặc định ROLE_DEFAULT)
     const HERO_ROLE = {};
     const roleOf = id => (ROLE_RULE[roleOv[id]] ? roleOv[id] : (ROLE_DEFAULT[id] || 'atk'));
     function applyStatOv() {

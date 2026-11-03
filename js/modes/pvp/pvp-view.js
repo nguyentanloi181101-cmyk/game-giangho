@@ -24,9 +24,9 @@
       const me = mainId !== null ? heroById(mainId) : null;
       const spots = entries.map((e, k) => {
         const l = pos[k][0], t = pos[k][1];
-        if (e.me) return `<div class="pv-spot me" style="left:${l}%;top:${t}%" onclick="pvpOpenSelf()"><div class="pv-hero full">${pvBody(me)}</div><div class="pv-lotus"></div><div class="pv-name">Cấp ${accLevel} ${pvName()}<br>Hạng ${fmtN(st.rank)}</div></div>`;
+        if (e.me) return `<div class="pv-spot me" style="left:${l}%;top:${t}%" onclick="pvpOpenSelf()"><div class="pv-hero full">${pvBody(me)}</div><div class="pv-name">Cấp ${accLevel} ${pvName()}<br>Hạng ${fmtN(st.rank)}</div></div>`;
         const o = e.o, main = pvMainOf(o.stats);
-        return `<div class="pv-spot" style="left:${l}%;top:${t}%" onclick="pvpOpen(${e.i})"><div class="pv-hero full" style="animation-delay:${-k * 0.6}s">${pvBody(main)}</div><div class="pv-lotus"></div><div class="pv-name">Cấp ${o.lvl} ${o.name}<br>Hạng ${fmtN(o.rank)}</div></div>`;
+        return `<div class="pv-spot" style="left:${l}%;top:${t}%" onclick="pvpOpen(${e.i})"><div class="pv-hero full" style="animation-delay:${-k * 0.6}s">${pvBody(main)}</div><div class="pv-name">Cấp ${o.lvl} ${o.name}<br>Hạng ${fmtN(o.rank)}</div></div>`;
       }).join('');
       const logged = typeof clUser !== 'undefined' && clUser;
       const note = pvpOpps.length ? '' : `<div style="position:absolute;left:8%;right:8%;top:34%;z-index:5;text-align:center;padding:10px 12px;background:rgba(0,0,0,.6);border:1px dashed #fde047;border-radius:10px;color:#fde68a;font-size:12px;line-height:1.5;pointer-events:none">${logged ? '👤 Chưa có tài khoản nào khác vào Tỷ Võ.<br>Hãy rủ thêm bạn bè đăng nhập đám mây nhé!' : '☁️ Tỷ Võ chỉ đấu với người chơi thật.<br>Hãy đăng nhập tài khoản đám mây để thấy đối thủ.'}</div>`;

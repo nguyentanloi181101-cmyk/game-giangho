@@ -51,7 +51,7 @@
     function startPvp(i) {
       const o = pvpOpps[i]; if (!o) return;
       if (!team.length) { alert('Hãy chọn Đội ngũ ra trận trước!'); return; }
-      battleToken++; playBgm(); playBattleOpen(); battleFast = false;
+      battleToken++; playBattleOpen(); battleFast = false;
       pvp = { opp: o }; pvpRound = 0; pvpDmg = { hero: 0, enemy: 0 }; currentWave = 1; busy = false;
       document.getElementById('bf-units').innerHTML = '';
       const sel = HEROES.filter(h => team.includes(h.id));

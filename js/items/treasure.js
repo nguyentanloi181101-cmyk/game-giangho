@@ -5,20 +5,21 @@
     // 5 LOẠI: Tôn Sư Ký (id 1) · Bá Vương Kiếm (6) · Thủy Hoàng Đăng (7) · Trống Lôi Âm (8) · Kim Giao Tiễn (9).
     // Có thể sở hữu NHIỀU BẢN của cùng 1 loại (cùng tên, cùng thông số; mỗi bản có cấp/sao riêng, đổi thêm bằng 🔥 ở Tỷ Võ).
     // Mỗi món có mã riêng `u`, `id` là LOẠI. Mỗi KHUNG chỉ gắn tối đa 3 Bảo Vật và KHÔNG được trùng loại (1 mỗi loại / khung).
-    const TS_NAME = 'Tôn Sư Ký', TS_KINDS = [1, 6, 7, 8, 9], TS_PER_HERO = 3, TS_MAX = 100, TS_FRAMES = 5, TS_STAR_MAX = 10;   // Bảo Vật tối đa 10★   // gắn theo KHUNG (tướng đứng ở khung nào nhận chỉ số khung đó), tối đa 3 Bảo Vật / khung
-    const TS_STAR_ADD = 0.5;   // mỗi ★: +50% CHỈ SỐ GỐC (cộng thẳng, không cộng dồn lãi)
+    const TS_NAME = 'Tôn Sư Ký', TS_KINDS = [1, 6, 7, 8, 9], TS_PER_HERO = 3, TS_FRAMES = 5;
+    let TS_MAX = cfgNum('treasure.maxLv', cfgSnap('tsMax', 100)), TS_STAR_MAX = cfgNum('treasure.maxStar', cfgSnap('tsStarMax', 10));   // cấp / sao tối đa (admin chỉnh được)   // Bảo Vật tối đa 10★   // gắn theo KHUNG (tướng đứng ở khung nào nhận chỉ số khung đó), tối đa 3 Bảo Vật / khung
+    let TS_STAR_ADD = cfgNum('treasure.starAdd', cfgSnap('tsStarAdd', 0.5));   // mỗi ★: +50% CHỈ SỐ GỐC (cộng thẳng, không cộng dồn lãi)
 
     // ---- THÔNG SỐ BẢO VẬT (theo bảng thiết kế) ----
     // stats = [[loại chỉ số, chỉ số gốc, điểm cộng mỗi cấp (tỉ lệ của chỉ số sau sao)], ...]  — thứ tự = dòng 1, 2, 3 trong bảng
     // CÔNG THỨC: chỉ số = gốc × (1 + 0.5 × số★) × (1 + điểm_mỗi_cấp × Lv)
     //   ví dụ: Công gốc 300, 10★ → 300 + 150×10 = 1800; mỗi cấp +15% → Lv20: 1800 × (1 + 0.15×20) = 7200
-    const TS_DEFS = {
+    const TS_DEFS = cfgSnap('ts', {
       1: { name:'Tôn Sư Ký',       stats:[ ['dodge', 30, .03],  ['atkFlat', 1000, .15], ['hpFlat', 5000, .20] ] },
       6: { name:'Bá Vương Kiếm',   stats:[ ['acc', 15, .03],    ['crit', 50, .15],      ['critDmg', 30, .15] ] },
       7: { name:'Thủy Hoàng Đăng', stats:[ ['tough', 25, .05],  ['crit', 25, .15],      ['critDmg', 25, .15] ] },
       8: { name:'Trống Lôi Âm',    stats:[ ['crit', 50, .05],   ['atkFlat', 2000, .15], ['atkFlat', 1500, .15] ] },
       9: { name:'Kim Giao Tiễn',   stats:[ ['spd', 20, .02],    ['critDmg', 500, .15],  ['pierce', 10000, .15] ] }
-    };
+    });
     const TS_LABEL = { dodge:'Né', acc:'Chuẩn', crit:'Bạo', critDmg:'Bạo Sát', tough:'Bền', heal:'Hồi máu', atkFlat:'Công', hpFlat:'HP', pierce:'Phá giáp', spd:'Tốc' };
     const TS_IMG = { 6:'assets/images/items/treasure-06.webp?v=24', 7:'assets/images/items/treasure-07.webp?v=24', 8:'assets/images/items/treasure-08.webp?v=24', 9:'assets/images/items/treasure-09.webp' };
     const TS_EMO = {};   // loại nào chưa có ảnh thì khai biểu tượng ở đây
@@ -80,13 +81,16 @@
       if (stage <= hamClaimed) return '';
       hamClaimed = stage;
       try { localStorage.setItem('ham_claimed', String(hamClaimed)); } catch (e) {}
-      return `\n\n🔨 Nhận ${HAMMER_PER_STAGE} Búa! Mỗi búa tăng 1★ cho Bảo Vật, +50% chỉ số gốc (còn ${hammerCount()} 🔨).`;
+      return `\n\n🔨 Nhận ${HAMMER_PER_STAGE} Búa! Búa cất trong Túi Đồ (còn ${hammerCount()} 🔨).`;
     }
+    // Tăng sao: tiêu 1 Bảo Vật CÙNG LOẠI (chưa gắn vào khung) làm nguyên liệu, +1★ cho món được chọn. Búa 🔨 vẫn giữ trong Túi Đồ, không dùng ở đây.
     function tsStarUp(u) {
       const t = tsFind(u); if (!t) return;
       if ((t.star | 0) >= TS_STAR_MAX) { alert('⭐ ' + tsName(t.id) + ' đã đạt tối đa ' + TS_STAR_MAX + ' sao.'); return; }
-      if (hammerCount() <= 0) { alert('🔨 Hết búa! Đánh xong 1 Ải (Bàn 10) để nhận thêm ' + HAMMER_PER_STAGE + ' búa.'); return; }
-      hamSpent++; try { localStorage.setItem('ham_spent', String(hamSpent)); } catch (e) {}
+      const fodder = tsBag.filter(x => x.u !== t.u && x.id === t.id && x.f < 0).sort((x, y) => (x.star | 0) - (y.star | 0) || x.lv - y.lv)[0];
+      if (!fodder) { alert('Cần thêm 1 ' + tsName(t.id) + ' cùng loại (chưa gắn vào khung) để làm nguyên liệu tăng sao.\nĐổi thêm bản mới bằng 🔥 ở Tỷ Võ.'); return; }
+      if (!confirm('Tiêu 1 ' + tsName(t.id) + ' (Lv.' + fodder.lv + ' ★' + (fodder.star | 0) + ') làm nguyên liệu?\n' + tsName(t.id) + ' sẽ tăng ★' + (t.star | 0) + ' → ★' + ((t.star | 0) + 1) + '.\nNguyên liệu bị mất vĩnh viễn.')) return;
+      tsBag.splice(tsBag.indexOf(fodder), 1);
       t.star = (t.star | 0) + 1; tsSave(); tsRender(); tsRefreshOthers();
     }
     const tsOfFrame = f => f >= 0 ? tsBag.filter(t => t.f === f) : [];
@@ -114,13 +118,13 @@
     function tsRender() {
       const lock = tsCtx >= 0;
       document.getElementById('ts-note').innerHTML = lock
-        ? `<b>🔨 Búa: ${hammerCount()}</b> • Chọn Bảo Vật gắn vào <b>Khung ${tsCtx + 1}</b> (${tsOfFrame(tsCtx).length}/${TS_PER_HERO}). Bấm ô khung để gắn / tháo.`
-        : `<b>🔨 Búa: ${hammerCount()}</b> — mỗi búa tăng 1★ cho Bảo Vật, +50% chỉ số gốc. Bảo Vật giúp tăng sức mạnh Võ Hiệp. Mỗi khung gắn tối đa ${TS_PER_HERO} Bảo Vật và không được trùng loại, gắn vào khung nào thì tướng đứng ở khung đó nhận chỉ số (giống trang bị). Bấm ô khung để gắn / đổi, bấm ✕ để tháo.`;
+        ? `Chọn Bảo Vật gắn vào <b>Khung ${tsCtx + 1}</b> (${tsOfFrame(tsCtx).length}/${TS_PER_HERO}). Bấm ô khung để gắn / tháo.`
+        : `Tăng sao: tiêu 1 Bảo Vật cùng loại (chưa gắn) để +1★, +50% chỉ số gốc. Bảo Vật giúp tăng sức mạnh Võ Hiệp. Mỗi khung gắn tối đa ${TS_PER_HERO} Bảo Vật và không được trùng loại, gắn vào khung nào thì tướng đứng ở khung đó nhận chỉ số (giống trang bị). Bấm ô khung để gắn / đổi, bấm ✕ để tháo.`;
       document.getElementById('ts-list').innerHTML = tsBag.map(t => {
         const act = lock ? `tsToggle(${t.u})` : `frPick('ts',${t.u})`;
         return `<div class="ts-row"><div class="ts-ico"><div class="ts-em">${tsIcon(t.id)}</div><div class="ts-nm">${tsName(t.id)}</div></div><div class="ts-link">🔗</div>${frSlot(t.f, act, `tsUnequip(${t.u})`)}
           <div class="ts-st"><b>Lv.${t.lv} <span style="color:#fbbf24">★${t.star}/${TS_STAR_MAX}</span></b>${tsLines(t)}${t.f >= 0 ? `<div class="ts-cnt">Khung ${t.f + 1} (${tsOfFrame(t.f).length}/${TS_PER_HERO})</div>` : ''}</div>
-          <div class="ts-btns"><button class="btn-attack" ${t.lv >= TS_MAX ? 'disabled' : ''} onclick="tsUp(${t.u},1)">Tăng</button><button class="btn-close-battle" ${t.lv >= TS_MAX ? 'disabled' : ''} onclick="tsUp(${t.u},10)">+10</button><button class="btn-attack" style="background:linear-gradient(180deg,#a855f7,#6b21a8)" ${(t.star | 0) >= TS_STAR_MAX ? 'disabled' : ''} onclick="tsStarUp(${t.u})">🔨 ★</button></div></div>`;
+          <div class="ts-btns"><button class="btn-attack" ${t.lv >= TS_MAX ? 'disabled' : ''} onclick="tsUp(${t.u},1)">Tăng</button><button class="btn-close-battle" ${t.lv >= TS_MAX ? 'disabled' : ''} onclick="tsUp(${t.u},10)">+10</button><button class="btn-attack" style="background:linear-gradient(180deg,#a855f7,#6b21a8)" ${(t.star | 0) >= TS_STAR_MAX ? 'disabled' : ''} onclick="tsStarUp(${t.u})">⭐ Tăng sao</button></div></div>`;
       }).join('');
     }
     function tsUp(u, n) {

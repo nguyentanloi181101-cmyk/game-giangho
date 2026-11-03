@@ -3,11 +3,15 @@
 /* Mỗi cấp kỹ năng Lò Luyện Hỏa cộng cho TƯỚNG (theo đúng thứ tự ô: trái→phải, trên→dưới).
    GD_HEAL_PER_LV: máu hồi mỗi cấp, cuối mỗi hiệp (2 bên đánh xong). Chỉnh số ở đây nếu cần. */
 const GD_HEAL_PER_LV = 1000;
-const GD_PER = { hp1: 3000, def1: 500, atk: 1000, hp2: 6000, def2: 1000, pierce: 1000, heal: GD_HEAL_PER_LV, spd: 2, critDmg: 20, boss: 10000 };
+const GD_PER = cfgSnap('gdper', { hp1: 3000, def1: 500, atk: 1000, hp2: 6000, def2: 1000, pierce: 1000, heal: GD_HEAL_PER_LV, spd: 2, critDmg: 20, boss: 10000 });
+Object.assign(GD_PER, cfgGet('guild', {}));   // admin chỉnh (Lò Luyện Hỏa: mỗi cấp cộng bao nhiêu)
+/* Thông số boss bang (admin chỉnh): HP boss k = baseHp × hpMult^k (Chí Tôn × ctMult); sát thương 1 đòn = HP/atkDiv (Chí Tôn × ctMult) */
+const BOSS_CFG = cfgSnap('boss', { baseHp: 2000000, hpMult: 2, ctMult: 2, atkDiv: 4000, heroDmgMult: 3, maxRounds: 30, ptsPerDmg: 20000, killPts: 100 });
+Object.assign(BOSS_CFG, cfgGet('boss', {}));
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng ' + GD_PER.hp1 + ' điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng ' + GD_PER.def1 + ' điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng ' + GD_PER.atk + ' điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng ' + GD_PER.hp2 + ' điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng ' + GD_PER.def2 + ' điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng ' + GD_PER.pierce + ' điểm phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp hồi ' + GD_PER.heal + ' máu cho tướng sau khi kết thúc lượt đánh của 2 bên'],
   ['Thần Tốc', '⚡', 'Mỗi cấp tăng ' + GD_PER.spd + ' điểm tốc độ'], ['Bạo Kích', '💥', 'Mỗi cấp tăng ' + GD_PER.critDmg + ' điểm bạo sát'], ['Chí Tôn', '👑', 'Mỗi cấp tăng ' + GD_PER.boss + ' sát thương lên boss bang']];
-const GD_SKILL_UNLOCK = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10], GD_SKILL_MAX = [60, 60, 60, 60, 60, 60, 60, 60, 60, 40];
+const GD_SKILL_UNLOCK = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10], GD_SKILL_MAX = [Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity];   // Lò Luyện Hỏa: nâng cấp không giới hạn
 const GD_ICO = { 'Thú Noãn': 'thu-noan', 'Thú Hồn': 'thu-hon', 'Thú Linh': 'thu-linh', 'Đá Nữ Oa': 'da-nu-oa', 'Dị Linh': 'di-linh', 'Đào Tiên': 'dao-tien', 'Đào Tiên Vương': 'dao-tien', 'Tử Linh Thạch': 'tu-linh-thach' };
 function gdIco(name, ico) { const f = GD_ICO[name] || (String(name).indexOf('Châu ') === 0 ? 'chau' : ''); return f ? `<img class="gi" src="assets/images/items/${f}.webp" alt="${name}">` : ico; }
 function gdSt() {
@@ -51,7 +55,7 @@ function dvLearn() {
 function renderDienVo() {
   const s = gdSt(), i = dvSel, lv = s.dv[i], c = dvCost(lv);
   document.getElementById('dv-body').innerHTML = `<div class="dv-uy">🏅 Uy Tín: ${fmtN(s.uytin)}</div>
-  <div class="dv-grid">${GD_SKILLS.map((k, j) => { const lock = GD_SKILL_UNLOCK[j] > s.bangLv; return `<div class="dv-sk ${j === i ? 'sel' : ''} ${lock ? 'lock' : ''}" onclick="dvPick(${j})"><i>${lock ? 'Cấp ' + GD_SKILL_UNLOCK[j] + ' mở' : k[1]}</i><span>${s.dv[j]}/${GD_SKILL_MAX[j]}</span></div>`; }).join('')}</div>
+  <div class="dv-grid">${GD_SKILLS.map((k, j) => { const lock = GD_SKILL_UNLOCK[j] > s.bangLv; return `<div class="dv-sk ${j === i ? 'sel' : ''} ${lock ? 'lock' : ''}" onclick="dvPick(${j})"><i>${lock ? 'Cấp ' + GD_SKILL_UNLOCK[j] + ' mở' : k[1]}</i><span>Lv.${s.dv[j]}</span></div>`; }).join('')}</div>
   <div class="dv-desc"><b>${GD_SKILLS[i][0]}</b><p>${GD_SKILLS[i][2]}</p><p>Kỹ năng cấp ${lv} → cấp ${lv + 1}</p></div>
   <div class="gs-act"><div>Cần 🏅 ${c.uy} &nbsp; 🥈 ${fmtN(c.silver)}</div><button onclick="dvLearn()">Học</button></div>`;
 }
@@ -64,8 +68,8 @@ const GD_BOSS = [   // [tên, bang cấp, icon, cách đánh, đặc điểm, [4
   ['Báo Tuyết', 7, '🐆', 'Chủ yếu là tấn công đơn', 'Quái vật này có đặc điểm nổi bật là rất xấu và rất mạnh', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Báo Tuyết'],
   ['Hắc Điêu', 8, '🦅', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Hắc Điêu'],
   ['Cuồng Ngưu', 9, '🐂', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Cuồng Ngưu']];
-const gdBossHp = (k, ct) => 2000000 * Math.pow(2, k) * (ct ? 2 : 1);
-const gdBossAtk = (k, ct) => Math.round(gdBossHp(k, 0) / 4000) * (ct ? 2 : 1);   // sát thương 1 đòn lên 1 tướng
+const gdBossHp = (k, ct) => BOSS_CFG.baseHp * Math.pow(BOSS_CFG.hpMult, k) * (ct ? BOSS_CFG.ctMult : 1);
+const gdBossAtk = (k, ct) => Math.round(gdBossHp(k, 0) / BOSS_CFG.atkDiv) * (ct ? BOSS_CFG.ctMult : 1);   // sát thương 1 đòn lên 1 tướng
 const gdDrops = k => { const b = GD_BOSS[k][0]; return k < 4
   ? [['Thú Hồn', '🟠'], ['Thú Linh', '🔥'], ['Thú Noãn', '🔶'], ['Đá Nữ Oa', '🔻'], ['Dị Linh', '🎭'], ['Châu ' + b, '🔮'], ['Đào Tiên', '🍑'], ['Tử Linh Thạch', '🪨']]
   : [['Đào Tiên Vương', '🍑'], ['Đá Nữ Oa', '🔻'], ['Châu ' + b, '🔮'], ['Dị Linh', '💀'], ['Lá Linh', '🍃'], ['Hộp Linh', '📦'], ['Hộp Tinh', '🎁'], ['Ngọc Tím', '🟣']]; };
@@ -88,7 +92,7 @@ function bbCtUnlock(k) { const s = gdSt(); if (gold < 5000) return scToast('Cầ
 function bbInfo(k, ct) {
   bbCur = [k, ct]; const b = GD_BOSS[k], m = document.getElementById('boss-modal');
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('boss-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">BOSS${ct ? ' CHÍ TÔN' : ''}</div>
-  <div class="bm-top"><div class="bm-pic">${ttImg(b[0], ct)}</div><div class="bm-desc">Cách đánh: ${b[3]}<br><br>Đặc điểm: ${b[4]}${ct ? '<br>HP & sát thương x2' : ''}<br><br>HP ${fmtN(gdBossHp(k, ct))}</div></div>
+  <div class="bm-top"><div class="bm-pic">${ttImg(b[0], ct)}</div><div class="bm-desc">Cách đánh: ${b[3]}<br><br>Đặc điểm: ${b[4]}${ct ? '<br>HP & sát thương x' + BOSS_CFG.ctMult : ''}<br><br>HP ${fmtN(gdBossHp(k, ct))}</div></div>
   <div class="bm-sk">${b[5].map((n, i) => `<span>Kỹ Năng ${i + 1}:${n}</span>`).join('')}<span>Kỹ Năng 5:</span></div>
   <div class="gs-bar">Vật Phẩm <span>(Chuyển vào Kho)</span></div><div class="bm-drops">${gdDrops(k).map(d => `<div title="${d[0]}">${gdIco(d[0], d[1])}</div>`).join('')}${'<div class="e">+</div>'.repeat(4)}</div>
   <div class="gs-act"><div>Hôm nay còn: ${gdSt().left}</div><button onclick="bbFight()">Khiêu chiến</button></div></div>`;
@@ -100,16 +104,16 @@ function bbFight() {   // trận tự động mô phỏng bằng chỉ số đ�
   const gb = gdBonus(), heroes = team.map(id => { const t = heroStats(id); return { hp: t.hp, max: t.hp, atk: t.atk, def: t.def, heal: gb.heal }; });
   if (!heroes.length) return scToast('Chưa có tướng trong đội');
   let boss = cur, dmgDone = 0, rounds = 0; const bAtk = gdBossAtk(k, ct);
-  while (boss > 0 && rounds < 30 && heroes.some(h => h.hp > 0)) {
+  while (boss > 0 && rounds < BOSS_CFG.maxRounds && heroes.some(h => h.hp > 0)) {
     rounds++;
-    heroes.forEach(h => { if (h.hp > 0) { const d = Math.round(h.atk * 3 * (.9 + Math.random() * .2)) + gb.boss; boss -= d; dmgDone += d; } });
+    heroes.forEach(h => { if (h.hp > 0) { const d = Math.round(h.atk * BOSS_CFG.heroDmgMult * (.9 + Math.random() * .2)) + gb.boss; boss -= d; dmgDone += d; } });
     if (boss <= 0) break;
     const alive = heroes.filter(h => h.hp > 0), tgt = alive[Math.floor(Math.random() * alive.length)];
     tgt.hp -= Math.max(1, bAtk - Math.round(tgt.def * .5));
     heroes.forEach(h => { if (h.hp > 0 && h.heal) h.hp = Math.min(h.max, h.hp + h.heal); });   // Hồi Phục: hết hiệp 2 bên
   }
   const killed = boss <= 0; boss = Math.max(0, boss); dmgDone = Math.min(dmgDone, cur);
-  s[key][k] = boss; s.left--; const pts = Math.floor(dmgDone / 20000) + (killed ? 100 : 0); s.pts += pts;
+  s[key][k] = boss; s.left--; const pts = Math.floor(dmgDone / BOSS_CFG.ptsPerDmg) + (killed ? BOSS_CFG.killPts : 0); s.pts += pts;
   let msg = `Gây ${fmtN(dmgDone)} sát thương • +${pts} Điểm BOSS`;
   if (killed) {   // rơi vật phẩm vào mục Đổi, hết hạn 12h trưa kế tiếp
     const e = new Date(); e.setHours(12, 0, 0, 0); if (e <= Date.now()) e.setDate(e.getDate() + 1);

@@ -9,7 +9,7 @@
 
     function bagItems() {   // [{k, name, ico, qty, price, desc, use}]
       const it = [{ k: 'pill', name: 'Viên Thể Lực', ico: '💊', qty: staState.pills, price: BAG_PRICE['Viên Thể Lực'], desc: `Mỗi viên +${PILL_STA} thể lực (hiện ${staState.v}/${STA_MAX}).`, use: 'pill' },
-        { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Tăng 1★ cho Bảo Vật.', use: 'hammer' },
+        { k: 'hammer', name: 'Búa', ico: '🔨', qty: hammerCount(), price: 0, desc: 'Vật phẩm dự trữ (không còn dùng để tăng sao Bảo Vật).', use: 'hammer' },
         { k: 'key', name: 'Chìa Khóa', ico: '🔑', qty: keyCount(), price: 0, desc: `1 🔑 mở thêm ${KEY_LV} cấp trang bị.`, use: 'key' }];
       if (typeof gdSt === 'function') { const kho = gdSt().kho; Object.keys(kho).forEach(n => { if (kho[n].qty > 0) it.push({ k: 'g:' + n, name: n, ico: gdIco(n, kho[n].ico), qty: kho[n].qty, price: BAG_PRICE[n] || 100, desc: BAG_DESC[n] || 'Vật phẩm Bang Hội.', use: 'gd' }); }); }
       return it.filter(x => x.qty > 0);
@@ -32,8 +32,7 @@
           <div class="bg-q"><button onclick="bagStep(-1)">−</button><span>${Math.min(bagQty, cur.qty)}</span><button onclick="bagStep(1)">+</button><button onclick="bagStep(0)">Tất cả</button></div></div>
           <div class="bg-m"><div class="bg-big">${cur.ico}</div><b>${cur.name}</b></div>
           <div class="bg-r"><button class="bg-sell" ${cur.price ? '' : 'disabled'} onclick="bagSellOpen()">Bán Ra</button><button class="bg-use" onclick="bagUse()">Sử Dụng</button></div>
-          <div class="bg-d">${cur.desc}</div></div>` : '<div class="bg-info"><div class="bg-d" style="text-align:center">Túi đồ trống</div></div>') +
-        '<div class="bg-gift"><button onclick="openGiftCode()">🎁 Gift Code</button></div>';
+          <div class="bg-d">${cur.desc}</div></div>` : '<div class="bg-info"><div class="bg-d" style="text-align:center">Túi đồ trống</div></div>');
     }
     function bagPick(k, i) { bagSel = k; bagStack = i || 0; bagQty = 1; renderBag(); }
     function bagStep(d) { const c = bagCur(); if (!c) return; bagQty = d === 0 ? c.qty : Math.max(1, Math.min(c.qty, Math.min(bagQty, c.qty) + d)); renderBag(); }

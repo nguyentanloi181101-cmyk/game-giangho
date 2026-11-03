@@ -1,0 +1,42 @@
+// ===== (Gift Code + Thông số game) DÁN THÊM vào Firebase Console → Firestore → Rules (bên trong `match /databases/{database}/documents { ... }`) =====
+// Giữ nguyên các quy tắc cũ (saves, pvp_players, chat_messages...). Chỉ THÊM phần dưới.
+
+function isAdmin() {
+  return request.auth != null
+    && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+}
+
+// Danh sách admin: tạo tay trong Console (Document ID = UID tài khoản admin). Client không được ghi.
+match /admins/{uid} {
+  allow read: if request.auth != null && request.auth.uid == uid;
+  allow write: if false;
+}
+
+match /gift_codes/{code} {
+  allow get: if request.auth != null;          // người chơi chỉ GET được từng mã, không liệt kê được
+  allow list: if isAdmin();
+  allow create, delete: if isAdmin();
+
+  allow update: if isAdmin()
+    // người chơi chỉ được tăng 'used' lên đúng 1, khi mã còn hiệu lực + còn lượt, và đồng thời ghi 'redeemed/{uid}' của chính mình
+    || (request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])
+        && request.resource.data.used == resource.data.used + 1
+        && resource.data.enabled == true
+        && (resource.data.max == 0 || resource.data.used < resource.data.max)
+        && (resource.data.exp == 0 || request.time.toMillis() < resource.data.exp)
+        && !exists(/databases/$(database)/documents/gift_codes/$(code)/redeemed/$(request.auth.uid))
+        && existsAfter(/databases/$(database)/documents/gift_codes/$(code)/redeemed/$(request.auth.uid)));
+
+  match /redeemed/{uid} {
+    allow read: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+    allow create: if request.auth != null && request.auth.uid == uid;
+    allow delete: if isAdmin();
+  }
+}
+
+// Thông số game do admin chỉnh (trang admin-config.html). Ai cũng ĐỌC được (game tải về khi mở); chỉ admin được GHI.
+match /game_config/{doc} {
+  allow read: if true;
+  allow write: if isAdmin();
+}

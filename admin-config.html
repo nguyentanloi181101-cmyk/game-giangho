@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin · Thông số game</title>
+<style>
+  :root{--bg:#0f1220;--card:#1a1f36;--line:#2d3556;--gold:#fde047;--txt:#e5e7f0;--mut:#8b93b3;--ok:#4ade80;--bad:#f87171}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;padding:16px 16px 90px}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:20px;color:var(--gold);margin:0 0 4px}
+  h2{font-size:15px;margin:0 0 8px;color:var(--gold)}
+  .sub{color:var(--mut);margin-bottom:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+  input,select{width:100%;background:#0f1220;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:inherit}
+  input::placeholder{color:#59617f}
+  input.ov{border-color:var(--gold);background:#231f0b}
+  input:focus,select:focus{outline:1px solid var(--gold)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .grid label{margin:0 0 3px}
+  button{background:#334;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+  button:hover{border-color:var(--gold)}
+  button.pri{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+  button.dng{color:var(--bad)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .tabs button.on{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+  .hide{display:none}
+  .msg{min-height:20px;margin-top:8px}
+  .note{color:var(--mut);font-size:12px;margin:4px 0 10px}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:#12162b;border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;z-index:5}
+  .bar .m{flex:1;max-width:520px}
+  table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line)}th{color:var(--mut);font-size:12px}
+  .uid{user-select:all;background:#0f1220;padding:2px 6px;border-radius:6px;word-break:break-all}
+  code{background:#0f1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--gold)}
+  .line3{display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;align-items:end;margin-bottom:6px}
+  @media(max-width:520px){.line3{grid-template-columns:1fr 1fr}.line3 .nm{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛠️ Admin · Thông số game</h1>
+  <div class="sub">Chỉnh thông số cơ bản của tướng, Bảo Vật, trang bị, boss bang, Lò Luyện Hỏa. Ô <b style="color:var(--gold)">viền vàng</b> = đang ghi đè; ô trống = dùng số mặc định (chữ mờ). Game của người chơi tự tải số mới khi mở / tải lại.</div>
+
+  <div id="v-login" class="card">
+    <h2>Đăng nhập admin</h2>
+    <label>Tên tài khoản</label><input id="lg-user" autocapitalize="none" autocomplete="username">
+    <label>Mật khẩu</label><input id="lg-pass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    <div style="margin-top:10px"><button class="pri" onclick="login()">Đăng nhập</button></div>
+    <div id="lg-msg" class="msg"></div>
+  </div>
+
+  <div id="v-noadmin" class="card hide">
+    <h2>⚠️ Tài khoản này chưa có quyền admin</h2>
+    <p>Trong Firestore tạo collection <code>admins</code>, thêm document có <b>Document ID</b> = UID bên dưới (đã làm cho trang Gift Code thì dùng chung). Rồi tải lại trang.</p>
+    <p>UID của bạn: <span id="my-uid" class="uid"></span></p>
+    <button onclick="auth.signOut()">Đăng xuất</button>
+  </div>
+
+  <div id="v-panel" class="hide">
+    <div class="tabs" id="tabs"></div>
+
+    <div id="t-hero" class="card"></div>
+    <div id="t-ts" class="card hide"></div>
+    <div id="t-eq" class="card hide"></div>
+    <div id="t-boss" class="card hide"></div>
+  </div>
+</div>
+
+<div class="bar hide" id="bar">
+  <div class="m" id="bar-msg" style="font-size:13px"></div>
+  <button onclick="reloadCfg()">↻ Tải lại từ máy chủ</button>
+  <button class="pri" id="btn-save" onclick="save()">💾 Lưu lên máy chủ</button>
+  <button onclick="auth.signOut()">Đăng xuất</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDOWlrfsWTx0HNWQAYvPHw7fWHlFP3UNu4", authDomain: "game-118e8.firebaseapp.com", projectId: "game-118e8",
+  storageBucket: "game-118e8.firebasestorage.app", messagingSenderId: "612432319937", appId: "1:612432319937:web:0e2ba2a7ecc032d8150b40"
+};
+const CL_DOMAIN = '@mhgh-game.app';
+const fbApp = firebase.initializeApp(FIREBASE_CONFIG, 'admin');   // app riêng: không đè phiên đăng nhập game
+const auth = fbApp.auth(), db = fbApp.firestore();
+
+/* Số MẶC ĐỊNH trong code game (chỉ dùng làm chữ mờ gợi ý + để biết ô nào đang ghi đè).
+   Nếu bạn sửa số mặc định trong code, cập nhật khối này cho khớp. */
+const DEF = {"heroes":[{"id":0,"name":"Ma Đao Thánh Nữ","role":"atk","s":{"hp":2800,"atk":340,"def":30,"dodge":10,"acc":300,"crit":40,"critDmg":4,"tough":5,"pierce":30,"block":0,"heal":0,"spd":60,"startRage":0}},{"id":1,"name":"Thanh Y Tiên Tử","role":"heal","s":{"hp":3200,"atk":280,"def":45,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":45,"startRage":0}},{"id":2,"name":"Chu Nguyên Chương","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":8,"acc":300,"crit":15,"critDmg":3,"tough":15,"pierce":15,"block":10,"heal":0,"spd":55,"startRage":100}},{"id":3,"name":"Độc Cô Cầu Bại","role":"atk","s":{"hp":2900,"atk":360,"def":35,"dodge":10,"acc":300,"crit":50,"critDmg":5,"tough":5,"pierce":40,"block":0,"heal":0,"spd":50,"startRage":0}},{"id":4,"name":"Trương Tam Phong","role":"skill","s":{"hp":3500,"atk":290,"def":60,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":20,"pierce":20,"block":15,"heal":0,"spd":40,"startRage":100}},{"id":5,"name":"Âu Cơ","role":"heal","s":{"hp":3000,"atk":300,"def":50,"dodge":10,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":50,"startRage":50}},{"id":6,"name":"Hoa Mãn Lâu","role":"skill","s":{"hp":2000,"atk":500,"def":60,"dodge":50,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":77,"startRage":100}},{"id":7,"name":"Kiều Phong","role":"atk","s":{"hp":1000,"atk":2500,"def":100,"dodge":2,"acc":300,"crit":30,"critDmg":3,"tough":5,"pierce":100,"block":0,"heal":0,"spd":65,"startRage":0}},{"id":8,"name":"Lạc Long Quân","role":"tank","s":{"hp":5000,"atk":300,"def":120,"dodge":70,"acc":300,"crit":10,"critDmg":2,"tough":30,"pierce":10,"block":30,"heal":0,"spd":1000,"startRage":100}},{"id":9,"name":"Đông Phương Cô Nương","role":"atk","s":{"hp":3000,"atk":300,"def":80,"dodge":20,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":50,"block":5,"heal":0,"spd":50,"startRage":100}},{"id":10,"name":"Tiểu Yêu","role":"skill","s":{"hp":3600,"atk":320,"def":50,"dodge":8,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":25,"block":5,"heal":0,"spd":58,"startRage":100}},{"id":11,"name":"Vô Nhai Tử","role":"sup","s":{"hp":3200,"atk":260,"def":45,"dodge":12,"acc":300,"crit":15,"critDmg":2,"tough":10,"pierce":15,"block":5,"heal":0,"spd":62,"startRage":100}},{"id":12,"name":"Đoàn Dự","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":30,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":5,"heal":0,"spd":70,"startRage":100}},{"id":13,"name":"Bắc Cái","role":"skill","s":{"hp":3000,"atk":330,"def":40,"dodge":15,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":30,"block":5,"heal":0,"spd":56,"startRage":0}},{"id":14,"name":"Đông Tà","role":"skill","s":{"hp":2800,"atk":350,"def":35,"dodge":20,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":60,"startRage":0}},{"id":15,"name":"Tây Độc","role":"tank","s":{"hp":4200,"atk":280,"def":80,"dodge":10,"acc":300,"crit":15,"critDmg":2,"tough":25,"pierce":20,"block":25,"heal":0,"spd":48,"startRage":0}},{"id":16,"name":"Nam Đế","role":"sup","s":{"hp":3300,"atk":270,"def":50,"dodge":15,"acc":300,"crit":15,"critDmg":2,"tough":15,"pierce":15,"block":10,"heal":0,"spd":52,"startRage":0}},{"id":17,"name":"Vương Trùng Dương","role":"sup","s":{"hp":3200,"atk":280,"def":45,"dodge":12,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":10,"heal":0,"spd":54,"startRage":0}}],"ts":[{"k":1,"name":"Tôn Sư Ký","lines":[{"t":"dodge","label":"Né","base":30,"per":0.03},{"t":"atkFlat","label":"Công","base":1000,"per":0.15},{"t":"hpFlat","label":"HP","base":5000,"per":0.2}]},{"k":6,"name":"Bá Vương Kiếm","lines":[{"t":"acc","label":"Chuẩn","base":15,"per":0.03},{"t":"crit","label":"Bạo","base":50,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":30,"per":0.15}]},{"k":7,"name":"Thủy Hoàng Đăng","lines":[{"t":"tough","label":"Bền","base":25,"per":0.05},{"t":"crit","label":"Bạo","base":25,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":25,"per":0.15}]},{"k":8,"name":"Trống Lôi Âm","lines":[{"t":"crit","label":"Bạo","base":50,"per":0.05},{"t":"atkFlat","label":"Công","base":2000,"per":0.15},{"t":"atkFlat","label":"Công","base":1500,"per":0.15}]},{"k":9,"name":"Kim Giao Tiễn","lines":[{"t":"spd","label":"Tốc","base":20,"per":0.02},{"t":"critDmg","label":"Bạo Sát","base":500,"per":0.15},{"t":"pierce","label":"Phá giáp","base":10000,"per":0.15}]}],"tsGlobal":{"starAdd":0.5,"maxLv":100,"maxStar":10},"equip":{"items":[{"k":"hat","name":"Mũ","label":"HP","per":1000},{"k":"armor","name":"Áo","label":"Thủ","per":50},{"k":"sword","name":"Kiếm","label":"Công","per":300},{"k":"boots","name":"Giày","label":"Tốc","per":1}],"maxLv":1000,"rewardEach":4,"rewardStartLv":1},"boss":{"baseHp":2000000,"hpMult":2,"ctMult":2,"atkDiv":4000,"heroDmgMult":3,"maxRounds":30,"ptsPerDmg":20000,"killPts":100},"guild":{"hp1":3000,"def1":500,"atk":1000,"hp2":6000,"def2":1000,"pierce":1000,"heal":1000,"spd":2,"critDmg":20,"boss":10000},"guildSkills":["Cường Tráng","Hộ Thuẫn","Lợi Kiếm","Cường Thân","Kiên Cố","Phá Giáp","Hồi Phục","Thần Tốc","Bạo Kích","Chí Tôn"],"roleRage":{"skill":100,"atk":50,"sup":100,"heal":50,"tank":100}};
+
+const STAT_FIELDS = [['hp','HP (Máu)'],['atk','Công'],['def','Thủ'],['dodge','Né'],['acc','Chuẩn'],['crit','Bạo'],['critDmg','Bạo Sát'],['tough','Bền'],['pierce','Phá giáp'],['block','Đỡ đòn (%)'],['heal','Hồi máu / hiệp'],['spd','Tốc'],['startRage','Nộ khởi đầu']];
+const ROLES = { skill:'✨ Kỹ năng (ulti liên tục)', atk:'⚔️ Công kích', sup:'🌟 Hỗ trợ', heal:'💚 Trị liệu', tank:'🛡️ Thủ (bị đánh đầu tiên)' };
+const GUILD_KEYS = ['hp1','def1','atk','hp2','def2','pierce','heal','spd','critDmg','boss'];
+const GUILD_LABEL = { hp1:'HP tối đa / cấp (Cường Tráng)', def1:'Thủ / cấp (Hộ Thuẫn)', atk:'Công / cấp (Lợi Kiếm)', hp2:'HP tối đa / cấp (Cường Thân)', def2:'Thủ / cấp (Kiên Cố)', pierce:'Phá giáp / cấp', heal:'Hồi máu / cấp (cuối hiệp)', spd:'Tốc / cấp', critDmg:'Bạo sát / cấp', boss:'Sát thương lên boss bang / cấp (Chí Tôn)' };
+const BOSS_LABEL = { baseHp:'HP boss đầu tiên', hpMult:'Boss sau nhân HP (×)', ctMult:'Boss Chí Tôn: nhân HP & sát thương (×)', atkDiv:'Sát thương đòn boss = HP ÷ số này', heroDmgMult:'Hệ số sát thương tướng đánh boss (× Công)', maxRounds:'Số hiệp tối đa mỗi lần khiêu chiến', ptsPerDmg:'Cứ bao nhiêu sát thương = 1 Điểm BOSS', killPts:'Điểm BOSS thưởng khi hạ boss' };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('vi-VN');
+let cfg = {}, tab = 'hero', heroSel = 0;
+
+function say(id, t, ok) { const e = $(id); e.style.color = ok === false ? 'var(--bad)' : 'var(--ok)'; e.textContent = t || ''; }
+function show(v) { ['v-login', 'v-noadmin', 'v-panel'].forEach(x => $(x).classList.toggle('hide', x !== v)); $('bar').classList.toggle('hide', v !== 'v-panel'); }
+
+/* ---------- đăng nhập ---------- */
+async function login() {
+  const u = ($('lg-user').value || '').trim().toLowerCase(), p = $('lg-pass').value || '';
+  if (!/^[a-z0-9_]{3,20}$/.test(u) || p.length < 6) return say('lg-msg', 'Tên tài khoản hoặc mật khẩu không hợp lệ.', false);
+  say('lg-msg', 'Đang đăng nhập…');
+  try { await auth.signInWithEmailAndPassword(u + CL_DOMAIN, p); say('lg-msg', ''); } catch (e) { say('lg-msg', 'Sai tên tài khoản hoặc mật khẩu.', false); }
+}
+auth.onAuthStateChanged(async u => {
+  if (!u) return show('v-login');
+  try { const a = await db.collection('admins').doc(u.uid).get(); if (!a.exists) { $('my-uid').textContent = u.uid; return show('v-noadmin'); } }
+  catch (e) { $('my-uid').textContent = u.uid; return show('v-noadmin'); }
+  show('v-panel'); await reloadCfg();
+});
+
+/* ---------- đọc / ghi cấu hình ---------- */
+async function reloadCfg() {
+  say('bar-msg', 'Đang tải…');
+  try {
+    const d = await db.collection('game_config').doc('main').get();
+    cfg = d.exists ? JSON.parse(d.data().json || '{}') : {};
+    say('bar-msg', d.exists ? '✔ Đã tải cấu hình hiện tại.' : 'Chưa có cấu hình trên máy chủ (đang dùng toàn bộ số mặc định).');
+  } catch (e) { cfg = {}; say('bar-msg', 'Không tải được: ' + (e.code || e.message), false); }
+  renderAll();
+}
+function prune(o) {   // bỏ trường rỗng / object rỗng
+  if (Array.isArray(o)) { const a = o.map(prune); return a.every(x => x == null) ? undefined : a; }
+  if (o && typeof o === 'object') { const r = {}; Object.keys(o).forEach(k => { const v = prune(o[k]); if (v !== undefined) r[k] = v; }); return Object.keys(r).length ? r : undefined; }
+  return (o === '' || o === null || o === undefined || (typeof o === 'number' && !isFinite(o))) ? undefined : o;
+}
+async function save() {
+  const out = prune(cfg) || {};
+  $('btn-save').disabled = true; say('bar-msg', 'Đang lưu…');
+  try {
+    await db.collection('game_config').doc('main').set({ json: JSON.stringify(out), t: Date.now(), by: auth.currentUser.uid });
+    cfg = out; say('bar-msg', '✔ Đã lưu lúc ' + new Date().toLocaleTimeString('vi-VN') + '. Người chơi sẽ nhận số mới khi mở/tải lại game.');
+  } catch (e) { say('bar-msg', 'Lỗi: ' + (e.code || e.message) + (e.code === 'permission-denied' ? ' (kiểm tra quy tắc Firestore game_config + document admins/UID)' : ''), false); }
+  finally { $('btn-save').disabled = false; }
+}
+
+/* ---------- helpers form ---------- */
+function getp(path) { let o = cfg; for (const k of path) { if (o == null) return undefined; o = o[k]; } return o; }
+function setp(path, v) {
+  let o = cfg; for (let i = 0; i < path.length - 1; i++) { if (o[path[i]] == null || typeof o[path[i]] !== 'object') o[path[i]] = (typeof path[i + 1] === 'number') ? [] : {}; o = o[path[i]]; }
+  o[path[path.length - 1]] = v;
+}
+// ô số: path = đường dẫn trong cfg, def = số mặc định (chữ mờ)
+function num(path, def, extra) {
+  const v = getp(path), has = v !== undefined && v !== null && v !== '';
+  return `<input type="number" step="any" class="${has ? 'ov' : ''}" placeholder="${esc(def)}" value="${has ? esc(v) : ''}" data-p='${JSON.stringify(path)}' onchange="onNum(this)" ${extra || ''}>`;
+}
+function onNum(el) {
+  const path = JSON.parse(el.dataset.p), s = el.value.trim();
+  if (s === '' || !isFinite(Number(s))) { setp(path, ''); el.value = ''; el.classList.remove('ov'); } else { setp(path, Number(s)); el.classList.add('ov'); }
+}
+function resetAt(path) { setp(path, undefined); const o = path.slice(0, -1).reduce((a, k) => (a == null ? a : a[k]), cfg); if (o && !Array.isArray(o)) delete o[path[path.length - 1]]; renderAll(); }
+
+/* ---------- các tab ---------- */
+const TABS = [['hero', '🧙 Tướng'], ['ts', '🏺 Bảo Vật'], ['eq', '🛡️ Trang bị'], ['boss', '🐲 Boss bang & Lò Luyện Hỏa']];
+function renderTabs() { $('tabs').innerHTML = TABS.map(t => `<button class="${tab === t[0] ? 'on' : ''}" onclick="setTab('${t[0]}')">${t[1]}</button>`).join(''); ['hero', 'ts', 'eq', 'boss'].forEach(t => $('t-' + t).classList.toggle('hide', t !== tab)); }
+function setTab(t) { tab = t; renderTabs(); }
+
+function renderHero() {
+  const h = DEF.heroes.find(x => x.id === heroSel), id = String(heroSel), cur = (cfg.heroes && cfg.heroes[id]) || {};
+  const role = cur.role || '';
+  const ovCount = hid => Object.keys((cfg.heroes && cfg.heroes[hid]) || {}).length;
+  $('t-hero').innerHTML = `<h2>Thông số cơ bản của tướng</h2>
+    <div class="note">Đây là chỉ số GỐC (trước khi nhân cấp / sao / trang bị / bảo vật…). Áp dụng cho PvE, Giang Hồ và Tỷ Võ.</div>
+    <label>Chọn tướng</label>
+    <select onchange="heroSel=Number(this.value);renderHero()">${DEF.heroes.map(x => `<option value="${x.id}" ${x.id === heroSel ? 'selected' : ''}>${esc(x.name)}${ovCount(x.id) ? ' ✏️ (' + ovCount(x.id) + ' ô đã sửa)' : ''}</option>`).join('')}</select>
+    <label>Chất tướng (quyết định nộ đầu trận, ulti liên tục, thứ tự bị đánh)</label>
+    <select onchange="setp(['heroes','${id}','role'],this.value);renderHero()"><option value="">Mặc định: ${esc(ROLES[h.role])}</option>${Object.keys(ROLES).map(r => `<option value="${r}" ${role === r ? 'selected' : ''}>${esc(ROLES[r])}</option>`).join('')}</select>
+    <div class="grid" style="margin-top:10px">${STAT_FIELDS.map(f => {
+      const def = f[0] === 'startRage' ? DEF.roleRage[role || h.role] : h.s[f[0]];
+      return `<div><label>${f[1]}</label>${num(['heroes', id, f[0]], f[0] === 'startRage' ? def + ' (theo chất tướng)' : def, 'min="0"')}</div>`;
+    }).join('')}</div>
+    <div style="margin-top:12px"><button class="dng" onclick="if(confirm('Khôi phục tất cả số của tướng này về mặc định?')){delete (cfg.heroes||{})['${id}'];renderHero()}">Khôi phục tướng này</button></div>`;
+}
+
+function renderTs() {
+  const g = DEF.tsGlobal;
+  $('t-ts').innerHTML = `<h2>Thông số Bảo Vật</h2>
+    <div class="note">Công thức: chỉ số = <b>Gốc</b> × (1 + <b>Sao thêm</b> × số★) × (1 + <b>Điểm mỗi cấp</b> × Lv). Ví dụ điểm mỗi cấp 0.15 = +15% mỗi cấp.</div>
+    <div class="grid">
+      <div><label>Mỗi ★ cộng thêm (0.5 = +50% gốc)</label>${num(['treasure', 'starAdd'], g.starAdd, 'min="0"')}</div>
+      <div><label>Cấp tối đa</label>${num(['treasure', 'maxLv'], g.maxLv, 'min="1"')}</div>
+      <div><label>Sao tối đa</label>${num(['treasure', 'maxStar'], g.maxStar, 'min="0"')}</div>
+    </div>
+    ${DEF.ts.map(t => `<h2 style="margin-top:16px">${esc(t.name)}</h2>` + t.lines.map((l, i) => `<div class="line3"><div class="nm"><label>Dòng ${i + 1}</label><b>${esc(l.label)}</b></div>
+      <div><label>Chỉ số gốc</label>${num(['treasure', 'kinds', String(t.k), i, 'base'], l.base, 'min="0"')}</div>
+      <div><label>Điểm mỗi cấp</label>${num(['treasure', 'kinds', String(t.k), i, 'per'], l.per, 'min="0"')}</div></div>`).join('')).join('')}`;
+}
+
+function renderEq() {
+  const e = DEF.equip;
+  $('t-eq').innerHTML = `<h2>Thông số trang bị</h2>
+    <div class="note">Mỗi cấp trang bị cộng thêm số chỉ số bên dưới cho tướng đứng ở khung gắn trang bị.</div>
+    <div class="grid">${e.items.map(i => `<div><label>${esc(i.name)}: +${esc(i.label)} mỗi cấp</label>${num(['equip', 'per', i.k], i.per, 'min="0"')}</div>`).join('')}</div>
+    <div class="grid" style="margin-top:10px">
+      <div><label>Cấp tối đa của trang bị</label>${num(['equip', 'maxLv'], e.maxLv, 'min="1"')}</div>
+      <div><label>Thưởng Ải 4-Bàn 10: số món mỗi loại</label>${num(['equip', 'rewardEach'], e.rewardEach, 'min="0"')}</div>
+      <div><label>Cấp ban đầu của món thưởng</label>${num(['equip', 'rewardStartLv'], e.rewardStartLv, 'min="1"')}</div></div>`;
+}
+
+function bossRows() {
+  const b = Object.assign({}, DEF.boss, cfg.boss || {}), r = [];
+  for (let k = 0; k < 10; k++) r.push(`<tr><td>Boss ${k + 1}</td><td>${fmt(b.baseHp * Math.pow(b.hpMult, k))}</td><td>${fmt(b.baseHp * Math.pow(b.hpMult, k) * b.ctMult)}</td><td>${fmt(Math.round(b.baseHp * Math.pow(b.hpMult, k) / b.atkDiv))}</td></tr>`);
+  return r.join('');
+}
+function renderBoss() {
+  $('t-boss').innerHTML = `<h2>Boss bang</h2>
+    <div class="note">HP boss k = HP đầu × (hệ số)^k. Chí Tôn nhân HP và sát thương. Bảng dưới tính theo số bạn đang nhập (lưu rồi mới áp dụng cho người chơi).</div>
+    <div class="grid">${Object.keys(BOSS_LABEL).map(k => `<div><label>${BOSS_LABEL[k]}</label>${num(['boss', k], DEF.boss[k], 'min="0" oninput="refreshBossTable()"')}</div>`).join('')}</div>
+    <div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Boss</th><th>HP thường</th><th>HP Chí Tôn</th><th>Sát thương 1 đòn (thường)</th></tr></thead><tbody id="boss-rows">${bossRows()}</tbody></table></div>
+    <h2 style="margin-top:20px">Lò Luyện Hỏa (kỹ năng bang)</h2>
+    <div class="note">Mỗi cấp kỹ năng cộng cho tướng số bên dưới. Cấp kỹ năng không giới hạn.</div>
+    <div class="grid">${GUILD_KEYS.map((k, i) => `<div><label>${esc(DEF.guildSkills[i])} — ${GUILD_LABEL[k]}</label>${num(['guild', k], DEF.guild[k], 'min="0"')}</div>`).join('')}</div>`;
+}
+function refreshBossTable() { setTimeout(() => { const t = $('boss-rows'); if (t) t.innerHTML = bossRows(); }, 0); }
+document.addEventListener('change', e => { if (e.target.closest && e.target.closest('#t-boss')) refreshBossTable(); });
+
+function renderAll() { renderTabs(); renderHero(); renderTs(); renderEq(); renderBoss(); }
+</script>
+</body>
+</html>
