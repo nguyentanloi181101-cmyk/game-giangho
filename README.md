@@ -193,8 +193,24 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 ## Gift Code (admin tạo mã trên máy chủ)
 - **Trang admin**: `admin-giftcode.html` (mở trực tiếp hoặc đưa lên cùng hosting). Đăng nhập bằng tài khoản game của bạn, tạo mã, chọn quà
   (Thể Lực, Bạc, Gạo, Vàng, Mảnh tướng, Bảo Vật, vật phẩm Bang), đặt số lượt tối đa / hạn dùng, bật-tắt hoặc xoá mã. Dùng app Firebase tên riêng nên **không** làm văng đăng nhập game trên cùng trình duyệt.
-- **Cài đặt 1 lần**: (1) dán quy tắc trong `firestore-giftcode.rules.txt` vào Firestore Rules; (2) tạo collection `admins`, thêm document có ID = UID tài khoản admin
+- **Cài đặt 1 lần**: (1) dán quy tắc trong `firestore-admin.rules.txt` vào Firestore Rules; (2) tạo collection `admins`, thêm document có ID = UID tài khoản admin
   (trang admin tự hiện UID nếu tài khoản chưa có quyền).
 - **Người chơi**: Túi Đồ → 🎁 Gift Code. `js/core/giftcode.js` kiểm tra mã bằng transaction Firestore (đúng lượt, đúng hạn, mỗi tài khoản 1 lần qua `gift_codes/{MÃ}/redeemed/{uid}`).
   Mã viết cứng `GIFT_CODES` vẫn dùng được làm dự phòng.
 - **Thêm loại quà mới**: thêm 1 nhánh trong `gcGrant` (giftcode.js) + 1 mục trong `TYPES` / `renderRw` / `rwText` (admin-giftcode.html).
+
+
+## Thông số game do ADMIN chỉnh (trang riêng) + thay đổi v53
+- **Trang `admin-config.html`**: admin (tài khoản có document `admins/{uid}`) chỉnh: chỉ số cơ bản + chất tướng của từng tướng; thông số Bảo Vật (gốc / điểm mỗi cấp / sao thêm / cấp & sao tối đa);
+  trang bị (cộng mỗi cấp, cấp tối đa, thưởng); boss bang (HP đầu, hệ số, Chí Tôn, sát thương, điểm) và Lò Luyện Hỏa (mỗi cấp cộng bao nhiêu).
+  Lưu vào Firestore `game_config/main` (1 field `json`). Ô để trống = dùng số mặc định trong code.
+- **Game đọc cấu hình**: `js/core/remote-config.js` (nạp đầu tiên) tải qua REST, cache ở `localStorage['game_cfg']` (không theo save người chơi), áp bằng `cfgApply()` (gọi ở `boot.js`).
+  Các file dữ liệu dùng `cfgSnap(...)` để giữ số mặc định: `game-state.js` (HERO_DEFAULTS), `treasure.js` (TS_DEFS, TS_MAX, TS_STAR_MAX, TS_STAR_ADD),
+  `equipment-data.js` (EQUIP.per, EQUIP_MAX, EQ_REWARD), `guild-sub.js` (GD_PER, BOSS_CFG).
+  Thêm tham số mới: khai báo trong file dữ liệu bằng `cfgSnap`/`cfgGet`, thêm nhánh trong `cfgApply`, thêm ô trong admin-config.html (+ số mặc định trong khối `DEF`).
+- **Đã bỏ khỏi Cài đặt**: Nhạc nền, "Chỉnh thông số tướng", "Sao lưu / Chuyển dữ liệu". Dữ liệu `hero_stat_ov` / `hero_role` cũ của người chơi không còn được dùng.
+- **Âm thanh**: không còn nhạc nền. Mỗi tướng (id 0-17) có âm tuyệt kỹ riêng `assets/audio/heroes/NN-ten.mp3` (tạo bằng tổng hợp âm), phát lúc bắt đầu tung chiêu (`HERO_SND_SRC` trong `js/battle/audio.js`).
+  Còn giữ `normal-attack.mp3` (đánh thường), `battle-open.mp3` (âm mở trận), `go-stone.mp3` (Vô Nhai Tử, đã tạo lại).
+- **Bảo Vật**: tăng sao bằng cách tiêu 1 Bảo Vật CÙNG LOẠI chưa gắn khung (`tsStarUp`). Búa 🔨 vẫn nằm trong Túi Đồ nhưng không dùng để tăng sao.
+- **Lò Luyện Hỏa**: nâng cấp không giới hạn (`GD_SKILL_MAX` = Infinity).
+- **Trang chủ**: thẻ tướng dùng ảnh tĩnh (không chuỗi khung); nút 🎁 Gift Code nằm dưới Túi Đồ. Tỷ Võ: đã bỏ đài sen.

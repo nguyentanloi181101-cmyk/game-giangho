@@ -1,7 +1,0 @@
-/* HIỆU ỨNG TUYỆT KỸ: doan-du
-   Tàn ảnh chạy nay là chuỗi khung SEQ.ddRun (đã xóa ảnh/emoji chạy cũ). */
-
-    .bf-lbghost{position:absolute;transform:translate(-50%,-50%);pointer-events:none;z-index:93;filter:drop-shadow(0 0 8px #67e8f9) drop-shadow(0 0 16px #22d3ee);opacity:.9}
-    .bf-lbghost .hero-seq{position:absolute;left:0;top:0}
-    .bf-lb{position:absolute;top:-42px;left:2px;font-size:11px;z-index:25;filter:drop-shadow(0 0 6px #67e8f9);pointer-events:none}
-    .bf-lb b{background:#0e7490;border:1px solid #67e8f9;border-radius:8px;padding:0 4px;color:#cffafe}

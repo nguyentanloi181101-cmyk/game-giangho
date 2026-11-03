@@ -6,9 +6,10 @@
 
     const HERO_DEFAULTS = {};
     HEROES.forEach(h => { HERO_DEFAULTS[h.id] = { hp:h.hp, atk:h.atk, def:h.def, dodge:h.dodge, acc:h.acc || 0, crit:h.crit || 0, critDmg:h.critDmg || 0, tough:h.tough || 0, pierce:h.pierce || 0, block:h.block || 0, heal:h.heal || 0, spd:h.spd, startRage:h.startRage || 0 }; });
+    cfgSnap('hero', HERO_DEFAULTS);   // bản mặc định để admin ghi đè (remote-config.js)
     const loadJSON = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } };
     const saveJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-    let statOv = loadJSON('hero_stat_ov');   // chỉnh sửa trong Cài đặt
+    let statOv = cfgHeroPatch().stat;   // chỉ số tướng do ADMIN chỉnh (không còn chỉnh trong Cài đặt)
     let gold = (() => { try { const v = parseInt(localStorage.getItem('gold_val')); return isNaN(v) ? 2291 : Math.max(0, v); } catch (e) { return 2291; } })();
     const updateGold = () => { ['gold-val', 'rc-gold'].forEach(i => { const el = document.getElementById(i); if (el) el.innerText = gold; }); };
     const goldSave = () => { try { localStorage.setItem('gold_val', String(gold)); } catch (e) {} updateGold(); };

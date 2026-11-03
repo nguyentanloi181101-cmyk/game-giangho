@@ -5,7 +5,7 @@
       const staCost = STA_WAVES * STA_PER_WAVE;
       if (!staSpend(staCost)) { alert('⚡ Không đủ thể lực! Cần ' + staCost + ' thể lực (có ' + staState.v + ').\nThể lực hồi 1 mỗi phút, hoặc dùng 💊 Viên Thể Lực trong Túi đồ (bấm vào ô Thể Lực).'); return; }
       battleToken++;
-      playBgm(); playBattleOpen();
+      playBattleOpen();
       currentStage = stage; currentBattle = battle; currentWave = 1;
       busy = false;
       document.getElementById('bf-units').innerHTML = '';

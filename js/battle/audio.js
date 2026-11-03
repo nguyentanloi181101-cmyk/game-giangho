@@ -2,8 +2,8 @@
    (tách từ index.html cũ — script) */
 
     // Chiêu cuối: tướng thường dùng kiểu lao vào đánh 3 đòn, Trương Tam Phong có chiêu riêng
-    // Âm thanh tuyệt kỹ theo tướng (nhúng sẵn): id 0 = Ma Đao Thánh Nữ, id 2 = Chu Nguyên Chương, id 5 = Âu Cơ, id 8 = Lạc Long Quân, id 9 = Hỏa Thiên Tướng, id 10 = Tiểu Yêu (Vô Nhai Tử: không có âm lúc bắt đầu chiêu, mỗi viên cờ rơi kêu 1 tiếng – xem playGoStone)
-    const HERO_SND_SRC = { 0: 'assets/audio/heroes/00-ma-dao-thanh-nu.mp3', 2: 'assets/audio/heroes/02-chu-nguyen-chuong.mp3', 5: 'assets/audio/heroes/05-au-co.mp3', 9: 'assets/audio/heroes/09-dong-phuong-co-nuong.mp3', 8: 'assets/audio/heroes/08-lac-long-quan.mp3', 10: 'assets/audio/heroes/10-tieu-yeu.mp3' };
+    // Âm thanh tuyệt kỹ theo tướng (assets/audio/heroes/NN-ten.mp3). [ghi chú cũ: id 0 = Ma Đao Thánh Nữ, id 2 = Chu Nguyên Chương, id 5 = Âu Cơ, id 8 = Lạc Long Quân, id 9 = Hỏa Thiên Tướng, id 10 = Tiểu Yêu (Vô Nhai Tử: không có âm lúc bắt đầu chiêu, mỗi viên cờ rơi kêu 1 tiếng – xem playGoStone)
+    const HERO_SND_SRC = { 0: 'assets/audio/heroes/00-ma-dao-thanh-nu.mp3?v=2', 1: 'assets/audio/heroes/01-thanh-y-tien-tu.mp3?v=2', 2: 'assets/audio/heroes/02-chu-nguyen-chuong.mp3?v=2', 3: 'assets/audio/heroes/03-doc-co-cau-bai.mp3?v=2', 4: 'assets/audio/heroes/04-truong-tam-phong.mp3?v=2', 5: 'assets/audio/heroes/05-au-co.mp3?v=2', 6: 'assets/audio/heroes/06-hoa-man-lau.mp3?v=2', 7: 'assets/audio/heroes/07-kieu-phong.mp3?v=2', 8: 'assets/audio/heroes/08-lac-long-quan.mp3?v=2', 9: 'assets/audio/heroes/09-dong-phuong-co-nuong.mp3?v=2', 10: 'assets/audio/heroes/10-tieu-yeu.mp3?v=2', 11: 'assets/audio/heroes/11-vo-nhai-tu.mp3?v=2', 12: 'assets/audio/heroes/12-doan-du.mp3?v=2', 13: 'assets/audio/heroes/13-bac-cai.mp3?v=2', 14: 'assets/audio/heroes/14-dong-ta.mp3?v=2', 15: 'assets/audio/heroes/15-tay-doc.mp3?v=2', 16: 'assets/audio/heroes/16-nam-de.mp3?v=2', 17: 'assets/audio/heroes/17-vuong-trung-duong.mp3?v=2' };   // mỗi tướng 1 âm tuyệt kỹ riêng (tạo bằng tổng hợp âm), phát lúc bắt đầu tung chiêu
     const heroSnd = {};
     Object.keys(HERO_SND_SRC).forEach(id => { try { const a = new Audio(HERO_SND_SRC[id]); a.preload = 'auto'; heroSnd[id] = a; } catch (e) {} });
     function playHeroSound(id) {
@@ -45,15 +45,6 @@
       } catch (e) {}
     }
     const normalAttack = (u, foes, tok) => { playNormalAtk(); return attack(u, foes, 1, u.atk, tok); };
-    // Nhạc nền trong mọi trận (ải thường & Tỷ Võ), lặp lại, nhỏ hơn âm tuyệt kỹ
-    const BGM_SRC = 'assets/audio/bgm.mp3';
-    let bgm = null;
-    function playBgm() {
-      try {
-        if (!audioSet.bgm) return;
-        if (!bgm) { bgm = new Audio(BGM_SRC); bgm.loop = true; bgm.volume = 0.35; }
-        if (bgm.paused) { bgm.currentTime = 0; const p = bgm.play(); if (p && p.catch) p.catch(() => {}); }
-      } catch (e) {}
-    }
-    function stopBgm() { try { if (bgm) { bgm.pause(); bgm.currentTime = 0; } if (openSnd) { openSnd.pause(); openSnd.currentTime = 0; } } catch (e) {} }
+    // (Đã bỏ nhạc nền.) stopBgm giờ chỉ dừng âm mở màn.
+    function stopBgm() { try { if (openSnd) { openSnd.pause(); openSnd.currentTime = 0; } } catch (e) {} }
     function stopHeroSounds() { try { Object.values(heroSnd).forEach(a => { a.pause(); a.currentTime = 0; }); } catch (e) {} }

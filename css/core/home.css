@@ -39,3 +39,8 @@
    /* hiện nguyên ảnh tướng phủ kín thẻ, không cắt vòng tròn */
     .hero-card .hero-bg-sprite{background:none}
     .home-hint{text-align:center;font-size:10px;color:#a7f3d0;opacity:.85}
+
+    /* Túi Đồ + Gift Code xếp dọc trong 1 cột của hàng nút trên trang chủ */
+    .feat-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
+    .feat-col .feat-item { flex: none; }
+    .feat-gift .feat-icon { width: 58%; font-size: 26cqw; background: radial-gradient(circle, #fecaca 0%, #dc2626 100%); }
