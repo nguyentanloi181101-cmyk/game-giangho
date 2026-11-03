@@ -39,7 +39,7 @@
           <div class="battle-item ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `startBattleSequence(${stageNum}, ${i})`}">
             <div>
               <div class="battle-item-title">Bàn ${i} ${isLocked ? '🔒' : ''}</div>
-              <div class="battle-item-desc">🥈 ${fmtN(banReward(stageNum, i).silver)} bạc • 🌾 ${fmtN(banReward(stageNum, i).rice)} gạo<br>⚡ Tốn ${STA_WAVES * STA_PER_WAVE} thể lực • 💊 Thưởng ${PILL_PER_CLEAR} viên thể lực${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
+              <div class="battle-item-desc">🥈 ${fmtN(banReward(stageNum, i).silver)} bạc • 🌾 ${fmtN(banReward(stageNum, i).rice)} gạo<br>🔴 ${fmtN(banReward(stageNum, i).thanDan)} Thần Đan • 🟡 ${fmtN(banReward(stageNum, i).tienDan)} Tiên Đan<br>⚡ Tốn ${STA_WAVES * STA_PER_WAVE} thể lực • 💊 Thưởng ${PILL_PER_CLEAR} viên thể lực${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
             </div>
             ${isLocked ? '<div class="battle-item-btn disabled">Chưa mở</div>' : `<div class="battle-btns">${isCleared(stageNum, i) ? `<div class="battle-item-btn sweep" onclick="event.stopPropagation();sweepBattle(${stageNum}, ${i})">Quét ×${SWEEP_N}<small>⚡${SWEEP_N * STA_WAVES * STA_PER_WAVE}</small></div>` : ''}<div class="battle-item-btn">Đánh ▶</div></div>`}
           </div>
@@ -60,7 +60,7 @@
       const r = banReward(stage, battle); let extra = '';
       for (let n = 0; n < SWEEP_N; n++) { grantBanReward(stage, battle); grantPills(); if (n === 0) extra = grantStageReward(stage, battle); }
       if (typeof updatePower === 'function') updatePower();
-      pvpToast(`⚔️ Quét Ải ${stage} - Bàn ${battle} ×${SWEEP_N}!\n\n🥈 +${fmtN(r.silver * SWEEP_N)} bạc • 🌾 +${fmtN(r.rice * SWEEP_N)} gạo\n💊 +${PILL_PER_CLEAR * SWEEP_N} Viên Thể Lực (có ${staState.pills})\n⚡ -${cost} thể lực` + extra, true);
+      pvpToast(`⚔️ Quét Ải ${stage} - Bàn ${battle} ×${SWEEP_N}!\n\n🥈 +${fmtN(r.silver * SWEEP_N)} bạc • 🌾 +${fmtN(r.rice * SWEEP_N)} gạo\n🔴 +${fmtN(r.thanDan * SWEEP_N)} Thần Đan • 🟡 +${fmtN(r.tienDan * SWEEP_N)} Tiên Đan\\n💊 +${PILL_PER_CLEAR * SWEEP_N} Viên Thể Lực (có ${staState.pills})\n⚡ -${cost} thể lực` + extra, true);
     }
 
     function backToStages() {
