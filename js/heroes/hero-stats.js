@@ -1,8 +1,42 @@
 /* TƯỚNG: chỉ số thực dụng trong trận và mô tả kỹ năng
    (tách từ index.html cũ — script) */
 
+    // ===== DÀN HỖ TRỢ (màn Đội Ngũ) =====
+    // 6 ô. Mỗi tướng hỗ trợ cộng cho TOÀN ĐỘI: HP / Công / Thủ / Hồi = chỉ số bồi dưỡng của chính tướng đó × (số sao ÷ 10)
+    // VD: tướng có 100 HP — 10★ cộng +100 HP, 15★ cộng +150 HP. Đổi hệ số ở SUP_STAR_DIV.
+    const SUP_SLOTS = 6, SUP_STAR_DIV = 10;
+    let supIds = (() => {
+      let a = []; try { a = JSON.parse(localStorage.getItem('support_ids')) || []; } catch (e) {}
+      const out = [];
+      for (let i = 0; i < SUP_SLOTS; i++) { const v = a[i]; out.push(Number.isInteger(v) && HEROES.some(h => h.id === v) && !out.includes(v) && !team.includes(v) ? v : null); }
+      return out;
+    })();
+    const supSave = () => { try { localStorage.setItem('support_ids', JSON.stringify(supIds)); } catch (e) {} };
+    // chỉ số bồi dưỡng của 1 tướng = chỉ số gốc × hệ số cấp/sao (chưa tính trang bị / Bảo Vật / Bang) — SỬA Ở ĐÂY nếu muốn lấy nguồn khác
+    function supBase(id, base) {
+      const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id);
+      return { hp: Math.round(h.hp * g), atk: Math.round(h.atk * g), def: Math.round(h.def * g), heal: Math.round((h.heal || 0) * g) };
+    }
+    // phần 1 tướng hỗ trợ cộng cho đội
+    function supGive(id, base) {
+      const k = getProg(id).star / SUP_STAR_DIV, b = supBase(id, base);
+      return { hp: Math.round(b.hp * k), atk: Math.round(b.atk * k), def: Math.round(b.def * k), heal: Math.round(b.heal * k) };
+    }
+    // tổng cả dàn hỗ trợ
+    function supTotal(base) {
+      const t = { hp: 0, atk: 0, def: 0, heal: 0 };
+      supIds.forEach(id => { if (id == null || team.includes(id)) return; const g = supGive(id, base); t.hp += g.hp; t.atk += g.atk; t.def += g.def; t.heal += g.heal; });
+      return t;
+    }
+    // Chỉ số thực dụng = chỉ số riêng + cộng từ dàn Hỗ Trợ (chỉ cho tướng đang ra trận)
+    function heroStats(id, base) {
+      const s = heroStatsRaw(id, base);
+      if (team.includes(id)) { const b = supTotal(base); s.hp += b.hp; s.atk += b.atk; s.def += b.def; s.heal += b.heal; }
+      return s;
+    }
+
     // Chỉ số cấp/sao nhân trước, trang bị của khung cộng thẳng lên trên
-    function heroStats(id, base) {   // base = true (Tỷ Võ): chỉ lấy chỉ số cơ bản gốc, không lấy số chỉnh trong Cài đặt
+    function heroStatsRaw(id, base) {   // base = true (Tỷ Võ): chỉ lấy chỉ số cơ bản gốc, không lấy số chỉnh trong Cài đặt
       const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id), eb = equipBonus(frameOf(id)), pb = pvpBonus(frameOf(id)), tb = tsBonus(id), gb = (typeof gdBonus === 'function') ? gdBonus() : { hp:0, atk:0, def:0, pierce:0, spd:0, critDmg:0, heal:0 };
       return { hp:Math.round(h.hp * g * (1 + tb.hp / 100)) + tb.hpFlat + eb.hp + pb.hp + gb.hp, atk:Math.round(h.atk * g * (1 + tb.atk / 100)) + tb.atkFlat + eb.atk + pb.atk + gb.atk, def:Math.round(h.def * g) + eb.def + pb.def + gb.def,
                dodge:h.dodge + tb.dodge, acc:(h.acc || 0) + tb.acc, crit:(h.crit || 0) + tb.crit, critDmg:(h.critDmg || 0) + tb.critDmg + gb.critDmg, tough:(h.tough || 0) + tb.tough, pierce:(h.pierce || 0) + tb.pierce + gb.pierce, block:h.block || 0, spd:h.spd + eb.spd + tb.spd + gb.spd, heal:(h.heal || 0) + (tb.heal || 0) + gb.heal, healGuild:gb.heal, rage:h.startRage || 0, tia:Math.max(1, Math.floor(h.tia || 1)) };

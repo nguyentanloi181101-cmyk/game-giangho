@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/battle/hero3d.css?v=23">
   <link rel="stylesheet" href="css/battle/battle.css?v=23">
   <link rel="stylesheet" href="css/heroes/team.css?v=23">
+  <link rel="stylesheet" href="css/heroes/team-screen.css?v=1">
   <link rel="stylesheet" href="css/items/treasure.css?v=23">
   <link rel="stylesheet" href="css/heroes/hero-detail.css?v=29">
   <link rel="stylesheet" href="css/core/settings.css?v=23">
@@ -170,6 +171,27 @@
         <div class="pve-header"><button class="btn-back" onclick="switchScreen('home')">Trở về</button><h2 class="pve-title" id="pk-title">Chọn Võ Hiệp thăng cấp</h2></div>
         <div class="pk-sub">Chạm vào tướng để quản lý</div>
         <div class="pk-grid" id="pk-grid"></div>
+      </div>
+
+      <!-- ĐỘI NGŨ (màn hình đầy đủ: 5 tướng + dàn Hỗ Trợ) -->
+      <div class="screen" id="screen-team">
+        <div class="pve-header">
+          <button class="btn-back" onclick="tnBack()">Trở về</button>
+          <h2 class="pve-title" style="flex:1">Đội Ngũ</h2>
+          <div class="tn-lead">🚩<span>Đội Trưởng</span></div>
+          <button class="tn-hbtn blue" onclick="tnPet()">Thần Thú</button>
+        </div>
+        <div class="tn-main" id="tn-main"></div>
+      </div>
+
+      <!-- CHỌN VÕ HIỆP ĐỂ ĐỔI (ô đội ngũ / ô hỗ trợ) -->
+      <div class="screen" id="screen-tpick">
+        <div class="pve-header">
+          <button class="btn-back" onclick="tnPickBack()">Trở về</button>
+          <h2 class="pve-title" style="flex:1">Chọn Võ Hiệp</h2>
+          <button class="tn-hbtn" id="tn-sort" onclick="tnToggleSort()">Cấp Sao</button>
+        </div>
+        <div class="tn-pgrid" id="tn-pgrid"></div>
       </div>
 
       <!-- HUB VÕ HIỆP -->
@@ -399,6 +421,7 @@
   <script src="js/cloud/login-screen.js?v=23"></script>
   <script src="js/social/chat.js?v=23"></script>
   <script src="js/social/vohiep-hub.js?v=23"></script>
+  <script src="js/heroes/team-screen.js?v=1"></script>
   <script src="js/social/guild.js?v=23"></script>
   <script src="js/social/guild-sub.js?v=60"></script>
   <script src="js/social/thanthu.js?v=35"></script>

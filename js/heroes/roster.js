@@ -80,5 +80,6 @@
       try { localStorage.setItem('team_ids', JSON.stringify(team)); } catch (e) {}
       renderTeam();
     }
-    function openTeam() { renderTeam(); document.getElementById('team-modal').style.display = 'flex'; }
+    // Đội Ngũ giờ là màn hình đầy đủ (js/heroes/team-screen.js); hộp thoại cũ chỉ còn làm dự phòng
+    function openTeam() { if (typeof tnOpen === 'function') return tnOpen(); renderTeam(); document.getElementById('team-modal').style.display = 'flex'; }
     function closeTeam() { document.getElementById('team-modal').style.display = 'none'; renderHomeTeam(); }
