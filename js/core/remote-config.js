@@ -7,7 +7,7 @@
      heroes:   { "<id>": { hp, atk, def, dodge, acc, crit, critDmg, tough, pierce, block, heal, spd, startRage, tia, role } }  (chỉ trường nào khác mặc định)
      treasure: { starAdd, maxLv, maxStar, kinds: { "<loại>": [ {base, per} | null, ... 3 dòng ] } }
      equip:    { maxLv, rewardEach, rewardStartLv, per: { hat, armor, sword, boots } }
-     boss:     { baseHp, hpMult, ctMult, atkDiv, heroDmgMult, maxRounds, ptsPerDmg, killPts }
+     boss:     { daily, baseHp, hpMult, ctMult, atkDiv, heroDmgMult, maxRounds, ptsPerDmg, killPts }
      guild:    { hp1, def1, atk, hp2, def2, pierce, heal, spd, critDmg, boss }     (mỗi cấp Lò Luyện Hỏa) */
 
 const CFG_URL = 'https://firestore.googleapis.com/v1/projects/game-118e8/databases/(default)/documents/game_config/main';

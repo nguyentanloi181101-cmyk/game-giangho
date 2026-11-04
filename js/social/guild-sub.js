@@ -6,7 +6,7 @@ const GD_HEAL_PER_LV = 1000;
 const GD_PER = cfgSnap('gdper', { hp1: 3000, def1: 500, atk: 1000, hp2: 6000, def2: 1000, pierce: 1000, heal: GD_HEAL_PER_LV, spd: 2, critDmg: 20, boss: 10000 });
 Object.assign(GD_PER, cfgGet('guild', {}));   // admin chỉnh (Lò Luyện Hỏa: mỗi cấp cộng bao nhiêu)
 /* Thông số boss bang (admin chỉnh): HP boss k = baseHp × hpMult^k (Chí Tôn × ctMult); sát thương 1 đòn = HP/atkDiv (Chí Tôn × ctMult) */
-const BOSS_CFG = cfgSnap('boss', { baseHp: 2000000, hpMult: 2, ctMult: 2, atkDiv: 4000, heroDmgMult: 3, maxRounds: 30, ptsPerDmg: 20000, killPts: 100 });
+const BOSS_CFG = cfgSnap('boss', { baseHp: 2000000, hpMult: 2, ctMult: 2, atkDiv: 4000, heroDmgMult: 3, maxRounds: 30, ptsPerDmg: 20000, killPts: 100, daily: 2 });
 Object.assign(BOSS_CFG, cfgGet('boss', {}));
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng ' + GD_PER.hp1 + ' điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng ' + GD_PER.def1 + ' điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng ' + GD_PER.atk + ' điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng ' + GD_PER.hp2 + ' điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng ' + GD_PER.def2 + ' điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng ' + GD_PER.pierce + ' điểm phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp hồi ' + GD_PER.heal + ' máu cho tướng sau khi kết thúc lượt đánh của 2 bên'],
@@ -21,7 +21,7 @@ function gdSt() {
   (s.lots || []).forEach(l => { if (l.name === 'Quỷ Linh') l.name = 'Dị Linh'; if (l.name === 'Hỏa Tinh') l.name = 'Thú Noãn'; if (l.name.indexOf('Thạch ') === 0) l.name = 'Tử Linh Thạch'; });
   s.beast = Object.assign({ lv: 1, star: 1, name: 'Kỳ Lân' }, s.beast || {});
   s.uytin = s.uytin === undefined ? 3000 : s.uytin; s.bangLv = s.bangLv || 5;
-  s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? 2 : s.left;
+  s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? bbDaily() : s.left;
   return s;
 }
 const gdSave = s => saveJSON('guild_state', s);
@@ -90,9 +90,12 @@ const gdDrops = k => { const b = GD_BOSS[k][0]; return k < 4
   ? [['Thú Hồn', '🟠'], ['Thú Linh', '🔥'], ['Thú Noãn', '🔶'], ['Đá Nữ Oa', '🔻'], ['Dị Linh', '🎭'], ['Châu ' + b, '🔮'], ['Đào Tiên', '🍑'], ['Tử Linh Thạch', '🪨']]
   : [['Đào Tiên Vương', '🍑'], ['Đá Nữ Oa', '🔻'], ['Châu ' + b, '🔮'], ['Dị Linh', '💀'], ['Lá Linh', '🍃'], ['Hộp Linh', '📦'], ['Hộp Tinh', '🎁'], ['Ngọc Tím', '🟣']]; };
 let bbTab = 'thuong', bbCur = null;
+const bbDaily = () => { const v = Math.floor(Number(BOSS_CFG.daily)); return isFinite(v) && v >= 0 ? v : 2; };   // số lượt đánh boss/ngày (admin chỉnh)
 function gdTick() {   // đổi ngày: +lượt; thứ 2 & thứ 5 3h: boss hồi đầy; 12h: kết thúc đấu giá
   const s = gdSt(), now = new Date(), dk = now.toDateString(); let ch = false;
-  if (s.day !== dk) { s.day = dk; s.left = 2; ch = true; }
+  const dly = bbDaily();
+  if (s.day !== dk) { s.day = dk; s.left = dly; s.cap = dly; ch = true; }
+  else if (s.cap !== dly) { s.left = Math.max(0, s.left + dly - (s.cap === undefined ? 2 : s.cap)); s.cap = dly; ch = true; }   // admin đổi số lượt giữa ngày -> cộng/trừ phần chênh
   const r = new Date(now.getTime() - 3 * 3600e3); while (r.getDay() !== 1 && r.getDay() !== 4) r.setDate(r.getDate() - 1);
   const rid = r.toDateString(); if (s.rid !== rid) { s.rid = rid; s.boss = {}; s.bossCt = {}; ch = true; }
   const keep = [];
@@ -144,7 +147,7 @@ function renderBangBoss() {
   const body = document.getElementById('bb-body');
   if (bbTab === 'doi') return renderBossShop(s, body);
   const ct = bbTab === 'chiton';
-  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn:${s.left}</span><span>Làm mới vào 3h-4h thứ 2, thứ 5</span></div>` + GD_BOSS.map((b, k) => {
+  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn: ${s.left}/${bbDaily()}</span><span>Làm mới vào 3h-4h thứ 2, thứ 5</span></div>` + GD_BOSS.map((b, k) => {
     const open = ct ? !!s.ct[k] : b[1] <= s.bangLv, mx = gdBossHp(k, ct), h = (ct ? s.bossCt : s.boss)[k], cur = h === undefined ? mx : h, pct = Math.ceil(cur / mx * 100);
     const act = open ? `bbInfo(${k},${ct ? 1 : 0})` : ct ? `bbCtUnlock(${k})` : '';
     return `<div class="bb-card ${open ? '' : 'lock'}"><div class="bb-h"><b>${ct ? b[6] : b[0]}</b><span class="${open ? 'ok' : 'no'}">Bang cấp ${ct ? 10 : b[1]}</span><button onclick="scToast('Bảng xếp hạng sắp ra mắt')">Hạng</button></div>
