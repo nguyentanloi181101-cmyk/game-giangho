@@ -5,6 +5,8 @@
     // 6 ô. Mỗi tướng hỗ trợ cộng cho TOÀN ĐỘI: HP / Công / Thủ / Hồi = chỉ số bồi dưỡng của chính tướng đó × (số sao ÷ 10)
     // VD: tướng có 100 HP — 10★ cộng +100 HP, 15★ cộng +150 HP. Đổi hệ số ở SUP_STAR_DIV.
     const SUP_SLOTS = 6, SUP_STAR_DIV = 10;
+    // Tướng nào cũng có Hồi gốc = 0 nên Hồi hỗ trợ lấy theo HP bồi dưỡng: Hồi = HP × SUP_HEAL_PCT (5%). Muốn nhiều/ít hơn thì sửa số này.
+    const SUP_HEAL_PCT = 0.05;
     let supIds = (() => {
       let a = []; try { a = JSON.parse(localStorage.getItem('support_ids')) || []; } catch (e) {}
       const out = [];
@@ -15,7 +17,7 @@
     // chỉ số bồi dưỡng của 1 tướng = chỉ số gốc × hệ số cấp/sao (chưa tính trang bị / Bảo Vật / Bang) — SỬA Ở ĐÂY nếu muốn lấy nguồn khác
     function supBase(id, base) {
       const h = base ? Object.assign({}, heroById(id), HERO_DEFAULTS[id]) : heroById(id), g = growth(id);
-      return { hp: Math.round(h.hp * g), atk: Math.round(h.atk * g), def: Math.round(h.def * g), heal: Math.round((h.heal || 0) * g) };
+      return { hp: Math.round(h.hp * g), atk: Math.round(h.atk * g), def: Math.round(h.def * g), heal: Math.round((h.heal || 0) * g + h.hp * g * SUP_HEAL_PCT) };
     }
     // phần 1 tướng hỗ trợ cộng cho đội
     function supGive(id, base) {
