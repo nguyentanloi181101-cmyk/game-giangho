@@ -52,3 +52,5 @@
 .bbt-end{position:absolute;inset:0;z-index:20;background:#000c;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}
 .bbt-end.on{display:flex}.bbt-end h2{margin:0;font-size:32px;color:#fde047}.bbt-end p{margin:0;line-height:1.6}
 .bbt-end button{background:linear-gradient(#37d27a,#138a45);border:2px solid #9df5c0;color:#fff;font-weight:800;font-size:16px;border-radius:12px;padding:10px 28px}
+
+.bbt-fx{position:absolute;left:0;top:0;z-index:7;pointer-events:none;will-change:transform,opacity;white-space:nowrap;line-height:1}
