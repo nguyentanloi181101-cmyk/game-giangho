@@ -54,3 +54,9 @@
 .bbt-end button{background:linear-gradient(#37d27a,#138a45);border:2px solid #9df5c0;color:#fff;font-weight:800;font-size:16px;border-radius:12px;padding:10px 28px}
 
 .bbt-fx{position:absolute;left:0;top:0;z-index:7;pointer-events:none;will-change:transform,opacity;white-space:nowrap;line-height:1}
+.bbt-pet{position:absolute;left:4%;top:2%;width:30%;height:22%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.bbt-pet .tt-img{max-height:70%;max-width:100%;object-fit:contain}
+.bbt-pet .ct-wrap{height:100%}
+.bbt-pn{font-size:10px;text-shadow:0 0 3px #000;white-space:nowrap;margin-bottom:1px}
+.bbt-pr{width:80px;height:5px;background:#000a;border-radius:3px;overflow:hidden;margin-top:2px}
+.bbt-pr i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#c4b5fd);transition:width .3s}

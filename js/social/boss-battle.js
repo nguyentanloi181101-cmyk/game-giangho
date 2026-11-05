@@ -61,10 +61,11 @@ function bbtBanner(host, txt, color) {   // tên tuyệt kỹ bay lên trên đ�
   const e = bbtFxEl(txt, { left: Math.max(4, Math.min(C.x - 60, (bbtArena().clientWidth - 130))) + 'px', top: (C.y - C.h / 2 - 16) + 'px', width: '130px', textAlign: 'center', fontSize: '12px', fontWeight: '900', color: '#fff', textShadow: `0 0 6px ${color},0 0 3px #000,0 0 3px #000`, zIndex: 9 }, ms);
   if (e) e.animate([{ transform: 'translateY(8px) scale(.6)', opacity: 0 }, { transform: 'translateY(-4px) scale(1.15)', opacity: 1, offset: .25 }, { transform: 'translateY(-26px) scale(1)', opacity: 0 }], { duration: ms });
 }
-function bbtUltFx(i) {   // hiệu ứng tuyệt kỹ của tướng i lên boss
-  const S = bbtS, h = S.heroes[i], he = document.getElementById('bbt-h' + i), bo = document.getElementById('bbt-boss'), B = bbtCtr(bo); if (!he || !bo || !B) return;
-  const [ico, color, kind] = BBT_FX[h.id] || ['💥', '#fde047', 'burst'];
-  bbtBanner(he, (typeof HERO_ULT_NAME !== 'undefined' && HERO_ULT_NAME[h.id]) || 'Tuyệt kỹ', color);
+function bbtUltFx(i) { const h = bbtS.heroes[i]; bbtSkillFx(h.id, document.getElementById('bbt-h' + i)); }
+function bbtSkillFx(id, he, title) {   // hiệu ứng tuyệt kỹ của tướng `id`, phát từ phần tử he (tướng hoặc thần thú) lên boss
+  const bo = document.getElementById('bbt-boss'), B = bbtCtr(bo); if (!he || !bo || !B) return;
+  const [ico, color, kind] = BBT_FX[id] || ['💥', '#fde047', 'burst'];
+  bbtBanner(he, title || (typeof HERO_ULT_NAME !== 'undefined' && HERO_ULT_NAME[id]) || 'Tuyệt kỹ', color);
   he.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25) translateY(-8px)', filter: `drop-shadow(0 0 14px ${color})` }, { transform: 'scale(1)' }], { duration: 600 / bbtSp() });
   bbtFlashScreen(color, 450);
   const sp = bbtSp(), at = (ms, fn) => setTimeout(fn, ms / sp);
@@ -99,7 +100,7 @@ function bbtBuild() {
   <div class="bbt-res"><span>🪙 X0</span><span>🌾 X0</span><span>🧑 X0</span><span class="bbt-fast" id="bbt-fast" onclick="bbtSpeed()"><em>✔</em>Nhanh</span></div>
   <div class="bbt-arena" id="bbt-arena"><div class="bbt-boss" id="bbt-boss"><div class="bbt-bn">${fmtN(S.boss)}</div><div class="bbt-bhp"><i id="bbt-bhp"></i></div>${ttImg(b[0], S.ct)}</div>
   ${S.heroes.map((h, i) => { const p = BBT_POS[i] || BBT_POS[0]; return `<div class="bbt-h" id="bbt-h${i}" style="left:${p[0]}%;top:${p[1]}%"><img src="${h.body}" alt="${h.name}"><div class="hb"><i></i></div></div>`; }).join('')}
-  <div class="bbt-timer" id="bbt-time">03:00</div><button class="bbt-treo off" id="bbt-treo" onclick="bbtAuto()">Treo</button></div>
+  ${S.tt ? `<div class="bbt-pet" id="bbt-pet"><div class="bbt-pn">🐾 ${S.tt} • 🛡️ Miễn nhiễm</div>${ttImg(S.tt, 0)}<div class="bbt-pr"><i id="bbt-petr"></i></div></div>` : ''}<div class="bbt-timer" id="bbt-time">03:00</div><button class="bbt-treo off" id="bbt-treo" onclick="bbtAuto()">Treo</button></div>
   <div class="bbt-team"><div class="bbt-cards" id="bbt-cards"></div><div class="bbt-orbs" id="bbt-orbs" onclick="bbtOrb(event)"></div></div>
   <div class="bbt-end" id="bbt-end"></div></div>`;
   root.classList.add('on');
@@ -116,15 +117,18 @@ function bbtHitBoss(d, i, big) {
 }
 function bbtStep() {
   const S = bbtS; if (!S || S.done) return; S.round++;
-  S.heroes.forEach((h, i) => { if (h.hp <= 0) return; bbtAtkFx(i); bbtHitBoss(Math.round(h.atk * BOSS_CFG.heroDmgMult * (.9 + Math.random() * .2)) + S.gb.boss, i, false); h.rage = Math.min(100, h.rage + 25); });
+  S.heroes.forEach((h, i) => { if (h.hp <= 0) return; bbtAtkFx(i); bbtHitBoss(Math.round(h.atk * BOSS_CFG.heroDmgMult * (S.buff && S.buff.t > 0 ? S.buff.mult : 1) * (.9 + Math.random() * .2)) + S.gb.boss, i, false); h.rage = Math.min(100, h.rage + 25); });
   if (S.tt) S.ttRage = Math.min(100, S.ttRage + 20);
   if (S.auto) { S.heroes.forEach((h, i) => bbtUlt(i)); if (S.tt) bbtBeast(); }
   if (S.boss > 0) {
     const alive = S.heroes.map((h, i) => i).filter(i => S.heroes[i].hp > 0);
-    if (alive.length) { const i = alive[Math.floor(Math.random() * alive.length)], t = S.heroes[i], d = Math.max(1, S.bAtk - Math.round(t.def * .5)); t.hp -= d;
+    if (alive.length) { const i = alive[Math.floor(Math.random() * alive.length)], t = S.heroes[i]; let d = Math.max(1, Math.round((S.bAtk - Math.round(t.def * .5)) * (S.weak && S.weak.t > 0 ? S.weak.mult : 1)));
+      if (S.moon > 0) { const rf = Math.round(d * .5); d = Math.max(1, Math.round(d * .3)); bbtHitBoss(rf, -1, false); }   // khiên trăng: nhận 30%, phản 50%
+      t.hp -= d;
       const he = document.getElementById('bbt-h' + i); bbtPop(he, '-' + fmtN(d), 'r'); bbtFlash(he, 'hurt'); bbtFlash(document.getElementById('bbt-boss'), 'atk'); bbtBossAtkFx(i); }
     S.heroes.forEach(h => { if (h.hp > 0 && h.heal) h.hp = Math.min(h.max, h.hp + h.heal); });
   }
+  ['moon', 'buff', 'weak'].forEach(k => { if (k === 'moon') { if (S.moon > 0) S.moon--; } else if (S[k] && S[k].t > 0) S[k].t--; });
   bbtDraw();
   if (S.boss <= 0) bbtFinish('CHIẾN THẮNG!'); else if (!S.heroes.some(h => h.hp > 0)) bbtFinish('THẤT BẠI'); else if (S.round >= BOSS_CFG.maxRounds) bbtFinish('HẾT GIỜ');
 }
@@ -132,9 +136,31 @@ function bbtUlt(i) {
   const S = bbtS, h = S && S.heroes[i]; if (!S || S.done || !h || h.hp <= 0 || h.rage < 100) return;
   h.rage = 0; bbtUltFx(i); bbtHitBoss(Math.round(h.atk * BOSS_CFG.heroDmgMult * 3), i, true); bbtDraw();
 }
+/* THẦN THÚ: tích nộ (+20/hiệp). Đủ 100 nộ -> tung NGẪU NHIÊN tuyệt kỹ của 1 trong TẤT CẢ tướng trong game.
+   Thần thú đứng ngoài trận: boss không đánh được và không dính hiệu ứng bất lợi nào (miễn nhiễm hoàn toàn).
+   Bảng hiệu lực theo từng tướng: m = hệ số sát thương lên boss • heal = hồi % máu tối đa cả đội • rev = số tướng gục được hồi sinh (50% máu)
+   moon = khiên (hiệp): nhận 30% sát thương, phản 50% • buff = [hệ số Công đội, số hiệp] • rage = +nộ cả đội • weak = [hệ số sát thương boss, số hiệp] */
+const BBT_SK = {
+  0: { m: 3.5 }, 1: { rev: 2, heal: .3 }, 2: { moon: 2 }, 3: { m: 3.6 }, 4: { m: 3 }, 5: { heal: .25 }, 6: { m: 3, buff: [1.5, 2] }, 7: { m: 3.5 },
+  8: { m: 2, rage: 50 }, 9: { m: 3.6 }, 10: { m: 3 }, 11: { m: 3 }, 12: { heal: .3 }, 13: { m: 3.6, buff: [1.3, 1] }, 14: { m: 3.6 },
+  15: { m: 3, weak: [.7, 3] }, 16: { m: 1, weak: [.5, 2] }, 17: { buff: [4, 2] }
+};
 function bbtBeast() {
-  const S = bbtS; if (!S || S.done || !S.tt || S.ttRage < 100) return; S.ttRage = 0; bbtBeastFx();
-  S.heroes.forEach((h, i) => { if (h.hp > 0) { const v = Math.round(h.max * .15); h.hp = Math.min(h.max, h.hp + v); bbtPop(document.getElementById('bbt-h' + i), '+' + fmtN(v), 'g'); } }); bbtDraw();
+  const S = bbtS; if (!S || S.done || !S.tt || S.ttRage < 100) return;
+  const alive = S.heroes.filter(h => h.hp > 0); if (!alive.length) return;
+  S.ttRage = 0;
+  const ids = (typeof HEROES !== 'undefined' ? HEROES.map(h => h.id) : Object.keys(BBT_SK).map(Number)), id = ids[Math.floor(Math.random() * ids.length)];
+  const sk = BBT_SK[id] || { m: 3 }, nm = (typeof HERO_ULT_NAME !== 'undefined' && HERO_ULT_NAME[id]) || 'Tuyệt kỹ';
+  bbtSkillFx(id, document.getElementById('bbt-pet'), '🐾 ' + S.tt + ': ' + nm);
+  const popAll = (txt, cls) => S.heroes.forEach((h, i) => { if (h.hp > 0) bbtPop(document.getElementById('bbt-h' + i), txt(h), cls); });
+  if (sk.m) { const avg = alive.reduce((a, h) => a + h.atk, 0) / alive.length; bbtHitBoss(Math.round(avg * BOSS_CFG.heroDmgMult * sk.m * (.95 + Math.random() * .1)) + S.gb.boss, -1, true); }
+  if (sk.rev) { S.heroes.filter(h => h.hp <= 0).slice(0, sk.rev).forEach(h => { h.hp = Math.round(h.max * .5); }); }
+  if (sk.heal) { S.heroes.forEach(h => { if (h.hp > 0) h.hp = Math.min(h.max, h.hp + Math.round(h.max * sk.heal)); }); popAll(h => '+' + fmtN(Math.round(h.max * sk.heal)), 'g'); }
+  if (sk.moon) { S.moon = sk.moon + 1; popAll(() => '🌙 KHIÊN', 'g'); }
+  if (sk.buff) { S.buff = { mult: sk.buff[0], t: sk.buff[1] + 1 }; popAll(() => '⚔️ x' + sk.buff[0], 'g'); }
+  if (sk.rage) { S.heroes.forEach(h => { if (h.hp > 0) h.rage = Math.min(100, h.rage + sk.rage); }); popAll(() => '⚡+' + sk.rage, 'g'); }
+  if (sk.weak) { S.weak = { mult: sk.weak[0], t: sk.weak[1] + 1 }; bbtPop(document.getElementById('bbt-boss'), '⬇ Boss yếu đi', 'g'); }
+  bbtDraw();
 }
 function bbtOrb(e) { const o = e.target.closest('.bbt-o'); if (!o || !o.classList.contains('ready')) return; o.dataset.i === 'tt' ? bbtBeast() : bbtUlt(+o.dataset.i); if (bbtS && bbtS.boss <= 0 && !bbtS.done) bbtFinish('CHIẾN THẮNG!'); }
 function bbtAuto() { const S = bbtS; if (!S) return; S.auto = !S.auto; document.getElementById('bbt-treo').classList.toggle('off', !S.auto); }
@@ -147,6 +173,7 @@ function bbtDraw() {
   const S = bbtS; if (!S) return;
   document.getElementById('bbt-bhp').style.width = Math.max(0, S.boss / S.mx * 100) + '%';
   const bn = document.querySelector('#bbt-boss .bbt-bn'); if (bn) bn.textContent = fmtN(Math.max(0, Math.round(S.boss)));
+  const pr = document.getElementById('bbt-petr'); if (pr) pr.style.width = S.ttRage + '%';
   const rem = Math.max(0, Math.round(180 * (1 - S.round / BOSS_CFG.maxRounds)));
   document.getElementById('bbt-time').textContent = String(Math.floor(rem / 60)).padStart(2, '0') + ':' + String(rem % 60).padStart(2, '0');
   S.heroes.forEach((h, i) => { const e = document.getElementById('bbt-h' + i); if (!e) return; e.classList.toggle('dead', h.hp <= 0); e.querySelector('.hb i').style.width = Math.max(0, h.hp / h.max * 100) + '%'; });
