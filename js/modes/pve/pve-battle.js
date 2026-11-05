@@ -5,6 +5,7 @@
       setBattleBg();
       document.getElementById('battle-overlay').classList.toggle('pvp-mode', !!pvp);
       if (pvp) { loadPvpWave(); return; }
+      if (bossB) { loadBossWave(); return; }
       const tok = battleToken;
       document.getElementById('ui-stage-title').innerText = `Ải ${currentStage} - Bàn ${currentBattle}`;
       document.getElementById('ui-wave-title').innerText = `Trận ${currentWave}/4`;
@@ -34,7 +35,7 @@
       setTimeout(() => { if (tok === battleToken) autoStep(); }, 600);
     }
 
-    function loseBattle() { if (pvp) { pvpFinish(false); return; } alert('Thua rồi! Đội ngũ đã gục ngã.'); closeBattle(); }
+    function loseBattle() { if (pvp) { pvpFinish(false); return; } if (bossB) { bossFinish('THẤT BẠI'); return; } alert('Thua rồi! Đội ngũ đã gục ngã.'); closeBattle(); }
 
     async function enemyTurn() {
       const tok = battleToken;
@@ -68,6 +69,10 @@
       if (tok !== battleToken) return;
       tickImmortal(waveUnits.heroes); tickImmortal(waveUnits.enemies);   // hết 1 hiệp: bất tử giảm 1
       waveRound++;
+      if (bossB) {   // BOSS BANG: đếm hiệp, hết hiệp tối đa thì kết toán
+        document.getElementById('ui-wave-title').innerText = `Hiệp ${Math.min(waveRound, BOSS_CFG.maxRounds)}/${BOSS_CFG.maxRounds}`;
+        if (waveRound > BOSS_CFG.maxRounds) { bossFinish('HẾT GIỜ'); return; }
+      }
       tickDebuffs(waveUnits.enemies);                        // hiệu ứng bướm trên địch giảm 1 hiệp (sau khi địch đã ra đòn)
       // Hết 1 hiệp: gỡ buff Thủ của Lạc Long Quân bên ta
       clearDefBuff(waveUnits.heroes);
@@ -80,6 +85,11 @@
       if (await tickBleed(waveUnits.heroes)) {
         await sleep(500); if (tok !== battleToken) return;
         if (waveUnits.heroes.every(h => !h.alive)) { loseBattle(); return; }
+      }
+      if (bossB) {   // Thần thú: tích nộ mỗi hiệp, đủ nộ tung ngẫu nhiên tuyệt kỹ của 1 tướng bất kỳ
+        await bossBeastTick(tok); if (tok !== battleToken) return;
+        if (waveUnits.heroes.every(h => !h.alive)) { loseBattle(); return; }
+        if (waveUnits.enemies.every(e => !e.alive)) { await sleep(400); if (tok !== battleToken) return; nextWave(); return; }
       }
       // Tướng ta dính choáng thì mất lượt
       waveUnits.heroes.forEach(h => {
@@ -150,6 +160,7 @@
 
     function nextWave() {
       if (pvp) { pvpFinish(true); return; }
+      if (bossB) { bossFinish('CHIẾN THẮNG!'); return; }
       if (currentWave < 4) {
         currentWave++;
         loadWave();
@@ -170,11 +181,13 @@
     }
 
     function closeBattle() {
+      if (bossB && !bossB.fin) { if (confirm('Thoát trận? Sát thương đã gây vẫn được tính và mất 1 lượt.')) bossFinish('ĐÃ THOÁT'); return; }
       battleToken++;
       stopHeroSounds();
       try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
       stopBgm(); battleFast = false;
       if (pvp) { pvp = null; pvpGenOpps(); renderPvp(); }   // thoát giữa trận Tỷ Võ = bỏ cuộc
+      bossB = null;
       busy = false;
       document.getElementById('battle-overlay').style.display = 'none';
       isPlayerTurn = false;

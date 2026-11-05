@@ -34,6 +34,7 @@
       try { new MutationObserver(go).observe(p.querySelector('.bf-fit'), { childList: true, subtree: true, characterData: true }); } catch (e) {}
       window.addEventListener('resize', go);
     })();
+    let bossB = null;       // BOSS BANG: đang đánh boss bang trên sàn PVE (xem js/social/boss-battle.js); null = không phải trận boss
     let battleFast = false;   // Tỷ Võ: bấm "Bỏ Qua" để tua nhanh trận đấu
     let ultTimeScale = 1;   // các lần ulti lặp (lần 2, 3) chạy nhanh gấp đôi: thu ngắn cả thời gian chờ lẫn hoạt ảnh
     let battleSlow = 1;     // PvE: nút "Chậm" -> 2 = mọi thứ (chờ + hoạt ảnh) chậm gấp đôi; 1 = bình thường
@@ -106,6 +107,11 @@
     function hit(u, dmg, noRage, src, noRefl, parts, ray) {   // parts = {main, crit, pierce}: 3 loại sát thương của 1 tia (xem strike) • ray = {i, wait}: tia thứ i (i>0 không cộng thêm nộ, chữ sát thương hiện trễ)
       if (!u.alive) return;
       dmg = Math.round(dmg); const dmg0 = dmg;
+      if (bossB && u === bossB.unit) {   // BOSS BANG: sát thương lên boss ×heroDmgMult (+ Chí Tôn bang mỗi đòn); mỗi nhát tối đa 3% HP boss (hiệu ứng DOT 1%) để chiêu trừ % máu không giết boss ngay
+        const mine = !!(src && src.side === 'hero');
+        if (mine) dmg = Math.round(dmg * BOSS_CFG.heroDmgMult) + ((ray && ray.i > 0) ? 0 : (bossB.gb.boss || 0));
+        dmg = Math.min(dmg, Math.max(1, Math.round(u.max * (noRage ? .01 : .03))));
+      }
       let refl = 0;
       if (u.moon > 0 && !noRage && !noRefl) {      // Khiên Trăng Khuyết: nhận 30%, phản 50% về địch
         refl = Math.round(dmg * MOON_REFLECT); dmg = Math.max(1, Math.round(dmg * MOON_TAKE));
@@ -401,6 +407,7 @@
       });
     }
     function stunEnemy(e, turns) {
+      if (bossB && e === bossB.unit) { floatText(e, '🛡️ MIỄN KHỐNG CHẾ'); return; }   // boss bang không bị choáng
       e.stun = turns;
       e.el.classList.add('stunned');
       if (!e.el.querySelector('.bf-stun')) {

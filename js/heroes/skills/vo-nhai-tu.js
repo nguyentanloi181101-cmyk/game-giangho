@@ -38,7 +38,7 @@
         await sleep(350); if (tok !== battleToken) return;
         // 4. Sao chép chỉ số của boss mạnh nhất (boss không đổi)
         if (boss.alive) {
-          const sa = boss.atk, sd = boss.def || 0, sm = boss.max;
+          const sa = boss.atk, sd = boss.def || 0, sm = (bossB && boss === bossB.unit) ? 0 : boss.max;   // boss bang: không chép HP (tránh HP hàng tỷ)
           floatText(boss, '⭐ SAO CHÉP');
           allies.forEach((a, i) => {
             const o = add('bf-fxorb', rand(['⚫', '⚪']), boss.x, boss.y);

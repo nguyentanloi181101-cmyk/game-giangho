@@ -1,62 +1,11 @@
-/* BOSS BANG: màn đánh trực quan (mẫu ảnh 1) */
-#bbt{position:fixed;inset:0;z-index:9000;background:#000;display:none;justify-content:center}
-#bbt.on{display:flex}
-.bbt-box{width:100%;max-width:460px;height:100%;display:flex;flex-direction:column;background:#0b1a12;color:#fff;font-family:inherit;position:relative;overflow:hidden}
-.bbt-top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:linear-gradient(#124a2e,#0b2a1b);border-bottom:3px solid #e6c34a;font-size:13px}
-.bbt-top b{color:#fde047;font-size:15px;flex:1}
-.bbt-top button{background:#7a1f1f;border:1px solid #f0a0a0;color:#fff;border-radius:6px;padding:4px 10px;font-weight:700}
-.bbt-res{display:flex;gap:6px;padding:5px 8px;background:#1b2233;font-size:12px;align-items:center}
-.bbt-res span{background:#0007;padding:3px 8px;border-radius:4px;flex:1}
-.bbt-fast{margin-left:auto;cursor:pointer;user-select:none;font-weight:700;flex:none!important;background:none!important}
-.bbt-fast em{display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;border-radius:3px;background:#555;font-style:normal;margin-right:4px}
-.bbt-fast.on em{background:#2ca24f}
-.bbt-arena{flex:1;min-height:250px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 15%,#8795ad,#3b4760 55%,#1a2133)}
-.bbt-arena:after{content:"";position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,#10142388);pointer-events:none}
-.bbt-boss{position:absolute;left:3%;top:26%;width:42%;height:48%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transition:transform .15s}
-.bbt-boss .tt-img{max-height:100%;max-width:100%}
-.bbt-boss .ct-wrap{height:100%}
-.bbt-bhp{width:110px;height:8px;background:#000a;border:1px solid #000;border-radius:4px;overflow:hidden;margin-bottom:4px}
-.bbt-bhp i{display:block;height:100%;background:#6fd04a;transition:width .3s}
-.bbt-bn{font-size:11px;text-shadow:0 0 3px #000;margin-bottom:2px}
-.bbt-boss.hit{transform:translateX(-8px);filter:brightness(1.5)}
-.bbt-boss.atk{transform:translateX(26px)}
-.bbt-h{position:absolute;width:64px;z-index:3;text-align:center;transition:transform .15s}
-.bbt-h img{height:78px;max-width:76px;object-fit:contain;display:block;margin:0 auto;animation:bbtBob 2.4s ease-in-out infinite;filter:drop-shadow(0 4px 4px #000a)}
-.bbt-h .hb{width:44px;height:5px;margin:2px auto 0;background:#000a;border-radius:3px;overflow:hidden}
-.bbt-h .hb i{display:block;height:100%;background:#4ce04c}
-.bbt-h.atk{transform:translateX(-30px)}
-.bbt-h.hurt img{filter:brightness(2) drop-shadow(0 0 6px red)}
-.bbt-h.dead{opacity:.35;filter:grayscale(1)}
-@keyframes bbtBob{50%{transform:translateY(-4px)}}
-.bbt-dmg{position:absolute;z-index:6;font-weight:900;color:#ffd24a;text-shadow:0 0 3px #000,0 0 3px #000;animation:bbtFl .9s forwards;pointer-events:none;white-space:nowrap}
-.bbt-dmg.r{color:#ff5a5a}.bbt-dmg.g{color:#6dff8a}
-@keyframes bbtFl{to{transform:translateY(-44px);opacity:0}}
-.bbt-timer{position:absolute;right:12px;bottom:8px;z-index:5;font-size:24px;font-weight:700;letter-spacing:2px;text-shadow:0 0 6px #000}
-.bbt-treo{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);z-index:8;width:70px;height:70px;border-radius:50%;background:radial-gradient(#2e9a4c,#0f5a28);border:4px solid #c9a24a;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
-.bbt-treo.off{background:radial-gradient(#777,#333)}
-.bbt-team{background:linear-gradient(#6a4a28,#3a2412);border-top:3px solid #c9a24a;padding:30px 6px 10px}
-.bbt-cards,.bbt-orbs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
-.bbt-c{border:2px solid #b8873a;border-radius:6px;overflow:hidden;background:#2a1a10}
-.bbt-c .pic{height:58px;background:#d9923e;display:flex;align-items:center;justify-content:center}
-.bbt-c .pic img{width:100%;height:100%;object-fit:cover}
-.bbt-c .pic .tt-img{object-fit:contain}
-.bbt-c .pw{background:#0006;color:#6dff6d;font-weight:800;font-size:11px;padding:2px;text-align:center}
-.bbt-c .b1,.bbt-c .b2{height:6px;margin:2px 3px;background:#243;border-radius:3px;overflow:hidden}
-.bbt-c .b1 i{display:block;height:100%;background:#4ce04c}.bbt-c .b2 i{display:block;height:100%;background:#4fd2e0}
-.bbt-c.dead{filter:grayscale(1) brightness(.6)}
-.bbt-orbs{margin-top:8px}
-.bbt-o{aspect-ratio:1;border-radius:50%;border:3px solid #c9a24a;background:radial-gradient(#666,#2a2a2a);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:default;text-shadow:0 0 3px #000}
-.bbt-o.ready{background:radial-gradient(#fff9b0,#c8c64a 60%,#6a6a20);box-shadow:0 0 12px #ffe97a;cursor:pointer;color:#442}
-.bbt-o.ready.tt{background:radial-gradient(#b08aff,#4a2a99 60%,#1a1048);box-shadow:0 0 12px #9a6aff;color:#fff}
-.bbt-o.empty{opacity:.4}
-.bbt-end{position:absolute;inset:0;z-index:20;background:#000c;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}
-.bbt-end.on{display:flex}.bbt-end h2{margin:0;font-size:32px;color:#fde047}.bbt-end p{margin:0;line-height:1.6}
-.bbt-end button{background:linear-gradient(#37d27a,#138a45);border:2px solid #9df5c0;color:#fff;font-weight:800;font-size:16px;border-radius:12px;padding:10px 28px}
-
-.bbt-fx{position:absolute;left:0;top:0;z-index:7;pointer-events:none;will-change:transform,opacity;white-space:nowrap;line-height:1}
-.bbt-pet{position:absolute;left:4%;top:2%;width:30%;height:22%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
-.bbt-pet .tt-img{max-height:70%;max-width:100%;object-fit:contain}
-.bbt-pet .ct-wrap{height:100%}
-.bbt-pn{font-size:10px;text-shadow:0 0 3px #000;white-space:nowrap;margin-bottom:1px}
-.bbt-pr{width:80px;height:5px;background:#000a;border-radius:3px;overflow:hidden;margin-top:2px}
-.bbt-pr i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#c4b5fd);transition:width .3s}
+/* BOSS BANG trên sàn PVE: boss cỡ lớn + thanh nộ thần thú. (Phần còn lại dùng css/battle/battle.css) */
+.bf-unit.bossu{width:210px;height:180px}
+.bf-unit.bossu .bf-sprite{top:14px;bottom:9px;font-size:0}
+.bf-unit.bossu .bf-sprite .tt-img,.bf-unit.bossu .bf-sprite .ct-wrap{display:block;width:100%;height:100%}
+.bf-unit.bossu .bf-sprite .tt-img{object-fit:contain;object-position:center bottom}
+.bf-unit.bossu.flip .bf-sprite .tt-img{transform:scaleX(-1)}
+.bf-unit.bossu .bf-hp{display:block !important;top:-6px;left:10px;right:10px;height:14px}
+.bf-unit.bossu .bf-dbf{top:-30px}
+.bf-bst-rg{position:absolute;left:6%;right:6%;bottom:-18px;z-index:6;text-align:center;font-size:10px;font-weight:800;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}
+.bf-bst-rg>div{height:6px;margin-top:2px;background:#000a;border:1px solid #000;border-radius:4px;overflow:hidden}
+.bf-bst-rg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#c4b5fd);transition:width .3s}
