@@ -9,3 +9,6 @@
 .bf-bst-rg{position:absolute;left:6%;right:6%;bottom:-18px;z-index:6;text-align:center;font-size:10px;font-weight:800;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}
 .bf-bst-rg>div{height:6px;margin-top:2px;background:#000a;border:1px solid #000;border-radius:4px;overflow:hidden}
 .bf-bst-rg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#c4b5fd);transition:width .3s}
+.bf-unit.bossu .bf-imm{position:absolute;left:0;right:0;top:-26px;text-align:center;font-size:10px;font-weight:900;color:#e9d5ff;text-shadow:0 0 4px #7c3aed,0 0 3px #000,0 0 3px #000;white-space:nowrap}
+.bf-unit.bossu .bf-brg{position:absolute;top:9px;left:10px;right:10px;height:5px;background:#000a;border:1px solid #000;border-radius:3px;overflow:hidden;z-index:3}
+.bf-unit.bossu .bf-brg i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#e9d5ff);transition:width .3s}

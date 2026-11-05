@@ -3,6 +3,7 @@
 
     function refreshPanel() {
       if (pvp) { renderPvpPanel(); return; }
+      if (bossB) bbtBossBar();
       const hs = waveUnits.heroes;
       let orbs = '', readyCount = 0;
       for (let i = 0; i < 5; i++) {

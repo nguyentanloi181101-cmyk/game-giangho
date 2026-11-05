@@ -6,7 +6,7 @@ const GD_HEAL_PER_LV = 1000;
 const GD_PER = cfgSnap('gdper', { hp1: 3000, def1: 500, atk: 1000, hp2: 6000, def2: 1000, pierce: 1000, heal: GD_HEAL_PER_LV, spd: 2, critDmg: 20, boss: 10000 });
 Object.assign(GD_PER, cfgGet('guild', {}));   // admin chỉnh (Lò Luyện Hỏa: mỗi cấp cộng bao nhiêu)
 /* Thông số boss bang (admin chỉnh): HP boss k = baseHp × hpMult^k (Chí Tôn × ctMult); sát thương 1 đòn = HP/atkDiv (Chí Tôn × ctMult) */
-const BOSS_CFG = cfgSnap('boss', { baseHp: 2000000, hpMult: 2, ctMult: 2, atkDiv: 4000, heroDmgMult: 3, maxRounds: 30, ptsPerDmg: 20000, killPts: 100, daily: 2 });
+const BOSS_CFG = cfgSnap('boss', { baseHp: 2000000, hpMult: 2, ctMult: 2, atkDiv: 4000, heroDmgMult: 3, maxRounds: 30, ptsPerDmg: 20000, killPts: 100, daily: 2, bossRage: 100, ultMult: 1 });
 Object.assign(BOSS_CFG, cfgGet('boss', {}));
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng ' + GD_PER.hp1 + ' điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng ' + GD_PER.def1 + ' điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng ' + GD_PER.atk + ' điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng ' + GD_PER.hp2 + ' điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng ' + GD_PER.def2 + ' điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng ' + GD_PER.pierce + ' điểm phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp hồi ' + GD_PER.heal + ' máu cho tướng sau khi kết thúc lượt đánh của 2 bên'],

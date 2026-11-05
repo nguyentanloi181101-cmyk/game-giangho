@@ -3,7 +3,8 @@
    Các móc vào engine (bossB != null): engine.js (hit / stunEnemy), pve-battle.js (loadWave, enemyTurn, nextWave, loseBattle, closeBattle).
    - Boss = 1 "địch" cỡ lớn bên phải; HP = HP còn lại của boss; sát thương lên boss ×BOSS_CFG.heroDmgMult; boss miễn choáng, mỗi nhát tối đa 3% HP.
    - Thần thú CỦA ĐỘI MÌNH đứng bệ góc trên trái (không có thần thú địch). Mỗi hiệp tích 20 nộ; đủ 100 nộ thì mượn thân 1 tướng NGẪU NHIÊN
-     trong TẤT CẢ tướng của game để tung đúng tuyệt kỹ của tướng đó. Thần thú đứng ngoài trận: miễn nhiễm mọi hiệu ứng bất lợi. */
+     trong TẤT CẢ tướng của game để tung đúng tuyệt kỹ của tướng đó. Thần thú của mình đứng ngoài trận (không bị đánh).
+   BOSS BANG (chính là 1 thần thú) mới là bên MIỄN NHIỄM mọi hiệu ứng bất lợi, có thanh nộ riêng: nộ đầu trận = BOSS_CFG.bossRage (100); đủ 100 nộ thì tung ulti NGẪU NHIÊN của 1 tướng bất kỳ. */
 const BBT_BEAST_RAGE = 20;   // nộ thần thú nhận mỗi hiệp
 
 function bbFight() {
@@ -41,6 +42,10 @@ function loadBossWave() {
   const u = makeUnit('enemy', ttImg(b[0], B.ct), 76, 58, B.cur, gdBossAtk(B.k, B.ct), true, nm);
   u.el.classList.add('bossu'); if (!faceL) u.el.classList.add('flip');
   u.max = B.mx; u.hp = B.cur; u.acc = 99999; u.def = 0; u.spd = 0; u.tia = 1; setHpBar(u);
+  u.rage = Math.max(0, Math.min(100, Number(BOSS_CFG.bossRage) || 0));   // nộ đầu trận của boss
+  bossProof(u);
+  u.el.insertAdjacentHTML('beforeend', '<div class="bf-imm">🛡️ MIỄN NHIỄM</div><div class="bf-brg"><i></i></div>');
+  bbtBossBar();
   B.unit = u; waveUnits.enemies = [u]; waveRound = 1;
   waveUnits.heroes.forEach(h => {
     h.acted = false; h.stun = 0; h.bleed = 0; h.bleedPct = 0; clearDebuffs(h); clearMods(h); grantStart(h);
@@ -51,10 +56,34 @@ function loadBossWave() {
   setTimeout(() => { if (tok === battleToken) autoStep(); }, 600);
 }
 
+// Boss miễn nhiễm TẤT CẢ hiệu ứng bất lợi: choáng, chảy máu, độc, câm lặng, giảm Công/Thủ/hồi máu/nộ, khóa tăng phúc (đọc luôn ra 0, ghi bị bỏ qua)
+function bossProof(u) {
+  ['stun', 'bleed', 'bleedPct'].forEach(k => Object.defineProperty(u, k, { get: () => 0, set() {}, configurable: true }));
+  const dn = new Proxy({}, { get: () => 0, set: () => true });
+  Object.defineProperty(u, 'dn', { get: () => dn, set() {}, configurable: true });
+}
+function bbtBossBar() {
+  const B = bossB, u = B && B.unit; if (!u) return;
+  const i = u.el.querySelector('.bf-brg i'); if (i) i.style.width = Math.min(100, u.rage || 0) + '%';
+}
+// Lượt của boss: đủ nộ -> tung ulti của 1 tướng NGẪU NHIÊN trong tất cả tướng của game (mượn id/skill của tướng đó); chưa đủ nộ -> đánh thường +nộ
+async function bossAct(e, tok) {
+  if (e.rage >= 100 && !ultBlocked(e)) {
+    e.rage = 0;
+    const id = rand(HEROES.map(h => h.id).filter(i => i !== 1));   // Thanh Y (hồi sinh đồng đội) vô nghĩa với boss đơn
+    floatText(e, '💥 ' + ((typeof HERO_ULT_NAME !== 'undefined' && HERO_ULT_NAME[id]) || 'Tuyệt kỹ'));
+    Object.assign(e, { id, isHero: true, star: 5, sk: skillMult(id) * (Number(BOSS_CFG.ultMult) || 1) });
+    refreshPanel();
+    try { await ultimate(e, tok); } catch (err) { console.warn('boss ult', err); }
+    finally { e.isHero = false; e.id = undefined; e.sk = 1; try { e.el.getAnimations().forEach(a => a.cancel()); } catch (x) {} }
+  } else { gainRage(e, RAGE_ATK); await attack(e, waveUnits.heroes, 1, e.atk, tok); }
+  refreshPanel();
+}
+
 function bbtBeastBar() {   // thanh nộ + nhãn miễn nhiễm của thần thú trên bệ trái
   const B = bossB, st = document.querySelector('#battle-arena .bf-bst.l'); if (!B || !st) return;
   let bar = st.querySelector('.bf-bst-rg');
-  if (!bar) { bar = document.createElement('div'); bar.className = 'bf-bst-rg'; bar.innerHTML = '<span>🐾 ' + (B.tt || '') + ' • 🛡️ Miễn nhiễm</span><div><i></i></div>'; st.appendChild(bar); }
+  if (!bar) { bar = document.createElement('div'); bar.className = 'bf-bst-rg'; bar.innerHTML = '<span>🐾 ' + (B.tt || '') + '</span><div><i></i></div>'; st.appendChild(bar); }
   bar.querySelector('i').style.width = B.ttRage + '%';
 }
 

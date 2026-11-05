@@ -334,6 +334,7 @@
     const MOD_STATS = ['atk', 'def', 'spd', 'dodge', 'acc', 'crit', 'critDmg', 'tough', 'pierce', 'block'];
     function addMod(u, k, delta, turns, kind, tag) {
       if (!delta) return;
+      if (kind === 'debuff' && bossB && u === bossB.unit) return;   // boss bang miễn nhiễm hiệu ứng bất lợi
       u.mods = u.mods || []; const old = u.mods.findIndex(m => m.k === k && m.tag === tag);
       if (old >= 0) { u[k] -= u.mods[old].d; u.mods.splice(old, 1); }   // cùng nguồn: làm mới, không cộng dồn
       u.mods.push({ k, d: delta, t: turns + ((u.side === 'hero' || pvp) ? 1 : 0), kind, tag }); u[k] = (u[k] || 0) + delta; refreshMods(u);

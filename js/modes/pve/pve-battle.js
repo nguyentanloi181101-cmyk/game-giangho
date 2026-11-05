@@ -62,6 +62,8 @@
           // Tướng địch: đủ nộ (hoặc alwaysUlt) thì ulti giống hệt tướng của ta, còn lại đánh thường (+nộ)
           if ((e.alwaysUlt || e.rage >= 100) && !ultBlocked(e)) { e.rage = e.alwaysUlt ? 100 : 0; await ultimate(e, tok); }
           else { gainRage(e, RAGE_ATK); await normalAttack(e, waveUnits.heroes, tok); }
+        } else if (bossB && e === bossB.unit) {
+          await bossAct(e, tok);   // boss bang: đủ nộ thì tung ulti ngẫu nhiên của 1 tướng bất kỳ
         } else {
           await attack(e, waveUnits.heroes, 1, e.atk, tok);
         }
