@@ -42,7 +42,7 @@
 <body>
 <div class="wrap">
   <h1>🎁 Admin · Gift Code</h1>
-  <div class="sub">Tạo mã quà tặng cho game. Mã lưu trên Firestore, người chơi nhập trong Túi Đồ → Gift Code.</div>
+  <div class="sub">Tạo mã quà tặng cho game: bạc, gạo, vàng, Thần Đan, Tiên Đan, búa, chìa khóa, mảnh tướng, Bảo Vật, thần thú, vật phẩm bang… Muốn tặng riêng 1 người: đặt "Số lượt tối đa" = 1 rồi gửi mã cho họ. Mã lưu trên Firestore, người chơi nhập trong Túi Đồ → Gift Code.</div>
 
   <!-- ĐĂNG NHẬP -->
   <div id="v-login" class="card">
@@ -124,8 +124,10 @@ const auth = fbApp.auth(), db = fbApp.firestore();
 /* Danh mục quà — khớp với hàm gcGrant trong js/core/giftcode.js */
 const HEROES = [[0,'Ma Đao Thánh Nữ'],[1,'Thanh Y Tiên Tử'],[2,'Chu Nguyên Chương'],[3,'Độc Cô Cầu Bại'],[4,'Trương Tam Phong'],[5,'Âu Cơ'],[6,'Hoa Mãn Lâu'],[7,'Kiều Phong'],[8,'Lạc Long Quân'],[9,'Đông Phương Cô Nương'],[10,'Tiểu Yêu'],[11,'Vô Nhai Tử'],[12,'Đoàn Dự'],[13,'Bắc Cái'],[14,'Đông Tà'],[15,'Tây Độc'],[16,'Nam Đế'],[17,'Vương Trùng Dương']];
 const TREASURES = [[1,'Tôn Sư Ký'],[6,'Bá Vương Kiếm'],[7,'Thủy Hoàng Đăng'],[8,'Trống Lôi Âm'],[9,'Kim Giao Tiễn']];
-const ITEMS = { 'Thú Noãn':'🥚','Thú Hồn':'👻','Thú Linh':'🔥','Đá Nữ Oa':'💎','Dị Linh':'✨','Đào Tiên':'🍑','Đào Tiên Vương':'🍑','Tử Linh Thạch':'🪨' };
-const TYPES = [['pill','💊 Viên Thể Lực'],['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['item','🎒 Vật phẩm Bang Hội']];
+const ITEMS = { 'Thú Noãn':'🥚','Thú Hồn':'👻','Thú Linh':'🔥','Đá Nữ Oa':'💎','Dị Linh':'✨','Đào Tiên':'🍑','Đào Tiên Vương':'🍑','Tử Linh Thạch':'🪨','Lá Linh':'🍃','Hộp Linh':'📦','Hộp Tinh':'🎁','Ngọc Tím':'🟣' };
+const BEASTS = ['Kỳ Lân','Xích Vũ','Tiên Lộc','Long Quy','Báo Tuyết','Hắc Điêu','Cuồng Ngưu','Lân Sư','Thiên Lân','Xích Tinh','Kim Quy','Thiên Lộc','Mai Hoa Báo','Tử Sắc Điêu','Nham Ngưu','Thiên Niên Thú','Địa Niên Thú','Kim Sư','Tản Viên Thần','Giáp Thìn','Cửu Vỹ Hồ','Hỏa Kỳ Lân','Khổng Tước'].map(x => [x, x]);
+const CUSTOM = '__custom';
+const TYPES = [['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['than','🔮 Thần Đan'],['tien','🔴 Tiên Đan'],['pill','💊 Viên Thể Lực'],['hammer','🔨 Búa'],['key','🔑 Chìa Khóa'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['beast','🦄 Thần thú (tặng luôn con)'],['tshard','🧩 Mảnh thần thú (Châu)'],['item','🎒 Vật phẩm Bang Hội (chọn sẵn / nhập tên)']];
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -158,9 +160,21 @@ function addRw() { rw.push({ t: 'silver', n: 100000 }); renderRw(); }
 function delRw(i) { rw.splice(i, 1); renderRw(); }
 function setRw(i, k, v) {
   const r = rw[i];
-  if (k === 't') { rw[i] = { t: v, n: r.n || 1 }; if (v === 'shard') rw[i].id = 0; if (v === 'treasure') rw[i].id = 1; if (v === 'item') { rw[i].name = 'Thú Linh'; rw[i].ico = ITEMS['Thú Linh']; } renderRw(); return; }
+  if (k === 't') {
+    rw[i] = { t: v, n: r.n || 1 };
+    if (v === 'shard') rw[i].id = 0;
+    if (v === 'treasure') rw[i].id = 1;
+    if (v === 'beast' || v === 'tshard') rw[i].name = BEASTS[0][0];
+    if (v === 'beast') rw[i].n = 1;
+    if (v === 'item') { rw[i].name = 'Thú Linh'; rw[i].ico = ITEMS['Thú Linh']; }
+    renderRw(); return;
+  }
+  if (k === 'pick') {   // chọn vật phẩm sẵn hoặc "tên khác"
+    if (v === CUSTOM) { r.name = ''; r.ico = '🎁'; r.custom = true; } else { r.name = v; r.ico = ITEMS[v] || '🎁'; delete r.custom; }
+    renderRw(); return;
+  }
   r[k] = (k === 'n' || k === 'id') ? Number(v) : v;
-  if (k === 'name') r.ico = ITEMS[v] || '🎁';
+  if (k === 'name' && !r.custom) r.ico = ITEMS[v] || r.ico || '🎁';
 }
 function opts(list, cur) { return list.map(x => `<option value="${esc(x[0])}" ${String(x[0]) === String(cur) ? 'selected' : ''}>${esc(x[1])}</option>`).join(''); }
 function renderRw() {
@@ -168,7 +182,12 @@ function renderRw() {
     let mid = '';
     if (r.t === 'shard') mid = `<select onchange="setRw(${i},'id',this.value)">${opts(HEROES, r.id)}</select>`;
     else if (r.t === 'treasure') mid = `<select onchange="setRw(${i},'id',this.value)">${opts(TREASURES, r.id)}</select>`;
-    else if (r.t === 'item') mid = `<select onchange="setRw(${i},'name',this.value)">${opts(Object.keys(ITEMS).map(k => [k, ITEMS[k] + ' ' + k]), r.name)}</select>`;
+    else if (r.t === 'beast' || r.t === 'tshard') mid = `<select onchange="setRw(${i},'name',this.value)">${opts(BEASTS, r.name)}</select>`;
+    else if (r.t === 'item') {
+      const list = Object.keys(ITEMS).map(k => [k, ITEMS[k] + ' ' + k]).concat([[CUSTOM, '✏️ Tên khác…']]);
+      mid = `<select onchange="setRw(${i},'pick',this.value)">${opts(list, r.custom ? CUSTOM : r.name)}</select>` +
+        (r.custom ? `<input type="text" maxlength="30" value="${esc(r.name)}" placeholder="Tên vật phẩm" onchange="setRw(${i},'name',this.value)"><input type="text" maxlength="4" value="${esc(r.ico || '🎁')}" style="max-width:60px;flex:0 0 60px" onchange="setRw(${i},'ico',this.value)" title="Icon (emoji)">` : '');
+    }
     return `<div class="rw"><select onchange="setRw(${i},'t',this.value)">${opts(TYPES, r.t)}</select>${mid}
       <input type="number" min="1" value="${r.n}" onchange="setRw(${i},'n',this.value)" placeholder="Số lượng">
       <button class="x dng" onclick="delRw(${i})">✕</button></div>`;
@@ -181,6 +200,12 @@ function rwText(r) {
     case 'silver': return n + ' bạc';
     case 'rice': return n + ' gạo';
     case 'gold': return n + ' vàng';
+    case 'than': return n + ' Thần Đan';
+    case 'tien': return n + ' Tiên Đan';
+    case 'hammer': return n + ' Búa';
+    case 'key': return n + ' Chìa Khóa';
+    case 'beast': return 'Thần thú ' + r.name;
+    case 'tshard': return n + ' mảnh ' + r.name;
     case 'shard': return n + ' mảnh ' + ((HEROES.find(h => h[0] === r.id) || [0, 'tướng #' + r.id])[1]);
     case 'treasure': return n + ' ' + ((TREASURES.find(h => h[0] === r.id) || [0, 'Bảo Vật'])[1]);
     case 'item': return n + ' ' + r.name;
@@ -196,7 +221,8 @@ function genCode() {
 async function createCode() {
   const code = ($('f-code').value || '').replace(/\s+/g, '').toUpperCase();
   if (!/^[A-Z0-9_-]{4,32}$/.test(code)) return say('f-msg', 'Mã chỉ gồm A-Z, 0-9, _ - và dài 4–32 ký tự.', false);
-  const rewards = rw.filter(r => Number(r.n) >= 1).map(r => Object.assign({}, r, { n: Math.floor(r.n) }));
+  const rewards = rw.filter(r => Number(r.n) >= 1).map(r => { const o = Object.assign({}, r, { n: Math.floor(r.n) }); delete o.custom; if (o.t === 'item') { o.name = String(o.name || '').trim().slice(0, 30); o.ico = String(o.ico || '🎁').slice(0, 4); } return o; });
+  if (rewards.some(r => r.t === 'item' && !r.name)) return say('f-msg', 'Vật phẩm "Tên khác" chưa có tên.', false);
   if (!rewards.length) return say('f-msg', 'Hãy thêm ít nhất 1 phần thưởng (số lượng ≥ 1).', false);
   const max = Math.max(0, Math.floor(Number($('f-max').value) || 0));
   const expV = $('f-exp').value, exp = expV ? new Date(expV).getTime() : 0;

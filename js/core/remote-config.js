@@ -57,6 +57,7 @@ function cfgApply(refresh) {
     }
     if (typeof GD_PER !== 'undefined' && cfgBase.gdper) Object.assign(GD_PER, cfgBase.gdper, GAME_CFG.guild || {});
     if (typeof BOSS_CFG !== 'undefined' && cfgBase.boss) Object.assign(BOSS_CFG, cfgBase.boss, GAME_CFG.boss || {});
+    if (typeof PVE_CFG !== 'undefined' && cfgBase.pve) Object.assign(PVE_CFG, cfgBase.pve, GAME_CFG.pve || {});
     if (refresh) {
       try { renderHomeTeam(); } catch (e) {} try { updatePower(); } catch (e) {} try { if (typeof renderPvp === 'function') renderPvp(); } catch (e) {}
     }

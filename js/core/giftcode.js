@@ -13,6 +13,12 @@
      'shard'    Mảnh tướng            { t: 'shard', id: 6, n: 10 }      (id = id tướng trong HEROES)
      'treasure' Bảo Vật (bản mới)     { t: 'treasure', id: 6, n: 1 }    (id = loại trong TS_DEFS)
      'item'     Vật phẩm Bang Hội     { t: 'item', name: 'Thú Linh', ico: '🔥', n: 5 }   (vào kho bang -> hiện trong Túi)
+     'than'     Thần Đan 🔮            { t: 'than', n: 1000 }
+     'tien'     Tiên Đan 🔴            { t: 'tien', n: 1000 }
+     'hammer'   Búa 🔨                 { t: 'hammer', n: 10 }
+     'key'      Chìa Khóa 🔑           { t: 'key', n: 3 }
+     'beast'    Thần thú (tặng luôn)   { t: 'beast', name: 'Kim Sư', n: 1 }   (đã có thì không cộng thêm)
+     'tshard'   Mảnh thần thú (Châu)   { t: 'tshard', name: 'Kim Sư', n: 50 }
    Lưu ý: mã dự phòng nằm trong file JS nên người chơi xem mã nguồn là thấy; mã bí mật thật sự hãy tạo ở trang admin. */
 
 const GIFT_CODES = {
@@ -41,6 +47,30 @@ function gcGrant(r) {
   if (r.t === 'item' && typeof gdSt === 'function') {
     const s = gdSt(); (s.kho[r.name] = s.kho[r.name] || { ico: r.ico || '🎁', qty: 0 }).qty += n; gdSave(s);
     return `${fmtN(n)} ${r.name}`;
+  }
+  if (r.t === 'than' || r.t === 'tien') {
+    const nm = r.t === 'than' ? 'Thần Đan' : 'Tiên Đan', ico = r.t === 'than' ? '🔮' : '🔴';
+    const s = gdSt(); (s.kho[nm] = s.kho[nm] || { ico, qty: 0 }).qty += n; gdSave(s);
+    return `${fmtN(n)} ${nm}`;
+  }
+  if (r.t === 'hammer') {   // hamSpent âm = búa cộng thêm (hammerCount đã chặn >= 0)
+    hamSpent -= n; try { localStorage.setItem('ham_spent', String(hamSpent)); } catch (e) {}
+    return `${fmtN(n)} Búa`;
+  }
+  if (r.t === 'key') {
+    keysBonus += n; try { localStorage.setItem('keys_bonus', String(keysBonus)); } catch (e) {}
+    if (typeof updateKeys === 'function') updateKeys();
+    return `${fmtN(n)} Chìa Khóa`;
+  }
+  if (r.t === 'beast' && typeof ttSt === 'function' && ttBeast(r.name)) {
+    const s = ttSt();
+    if (s.tt.own[r.name]) return `${r.name} (đã sở hữu)`;
+    s.tt.own[r.name] = { lv: 1, star: 1, exp: 0 }; gdSave(s);
+    return `Thần thú ${r.name}`;
+  }
+  if (r.t === 'tshard' && typeof ttSt === 'function' && ttBeast(r.name)) {
+    const s = ttSt(); s.tt.sh[r.name] = (s.tt.sh[r.name] || 0) + n; gdSave(s);
+    return `${fmtN(n)} mảnh ${r.name}`;
   }
   return '';
 }

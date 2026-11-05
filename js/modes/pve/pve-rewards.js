@@ -39,6 +39,9 @@ const BAN_SILVER_BASE = 3000;
 
 const BAN_THAN_BASE = 2;
 const BAN_TIEN_BASE = 100;
+// Admin chỉnh được (admin-config.html → tab Thưởng PVE)
+const PVE_CFG = cfgSnap('pve', { silverBase: BAN_SILVER_BASE, riceBase: BAN_RICE_BASE, growth: BAN_REWARD_GROWTH, thanBase: BAN_THAN_BASE, tienBase: BAN_TIEN_BASE });
+Object.assign(PVE_CFG, cfgGet('pve', {}));
 
 // Thêm đan vào kho Túi Đồ
 function danAdd(name, ico, n) {
@@ -61,15 +64,15 @@ const banIndex = (stage, battle) =>
 // Tính phần thưởng
 function banReward(stage, battle) {
   const m = Math.pow(
-    BAN_REWARD_GROWTH,
+    Number(PVE_CFG.growth) || 1,
     banIndex(stage, battle) - 1
   );
 
   return {
-    silver: Math.round(BAN_SILVER_BASE * m),
-    rice: Math.round(BAN_RICE_BASE * m),
-    than: Math.round(BAN_THAN_BASE * m),
-    tien: Math.round(BAN_TIEN_BASE * m)
+    silver: Math.round(PVE_CFG.silverBase * m),
+    rice: Math.round(PVE_CFG.riceBase * m),
+    than: Math.round(PVE_CFG.thanBase * m),
+    tien: Math.round(PVE_CFG.tienBase * m)
   };
 }
 

@@ -7,8 +7,9 @@
       return Math.max(k, (progress.maxStage || 1) - 1); })();   // tổng chìa khóa đã nhận (người chơi cũ tính bù)
     let accLevel = (() => { let v = 0; try { v = parseInt(localStorage.getItem('acc_level')) || 0; } catch (e) {}
       return Math.min(LV_MAX, Math.max(ACC_START, v)); })();
+    let keysBonus = (() => { try { return Math.max(0, parseInt(localStorage.getItem('keys_bonus')) || 0); } catch (e) { return 0; } })();   // chìa khóa tặng (Gift Code)
     const keysSpent = () => Math.round((accLevel - ACC_START) / KEY_LV);
-    const keyCount = () => Math.max(0, keysClaimed - keysSpent());   // chìa khóa còn lại
+    const keyCount = () => Math.max(0, keysClaimed + keysBonus - keysSpent());   // chìa khóa còn lại
     // Cấp acc chính là giới hạn cấp của TẤT CẢ tướng và trang bị
     const heroCap = id => Math.max(accLevel, (START_PROG[id] || { lv:1 }).lv);
     const eqCap = () => accLevel;
