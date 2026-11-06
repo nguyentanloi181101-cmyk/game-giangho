@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin · Quản lý người chơi</title>
+<style>
+  :root{--bg:#0f1220;--card:#1a1f36;--line:#2d3556;--gold:#fde047;--txt:#e5e7f0;--mut:#8b93b3;--ok:#4ade80;--bad:#f87171}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;padding:16px}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:20px;color:var(--gold);margin:0 0 4px}
+  h2{font-size:15px;margin:0 0 10px;color:var(--gold)}
+  .sub{color:var(--mut);margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+  input,select{width:100%;background:#0f1220;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+  .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+  button{background:#334;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+  button:hover{border-color:var(--gold)}
+  button.pri{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+  button.dng{color:var(--bad)}
+  button:disabled{opacity:.5;cursor:default}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{color:var(--mut);font-size:12px;font-weight:600}
+  td input{padding:4px 8px}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line)}
+  .on{color:var(--ok);border-color:var(--ok)}.off{color:var(--bad);border-color:var(--bad)}
+  .msg{min-height:20px;margin-top:8px}
+  .hide{display:none}
+  .scroll{overflow-x:auto;max-height:340px;overflow-y:auto}
+  .uid{user-select:all;background:#0f1220;padding:2px 6px;border-radius:6px;word-break:break-all;font-size:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+  .warn{color:#fbbf24;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>👥 Admin · Quản lý người chơi</h1>
+  <div class="sub">Khóa tài khoản • Thu hồi / chỉnh vật phẩm • Reset tài khoản (từng người hoặc tất cả) • Khôi phục tài khoản về khung giờ trước (game tự lưu ảnh chụp mỗi giờ, giữ 72 giờ).</div>
+
+  <div id="v-login" class="card">
+    <h2>Đăng nhập admin</h2>
+    <label>Tên tài khoản</label><input id="lg-user" autocapitalize="none" autocomplete="username">
+    <label>Mật khẩu</label><input id="lg-pass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    <div style="margin-top:10px"><button class="pri" onclick="login()">Đăng nhập</button></div>
+    <div id="lg-msg" class="msg"></div>
+  </div>
+
+  <div id="v-noadmin" class="card hide">
+    <h2>⚠️ Tài khoản này chưa có quyền admin</h2>
+    <p>Tạo document trong collection <b>admins</b> có ID = UID: <span id="my-uid" class="uid"></span></p>
+    <button onclick="logout()">Đăng xuất</button>
+  </div>
+
+  <div id="v-panel" class="hide">
+    <div class="card row" style="align-items:center">
+      <div>Đang đăng nhập: <b id="who"></b></div>
+      <div style="text-align:right;flex:0 0 auto"><button onclick="logout()">Đăng xuất</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Danh sách người chơi</h2>
+      <div class="row">
+        <input id="q" placeholder="Tìm theo tên hoặc UID…" oninput="renderList()">
+        <button onclick="loadPlayers()" style="flex:0 0 auto">🔄 Tải danh sách</button>
+      </div>
+      <div class="scroll" style="margin-top:8px"><table><thead><tr><th>Tên</th><th>Cấp acc</th><th>Vàng</th><th>Bạc</th><th>Lưu lần cuối</th><th>Trạng thái</th><th></th></tr></thead><tbody id="list"></tbody></table></div>
+      <div id="list-msg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ Reset TẤT CẢ tài khoản</h2>
+      <div class="warn">Xóa sạch dữ liệu của MỌI người chơi (họ chơi lại từ đầu). Ảnh chụp theo giờ vẫn còn nên vẫn khôi phục được từng người trong 72 giờ (ảnh chụp cũ hơn tự bị dọn).</div>
+      <div class="row" style="margin-top:8px"><input id="ra-conf" placeholder='Gõ đúng: RESET TAT CA'><button class="dng" onclick="resetAll()" style="flex:0 0 auto">Reset tất cả</button></div>
+      <div id="ra-msg" class="msg"></div>
+    </div>
+
+    <div id="detail" class="hide">
+      <div class="card">
+        <h2>Người chơi: <span id="d-name"></span></h2>
+        <div>UID: <span id="d-uid" class="uid"></span></div>
+        <div id="d-state" style="margin:6px 0"></div>
+        <label>Lý do khóa (người chơi sẽ thấy)</label>
+        <div class="row"><input id="d-reason" placeholder="vd: Gian lận"><button class="dng" onclick="setLock(true)" style="flex:0 0 auto">🔒 Khóa acc</button><button onclick="setLock(false)" style="flex:0 0 auto">🔓 Mở khóa</button></div>
+        <div style="margin-top:10px"><button class="dng" onclick="resetOne()">🗑️ Reset tài khoản này về mới tinh</button></div>
+        <div id="d-msg" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>🕒 Khôi phục về khung giờ trước</h2>
+        <div class="sub" style="margin-bottom:6px">Chọn mốc rồi bấm Khôi phục — tài khoản trở về đúng trạng thái lúc đó (lực chiến, vật phẩm…). Trạng thái hiện tại được lưu thành mốc "trước khi admin chỉnh" để hoàn tác.</div>
+        <button onclick="loadSnaps()">Tải các mốc giờ</button>
+        <div class="scroll" style="margin-top:8px"><table><thead><tr><th>Mốc</th><th>Lực chiến</th><th>Cấp acc</th><th>Vàng</th><th>Bạc</th><th></th></tr></thead><tbody id="snaps"></tbody></table></div>
+        <div id="sn-msg" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>🎒 Thu hồi / chỉnh vật phẩm</h2>
+        <div class="warn">Sửa số rồi bấm "Lưu thay đổi". Đặt 0 (hoặc bấm Xóa) để thu hồi hoàn toàn. Máy người chơi sẽ tự tải lại dữ liệu mới (tối đa ~1 phút khi đang mở game).</div>
+        <h3>Tài nguyên</h3><div class="grid" id="e-res"></div>
+        <h3>Vật phẩm Bang Hội (kho)</h3><div class="grid" id="e-kho"></div>
+        <h3>Mảnh tướng</h3><div class="grid" id="e-shard"></div>
+        <h3>Bảo Vật</h3><div class="scroll"><table><tbody id="e-ts"></tbody></table></div>
+        <h3>Trang bị</h3><div class="scroll"><table><tbody id="e-eq"></tbody></table></div>
+        <h3>Thần thú sở hữu</h3><div class="grid" id="e-beast"></div>
+        <div style="margin-top:12px"><button class="pri" onclick="saveEdits()">💾 Lưu thay đổi</button></div>
+        <div id="e-msg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDOWlrfsWTx0HNWQAYvPHw7fWHlFP3UNu4",
+  authDomain: "game-118e8.firebaseapp.com",
+  projectId: "game-118e8",
+  storageBucket: "game-118e8.firebasestorage.app",
+  messagingSenderId: "612432319937",
+  appId: "1:612432319937:web:0e2ba2a7ecc032d8150b40"
+};
+const CL_DOMAIN = '@mhgh-game.app';
+const fbApp = firebase.initializeApp(FIREBASE_CONFIG, 'admin');
+const auth = fbApp.auth(), db = fbApp.firestore();
+const HERO_NAMES = ['Ma Đao Thánh Nữ','Thanh Y Tiên Tử','Chu Nguyên Chương','Độc Cô Cầu Bại','Trương Tam Phong','Âu Cơ','Hoa Mãn Lâu','Kiều Phong','Lạc Long Quân','Đông Phương Cô Nương','Tiểu Yêu','Vô Nhai Tử','Đoàn Dự','Bắc Cái','Đông Tà','Tây Độc','Nam Đế','Vương Trùng Dương'];
+const TS_NAMES = { 1:'Tôn Sư Ký', 6:'Bá Vương Kiếm', 7:'Thủy Hoàng Đăng', 8:'Trống Lôi Âm', 9:'Kim Giao Tiễn' };
+const EQ_NAMES = { hat:'Mũ', armor:'Áo', sword:'Kiếm', boots:'Giày' };
+const RES = [['gold_val','🪙 Vàng'],['silver_val','🥈 Bạc'],['rice_val','🌾 Gạo'],['thandan_val','💎 Thần Đan'],['tiendan_val','🔮 Tiên Đan'],['keys_bonus','🔑 Chìa khóa tặng'],['acc_level','📈 Cấp acc']];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n || 0).toLocaleString('vi-VN');
+const pj = (s, d) => { try { const v = JSON.parse(s); return v == null ? d : v; } catch (e) { return d; } };
+const num = (s, d) => { const v = parseFloat(s); return isNaN(v) ? d : v; };
+function say(id, t, ok) { const e = $(id); e.style.color = ok === false ? 'var(--bad)' : 'var(--ok)'; e.textContent = t || ''; }
+function show(v) { ['v-login', 'v-noadmin', 'v-panel'].forEach(x => $(x).classList.toggle('hide', x !== v)); }
+
+async function login() {
+  const u = ($('lg-user').value || '').trim().toLowerCase(), p = $('lg-pass').value || '';
+  if (!/^[a-z0-9_]{3,20}$/.test(u) || p.length < 6) return say('lg-msg', 'Tên tài khoản hoặc mật khẩu không hợp lệ.', false);
+  say('lg-msg', 'Đang đăng nhập…');
+  try { await auth.signInWithEmailAndPassword(u + CL_DOMAIN, p); say('lg-msg', ''); } catch (e) { say('lg-msg', 'Sai tên tài khoản hoặc mật khẩu.', false); }
+}
+function logout() { auth.signOut(); }
+auth.onAuthStateChanged(async u => {
+  if (!u) return show('v-login');
+  try { const a = await db.collection('admins').doc(u.uid).get(); if (!a.exists) { $('my-uid').textContent = u.uid; return show('v-noadmin'); } }
+  catch (e) { $('my-uid').textContent = u.uid; return show('v-noadmin'); }
+  $('who').textContent = (u.email || '').replace(CL_DOMAIN, '');
+  show('v-panel'); loadPlayers();
+});
+
+/* ---------- Danh sách ---------- */
+let players = [], ctl = {}, names = {}, cur = null, curData = null;   // cur = uid đang quản lý; curData = data (map key->chuỗi JSON) đang sửa
+async function loadPlayers() {
+  say('list-msg', 'Đang tải…');
+  try {
+    const [sv, ct, pv] = await Promise.all([db.collection('saves').get(), db.collection('account_ctl').get(), db.collection('pvp_players').get().catch(() => null)]);
+    ctl = {}; ct.forEach(d => ctl[d.id] = d.data());
+    names = {}; if (pv) pv.forEach(d => names[d.id] = (d.data() || {}).name || '');
+    players = []; sv.forEach(d => { const v = d.data() || {}; players.push({ uid: d.id, t: v.t || 0, data: v.data || {} }); });
+    players.sort((a, b) => b.t - a.t);
+    say('list-msg', 'Có ' + players.length + ' tài khoản.'); renderList();
+  } catch (e) { say('list-msg', 'Lỗi tải: ' + (e.code || e.message) + ' — đã dán quy tắc Firestore mới chưa?', false); }
+}
+const pName = p => p.data.player_name || names[p.uid] || ('(' + p.uid.slice(0, 6) + ')');
+function renderList() {
+  const q = ($('q').value || '').trim().toLowerCase();
+  $('list').innerHTML = players.filter(p => !q || pName(p).toLowerCase().includes(q) || p.uid.toLowerCase().includes(q)).slice(0, 300).map(p => {
+    const c = ctl[p.uid] || {};
+    return `<tr><td>${esc(pName(p))}</td><td>${fmt(num(p.data.acc_level, 74))}</td><td>${fmt(num(p.data.gold_val, 0))}</td><td>${fmt(num(p.data.silver_val, 0))}</td><td>${p.t ? new Date(p.t).toLocaleString('vi-VN') : '-'}</td>
+      <td>${c.locked ? '<span class="tag off">KHÓA</span>' : '<span class="tag on">Bình thường</span>'}</td><td><button onclick="openPlayer('${p.uid}')">Quản lý</button></td></tr>`;
+  }).join('');
+}
+
+/* ---------- Chi tiết ---------- */
+function openPlayer(uid) {
+  const p = players.find(x => x.uid === uid); if (!p) return;
+  cur = uid; curData = Object.assign({}, p.data);
+  $('detail').classList.remove('hide');
+  $('d-name').textContent = pName(p); $('d-uid').textContent = uid;
+  $('snaps').innerHTML = ''; say('d-msg', ''); say('sn-msg', ''); say('e-msg', '');
+  renderState(); renderEdit();
+  $('detail').scrollIntoView({ behavior: 'smooth' });
+}
+function renderState() {
+  const c = ctl[cur] || {};
+  $('d-state').innerHTML = (c.locked ? '<span class="tag off">ĐANG KHÓA</span> Lý do: ' + esc(c.reason || '—') : '<span class="tag on">Bình thường</span>') + ' · epoch ' + (c.epoch || 0);
+}
+function renderEdit() {
+  const d = curData;
+  $('e-res').innerHTML = RES.map(([k, l]) => `<div><label>${l}</label><input data-res="${k}" type="number" min="0" value="${num(d[k], 0)}"></div>`).join('') +
+    `<div><label>💊 Viên thể lực</label><input data-res="pills" type="number" min="0" value="${Math.max(0, Math.floor(pj(d.sta_state, {}).pills) || 0)}"></div>`;
+  const kho = (pj(d.guild_state, {}).kho) || {};
+  $('e-kho').innerHTML = Object.keys(kho).map(n => `<div><label>${esc(kho[n].ico || '')} ${esc(n)}</label><input data-kho="${esc(n)}" type="number" min="0" value="${kho[n].qty || 0}"></div>`).join('') || '<span class="sub">Trống</span>';
+  const sh = pj(d.hero_shards, {});
+  $('e-shard').innerHTML = Object.keys(sh).filter(k => sh[k] > 0).map(k => `<div><label>🧩 ${esc(HERO_NAMES[k] || 'Tướng ' + k)}</label><input data-shard="${esc(k)}" type="number" min="0" value="${sh[k]}"></div>`).join('') || '<span class="sub">Trống</span>';
+  const ts = pj(d.ts_bag, []);
+  $('e-ts').innerHTML = ts.map((t, i) => `<tr data-ts="${i}"><td>${esc(TS_NAMES[t.id] || 'Loại ' + t.id)}</td><td>${esc(JSON.stringify(t))}</td><td><button class="dng" onclick="delItem('ts',${i})">Xóa</button></td></tr>`).join('') || '<tr><td class="sub">Trống</td></tr>';
+  const eq = pj(d.eq_bag, []);
+  $('e-eq').innerHTML = eq.map((t, i) => `<tr><td>${esc(EQ_NAMES[t.k] || t.k)}</td><td>Cấp ${t.lv} ${t.f >= 0 ? '(đang gắn khung ' + (t.f + 1) + ')' : ''}</td><td><button class="dng" onclick="delItem('eq',${i})">Xóa</button></td></tr>`).join('') || '<tr><td class="sub">Trống</td></tr>';
+  const own = (((pj(d.guild_state, {}).tt) || {}).own) || {};
+  $('e-beast').innerHTML = Object.keys(own).map(n => `<div><label>🦄 ${esc(n)} (Lv ${own[n].lv}, ★${own[n].star})</label><button class="dng" onclick="delItem('beast','${esc(n)}')">Thu hồi con này</button></div>`).join('') || '<span class="sub">Không có</span>';
+}
+function delItem(kind, i) {
+  if (!confirm('Xóa mục này khỏi dữ liệu (chỉ áp dụng sau khi bấm Lưu thay đổi)?')) return;
+  if (kind === 'ts') { const a = pj(curData.ts_bag, []); a.splice(i, 1); curData.ts_bag = JSON.stringify(a); }
+  else if (kind === 'eq') { const a = pj(curData.eq_bag, []); a.splice(i, 1); curData.eq_bag = JSON.stringify(a); }
+  else if (kind === 'beast') { const g = pj(curData.guild_state, {}); if (g.tt && g.tt.own) delete g.tt.own[i]; curData.guild_state = JSON.stringify(g); }
+  readInputs(); renderEdit();
+}
+function readInputs() {   // đọc các ô nhập vào curData
+  document.querySelectorAll('[data-res]').forEach(i => {
+    const k = i.dataset.res, v = Math.max(0, Math.floor(num(i.value, 0)));
+    if (k === 'pills') { const s = pj(curData.sta_state, {}); s.pills = v; curData.sta_state = JSON.stringify(s); }
+    else curData[k] = String(v);
+  });
+  const g = pj(curData.guild_state, {}); g.kho = g.kho || {};
+  document.querySelectorAll('[data-kho]').forEach(i => { const n = i.dataset.kho; if (g.kho[n]) g.kho[n].qty = Math.max(0, Math.floor(num(i.value, 0))); });
+  curData.guild_state = JSON.stringify(g);
+  const sh = pj(curData.hero_shards, {});
+  document.querySelectorAll('[data-shard]').forEach(i => { sh[i.dataset.shard] = Math.max(0, Math.floor(num(i.value, 0))); });
+  curData.hero_shards = JSON.stringify(sh);
+}
+
+/* ---------- Ghi dữ liệu: luôn tăng epoch để máy người chơi bỏ dữ liệu cũ, tải bản mới ---------- */
+async function backupNow(uid, data) {   // lưu trạng thái hiện tại làm mốc để hoàn tác
+  await db.collection('save_history').doc(uid).collection('snaps').doc('pre-' + Date.now()).set({ t: Date.now(), data: data, tag: 'trước khi admin chỉnh', ep: (ctl[uid] || {}).epoch || 0, pw: 0 });
+}
+async function writeSave(uid, data, patchCtl) {
+  const cur0 = (await db.collection('account_ctl').doc(uid).get()).data() || {};
+  const ep = (cur0.epoch || 0) + 1;
+  const b = db.batch();
+  b.set(db.collection('account_ctl').doc(uid), Object.assign({}, cur0, patchCtl || {}, { epoch: ep }), { merge: true });
+  b.set(db.collection('saves').doc(uid), { t: Date.now(), data: data, ep: ep });
+  await b.commit();
+  ctl[uid] = Object.assign({}, cur0, patchCtl || {}, { epoch: ep });
+  const p = players.find(x => x.uid === uid); if (p) { p.data = data; p.t = Date.now(); }
+}
+async function saveEdits() {
+  if (!cur) return; readInputs();
+  if (!confirm('Lưu thay đổi vật phẩm cho người chơi này?')) return;
+  say('e-msg', 'Đang lưu…');
+  try {
+    const old = (players.find(x => x.uid === cur) || {}).data || {};
+    await backupNow(cur, old);
+    await writeSave(cur, curData);
+    say('e-msg', '✔ Đã lưu. Người chơi sẽ nhận dữ liệu mới khi mở/quay lại game.'); renderList(); renderState();
+  } catch (e) { say('e-msg', 'Lỗi: ' + (e.code || e.message), false); }
+}
+async function setLock(lock) {
+  if (!cur) return;
+  const reason = ($('d-reason').value || '').trim();
+  try {
+    await db.collection('account_ctl').doc(cur).set({ locked: lock, reason: lock ? reason : '' }, { merge: true });
+    ctl[cur] = Object.assign({}, ctl[cur], { locked: lock, reason: lock ? reason : '' });
+    say('d-msg', lock ? '🔒 Đã khóa. Người chơi bị đăng xuất trong ≤1 phút và không đăng nhập lại được.' : '🔓 Đã mở khóa.'); renderState(); renderList();
+  } catch (e) { say('d-msg', 'Lỗi: ' + (e.code || e.message), false); }
+}
+async function resetOne() {
+  if (!cur || !confirm('RESET tài khoản này về mới tinh? (Vẫn khôi phục được từ mốc giờ trong 72 giờ)')) return;
+  try {
+    const old = (players.find(x => x.uid === cur) || {}).data || {};
+    await backupNow(cur, old); await writeSave(cur, {});
+    say('d-msg', '✔ Đã reset.'); curData = {}; renderEdit(); renderList(); renderState();
+  } catch (e) { say('d-msg', 'Lỗi: ' + (e.code || e.message), false); }
+}
+async function resetAll() {
+  if ($('ra-conf').value.trim() !== 'RESET TAT CA') return say('ra-msg', 'Gõ đúng "RESET TAT CA" để xác nhận.', false);
+  if (!confirm('XÓA DỮ LIỆU CỦA TẤT CẢ ' + players.length + ' NGƯỜI CHƠI?')) return;
+  say('ra-msg', 'Đang reset…');
+  try {
+    let done = 0;
+    for (let i = 0; i < players.length; i += 150) {
+      const b = db.batch(), now = Date.now();
+      players.slice(i, i + 150).forEach(p => {
+        const ep = ((ctl[p.uid] || {}).epoch || 0) + 1;
+        b.set(db.collection('save_history').doc(p.uid).collection('snaps').doc('pre-' + now), { t: now, data: p.data, tag: 'trước reset tất cả', ep: ep - 1, pw: 0 });
+        b.set(db.collection('account_ctl').doc(p.uid), { epoch: ep }, { merge: true });
+        b.set(db.collection('saves').doc(p.uid), { t: now, data: {}, ep: ep });
+        ctl[p.uid] = Object.assign({}, ctl[p.uid], { epoch: ep }); p.data = {}; p.t = now;
+      });
+      await b.commit(); done = Math.min(players.length, i + 150); say('ra-msg', 'Đã reset ' + done + '/' + players.length + '…');
+    }
+    say('ra-msg', '✔ Đã reset ' + players.length + ' tài khoản.'); renderList(); if (cur) { curData = {}; renderEdit(); }
+  } catch (e) { say('ra-msg', 'Lỗi giữa chừng: ' + (e.code || e.message), false); }
+}
+
+/* ---------- Khôi phục khung giờ ---------- */
+let snaps = [];
+function snapLabel(id) { const m = /^(\d{4})(\d{2})(\d{2})(\d{2})$/.exec(id); return m ? `${m[4]}h ngày ${m[3]}/${m[2]}/${m[1]}` : id; }
+async function loadSnaps() {
+  if (!cur) return; say('sn-msg', 'Đang tải…');
+  try {
+    const q = await db.collection('save_history').doc(cur).collection('snaps').get();
+    snaps = []; q.forEach(d => snaps.push(Object.assign({ id: d.id }, d.data())));
+    snaps.sort((a, b) => (b.t || 0) - (a.t || 0));
+    $('snaps').innerHTML = snaps.map((s, i) => {
+      const dt = s.data || {};
+      return `<tr><td>${esc(snapLabel(s.id))}${s.tag ? ' <span class="tag">' + esc(s.tag) + '</span>' : ''}</td><td>${s.pw ? fmt(s.pw) : '-'}</td><td>${fmt(num(dt.acc_level, 74))}</td><td>${fmt(num(dt.gold_val, 0))}</td><td>${fmt(num(dt.silver_val, 0))}</td><td><button onclick="restoreSnap(${i})">Khôi phục</button></td></tr>`;
+    }).join('') || '<tr><td class="sub">Chưa có mốc nào (người chơi cần dùng bản game mới để bắt đầu lưu mốc theo giờ).</td></tr>';
+    say('sn-msg', 'Có ' + snaps.length + ' mốc.');
+  } catch (e) { say('sn-msg', 'Lỗi: ' + (e.code || e.message), false); }
+}
+async function restoreSnap(i) {
+  const s = snaps[i]; if (!s || !cur) return;
+  if (!confirm('Khôi phục tài khoản về mốc ' + snapLabel(s.id) + '?\nDữ liệu hiện tại sẽ được lưu thành mốc hoàn tác.')) return;
+  say('sn-msg', 'Đang khôi phục…');
+  try {
+    const old = (players.find(x => x.uid === cur) || {}).data || {};
+    await backupNow(cur, old);
+    await writeSave(cur, s.data || {});
+    curData = Object.assign({}, s.data || {}); renderEdit(); renderList(); renderState();
+    say('sn-msg', '✔ Đã khôi phục về ' + snapLabel(s.id) + '. Máy người chơi sẽ tải lại dữ liệu này.'); loadSnaps();
+  } catch (e) { say('sn-msg', 'Lỗi: ' + (e.code || e.message), false); }
+}
+</script>
+</body>
+</html>

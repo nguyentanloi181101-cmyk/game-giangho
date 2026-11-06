@@ -40,3 +40,34 @@ match /game_config/{doc} {
   allow read: if true;
   allow write: if isAdmin();
 }
+
+
+// ===== (Quản lý người chơi: khóa acc / reset / thu hồi vật phẩm / khôi phục khung giờ) — trang admin-players.html =====
+// QUAN TRỌNG: THAY khối `match /saves/{uid}` cũ bằng khối dưới (giữ nguyên các khối khác), rồi THÊM 2 khối account_ctl và save_history.
+
+function ctlOf(uid) { return /databases/$(database)/documents/account_ctl/$(uid); }
+function notLocked(uid) { return !(exists(ctlOf(uid)) && get(ctlOf(uid)).data.get('locked', false) == true); }
+function epochOk(uid) { return request.resource.data.get('ep', 0) == (exists(ctlOf(uid)) ? get(ctlOf(uid)).data.get('epoch', 0) : 0); }
+
+match /saves/{uid} {
+  allow get: if request.auth != null && (request.auth.uid == uid || isAdmin());
+  allow list: if isAdmin();
+  allow create, update: if isAdmin()
+    || (request.auth != null && request.auth.uid == uid && notLocked(uid) && epochOk(uid));   // bị khóa / máy cũ sau reset -> không ghi đè được
+  allow delete: if isAdmin();
+}
+
+// Khóa + epoch: chỉ admin ghi; người chơi chỉ đọc của chính mình
+match /account_ctl/{uid} {
+  allow get: if request.auth != null && (request.auth.uid == uid || isAdmin());
+  allow list: if isAdmin();
+  allow write: if isAdmin();
+}
+
+// Ảnh chụp theo giờ (client tự ghi mỗi giờ, giữ 72 giờ) để admin khôi phục
+match /save_history/{uid}/snaps/{id} {
+  allow read: if isAdmin();
+  allow create, update: if isAdmin()
+    || (request.auth != null && request.auth.uid == uid && notLocked(uid) && epochOk(uid));
+  allow delete: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+}

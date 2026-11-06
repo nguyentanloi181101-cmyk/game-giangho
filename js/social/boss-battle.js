@@ -72,10 +72,13 @@ async function bossAct(e, tok) {
     e.rage = 0;
     const id = rand(HEROES.map(h => h.id).filter(i => i !== 1));   // Thanh Y (hồi sinh đồng đội) vô nghĩa với boss đơn
     floatText(e, '💥 ' + ((typeof HERO_ULT_NAME !== 'undefined' && HERO_ULT_NAME[id]) || 'Tuyệt kỹ'));
-    Object.assign(e, { id, isHero: true, star: 5, sk: skillMult(id) * (Number(BOSS_CFG.ultMult) || 1) });
     refreshPanel();
-    try { await ultimate(e, tok); } catch (err) { console.warn('boss ult', err); }
-    finally { e.isHero = false; e.id = undefined; e.sk = 1; try { e.el.getAnimations().forEach(a => a.cancel()); } catch (x) {} }
+    // Người tung chiêu là 1 "bóng" VÔ HÌNH đứng đúng chỗ boss: chỉ hiện hoạt ảnh/skill của tướng, KHÔNG hiện hình tướng, boss đứng yên (không nhảy/bay theo chiêu)
+    const g = makeUnit('enemy', '', e.x, e.y, 1e15, e.atk, false, '');
+    g.el.classList.add('bb-cast');
+    Object.assign(g, { id, isHero: true, star: 5, def: e.def || 0, spd: e.spd || 0, acc: 99999, crit: e.crit || 0, critDmg: e.critDmg || 0, pierce: e.pierce || 0, tia: 1, rage: 0, sk: skillMult(id) * (Number(BOSS_CFG.ultMult) || 1) });
+    try { await ultimate(g, tok); } catch (err) { console.warn('boss ult', err); }
+    finally { g.alive = false; try { g.el.remove(); } catch (x) {} }
   } else { gainRage(e, RAGE_ATK); await attack(e, waveUnits.heroes, 1, e.atk, tok); }
   refreshPanel();
 }
@@ -99,7 +102,7 @@ async function bossBeastTick(tok) {
   const g = makeUnit('hero', heroIcon(h), 24, 28, 1, Math.round(alive.reduce((a, x) => a + x.atk, 0) / alive.length), false, h.name);
   Object.assign(g, { id, emoji: heroIcon(h), def: ref.def, spd: ref.spd, dodge: ref.dodge, acc: 99999, crit: ref.crit, critDmg: ref.critDmg, tough: ref.tough, pierce: ref.pierce, tia: ref.tia || 1, block: ref.block, sk: skillMult(id), rage: 0, isGhost: true });
   try {
-    applyRole(g); g.el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' });
+    applyRole(g); g.el.classList.add('bb-cast');   // vô hình: chỉ hiện skill của tướng, không hiện hình tướng
     floatText(g, '🐾 ' + B.tt); await sleep(500); if (tok !== battleToken) return;
     await ultimate(g, tok);
   } catch (e) { console.warn('beast ult', e); }

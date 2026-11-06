@@ -14,10 +14,12 @@ const FIREBASE_CONFIG = {
 const CL_DOMAIN = '@mhgh-game.app';
 const CL_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const _lsGet = Storage.prototype.getItem, _lsSet = Storage.prototype.setItem, _lsDel = Storage.prototype.removeItem;
+const CL_HIST_HOURS = 72, CL_SNAP_GAP = 10 * 60e3, CL_CTL_POLL = 60e3;   // giữ ảnh chụp tài khoản theo GIỜ trong 72 giờ (admin khôi phục về khung giờ trước)
+let clEp = 0, clSnapT = 0, clSnapKey = '', clPruned = false, clCtlTimer = null, clLocked = false;
 let clAuth = null, clDb = null, clUser = null, clTimer = null, clDirty = false, clAsk = false, clBusy = false, clInited = false, clFresh = false, clWiping = false, clReady = '';
 const clOwner = () => { try { return _lsGet.call(localStorage, 'cloud_owner') || ''; } catch (e) { return ''; } };
 const clSetOwner = u => { try { _lsSet.call(localStorage, 'cloud_owner', u); } catch (e) {} };
-function clReadyOk(uid) { clReady = uid; clSetOwner(uid); if (clDirty && !clTimer) clTimer = setTimeout(clPush, 3000); }
+function clReadyOk(uid) { clReady = uid; clSetOwner(uid); clStartCtlPoll(); if (clDirty && !clTimer) clTimer = setTimeout(clPush, 3000); }
 const clCfgOk = () => !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
 const clLocalT = () => Number(_lsGet.call(localStorage, 'cloud_local_t')) || 0;
 const clHasLocal = () => SV_KEYS.some(k => _lsGet.call(localStorage, k) !== null);
@@ -83,6 +85,7 @@ function clStartFresh(uid) {
   try {
     SV_KEYS.forEach(k => _lsDel.call(localStorage, k));
     _lsSet.call(localStorage, 'cloud_local_t', String(Date.now()));
+    _lsSet.call(localStorage, 'cloud_ep', String(clEp || 0));
     if (uid) _lsSet.call(localStorage, 'cloud_owner', uid);
   } catch (e) {}
   setTimeout(() => location.reload(), 600);
@@ -112,12 +115,14 @@ async function clPush() {
   if (clReady !== clUser.uid) return false;   // chưa đồng bộ xong / dữ liệu trên máy không thuộc tài khoản này
   const t = clLocalT() || Date.now();
   try {
-    await clDb.collection('saves').doc(clUser.uid).set({ t: t, data: svCollect().data });
+    const data = svCollect().data;
+    await clDb.collection('saves').doc(clUser.uid).set({ t: t, data: data, ep: clEp });
     _lsSet.call(localStorage, 'cloud_local_t', String(t)); clDirty = false; clSetOwner(clUser.uid);
     clPublishPvp().catch(() => {});   // cập nhật đội hình Tỷ Võ cho người chơi khác
+    clSnap(data, t).catch(() => {});  // ảnh chụp theo giờ (để admin khôi phục)
     clMsg('☁️ Đã lưu lên đám mây ' + new Date().toLocaleTimeString());
     return true;
-  } catch (e) { clMsg(clErr(e), false); return false; }
+  } catch (e) { if (e && e.code === 'permission-denied') clCheckCtl(); clMsg(clErr(e), false); return false; }
 }
 // Đăng "ảnh chụp" đội hình Tỷ Võ (chỉ số đã tính đủ trang bị / Bảo Vật / cộng dồn Tỷ Võ) để tài khoản khác đấu được với mình
 async function clPublishPvp() {
@@ -132,11 +137,79 @@ async function clPublishPvp() {
   if (!cur.exists) { data.rank = await pvpNewKey(); data.rt = Date.now(); }   // tài khoản mới xếp tiếp xuống cuối bảng; sau đó đổi qua pvpRankCloud
   await ref.set(data, { merge: true });
 }
+
+/* ===== ADMIN: KHÓA TÀI KHOẢN / RESET / KHÔI PHỤC VỀ KHUNG GIỜ TRƯỚC =====
+   account_ctl/{uid} = { locked, reason, epoch }  (chỉ admin ghi). epoch tăng mỗi lần admin reset / khôi phục / sửa vật phẩm:
+   máy nào có epoch cũ sẽ bị BỎ dữ liệu trên máy và tải lại dữ liệu mới từ mây; luật Firestore cũng chặn máy cũ ghi đè (saves.ep phải khớp). */
+const clLocalEp = () => Number(_lsGet.call(localStorage, 'cloud_ep')) || 0;
+const clSetLocalEp = n => { try { _lsSet.call(localStorage, 'cloud_ep', String(n || 0)); } catch (e) {} };
+async function clReadCtl() {
+  const d = await clDb.collection('account_ctl').doc(clUser.uid).get();
+  return d.exists ? d.data() : {};
+}
+function clLockOut(reason) {
+  if (clLocked) return; clLocked = true;
+  clWiping = true; clearTimeout(clTimer); clTimer = null; clDirty = false; clearInterval(clCtlTimer); clCtlTimer = null;
+  const done = () => {
+    try { SV_KEYS.forEach(k => _lsDel.call(localStorage, k)); _lsDel.call(localStorage, 'cloud_owner'); _lsDel.call(localStorage, 'cloud_local_t'); _lsDel.call(localStorage, 'cloud_ep'); } catch (e) {}
+    alert('🔒 Tài khoản này đã bị KHÓA bởi quản trị viên.' + (reason ? '\nLý do: ' + reason : ''));
+    location.reload();
+  };
+  try { clAuth.signOut().then(done, done); } catch (e) { done(); }
+}
+// Kiểm tra khóa / epoch. Trả về true nếu tài khoản dùng tiếp được ở trạng thái hiện tại.
+async function clCheckCtl() {
+  if (!clUser || !clDb || clLocked) return false;
+  try {
+    const c = await clReadCtl();
+    if (c.locked) { clLockOut(c.reason || ''); return false; }
+    const ep = Number(c.epoch) || 0;
+    if (ep !== clEp || ep !== clLocalEp()) {   // admin vừa reset / khôi phục / chỉnh dữ liệu -> bỏ dữ liệu máy, tải bản mới
+      if (clBusy) return true;
+      clBusy = true;
+      try {
+        const snap = await clDb.collection('saves').doc(clUser.uid).get();
+        clEp = ep; clSetLocalEp(ep);
+        if (snap.exists) clApplyCloud(snap.data(), clUser.uid); else clStartFresh(clUser.uid);
+      } finally { clBusy = false; }
+      return false;
+    }
+  } catch (e) { /* mất mạng: bỏ qua, lần sau kiểm tra lại */ }
+  return true;
+}
+function clStartCtlPoll() {
+  if (clCtlTimer) return;
+  clCtlTimer = setInterval(() => { if (document.visibilityState === 'visible') clCheckCtl(); }, CL_CTL_POLL);
+}
+// Sức mạnh (lực chiến) hiện tại của đội — ghi kèm ảnh chụp để admin chọn đúng mốc
+function clPower() {
+  try {
+    const ids = (team || []).filter(id => heroById(id)); if (!ids.length) return 0;
+    const _tt = (typeof ttMine === 'function' && ttMine()) || null, _bn = _tt ? ttBonus(_tt.pt) : {};
+    return ids.reduce((a, id) => a + unitPower(ttApply(Object.assign({}, heroStats(id, true)), _bn)), 0);
+  } catch (e) { return 0; }
+}
+// Ảnh chụp mỗi GIỜ: save_history/{uid}/snaps/{yyyyMMddHH}. Cùng 1 giờ thì ghi đè bằng trạng thái mới nhất (cách nhau >= 10 phút).
+async function clSnap(data, t) {
+  if (!clUser || !clDb) return;
+  const d = new Date(), z = n => String(n).padStart(2, '0');
+  const key = '' + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + z(d.getHours());
+  if (key === clSnapKey && Date.now() - clSnapT < CL_SNAP_GAP) return;
+  clSnapKey = key; clSnapT = Date.now();
+  const col = clDb.collection('save_history').doc(clUser.uid).collection('snaps');
+  await col.doc(key).set({ t: Date.now(), st: t, data: data, ep: clEp, pw: Math.round(clPower()), name: (typeof pvName === 'function' ? pvName() : '') });
+  if (!clPruned) {   // mỗi phiên dọn 1 lần: xóa ảnh chụp quá CL_HIST_HOURS giờ
+    clPruned = true;
+    const old = await col.where('t', '<', Date.now() - CL_HIST_HOURS * 3600e3).limit(30).get();
+    old.forEach(x => x.ref.delete().catch(() => {}));
+  }
+}
 function clApplyCloud(cloud, uid) {
   try {
     SV_KEYS.forEach(k => _lsDel.call(localStorage, k));
     Object.keys(cloud.data || {}).forEach(k => { if (SV_KEYS.includes(k)) _lsSet.call(localStorage, k, cloud.data[k]); });
     _lsSet.call(localStorage, 'cloud_local_t', String(cloud.t || 0));
+    _lsSet.call(localStorage, 'cloud_ep', String(clEp || 0));
     if (uid) _lsSet.call(localStorage, 'cloud_owner', uid);
   } catch (e) { clMsg('Không ghi được dữ liệu vào máy này.', false); return; }
   clMsg('✔ Đã tải dữ liệu từ đám mây, đang tải lại game...');
@@ -149,9 +222,16 @@ async function clSync() {
   const ask = clAsk; clAsk = false;
   const fresh = clFresh; clFresh = false;
   const uid = clUser.uid;
+  try {   // admin: tài khoản bị khóa -> đăng xuất; epoch (reset/khôi phục) -> luôn lấy dữ liệu mây
+    const c = await clReadCtl();
+    if (c.locked) { clBusy = false; clLockOut(c.reason || ''); return; }
+    clEp = Number(c.epoch) || 0;
+  } catch (e) { clEp = clLocalEp(); }
   if (fresh) { clStartFresh(uid); clBusy = false; return; }
   try {
     const snap = await clDb.collection('saves').doc(uid).get();
+    if (snap.exists && clEp !== clLocalEp()) { clApplyCloud(snap.data(), uid); clBusy = false; return; }
+    if (!snap.exists && clEp !== clLocalEp()) { clStartFresh(uid); clBusy = false; return; }
     const cloud = snap.exists ? snap.data() : null, lt = clLocalT(), has = clHasLocal();
     let owner = clOwner();
     if (!owner && !ask && has) owner = uid;   // phiên đăng nhập cũ (trước khi có cơ chế gắn chủ): coi dữ liệu máy là của tài khoản này
@@ -184,5 +264,5 @@ function clRender() {
   }
 }
 // Khi rời trang / chuyển tab: đẩy dữ liệu chưa lưu
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && clDirty && clUser) clPush(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && clDirty && clUser) clPush(); else if (document.visibilityState === 'visible' && clUser) clCheckCtl(); });
 window.addEventListener('pagehide', () => { if (clDirty && clUser) clPush(); });
