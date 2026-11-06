@@ -2,8 +2,26 @@
    (tách từ index.html cũ — script) */
 
     // ================= CHỈ SỐ TƯỚNG • CẤP / SAO / KỸ NĂNG • CÀI ĐẶT =================
-    const LV_MAX = 1000, STAR_MAX = 6, SKILL_MAX = 10;          // giới hạn nâng cấp
-    const LV_GROWTH = 0.02, STAR_GROWTH = 0.10, SKILL_GROWTH = 0.10;  // +2%/cấp, +10%/sao (HP/Công/Thủ), +10%/cấp kỹ năng
+    const LV_MAX = 1000, STAR_MAX = 6;
+    // ===== QUY TẮC TĂNG TRƯỞNG TƯỚNG — ADMIN CHỈNH ĐƯỢC (game_config → progress) =====
+    //  lvPerStar     : cấp tướng cần cho mỗi sao (mặc định 10): muốn lên ★2 phải đạt cấp 20, ★3 cấp 30, ★n cấp 10×n (★1 là sao khởi đầu)
+    //  starNeedsLv   : 1 = tăng sao đòi đủ cấp tướng như trên; 0 = tắt luật này
+    //  accLimitsLv   : 1 = cấp tướng không được vượt cấp tài khoản; 0 = tắt luật này
+    //  maxStar       : sao tối đa (≤ 15, giao diện chỉ vẽ tới ★15)
+    //  lvGrowthPct / starGrowthPct / skillGrowthPct : % HP/Công/Thủ tăng mỗi cấp / mỗi sao / mỗi cấp kỹ năng
+    //  skillMax      : cấp kỹ năng tối đa
+    //  costSilver / costRice / costGrowthPct : chi phí lên cấp 2 (bạc, gạo) và % đắt thêm mỗi cấp
+    const PROG_CFG = cfgSnap('progress', { lvPerStar: 10, maxStar: 15, starNeedsLv: 1, accLimitsLv: 1, lvGrowthPct: 2, starGrowthPct: 10, skillGrowthPct: 10, skillMax: 10, costSilver: 100, costRice: 200, costGrowthPct: 10 });
+    Object.assign(PROG_CFG, cfgGet('progress', {}));
+    let SKILL_MAX = 10, LV_GROWTH = 0.02, STAR_GROWTH = 0.10, SKILL_GROWTH = 0.10;   // đồng bộ từ PROG_CFG bằng progCfgSync() (gọi cuối hero-progress.js và mỗi lần admin đổi cấu hình)
+    const _pn = (v, d, lo, hi) => { v = Number(v); if (!isFinite(v)) v = d; return Math.min(hi, Math.max(lo, v)); };
+    // Sao tối đa mà tướng cấp `lv` được phép có (★1 luôn có; ★n cần cấp lvPerStar × n)
+    const starCapByLv = lv => PROG_CFG.starNeedsLv ? Math.max(1, Math.floor(Math.max(0, lv | 0) / Math.floor(_pn(PROG_CFG.lvPerStar, 10, 1, 1000)))) : 15;
+    function progCfgSync() {
+      SKILL_MAX = Math.floor(_pn(PROG_CFG.skillMax, 10, 1, 100));
+      LV_GROWTH = _pn(PROG_CFG.lvGrowthPct, 2, 0, 1000) / 100; STAR_GROWTH = _pn(PROG_CFG.starGrowthPct, 10, 0, 1000) / 100; SKILL_GROWTH = _pn(PROG_CFG.skillGrowthPct, 10, 0, 1000) / 100;
+      try { STAR_ABS_MAX = Math.floor(_pn(PROG_CFG.maxStar, 15, 1, 15)); LV_COST_SILVER = _pn(PROG_CFG.costSilver, 100, 0, 1e12); LV_COST_RICE = _pn(PROG_CFG.costRice, 200, 0, 1e12); LV_COST_GROWTH = 1 + _pn(PROG_CFG.costGrowthPct, 10, 0, 1000) / 100; } catch (e) {}   // các biến này khai báo ở hero-progress.js
+    }
     // Cấp & sao ban đầu của từng tướng (chỉ số cơ bản trong HEROES tương ứng với mức này)
     // Tài khoản bị admin "RESET TRẮNG" (cờ blank_start): mọi tướng cấp 1 ★1, cấp acc 1, tài nguyên 0, bang cấp 1
     const BLANK_START = (() => { try { return localStorage.getItem('blank_start') === '1'; } catch (e) { return false; } })();

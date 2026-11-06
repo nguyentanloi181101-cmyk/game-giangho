@@ -7,6 +7,7 @@
      heroes:   { "<id>": { hp, atk, def, dodge, acc, crit, critDmg, tough, pierce, block, heal, spd, startRage, tia, role } }  (chỉ trường nào khác mặc định)
      treasure: { starAdd, maxLv, maxStar, kinds: { "<loại>": [ {base, per} | null, ... 3 dòng ] } }
      equip:    { maxLv, rewardEach, rewardStartLv, per: { hat, armor, sword, boots } }
+     progress: { lvPerStar, maxStar, starNeedsLv, accLimitsLv, lvGrowthPct, starGrowthPct, skillGrowthPct, skillMax, costSilver, costRice, costGrowthPct }   (luật cấp/sao tướng)
      exp:      { base, growth }                                  (EXP lên cấp 2 • % tăng mỗi cấp)
      pve:      { silverBase, riceBase, growth, thanBase, tienBase, expBase, pillBase, extra: [ {t,n,...} ] }   (extra = thưởng thêm mỗi trận)
      foe:      { hp, atk, def, dodge, growth, bossMult, counts:[t1,t2,t3,t4], rules:[{from,to,c:[..]}] }   (địch PVE)
@@ -62,6 +63,7 @@ function cfgApply(refresh) {
     if (typeof BOSS_CFG !== 'undefined' && cfgBase.boss) Object.assign(BOSS_CFG, cfgBase.boss, GAME_CFG.boss || {});
     if (typeof PVE_CFG !== 'undefined' && cfgBase.pve) Object.assign(PVE_CFG, cfgBase.pve, GAME_CFG.pve || {});
     if (typeof FOE_CFG !== 'undefined' && cfgBase.foe) Object.assign(FOE_CFG, cfgBase.foe, GAME_CFG.foe || {});
+    if (typeof PROG_CFG !== 'undefined' && cfgBase.progress) { Object.assign(PROG_CFG, cfgBase.progress, GAME_CFG.progress || {}); try { progCfgSync(); } catch (e) {} }
     if (typeof EXP_CFG !== 'undefined' && cfgBase.exp) { Object.assign(EXP_CFG, cfgBase.exp, GAME_CFG.exp || {}); try { updateAccExp(); } catch (e) {} }
     if (refresh) {
       try { renderHomeTeam(); } catch (e) {} try { updatePower(); } catch (e) {} try { if (typeof renderPvp === 'function') renderPvp(); } catch (e) {}

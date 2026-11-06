@@ -2,8 +2,9 @@
    (tách từ index.html cũ — script) */
 
     // Cứ 10 cấp tướng được tăng thêm 1 sao (cấp 150 → tối đa ★15); thấp nhất vẫn là ★6 như cũ
-    const STAR_ABS_MAX = 15;   // tối đa 15 sao, không tăng thêm
-    const starCapOf = lv => Math.min(STAR_ABS_MAX, Math.max(STAR_MAX, Math.floor(lv / 10)));
+    let STAR_ABS_MAX = 15;   // sao tối đa (admin chỉnh PROG_CFG.maxStar, ≤ 15)
+    // Sao tối đa theo cấp tướng: cấp 20 → ★2, cấp 30 → ★3 ... (cấp 10 mỗi sao; admin chỉnh PROG_CFG.lvPerStar)
+    const starCapOf = lv => Math.min(STAR_ABS_MAX, starCapByLv(lv));
     // CÁCH HIỂN THỊ SAO (dùng chung thẻ tướng, Tỷ Võ, Tăng Sao):
     //  ★1-5  : n sao thường (vàng)
     //  ★6-10 : sao LỚN = 2 sao → ★6 = 1 lớn + 4 nhỏ, ★7 = 2 lớn + 3 nhỏ … ★10 = 5 lớn
@@ -38,8 +39,10 @@
     const skillMult = id => 1 + SKILL_GROWTH * (getProg(id).sk - 1);
 
     // ---- CHI PHÍ LÊN CẤP TƯỚNG: cấp 2 = 100 bạc + 200 gạo; mỗi cấp sau đắt hơn cấp trước 10% (cấp 3 = cấp 2 + 10%, cấp 4 = cấp 3 + 10%, ...) ----
-    const LV_COST_SILVER = 100, LV_COST_RICE = 200, LV_COST_GROWTH = 1.1;
+    let LV_COST_SILVER = 100, LV_COST_RICE = 200, LV_COST_GROWTH = 1.1;
     const lvCost = lv => { const m = Math.pow(LV_COST_GROWTH, Math.max(0, lv - 2)); return { silver: Math.round(LV_COST_SILVER * m), rice: Math.round(LV_COST_RICE * m) }; };   // chi phí để LÊN cấp `lv`
     const lvCostRange = (from, n) => { let s = 0, r = 0; for (let i = 1; i <= n; i++) { const c = lvCost(from + i); s += c.silver; r += c.rice; } return { silver: s, rice: r }; };
     // Với số bạc/gạo hiện có, lên được tối đa bao nhiêu cấp (không quá n)
     const lvAffordable = (from, n) => { let k = 0, s = silver, r = rice; while (k < n) { const c = lvCost(from + k + 1); if (s < c.silver || r < c.rice) break; s -= c.silver; r -= c.rice; k++; } return k; };
+
+progCfgSync();   // áp thông số admin (sau khi các biến ở trên đã khai báo)

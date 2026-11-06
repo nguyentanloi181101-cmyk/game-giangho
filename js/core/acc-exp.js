@@ -1,6 +1,6 @@
 /* CẤP TÀI KHOẢN + EXP (thay cho hệ thống Chìa Khóa 🔑 cũ)
    - Thắng mỗi Bàn PVE (và quét) nhận EXP (admin chỉnh `pve.expBase` như bạc/gạo/Thần Đan/Tiên Đan). Đủ EXP thì tự lên cấp acc.
-   - Cấp acc chính là giới hạn cấp của TẤT CẢ tướng và trang bị (heroCap / eqCap).
+   - Cấp tướng ≤ cấp acc. Tăng sao đòi cấp tướng: cấp 20 mới lên ★2, cấp 30 mới lên ★3... (hệ số 10 và 2 luật này admin chỉnh ở game_config → progress). Trang bị cũng bị giới hạn bởi cấp acc (eqCap).
    - Admin chỉnh ở admin-config.html → tab "Cấp & EXP":
        exp.base = EXP cần để lên cấp 2 • exp.growth = % tăng thêm mỗi cấp  (EXP nhận mỗi Bàn: tab "Thưởng PVE")
    - Cấp 1→2 cần `base` EXP; cấp k→k+1 cần base × (1 + growth/100)^(k−1)  (mặc định 3000, +10%/cấp) */
@@ -21,7 +21,8 @@ const expNeed = lv => {
 };
 
 // Cấp acc chính là giới hạn cấp của TẤT CẢ tướng và trang bị
-const heroCap = id => Math.max(accLevel, (START_PROG[id] || { lv:1 }).lv);
+// Cấp tối đa của 1 tướng = cấp acc (admin có thể tắt bằng progress.accLimitsLv = 0). Tướng đã vượt mức này từ trước giữ nguyên cấp.
+const heroCap = id => Math.max(PROG_CFG.accLimitsLv ? accLevel : LV_MAX, getProg(id).lv);
 const eqCap = () => accLevel;
 
 function accSave() {

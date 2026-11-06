@@ -40,7 +40,7 @@
       let cost = '', btns = '';
       if (mode === 'sao') {
         const need = starCost(p.star + 1), have = shardsOf(upgId), ok = have >= need;
-        cost = maxed ? '<div class="up-max">Đã đạt sao tối đa theo cấp hiện tại — tăng cấp tướng để mở thêm sao</div>' : `<div class="up-cost"><div class="up-it"><div class="e">${heroIcon(h)}</div><b class="${ok ? '' : 'bad'}">${have}/${need}</b><small>Mảnh ${h.name}</small></div></div>`;
+        cost = maxed ? (p.star >= STAR_ABS_MAX ? '<div class="up-max">Đã đạt sao tối đa</div>' : '<div class="up-max">🔒 Cần tướng cấp ' + PROG_CFG.lvPerStar * (p.star + 1) + ' để lên ★' + (p.star + 1) + ' — hãy Thăng Cấp trước</div>') : `<div class="up-cost"><div class="up-it"><div class="e">${heroIcon(h)}</div><b class="${ok ? '' : 'bad'}">${have}/${need}</b><small>Mảnh ${h.name}</small></div></div>`;
         btns = `<button class="up-go" ${maxed || !ok ? 'disabled' : ''} onclick="upgradeHero('star',1)">Tăng Sao</button>`;
       } else if (mode === 'boiduong') {
         const c = lvCost(p.lv + 1), k = lvAffordable(p.lv, 1) >= 1;
