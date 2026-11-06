@@ -39,7 +39,7 @@
           <div class="battle-item ${isLocked ? 'locked' : ''}" onclick="${isLocked ? '' : `startBattleSequence(${stageNum}, ${i})`}">
             <div>
               <div class="battle-item-title">Bàn ${i} ${isLocked ? '🔒' : ''}</div>
-              <div class="battle-item-desc">🥈 ${fmtN(banReward(stageNum, i).silver)} bạc • 🌾 ${fmtN(banReward(stageNum, i).rice)} gạo<br>🔮 ${fmtN(banReward(stageNum, i).than)} Thần Đan • 🔴 ${fmtN(banReward(stageNum, i).tien)} Tiên Đan<br>⚡ Tốn ${STA_WAVES * STA_PER_WAVE} thể lực • 💊 Thưởng ${PILL_PER_CLEAR} viên thể lực${extraList().length ? '<br>🎁 Thêm: ' + extraRewardText() : ''}${i === 10 && expPerStage() > 0 ? '<br>✨ Vượt Ải: +' + fmtN(expPerStage()) + ' EXP' : ''}${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
+              <div class="battle-item-desc">🥈 ${fmtN(banReward(stageNum, i).silver)} bạc • 🌾 ${fmtN(banReward(stageNum, i).rice)} gạo<br>🔮 ${fmtN(banReward(stageNum, i).than)} Thần Đan • 🔴 ${fmtN(banReward(stageNum, i).tien)} Tiên Đan${banReward(stageNum, i).exp > 0 ? ' • ✨ ' + fmtN(banReward(stageNum, i).exp) + ' EXP' : ''}<br>⚡ Tốn ${STA_WAVES * STA_PER_WAVE} thể lực • ${pillPerClear() > 0 ? '💊 Thưởng ' + pillPerClear() + ' viên thể lực' : ''}${extraList().length ? '<br>🎁 Thêm: ' + extraRewardText() : ''}${stageNum === EQ_REWARD.stage && i === EQ_REWARD.battle ? '<br>🎁 Thưởng: ' + EQ_REWARD.each + ' Mũ, ' + EQ_REWARD.each + ' Áo, ' + EQ_REWARD.each + ' Kiếm, ' + EQ_REWARD.each + ' Giày' : ''}</div>
             </div>
             ${isLocked ? '<div class="battle-item-btn disabled">Chưa mở</div>' : `<div class="battle-btns">${isCleared(stageNum, i) ? `<div class="battle-item-btn sweep" onclick="event.stopPropagation();sweepBattle(${stageNum}, ${i})">Quét ×${SWEEP_N}<small>⚡${SWEEP_N * STA_WAVES * STA_PER_WAVE}</small></div>` : ''}<div class="battle-item-btn">Đánh ▶</div></div>`}
           </div>
@@ -57,11 +57,11 @@
       if (!isCleared(stage, battle)) return;
       const cost = SWEEP_N * STA_WAVES * STA_PER_WAVE;
       if (!staSpend(cost)) { alert('⚡ Không đủ thể lực để quét! Cần ' + cost + ' thể lực (có ' + staState.v + ').\nDùng 💊 Viên Thể Lực trong Túi đồ để hồi thêm.'); return; }
-      const r = banReward(stage, battle); let extra = '';
+      const r = banReward(stage, battle); let extra = ''; const lv0 = accLevel;
       for (let n = 0; n < SWEEP_N; n++) { grantBanReward(stage, battle); grantPills(); if (n === 0) extra = grantStageReward(stage, battle); }
       extra = grantExtraReward(SWEEP_N) + extra;
       if (typeof updatePower === 'function') updatePower();
-      pvpToast(`⚔️ Quét Ải ${stage} - Bàn ${battle} ×${SWEEP_N}!\n\n🥈 +${fmtN(r.silver * SWEEP_N)} bạc • 🌾 +${fmtN(r.rice * SWEEP_N)} gạo\n🔮 +${fmtN(r.than * SWEEP_N)} Thần Đan • 🔴 +${fmtN(r.tien * SWEEP_N)} Tiên Đan\n💊 +${PILL_PER_CLEAR * SWEEP_N} Viên Thể Lực (có ${staState.pills})\n⚡ -${cost} thể lực` + extra, true);
+      pvpToast(`⚔️ Quét Ải ${stage} - Bàn ${battle} ×${SWEEP_N}!\n\n🥈 +${fmtN(r.silver * SWEEP_N)} bạc • 🌾 +${fmtN(r.rice * SWEEP_N)} gạo\n🔮 +${fmtN(r.than * SWEEP_N)} Thần Đan • 🔴 +${fmtN(r.tien * SWEEP_N)} Tiên Đan${r.exp > 0 ? '\n✨ +' + fmtN(r.exp * SWEEP_N) + ' EXP' + (accLevel > lv0 ? ' • 🎉 Lên cấp ' + accLevel + '!' : '') : ''}\n${pillPerClear() > 0 ? '💊 +' + pillPerClear() * SWEEP_N + ' Viên Thể Lực (có ' + staState.pills + ')\n' : ''}⚡ -${cost} thể lực` + extra, true);
     }
 
     function backToStages() {

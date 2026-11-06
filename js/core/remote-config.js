@@ -7,8 +7,8 @@
      heroes:   { "<id>": { hp, atk, def, dodge, acc, crit, critDmg, tough, pierce, block, heal, spd, startRage, tia, role } }  (chỉ trường nào khác mặc định)
      treasure: { starAdd, maxLv, maxStar, kinds: { "<loại>": [ {base, per} | null, ... 3 dòng ] } }
      equip:    { maxLv, rewardEach, rewardStartLv, per: { hat, armor, sword, boots } }
-     exp:      { perStage, base, growth }                        (EXP mỗi Ải • EXP lên cấp 2 • % tăng mỗi cấp)
-     pve:      { silverBase, riceBase, growth, thanBase, tienBase, extra: [ {t,n,...} ] }   (extra = thưởng thêm mỗi trận)
+     exp:      { base, growth }                                  (EXP lên cấp 2 • % tăng mỗi cấp)
+     pve:      { silverBase, riceBase, growth, thanBase, tienBase, expBase, pillBase, extra: [ {t,n,...} ] }   (extra = thưởng thêm mỗi trận)
      boss:     { daily, baseHp, hpMult, ctMult, atkDiv, heroDmgMult, maxRounds, ptsPerDmg, killPts }
      guild:    { hp1, def1, atk, hp2, def2, pierce, heal, spd, critDmg, boss }     (mỗi cấp Lò Luyện Hỏa) */
 

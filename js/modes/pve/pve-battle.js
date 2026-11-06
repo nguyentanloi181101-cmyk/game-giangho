@@ -167,9 +167,8 @@
         currentWave++;
         loadWave();
       } else {
-        const expMsg = currentBattle === 10 ? claimStageExp(currentStage) : '';
         const hamMsg = currentBattle === 10 ? claimStageHammer(currentStage) : '';
-        const rewardMsg = grantBanReward(currentStage, currentBattle) + grantExtraReward() + grantStageReward(currentStage, currentBattle) + expMsg + hamMsg + grantPills();
+        const rewardMsg = grantBanReward(currentStage, currentBattle) + grantExtraReward() + grantStageReward(currentStage, currentBattle) + hamMsg + grantPills();
         pvpToast(`Hoàn thành Ải ${currentStage} - Bàn ${currentBattle}!` + rewardMsg, true);   // tự qua bàn, thông báo tự tắt
         const st = currentStage, bt = currentBattle;
         closeBattle();

@@ -2,7 +2,7 @@
    (tách từ index.html cũ — script) */
 
 /* ===== SAO LƯU / CHUYỂN DỮ LIỆU GIỮA CÁC MÁY ===== */
-const SV_KEYS = ['pve_progress','team_ids','hero_stat_ov','hero_role','hero_prog','acc_level','acc_exp','exp_claimed',
+const SV_KEYS = ['pve_progress','team_ids','hero_stat_ov','hero_role','hero_prog','acc_level','acc_exp',
                  'player_name','ts_bag','eq_bag','eq_lv','eq_mount','eq_reward_done','auto_battle','pvp_state','audio_set','sta_state',
                  'gold_val','silver_val','rice_val','mail_state','ham_claimed','ham_spent','hero_shards','rec_state','guild_state','quest_state','giftcode_used','blank_start','hero_owned'];
 function svMsg(t, ok) { const e = document.getElementById('sv-msg'); e.style.color = ok === false ? '#f87171' : '#4ade80'; e.innerText = t; }

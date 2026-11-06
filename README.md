@@ -227,11 +227,11 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 
 
 ## Cấp tài khoản & EXP (thay cho Chìa Khóa 🔑 — đã bỏ hẳn)
-- `js/core/acc-exp.js`: vượt xong 1 Ải (thắng Bàn 10 **lần đầu**) nhận EXP, đủ EXP tự lên cấp acc. Cấp acc vẫn là giới hạn cấp của mọi tướng và trang bị.
+- `js/core/acc-exp.js`: thắng mỗi Bàn PVE (và quét) nhận EXP như bạc/gạo/Thần Đan/Tiên Đan (hiện trong mô tả từng Bàn), đủ EXP tự lên cấp acc. Cấp acc vẫn là giới hạn cấp của mọi tướng và trang bị.
 - Thanh EXP nằm ngay dưới dòng "Cấp / tên" ở trang chủ (vạch đỏ trong ảnh). Không còn nút 🔒 và số 🔑.
 - Công thức: cấp 1 → 2 cần `base` EXP (mặc định 3000); cấp k → k+1 cần `base × (1 + growth/100)^(k−1)` (mặc định +10%/cấp: 3000, 3300, 3630…).
-- Admin chỉnh ở `admin-config.html` → tab **✨ Cấp & EXP**: `exp.perStage` (mặc định 1000/Ải), `exp.base` (3000), `exp.growth` (10). Có bảng xem trước số EXP & số Ải cần mỗi cấp.
-- Ải đã qua trước bản này không được tính bù EXP. Chìa khóa chưa dùng của tài khoản cũ không còn tác dụng.
+- Admin chỉnh ở `admin-config.html` → tab **✨ Cấp & EXP**: `exp.base` (3000) và `exp.growth` (10) + bảng xem trước. EXP nhận mỗi Bàn chỉnh ở tab **Thưởng PVE** (`pve.expBase`, mặc định 100 ở Bàn 1, tăng theo hệ số Bàn như bạc/gạo).
+- Chìa khóa chưa dùng của tài khoản cũ không còn tác dụng.
 - Gift Code: loại quà `key` đổi thành `exp` (mã cũ có `key` sẽ bị bỏ qua). Admin-players: ô "Chìa khóa tặng" đổi thành "EXP".
 
 ## Thưởng thêm mỗi trận (PVE)

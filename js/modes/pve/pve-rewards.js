@@ -39,8 +39,9 @@ const BAN_SILVER_BASE = 3000;
 
 const BAN_THAN_BASE = 2;
 const BAN_TIEN_BASE = 100;
+const BAN_EXP_BASE = 100;   // EXP tài khoản ở Bàn 1
 // Admin chỉnh được (admin-config.html → tab Thưởng PVE)
-const PVE_CFG = cfgSnap('pve', { silverBase: BAN_SILVER_BASE, riceBase: BAN_RICE_BASE, growth: BAN_REWARD_GROWTH, thanBase: BAN_THAN_BASE, tienBase: BAN_TIEN_BASE, extra: [] });
+const PVE_CFG = cfgSnap('pve', { silverBase: BAN_SILVER_BASE, riceBase: BAN_RICE_BASE, growth: BAN_REWARD_GROWTH, thanBase: BAN_THAN_BASE, tienBase: BAN_TIEN_BASE, expBase: BAN_EXP_BASE, pillBase: 10, extra: [] });
 Object.assign(PVE_CFG, cfgGet('pve', {}));
 
 // Thêm đan vào kho Túi Đồ
@@ -72,7 +73,8 @@ function banReward(stage, battle) {
     silver: Math.round(PVE_CFG.silverBase * m),
     rice: Math.round(PVE_CFG.riceBase * m),
     than: Math.round(PVE_CFG.thanBase * m),
-    tien: Math.round(PVE_CFG.tienBase * m)
+    tien: Math.round(PVE_CFG.tienBase * m),
+    exp: Math.round((Number(PVE_CFG.expBase) || 0) * m)
   };
 }
 
@@ -86,8 +88,9 @@ function grantBanReward(stage, battle) {
 
   danAdd('Thần Đan', '🔮', r.than);
   danAdd('Tiên Đan', '🔴', r.tien);
+  const up = typeof addAccExp === 'function' ? addAccExp(r.exp) : 0;   // EXP → tự lên cấp acc khi đủ
 
-  return `\n\n🥈 +${fmtRewardN(r.silver)} bạc • 🌾 +${fmtRewardN(r.rice)} gạo\n🔮 +${fmtRewardN(r.than)} Thần Đan • 🔴 +${fmtRewardN(r.tien)} Tiên Đan`;
+  return `\n\n🥈 +${fmtRewardN(r.silver)} bạc • 🌾 +${fmtRewardN(r.rice)} gạo\n🔮 +${fmtRewardN(r.than)} Thần Đan • 🔴 +${fmtRewardN(r.tien)} Tiên Đan` + (r.exp > 0 ? `\n✨ +${fmtRewardN(r.exp)} EXP` : '') + (up ? `\n🎉 Lên cấp ${accLevel}! Tướng & Trang bị nâng được tới cấp ${accLevel}.` : '');
 }
 
 

@@ -36,10 +36,13 @@
       staState.v -= n; staSave(); staRender();
       return true;
     }
+    // Viên thể lực nhận mỗi Bàn: admin chỉnh ở pve.pillBase (cố định, không tăng theo Bàn)
+    const pillPerClear = () => { const v = (typeof PVE_CFG !== 'undefined' && PVE_CFG.pillBase !== undefined) ? Number(PVE_CFG.pillBase) : PILL_PER_CLEAR; return isFinite(v) ? Math.max(0, Math.floor(v)) : PILL_PER_CLEAR; };
     function grantPills() {
-      staState.pills += PILL_PER_CLEAR; staSave();
+      const n = pillPerClear(); if (n < 1) return '';
+      staState.pills += n; staSave();
       if (document.getElementById('equip-modal').style.display === 'flex') renderEquip();
-      return `\n\n💊 Nhận ${PILL_PER_CLEAR} Viên Thể Lực vào Túi đồ (có ${staState.pills} viên)!`;
+      return `\n\n💊 Nhận ${n} Viên Thể Lực vào Túi đồ (có ${staState.pills} viên)!`;
     }
     function usePills(n) {
       n = Math.min(n, staState.pills);
