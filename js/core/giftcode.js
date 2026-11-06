@@ -16,7 +16,7 @@
      'than'     Thần Đan 🔮            { t: 'than', n: 1000 }
      'tien'     Tiên Đan 🔴            { t: 'tien', n: 1000 }
      'hammer'   Búa 🔨                 { t: 'hammer', n: 10 }
-     'key'      Chìa Khóa 🔑           { t: 'key', n: 3 }
+     'exp'      EXP tài khoản ✨       { t: 'exp', n: 5000 }   (tự lên cấp acc khi đủ EXP; mã cũ có loại 'key' sẽ bị bỏ qua)
      'beast'    Thần thú (tặng luôn)   { t: 'beast', name: 'Kim Sư', n: 1 }   (đã có thì không cộng thêm)
      'tshard'   Mảnh thần thú (Châu)   { t: 'tshard', name: 'Kim Sư', n: 50 }
    Lưu ý: mã dự phòng nằm trong file JS nên người chơi xem mã nguồn là thấy; mã bí mật thật sự hãy tạo ở trang admin. */
@@ -57,10 +57,9 @@ function gcGrant(r) {
     hamSpent -= n; try { localStorage.setItem('ham_spent', String(hamSpent)); } catch (e) {}
     return `${fmtN(n)} Búa`;
   }
-  if (r.t === 'key') {
-    keysBonus += n; try { localStorage.setItem('keys_bonus', String(keysBonus)); } catch (e) {}
-    if (typeof updateKeys === 'function') updateKeys();
-    return `${fmtN(n)} Chìa Khóa`;
+  if (r.t === 'exp' && typeof addAccExp === 'function') {
+    const up = addAccExp(n);
+    return `${fmtN(n)} EXP` + (up ? ` (lên cấp ${accLevel})` : '');
   }
   if (r.t === 'beast' && typeof ttSt === 'function' && ttBeast(r.name)) {
     const s = ttSt();

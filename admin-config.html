@@ -19,6 +19,7 @@
   input::placeholder{color:#59617f}
   input.ov{border-color:var(--gold);background:#231f0b}
   input:focus,select:focus{outline:1px solid var(--gold)}
+  .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.row>*{flex:1 1 130px;min-width:0}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
   .grid label{margin:0 0 3px}
   button{background:#334;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
@@ -66,6 +67,7 @@
     <div id="t-ts" class="card hide"></div>
     <div id="t-eq" class="card hide"></div>
     <div id="t-boss" class="card hide"></div>
+    <div id="t-exp" class="card hide"></div>
     <div id="t-pve" class="card hide"></div>
   </div>
 </div>
@@ -91,7 +93,7 @@ const auth = fbApp.auth(), db = fbApp.firestore();
 
 /* Số MẶC ĐỊNH trong code game (chỉ dùng làm chữ mờ gợi ý + để biết ô nào đang ghi đè).
    Nếu bạn sửa số mặc định trong code, cập nhật khối này cho khớp. */
-const DEF = {"heroes":[{"id":0,"name":"Ma Đao Thánh Nữ","role":"atk","s":{"hp":2800,"atk":340,"def":30,"dodge":10,"acc":300,"crit":40,"critDmg":4,"tough":5,"pierce":30,"block":0,"heal":0,"spd":60,"tia":1,"startRage":0}},{"id":1,"name":"Thanh Y Tiên Tử","role":"heal","s":{"hp":3200,"atk":280,"def":45,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":45,"tia":1,"startRage":0}},{"id":2,"name":"Chu Nguyên Chương","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":8,"acc":300,"crit":15,"critDmg":3,"tough":15,"pierce":15,"block":10,"heal":0,"spd":55,"tia":1,"startRage":100}},{"id":3,"name":"Độc Cô Cầu Bại","role":"atk","s":{"hp":2900,"atk":360,"def":35,"dodge":10,"acc":300,"crit":50,"critDmg":5,"tough":5,"pierce":40,"block":0,"heal":0,"spd":50,"tia":1,"startRage":0}},{"id":4,"name":"Trương Tam Phong","role":"skill","s":{"hp":3500,"atk":290,"def":60,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":20,"pierce":20,"block":15,"heal":0,"spd":40,"tia":1,"startRage":100}},{"id":5,"name":"Âu Cơ","role":"heal","s":{"hp":3000,"atk":300,"def":50,"dodge":10,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":50,"tia":1,"startRage":50}},{"id":6,"name":"Hoa Mãn Lâu","role":"skill","s":{"hp":2000,"atk":500,"def":60,"dodge":50,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":77,"tia":1,"startRage":100}},{"id":7,"name":"Kiều Phong","role":"atk","s":{"hp":1000,"atk":2500,"def":100,"dodge":2,"acc":300,"crit":30,"critDmg":3,"tough":5,"pierce":100,"block":0,"heal":0,"spd":65,"tia":1,"startRage":0}},{"id":8,"name":"Lạc Long Quân","role":"tank","s":{"hp":5000,"atk":300,"def":120,"dodge":70,"acc":300,"crit":10,"critDmg":2,"tough":30,"pierce":10,"block":30,"heal":0,"spd":1000,"tia":1,"startRage":100}},{"id":9,"name":"Đông Phương Cô Nương","role":"atk","s":{"hp":3000,"atk":300,"def":80,"dodge":20,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":50,"block":5,"heal":0,"spd":50,"tia":1,"startRage":100}},{"id":10,"name":"Tiểu Yêu","role":"skill","s":{"hp":3600,"atk":320,"def":50,"dodge":8,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":25,"block":5,"heal":0,"spd":58,"tia":1,"startRage":100}},{"id":11,"name":"Vô Nhai Tử","role":"sup","s":{"hp":3200,"atk":260,"def":45,"dodge":12,"acc":300,"crit":15,"critDmg":2,"tough":10,"pierce":15,"block":5,"heal":0,"spd":62,"tia":1,"startRage":100}},{"id":12,"name":"Đoàn Dự","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":30,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":5,"heal":0,"spd":70,"tia":1,"startRage":100}},{"id":13,"name":"Bắc Cái","role":"skill","s":{"hp":3000,"atk":330,"def":40,"dodge":15,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":30,"block":5,"heal":0,"spd":56,"tia":1,"startRage":0}},{"id":14,"name":"Đông Tà","role":"skill","s":{"hp":2800,"atk":350,"def":35,"dodge":20,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":60,"tia":1,"startRage":0}},{"id":15,"name":"Tây Độc","role":"tank","s":{"hp":4200,"atk":280,"def":80,"dodge":10,"acc":300,"crit":15,"critDmg":2,"tough":25,"pierce":20,"block":25,"heal":0,"spd":48,"tia":1,"startRage":0}},{"id":16,"name":"Nam Đế","role":"sup","s":{"hp":3300,"atk":270,"def":50,"dodge":15,"acc":300,"crit":15,"critDmg":2,"tough":15,"pierce":15,"block":10,"heal":0,"spd":52,"tia":1,"startRage":0}},{"id":17,"name":"Vương Trùng Dương","role":"sup","s":{"hp":3200,"atk":280,"def":45,"dodge":12,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":10,"heal":0,"spd":54,"tia":1,"startRage":0}}],"ts":[{"k":1,"name":"Tôn Sư Ký","lines":[{"t":"dodge","label":"Né","base":30,"per":0.03},{"t":"atkFlat","label":"Công","base":1000,"per":0.15},{"t":"hpFlat","label":"HP","base":5000,"per":0.2}]},{"k":6,"name":"Bá Vương Kiếm","lines":[{"t":"acc","label":"Chuẩn","base":15,"per":0.03},{"t":"crit","label":"Bạo","base":50,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":30,"per":0.15}]},{"k":7,"name":"Thủy Hoàng Đăng","lines":[{"t":"tough","label":"Bền","base":25,"per":0.05},{"t":"crit","label":"Bạo","base":25,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":25,"per":0.15}]},{"k":8,"name":"Trống Lôi Âm","lines":[{"t":"crit","label":"Bạo","base":50,"per":0.05},{"t":"atkFlat","label":"Công","base":2000,"per":0.15},{"t":"atkFlat","label":"Công","base":1500,"per":0.15}]},{"k":9,"name":"Kim Giao Tiễn","lines":[{"t":"spd","label":"Tốc","base":20,"per":0.02},{"t":"critDmg","label":"Bạo Sát","base":500,"per":0.15},{"t":"pierce","label":"Phá giáp","base":10000,"per":0.15}]}],"tsGlobal":{"starAdd":0.5,"maxLv":100,"maxStar":10},"equip":{"items":[{"k":"hat","name":"Mũ","label":"HP","per":1000},{"k":"armor","name":"Áo","label":"Thủ","per":50},{"k":"sword","name":"Kiếm","label":"Công","per":300},{"k":"boots","name":"Giày","label":"Tốc","per":1}],"maxLv":1000,"rewardEach":4,"rewardStartLv":1},"pve":{"silverBase":3000,"riceBase":2500,"growth":1.005,"thanBase":2,"tienBase":100},"boss":{"daily":2,"bossRage":100,"ultMult":1,"baseHp":2000000,"hpMult":2,"ctMult":2,"atkDiv":4000,"heroDmgMult":3,"maxRounds":30,"ptsPerDmg":20000,"killPts":100},"guild":{"hp1":3000,"def1":500,"atk":1000,"hp2":6000,"def2":1000,"pierce":1000,"heal":1000,"spd":2,"critDmg":20,"boss":10000},"guildSkills":["Cường Tráng","Hộ Thuẫn","Lợi Kiếm","Cường Thân","Kiên Cố","Phá Giáp","Hồi Phục","Thần Tốc","Bạo Kích","Chí Tôn"],"roleRage":{"skill":100,"atk":50,"sup":100,"heal":50,"tank":100}};
+const DEF = {"heroes":[{"id":0,"name":"Ma Đao Thánh Nữ","role":"atk","s":{"hp":2800,"atk":340,"def":30,"dodge":10,"acc":300,"crit":40,"critDmg":4,"tough":5,"pierce":30,"block":0,"heal":0,"spd":60,"tia":1,"startRage":0}},{"id":1,"name":"Thanh Y Tiên Tử","role":"heal","s":{"hp":3200,"atk":280,"def":45,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":45,"tia":1,"startRage":0}},{"id":2,"name":"Chu Nguyên Chương","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":8,"acc":300,"crit":15,"critDmg":3,"tough":15,"pierce":15,"block":10,"heal":0,"spd":55,"tia":1,"startRage":100}},{"id":3,"name":"Độc Cô Cầu Bại","role":"atk","s":{"hp":2900,"atk":360,"def":35,"dodge":10,"acc":300,"crit":50,"critDmg":5,"tough":5,"pierce":40,"block":0,"heal":0,"spd":50,"tia":1,"startRage":0}},{"id":4,"name":"Trương Tam Phong","role":"skill","s":{"hp":3500,"atk":290,"def":60,"dodge":5,"acc":300,"crit":10,"critDmg":2,"tough":20,"pierce":20,"block":15,"heal":0,"spd":40,"tia":1,"startRage":100}},{"id":5,"name":"Âu Cơ","role":"heal","s":{"hp":3000,"atk":300,"def":50,"dodge":10,"acc":300,"crit":10,"critDmg":2,"tough":10,"pierce":10,"block":5,"heal":0,"spd":50,"tia":1,"startRage":50}},{"id":6,"name":"Hoa Mãn Lâu","role":"skill","s":{"hp":2000,"atk":500,"def":60,"dodge":50,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":77,"tia":1,"startRage":100}},{"id":7,"name":"Kiều Phong","role":"atk","s":{"hp":1000,"atk":2500,"def":100,"dodge":2,"acc":300,"crit":30,"critDmg":3,"tough":5,"pierce":100,"block":0,"heal":0,"spd":65,"tia":1,"startRage":0}},{"id":8,"name":"Lạc Long Quân","role":"tank","s":{"hp":5000,"atk":300,"def":120,"dodge":70,"acc":300,"crit":10,"critDmg":2,"tough":30,"pierce":10,"block":30,"heal":0,"spd":1000,"tia":1,"startRage":100}},{"id":9,"name":"Đông Phương Cô Nương","role":"atk","s":{"hp":3000,"atk":300,"def":80,"dodge":20,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":50,"block":5,"heal":0,"spd":50,"tia":1,"startRage":100}},{"id":10,"name":"Tiểu Yêu","role":"skill","s":{"hp":3600,"atk":320,"def":50,"dodge":8,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":25,"block":5,"heal":0,"spd":58,"tia":1,"startRage":100}},{"id":11,"name":"Vô Nhai Tử","role":"sup","s":{"hp":3200,"atk":260,"def":45,"dodge":12,"acc":300,"crit":15,"critDmg":2,"tough":10,"pierce":15,"block":5,"heal":0,"spd":62,"tia":1,"startRage":100}},{"id":12,"name":"Đoàn Dự","role":"sup","s":{"hp":3000,"atk":300,"def":40,"dodge":30,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":5,"heal":0,"spd":70,"tia":1,"startRage":100}},{"id":13,"name":"Bắc Cái","role":"skill","s":{"hp":3000,"atk":330,"def":40,"dodge":15,"acc":300,"crit":30,"critDmg":3,"tough":10,"pierce":30,"block":5,"heal":0,"spd":56,"tia":1,"startRage":0}},{"id":14,"name":"Đông Tà","role":"skill","s":{"hp":2800,"atk":350,"def":35,"dodge":20,"acc":300,"crit":40,"critDmg":4,"tough":10,"pierce":30,"block":0,"heal":0,"spd":60,"tia":1,"startRage":0}},{"id":15,"name":"Tây Độc","role":"tank","s":{"hp":4200,"atk":280,"def":80,"dodge":10,"acc":300,"crit":15,"critDmg":2,"tough":25,"pierce":20,"block":25,"heal":0,"spd":48,"tia":1,"startRage":0}},{"id":16,"name":"Nam Đế","role":"sup","s":{"hp":3300,"atk":270,"def":50,"dodge":15,"acc":300,"crit":15,"critDmg":2,"tough":15,"pierce":15,"block":10,"heal":0,"spd":52,"tia":1,"startRage":0}},{"id":17,"name":"Vương Trùng Dương","role":"sup","s":{"hp":3200,"atk":280,"def":45,"dodge":12,"acc":300,"crit":20,"critDmg":3,"tough":10,"pierce":20,"block":10,"heal":0,"spd":54,"tia":1,"startRage":0}}],"ts":[{"k":1,"name":"Tôn Sư Ký","lines":[{"t":"dodge","label":"Né","base":30,"per":0.03},{"t":"atkFlat","label":"Công","base":1000,"per":0.15},{"t":"hpFlat","label":"HP","base":5000,"per":0.2}]},{"k":6,"name":"Bá Vương Kiếm","lines":[{"t":"acc","label":"Chuẩn","base":15,"per":0.03},{"t":"crit","label":"Bạo","base":50,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":30,"per":0.15}]},{"k":7,"name":"Thủy Hoàng Đăng","lines":[{"t":"tough","label":"Bền","base":25,"per":0.05},{"t":"crit","label":"Bạo","base":25,"per":0.15},{"t":"critDmg","label":"Bạo Sát","base":25,"per":0.15}]},{"k":8,"name":"Trống Lôi Âm","lines":[{"t":"crit","label":"Bạo","base":50,"per":0.05},{"t":"atkFlat","label":"Công","base":2000,"per":0.15},{"t":"atkFlat","label":"Công","base":1500,"per":0.15}]},{"k":9,"name":"Kim Giao Tiễn","lines":[{"t":"spd","label":"Tốc","base":20,"per":0.02},{"t":"critDmg","label":"Bạo Sát","base":500,"per":0.15},{"t":"pierce","label":"Phá giáp","base":10000,"per":0.15}]}],"tsGlobal":{"starAdd":0.5,"maxLv":100,"maxStar":10},"equip":{"items":[{"k":"hat","name":"Mũ","label":"HP","per":1000},{"k":"armor","name":"Áo","label":"Thủ","per":50},{"k":"sword","name":"Kiếm","label":"Công","per":300},{"k":"boots","name":"Giày","label":"Tốc","per":1}],"maxLv":1000,"rewardEach":4,"rewardStartLv":1},"pve":{"silverBase":3000,"riceBase":2500,"growth":1.005,"thanBase":2,"tienBase":100},"exp":{"perStage":1000,"base":3000,"growth":10},"boss":{"daily":2,"bossRage":100,"ultMult":1,"baseHp":2000000,"hpMult":2,"ctMult":2,"atkDiv":4000,"heroDmgMult":3,"maxRounds":30,"ptsPerDmg":20000,"killPts":100},"guild":{"hp1":3000,"def1":500,"atk":1000,"hp2":6000,"def2":1000,"pierce":1000,"heal":1000,"spd":2,"critDmg":20,"boss":10000},"guildSkills":["Cường Tráng","Hộ Thuẫn","Lợi Kiếm","Cường Thân","Kiên Cố","Phá Giáp","Hồi Phục","Thần Tốc","Bạo Kích","Chí Tôn"],"roleRage":{"skill":100,"atk":50,"sup":100,"heal":50,"tank":100}};
 
 const STAT_FIELDS = [['hp','HP (Máu)'],['atk','Công'],['def','Thủ'],['dodge','Né'],['acc','Chuẩn'],['crit','Bạo'],['critDmg','Bạo Sát'],['tough','Bền'],['pierce','Phá giáp'],['block','Đỡ đòn (%)'],['heal','Hồi máu / hiệp'],['spd','Tốc'],['startRage','Nộ khởi đầu']];
 const ROLES = { skill:'✨ Kỹ năng (ulti liên tục)', atk:'⚔️ Công kích', sup:'🌟 Hỗ trợ', heal:'💚 Trị liệu', tank:'🛡️ Thủ (bị đánh đầu tiên)' };
@@ -164,8 +166,8 @@ function onNum(el) {
 function resetAt(path) { setp(path, undefined); const o = path.slice(0, -1).reduce((a, k) => (a == null ? a : a[k]), cfg); if (o && !Array.isArray(o)) delete o[path[path.length - 1]]; renderAll(); }
 
 /* ---------- các tab ---------- */
-const TABS = [['hero', '🧙 Tướng'], ['ts', '🏺 Bảo Vật'], ['eq', '🛡️ Trang bị'], ['boss', '🐲 Boss bang & Lò Luyện Hỏa'], ['pve', '🎁 Thưởng PVE']];
-function renderTabs() { $('tabs').innerHTML = TABS.map(t => `<button class="${tab === t[0] ? 'on' : ''}" onclick="setTab('${t[0]}')">${t[1]}</button>`).join(''); ['hero', 'ts', 'eq', 'boss', 'pve'].forEach(t => $('t-' + t).classList.toggle('hide', t !== tab)); }
+const TABS = [['hero', '🧙 Tướng'], ['ts', '🏺 Bảo Vật'], ['eq', '🛡️ Trang bị'], ['boss', '🐲 Boss bang & Lò Luyện Hỏa'], ['exp', '✨ Cấp & EXP'], ['pve', '🎁 Thưởng PVE']];
+function renderTabs() { $('tabs').innerHTML = TABS.map(t => `<button class="${tab === t[0] ? 'on' : ''}" onclick="setTab('${t[0]}')">${t[1]}</button>`).join(''); ['hero', 'ts', 'eq', 'boss', 'exp', 'pve'].forEach(t => $('t-' + t).classList.toggle('hide', t !== tab)); }
 function setTab(t) { tab = t; renderTabs(); }
 
 function renderHero() {
@@ -230,13 +232,68 @@ function renderBoss() {
 function refreshBossTable() { setTimeout(() => { const t = $('boss-rows'); if (t) t.innerHTML = bossRows(); }, 0); }
 document.addEventListener('change', e => { if (e.target.closest && e.target.closest('#t-boss')) refreshBossTable(); });
 
+const EXP_LABEL = { perStage: '✨ EXP nhận mỗi Ải (thắng Bàn 10 lần đầu)', base: '📈 EXP cần để lên cấp 2 (cấp 1 → 2)', growth: '➕ % EXP tăng thêm mỗi cấp (10 = +10%/cấp)' };
+function expNeedAt(lv) { const b = Number(getp(['exp', 'base']) ?? DEF.exp.base), g = Number(getp(['exp', 'growth']) ?? DEF.exp.growth); return Math.round(b * Math.pow(1 + g / 100, lv - 1)); }
+function expPreview() {
+  const per = Number(getp(['exp', 'perStage']) ?? DEF.exp.perStage) || 0, rows = [1, 2, 3, 4, 5, 10, 20, 50, 100].map(lv => { const n = expNeedAt(lv); return `<tr><td>Cấp ${lv} → ${lv + 1}</td><td>${fmt(n)}</td><td>${per > 0 ? Math.ceil(n / per) + ' Ải' : '—'}</td></tr>`; }).join('');
+  return `<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Lên cấp</th><th>EXP cần</th><th>Số Ải cần (theo EXP/Ải)</th></tr></thead><tbody id="exp-rows">${rows}</tbody></table></div>`;
+}
+function renderExp() {
+  $('t-exp').innerHTML = `<h2>Cấp tài khoản & EXP</h2>
+    <div class="note">Người chơi nhận EXP mỗi khi vượt xong 1 Ải (thắng Bàn 10, chỉ lần đầu). Cấp 1 → 2 cần <b>EXP cấp 2</b>; mỗi cấp sau cần nhiều hơn <b>x%</b> so với cấp trước. Cấp acc là giới hạn cấp của mọi tướng và trang bị. Để trống = dùng số mặc định (chữ mờ).</div>
+    <div class="grid">${Object.keys(EXP_LABEL).map(k => `<div><label>${EXP_LABEL[k]}</label>${num(['exp', k], DEF.exp[k], 'min="0"')}</div>`).join('')}</div>
+    ${expPreview()}`;
+}
+document.addEventListener('change', e => { if (e.target.closest && e.target.closest('#t-exp')) setTimeout(() => { const t = $('exp-rows'); if (t) t.closest('div').outerHTML = expPreview(); }, 0); });
+
+/* ---------- Thưởng thêm mỗi trận (pve.extra) ---------- */
+const EX_TYPES = [['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['than','🔮 Thần Đan'],['tien','🔴 Tiên Đan'],['pill','💊 Viên Thể Lực'],['hammer','🔨 Búa'],['exp','✨ EXP tài khoản'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['tshard','🧩 Mảnh thần thú (Châu)'],['item','🎒 Vật phẩm Bang Hội']];
+const EX_ITEMS = { 'Thú Noãn':'🥚','Thú Hồn':'👻','Thú Linh':'🔥','Đá Nữ Oa':'💎','Dị Linh':'✨','Đào Tiên':'🍑','Đào Tiên Vương':'🍑','Tử Linh Thạch':'🪨','Lá Linh':'🍃','Hộp Linh':'📦','Hộp Tinh':'🎁','Ngọc Tím':'🟣' };
+const EX_BEASTS = ['Kỳ Lân','Xích Vũ','Tiên Lộc','Long Quy','Báo Tuyết','Hắc Điêu','Cuồng Ngưu','Lân Sư','Thiên Lân','Xích Tinh','Kim Quy','Thiên Lộc','Mai Hoa Báo','Tử Sắc Điêu','Nham Ngưu','Thiên Niên Thú','Địa Niên Thú','Kim Sư','Tản Viên Thần','Giáp Thìn','Cửu Vỹ Hồ','Hỏa Kỳ Lân','Khổng Tước'];
+const EX_CUSTOM = '__custom';
+function exList() { cfg.pve = cfg.pve || {}; if (!Array.isArray(cfg.pve.extra)) cfg.pve.extra = []; return cfg.pve.extra; }
+function exAdd() { exList().push({ t: 'silver', n: 1000 }); renderPve(); }
+function exDel(i) { exList().splice(i, 1); renderPve(); }
+function exSet(i, k, v) {
+  const r = exList()[i];
+  if (k === 't') {
+    const o = { t: v, n: r.n || 1 };
+    if (v === 'shard') o.id = 0; if (v === 'treasure') o.id = 1; if (v === 'tshard') o.name = EX_BEASTS[0];
+    if (v === 'item') { o.name = 'Thú Linh'; o.ico = EX_ITEMS['Thú Linh']; }
+    exList()[i] = o; renderPve(); return;
+  }
+  if (k === 'pick') { if (v === EX_CUSTOM) { r.name = ''; r.ico = '🎁'; r.custom = true; } else { r.name = v; r.ico = EX_ITEMS[v] || '🎁'; delete r.custom; } renderPve(); return; }
+  r[k] = (k === 'n' || k === 'id') ? Math.max(0, Math.floor(Number(v)) || 0) : v;
+  if (k === 'n' && r.n < 1) r.n = 1;
+}
+function exOpts(list, cur) { return list.map(x => `<option value="${esc(x[0])}" ${String(x[0]) === String(cur) ? 'selected' : ''}>${esc(x[1])}</option>`).join(''); }
+function exRows() {
+  const L = exList();
+  if (!L.length) return '<div class="note">Chưa có phần thưởng thêm. Bấm "＋ Thêm phần thưởng" để thêm.</div>';
+  return L.map((r, i) => {
+    let mid = '';
+    if (r.t === 'shard') mid = `<select onchange="exSet(${i},'id',this.value)">${exOpts(DEF.heroes.map(h => [h.id, h.name]), r.id)}</select>`;
+    else if (r.t === 'treasure') mid = `<select onchange="exSet(${i},'id',this.value)">${exOpts(DEF.ts.map(t => [t.k, t.name]), r.id)}</select>`;
+    else if (r.t === 'tshard') mid = `<select onchange="exSet(${i},'name',this.value)">${exOpts(EX_BEASTS.map(x => [x, x]), r.name)}</select>`;
+    else if (r.t === 'item') {
+      mid = `<select onchange="exSet(${i},'pick',this.value)">${exOpts(Object.keys(EX_ITEMS).map(k => [k, EX_ITEMS[k] + ' ' + k]).concat([[EX_CUSTOM, '✏️ Tên khác…']]), r.custom ? EX_CUSTOM : r.name)}</select>` +
+        (r.custom ? `<input type="text" maxlength="30" value="${esc(r.name)}" placeholder="Tên vật phẩm" onchange="exSet(${i},'name',this.value)"><input type="text" maxlength="4" value="${esc(r.ico || '🎁')}" style="max-width:60px" onchange="exSet(${i},'ico',this.value)" title="Icon (emoji)">` : '');
+    }
+    return `<div class="row" style="margin-bottom:6px"><select onchange="exSet(${i},'t',this.value)">${exOpts(EX_TYPES, r.t)}</select>${mid}<input type="number" min="1" value="${esc(r.n)}" onchange="exSet(${i},'n',this.value)" placeholder="Số lượng" style="max-width:130px"><button class="dng" onclick="exDel(${i})" style="flex:0 0 auto">✕</button></div>`;
+  }).join('');
+}
+
 const PVE_LABEL = { silverBase: '🥈 Bạc ở Bàn 1', riceBase: '🌾 Gạo ở Bàn 1', thanBase: '🔮 Thần Đan ở Bàn 1', tienBase: '🔴 Tiên Đan ở Bàn 1', growth: 'Hệ số tăng mỗi Bàn (1.005 = +0,5%/Bàn)' };
 function renderPve() {
   $('t-pve').innerHTML = `<h2>Thưởng khi thắng PVE (mỗi Bàn)</h2>
     <div class="note">Thưởng Bàn k = số ở Bàn 1 × (hệ số)^(k−1). Áp dụng cả khi quét Ải. Để trống = dùng số mặc định (chữ mờ).</div>
-    <div class="grid">${Object.keys(PVE_LABEL).map(k => `<div><label>${PVE_LABEL[k]}</label>${num(['pve', k], DEF.pve[k], 'min="0"')}</div>`).join('')}</div>`;
+    <div class="grid">${Object.keys(PVE_LABEL).map(k => `<div><label>${PVE_LABEL[k]}</label>${num(['pve', k], DEF.pve[k], 'min="0"')}</div>`).join('')}</div>
+    <h2 style="margin-top:20px">➕ Thưởng thêm mỗi trận</h2>
+    <div class="note">Mỗi lần người chơi thắng 1 Bàn sẽ nhận thêm các phần thưởng bên dưới (cố định, không tăng theo Bàn). Quét ×10 thì nhận ×10. Nhớ bấm <b>Lưu</b> ở thanh trên.</div>
+    <div id="ex-list">${exRows()}</div>
+    <button onclick="exAdd()" style="margin-top:6px">＋ Thêm phần thưởng</button>`;
 }
-function renderAll() { renderTabs(); renderHero(); renderTs(); renderEq(); renderBoss(); renderPve(); }
+function renderAll() { renderTabs(); renderHero(); renderTs(); renderEq(); renderBoss(); renderExp(); renderPve(); }
 </script>
 </body>
 </html>

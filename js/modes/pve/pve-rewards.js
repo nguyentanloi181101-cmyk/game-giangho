@@ -40,7 +40,7 @@ const BAN_SILVER_BASE = 3000;
 const BAN_THAN_BASE = 2;
 const BAN_TIEN_BASE = 100;
 // Admin chỉnh được (admin-config.html → tab Thưởng PVE)
-const PVE_CFG = cfgSnap('pve', { silverBase: BAN_SILVER_BASE, riceBase: BAN_RICE_BASE, growth: BAN_REWARD_GROWTH, thanBase: BAN_THAN_BASE, tienBase: BAN_TIEN_BASE });
+const PVE_CFG = cfgSnap('pve', { silverBase: BAN_SILVER_BASE, riceBase: BAN_RICE_BASE, growth: BAN_REWARD_GROWTH, thanBase: BAN_THAN_BASE, tienBase: BAN_TIEN_BASE, extra: [] });
 Object.assign(PVE_CFG, cfgGet('pve', {}));
 
 // Thêm đan vào kho Túi Đồ
@@ -88,4 +88,30 @@ function grantBanReward(stage, battle) {
   danAdd('Tiên Đan', '🔴', r.tien);
 
   return `\n\n🥈 +${fmtRewardN(r.silver)} bạc • 🌾 +${fmtRewardN(r.rice)} gạo\n🔮 +${fmtRewardN(r.than)} Thần Đan • 🔴 +${fmtRewardN(r.tien)} Tiên Đan`;
+}
+
+
+// ===== THƯỞNG THÊM MỖI TRẬN (admin thêm ở admin-config.html → tab "Thưởng PVE" → "Thưởng thêm mỗi trận") =====
+// PVE_CFG.extra = [{ t, n, id?, name?, ico? }] — cùng định dạng loại quà với Gift Code (silver, rice, gold, than, tien, pill, hammer, exp, shard, treasure, item, ...).
+// Nhận mỗi lần thắng 1 Bàn; quét ×N thì nhận ×N.
+const extraList = () => (Array.isArray(PVE_CFG.extra) ? PVE_CFG.extra : []).filter(r => r && r.t && Number(r.n) > 0);
+function grantExtraReward(times) {
+  times = Math.max(1, times | 0);
+  const got = [];
+  extraList().forEach(r => {
+    try { const t = gcGrant(Object.assign({}, r, { n: Math.floor(Number(r.n)) * times })); if (t) got.push(t); } catch (e) { console.warn('extra reward', e); }
+  });
+  try { if (typeof renderBag === 'function' && document.getElementById('bag-modal').style.display === 'flex') renderBag(); } catch (e) {}
+  return got.length ? `\n🎁 Thưởng thêm: ${got.join(' • ')}` : '';
+}
+// Chữ mô tả thưởng thêm (hiện ở danh sách Bàn)
+function extraRewardText() {
+  const L = extraList().map(r => { const n = fmtRewardN(r.n);
+    switch (r.t) {
+      case 'silver': return n + ' bạc'; case 'rice': return n + ' gạo'; case 'gold': return n + ' vàng'; case 'pill': return n + ' viên thể lực';
+      case 'than': return n + ' Thần Đan'; case 'tien': return n + ' Tiên Đan'; case 'hammer': return n + ' Búa'; case 'exp': return n + ' EXP';
+      case 'shard': { const h = typeof heroById === 'function' && heroById(r.id); return n + ' mảnh ' + (h ? h.name : 'tướng'); }
+      case 'treasure': return n + ' Bảo Vật'; case 'beast': return 'Thần thú ' + (r.name || ''); case 'tshard': return n + ' mảnh ' + (r.name || 'thần thú');
+      default: return n + ' ' + (r.name || 'vật phẩm'); } });
+  return L.join(' • ');
 }

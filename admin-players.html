@@ -74,8 +74,7 @@
     <div class="card">
       <h2>⚠️ Reset TẤT CẢ tài khoản</h2>
       <div class="warn">Xóa sạch dữ liệu của MỌI người chơi (họ chơi lại từ đầu). Ảnh chụp theo giờ vẫn còn nên vẫn khôi phục được từng người trong 72 giờ (ảnh chụp cũ hơn tự bị dọn).</div>
-      <label>Kiểu reset (áp dụng cho cả "Reset tài khoản này" bên dưới)</label>
-      <select id="rs-mode"><option value="blank">Reset MẶC ĐỊNH: tất cả về 1 (tướng cấp 1 ★1, cấp acc 1, bang cấp 1, vàng/bạc/gạo = 0, chưa có tướng nào — phải Chiêu Mộ)</option><option value="old">Reset kiểu cũ — chỉ để test (tướng cấp 70+, 21 triệu bạc…, có sẵn đủ tướng)</option></select>
+      <div class="note">Reset = <b>tất cả về 1</b>: tướng cấp 1 ★1, cấp acc 1 (EXP 0), bang cấp 1, vàng/bạc/gạo = 0, chưa có tướng nào — phải Chiêu Mộ. Áp dụng cho cả "Reset tài khoản này" bên dưới.</div>
       <div class="row" style="margin-top:8px"><input id="ra-conf" placeholder='Gõ đúng: RESET TAT CA'><button class="dng" onclick="resetAll()" style="flex:0 0 auto">Reset tất cả</button></div>
       <div id="ra-msg" class="msg"></div>
     </div>
@@ -141,9 +140,9 @@ const auth = fbApp.auth(), db = fbApp.firestore();
 const HERO_NAMES = ['Ma Đao Thánh Nữ','Thanh Y Tiên Tử','Chu Nguyên Chương','Độc Cô Cầu Bại','Trương Tam Phong','Âu Cơ','Hoa Mãn Lâu','Kiều Phong','Lạc Long Quân','Đông Phương Cô Nương','Tiểu Yêu','Vô Nhai Tử','Đoàn Dự','Bắc Cái','Đông Tà','Tây Độc','Nam Đế','Vương Trùng Dương'];
 const TS_NAMES = { 1:'Tôn Sư Ký', 6:'Bá Vương Kiếm', 7:'Thủy Hoàng Đăng', 8:'Trống Lôi Âm', 9:'Kim Giao Tiễn' };
 const EQ_NAMES = { hat:'Mũ', armor:'Áo', sword:'Kiếm', boots:'Giày' };
-const RES = [['gold_val','🪙 Vàng'],['silver_val','🥈 Bạc'],['rice_val','🌾 Gạo'],['thandan_val','💎 Thần Đan'],['tiendan_val','🔮 Tiên Đan'],['keys_bonus','🔑 Chìa khóa tặng'],['acc_level','📈 Cấp acc']];
+const RES = [['gold_val','🪙 Vàng'],['silver_val','🥈 Bạc'],['rice_val','🌾 Gạo'],['thandan_val','💎 Thần Đan'],['tiendan_val','🔮 Tiên Đan'],['acc_level','📈 Cấp acc'],['acc_exp','✨ EXP (ở cấp hiện tại)']];
 
-const resetData = () => ($('rs-mode').value === 'old' ? {} : { blank_start: '1' });   // MẶC ĐỊNH = tất cả về 1: cờ blank_start làm game bắt đầu từ cấp 1 + tướng phải Chiêu Mộ mới có (chỉ chọn 'old' mới ra kiểu cũ)
+const resetData = () => ({ blank_start: '1' });   // Reset = tất cả về 1: cờ blank_start làm game bắt đầu từ cấp 1 + tướng phải Chiêu Mộ mới có
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = n => Number(n || 0).toLocaleString('vi-VN');

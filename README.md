@@ -21,7 +21,7 @@ css/
   cloud/              login.css
   cascade-fixes.css   13 luật phải nạp cuối để giữ đúng thứ tự ghi đè như bản gốc
 js/
-  core/               navigation, game-state, keys, stamina, settings, player-name, backup, boot
+  core/               navigation, game-state, acc-exp, stamina, settings, player-name, backup, boot
   heroes/             roster (danh sách tướng) · hero-stats · hero-roles · hero-detail · vohiep · recruit
     skills/           MỖI TƯỚNG 1 FILE tuyệt kỹ (ma-dao-thanh-nu.js, au-co.js, ...)
     hero-seq.js       khai báo các chuỗi khung hình (SEQ, SEQ_IDLE) + hàm seqEl / seqOverlay / seqIdleHTML
@@ -60,13 +60,13 @@ js/
   (`js/modes/pve/pve-rewards.js`). Dùng để lên cấp tướng: cấp 2 tốn 100 bạc + 200 gạo, mỗi cấp sau đắt hơn 10%
   (`lvCost` trong `js/heroes/hero-progress.js`, trừ tiền trong `js/heroes/vohiep.js`).
 - 🪙 Vàng (dưới chữ "Văn Lang"): dùng Chiêu Mộ; Hộp Thư (`js/core/mail.js`) tặng 10.000 vàng mỗi ngày.
-- 🎒 Túi Đồ (`js/core/bag.js`) thay nút "Ưu Đãi": xem bạc/gạo/vàng, viên thể lực, búa, chìa khóa, Bảo Vật, trang bị, mảnh tướng.
+- 🎒 Túi Đồ (`js/core/bag.js`) thay nút "Ưu Đãi": xem bạc/gạo/vàng, viên thể lực, búa, Bảo Vật, trang bị, mảnh tướng.
 
 ## Bạc, Gạo, Vàng, Túi Đồ, Hộp Thư
 - **Bạc 🥈 / Gạo 🌾** (góc trái dưới nhãn VIP): thắng mỗi Bàn PVE nhận (`js/modes/pve/pve-rewards.js`): Ải 1 Bàn 1 = 3000 bạc + 2500 gạo,
   mỗi Bàn sau nhiều hơn 10% (Ải 2 Bàn 1 là Bàn thứ 11). Dùng để tăng cấp tướng: lên cấp 2 tốn 100 bạc + 200 gạo, mỗi cấp sau +10% (`js/heroes/hero-progress.js`).
 - **Vàng 🪙** (góc phải, dưới chữ Văn Lang): dùng Chiêu Mộ. **Hộp Thư** (`js/core/mail.js`) tặng 10.000 vàng mỗi ngày, thư chưa nhận giữ 7 ngày.
-- **Túi Đồ** (thay nút Ưu Đãi, `js/core/bag.js`): bạc, gạo, vàng, viên thể lực, búa, chìa khóa, Bảo Vật, trang bị, mảnh tướng.
+- **Túi Đồ** (thay nút Ưu Đãi, `js/core/bag.js`): bạc, gạo, vàng, viên thể lực, búa, Bảo Vật, trang bị, mảnh tướng.
 
 ## Chat, chọn tướng, Võ Hiệp, Bang Hội (mới)
 - `js/social/chat.js` – chat chung giữa các tài khoản online (nút **Thẻ Tháng** và nút 💬 trong Bang Hội). Dùng collection Firestore `chat_messages`.
@@ -224,3 +224,19 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
   Tướng mới tự vào đội nếu đội chưa đủ 5. Đội trống thì không vào được PVE / Tỷ Võ / Boss bang. `heroGain(id)` = ghép mảnh (kiểm tra đủ `MERGE_COST` và trừ mảnh).
 - **Admin (`admin-players.html`)**: kiểu reset mặc định = "tất cả về 1" (tùy chọn "kiểu cũ" chỉ để test); thêm **Reset BANG riêng** (tất cả hoặc từng người — chỉ ghi lại `guild_state` về bang cấp 1, giữ nguyên mọi thứ khác);
   mục "Tướng sở hữu" (tick để tặng / bỏ tick để thu hồi tướng của tài khoản kiểu mới).
+
+
+## Cấp tài khoản & EXP (thay cho Chìa Khóa 🔑 — đã bỏ hẳn)
+- `js/core/acc-exp.js`: vượt xong 1 Ải (thắng Bàn 10 **lần đầu**) nhận EXP, đủ EXP tự lên cấp acc. Cấp acc vẫn là giới hạn cấp của mọi tướng và trang bị.
+- Thanh EXP nằm ngay dưới dòng "Cấp / tên" ở trang chủ (vạch đỏ trong ảnh). Không còn nút 🔒 và số 🔑.
+- Công thức: cấp 1 → 2 cần `base` EXP (mặc định 3000); cấp k → k+1 cần `base × (1 + growth/100)^(k−1)` (mặc định +10%/cấp: 3000, 3300, 3630…).
+- Admin chỉnh ở `admin-config.html` → tab **✨ Cấp & EXP**: `exp.perStage` (mặc định 1000/Ải), `exp.base` (3000), `exp.growth` (10). Có bảng xem trước số EXP & số Ải cần mỗi cấp.
+- Ải đã qua trước bản này không được tính bù EXP. Chìa khóa chưa dùng của tài khoản cũ không còn tác dụng.
+- Gift Code: loại quà `key` đổi thành `exp` (mã cũ có `key` sẽ bị bỏ qua). Admin-players: ô "Chìa khóa tặng" đổi thành "EXP".
+
+## Thưởng thêm mỗi trận (PVE)
+- `admin-config.html` → tab **🎁 Thưởng PVE** → "➕ Thưởng thêm mỗi trận": thêm bao nhiêu dòng cũng được (Bạc, Gạo, Vàng, Thần Đan, Tiên Đan, Viên Thể Lực, Búa, EXP, Mảnh tướng, Bảo Vật, Mảnh thần thú, Vật phẩm Bang Hội).
+- Mỗi lần thắng 1 Bàn nhận đủ các dòng này (số cố định, không tăng theo Bàn); Quét ×10 nhận ×10. Hiện ở mô tả từng Bàn. Lưu trong `game_config/main` → `pve.extra`. Code: `grantExtraReward` trong `js/modes/pve/pve-rewards.js`.
+
+## Reset (admin-players.html)
+- Chỉ còn 1 kiểu reset: **tất cả về 1** (đã bỏ lựa chọn "kiểu cũ — chỉ để test").

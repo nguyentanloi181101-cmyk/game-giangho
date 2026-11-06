@@ -44,7 +44,7 @@
       document.getElementById('eq-pills').innerHTML = '';   // Viên Thể Lực chỉ nằm trong Túi Đồ
       document.getElementById('eq-sub').innerText = eqLock
         ? `Chọn ${e.name} gắn vào Khung ${eqCtx + 1}. Tướng đứng ở khung nào thì nhận chỉ số của khung đó.`
-        : `Cấp acc ${accLevel} → trang bị nâng tối đa tới cấp ${eqCap()} (🔑 ${keyCount()}). Gắn vào khung nào thì tướng đứng ở khung đó được cộng chỉ số.`;
+        : `Cấp acc ${accLevel} → trang bị nâng tối đa tới cấp ${eqCap()} (vượt Ải nhận EXP để lên cấp acc). Gắn vào khung nào thì tướng đứng ở khung đó được cộng chỉ số.`;
       document.getElementById('eq-tabs').innerHTML = eqLock ? '' : EQUIP.map(x =>
         `<button class="eq-tab ${x.k === eqTab ? 'on' : ''}" onclick="eqSetTab('${x.k}')">${x.icon} ${x.name} <small>${eqBag.filter(i => i.k === x.k).length}</small></button>`).join('');
       const all = eqBag.filter(i => i.k === eqTab).sort((a, b) => a.id - b.id);

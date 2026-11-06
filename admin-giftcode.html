@@ -127,7 +127,7 @@ const TREASURES = [[1,'Tôn Sư Ký'],[6,'Bá Vương Kiếm'],[7,'Thủy Hoàng
 const ITEMS = { 'Thú Noãn':'🥚','Thú Hồn':'👻','Thú Linh':'🔥','Đá Nữ Oa':'💎','Dị Linh':'✨','Đào Tiên':'🍑','Đào Tiên Vương':'🍑','Tử Linh Thạch':'🪨','Lá Linh':'🍃','Hộp Linh':'📦','Hộp Tinh':'🎁','Ngọc Tím':'🟣' };
 const BEASTS = ['Kỳ Lân','Xích Vũ','Tiên Lộc','Long Quy','Báo Tuyết','Hắc Điêu','Cuồng Ngưu','Lân Sư','Thiên Lân','Xích Tinh','Kim Quy','Thiên Lộc','Mai Hoa Báo','Tử Sắc Điêu','Nham Ngưu','Thiên Niên Thú','Địa Niên Thú','Kim Sư','Tản Viên Thần','Giáp Thìn','Cửu Vỹ Hồ','Hỏa Kỳ Lân','Khổng Tước'].map(x => [x, x]);
 const CUSTOM = '__custom';
-const TYPES = [['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['than','🔮 Thần Đan'],['tien','🔴 Tiên Đan'],['pill','💊 Viên Thể Lực'],['hammer','🔨 Búa'],['key','🔑 Chìa Khóa'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['beast','🦄 Thần thú (tặng luôn con)'],['tshard','🧩 Mảnh thần thú (Châu)'],['item','🎒 Vật phẩm Bang Hội (chọn sẵn / nhập tên)']];
+const TYPES = [['silver','🥈 Bạc'],['rice','🌾 Gạo'],['gold','🪙 Vàng'],['than','🔮 Thần Đan'],['tien','🔴 Tiên Đan'],['pill','💊 Viên Thể Lực'],['hammer','🔨 Búa'],['exp','✨ EXP tài khoản'],['shard','🧩 Mảnh tướng'],['treasure','🏺 Bảo Vật (bản mới Lv0 ★0)'],['beast','🦄 Thần thú (tặng luôn con)'],['tshard','🧩 Mảnh thần thú (Châu)'],['item','🎒 Vật phẩm Bang Hội (chọn sẵn / nhập tên)']];
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -203,7 +203,7 @@ function rwText(r) {
     case 'than': return n + ' Thần Đan';
     case 'tien': return n + ' Tiên Đan';
     case 'hammer': return n + ' Búa';
-    case 'key': return n + ' Chìa Khóa';
+    case 'exp': return n + ' EXP';
     case 'beast': return 'Thần thú ' + r.name;
     case 'tshard': return n + ' mảnh ' + r.name;
     case 'shard': return n + ' mảnh ' + ((HEROES.find(h => h[0] === r.id) || [0, 'tướng #' + r.id])[1]);

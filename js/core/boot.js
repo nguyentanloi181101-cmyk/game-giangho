@@ -6,7 +6,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderHomeTeam();
       renderStages();
-      updateKeys();
+      updateAccExp();
       updatePower();
       updateRes();
       updateMailBadge();

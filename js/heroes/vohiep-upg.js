@@ -44,7 +44,7 @@
         btns = `<button class="up-go" ${maxed || !ok ? 'disabled' : ''} onclick="upgradeHero('star',1)">Tăng Sao</button>`;
       } else if (mode === 'boiduong') {
         const c = lvCost(p.lv + 1), k = lvAffordable(p.lv, 1) >= 1;
-        cost = maxed ? '<div class="up-max">Đã đạt cấp tối đa hiện tại (cần 🔑 để mở thêm)</div>' : `<div class="up-cost"><div class="up-it"><div class="e">🥈</div><b class="${silver >= c.silver ? '' : 'bad'}">${fmtN(silver)}/${fmtN(c.silver)}</b><small>Bạc</small></div><div class="up-it"><div class="e">🌾</div><b class="${rice >= c.rice ? '' : 'bad'}">${fmtN(rice)}/${fmtN(c.rice)}</b><small>Gạo</small></div></div>`;
+        cost = maxed ? '<div class="up-max">Đã chạm cấp acc (vượt Ải nhận EXP để lên cấp acc)</div>' : `<div class="up-cost"><div class="up-it"><div class="e">🥈</div><b class="${silver >= c.silver ? '' : 'bad'}">${fmtN(silver)}/${fmtN(c.silver)}</b><small>Bạc</small></div><div class="up-it"><div class="e">🌾</div><b class="${rice >= c.rice ? '' : 'bad'}">${fmtN(rice)}/${fmtN(c.rice)}</b><small>Gạo</small></div></div>`;
         btns = `<button class="up-go" ${maxed || !k ? 'disabled' : ''} onclick="upgradeHero('lv',1)">+1 Cấp</button><button class="up-go alt" ${maxed || !k ? 'disabled' : ''} onclick="upgradeHero('lv',10)">+10 Cấp</button>`;
       } else {
         cost = maxed ? '<div class="up-max">Kỹ năng đã tối đa</div>' : '<div class="up-max" style="color:#86efac">Nâng kỹ năng miễn phí</div>';
