@@ -5,7 +5,10 @@
     const LV_MAX = 1000, STAR_MAX = 6, SKILL_MAX = 10;          // giới hạn nâng cấp
     const LV_GROWTH = 0.02, STAR_GROWTH = 0.10, SKILL_GROWTH = 0.10;  // +2%/cấp, +10%/sao (HP/Công/Thủ), +10%/cấp kỹ năng
     // Cấp & sao ban đầu của từng tướng (chỉ số cơ bản trong HEROES tương ứng với mức này)
-    const START_PROG = { 0:{lv:70,star:5}, 1:{lv:73,star:5}, 2:{lv:70,star:5}, 3:{lv:70,star:4}, 4:{lv:73,star:3}, 5:{lv:70,star:5}, 6:{lv:70,star:5}, 7:{lv:70,star:5}, 8:{lv:70,star:5}, 9:{lv:70,star:5}, 10:{lv:70,star:5}, 11:{lv:70,star:5}, 12:{lv:70,star:5}, 13:{lv:70,star:5}, 14:{lv:70,star:5}, 15:{lv:70,star:5}, 16:{lv:70,star:5}, 17:{lv:70,star:5} };
+    // Tài khoản bị admin "RESET TRẮNG" (cờ blank_start): mọi tướng cấp 1 ★1, cấp acc 1, tài nguyên 0, bang cấp 1
+    const BLANK_START = (() => { try { return localStorage.getItem('blank_start') === '1'; } catch (e) { return false; } })();
+    const START_PROG_DEF = { 0:{lv:70,star:5}, 1:{lv:73,star:5}, 2:{lv:70,star:5}, 3:{lv:70,star:4}, 4:{lv:73,star:3}, 5:{lv:70,star:5}, 6:{lv:70,star:5}, 7:{lv:70,star:5}, 8:{lv:70,star:5}, 9:{lv:70,star:5}, 10:{lv:70,star:5}, 11:{lv:70,star:5}, 12:{lv:70,star:5}, 13:{lv:70,star:5}, 14:{lv:70,star:5}, 15:{lv:70,star:5}, 16:{lv:70,star:5}, 17:{lv:70,star:5} };
+    const START_PROG = (() => { if (!BLANK_START) return START_PROG_DEF; const o = {}; Object.keys(START_PROG_DEF).forEach(k => { o[k] = { lv: 1, star: 1 }; }); return o; })();
     const HERO_BORDER = { 0:'purple', 2:'purple', 6:'purple', 10:'purple', 12:'purple', 15:'purple', 16:'purple', 17:'purple' };               // còn lại viền cam
     const HERO_ULT_NAME = { 0:'Thất Trảm Ma Đao', 1:'Thanh Liên Hoàn Sinh', 2:'Nguyệt Quang Hộ Thể', 3:'Độc Cô Cửu Kiếm', 4:'Thái Cực Quyền', 5:'Liên Hoa Hồi Xuân', 6:'Hồ Điệp Kim Cầu', 7:'Song Long Hỏa Quyển', 8:'Thủy Thần Hộ Thể', 9:'Thiên Hỏa Chu Võng', 10:'Bạch Cốt Đoạt Mệnh', 11:'Hổ Khẩu Thôn Thiên', 12:'Lăng Ba Vi Bộ', 13:'Thiên Địa Trúc Vũ', 14:'Bích Hải Triều Sinh', 15:'Hà Mô Công', 16:'Nhất Dương Vạn Ấn', 17:'Cửu Chuyển Thái Cực' };
     const STAT_FIELDS = [

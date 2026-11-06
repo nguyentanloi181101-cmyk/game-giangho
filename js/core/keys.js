@@ -2,7 +2,7 @@
    (tách từ index.html cũ — script) */
 
     // ---- CHÌA KHÓA: thắng xong 1 Ải (Bàn 10) nhận 1 🔑. Mỗi 🔑 mở thêm 10 cấp cho tướng và trang bị ----
-    const KEY_LV = 10, ACC_START = 74;     // cấp acc ban đầu 74; mỗi lần mở khóa +10, tối đa 1000
+    const KEY_LV = 10, ACC_START = BLANK_START ? 1 : 74;     // cấp acc ban đầu 74; mỗi lần mở khóa +10, tối đa 1000
     let keysClaimed = (() => { let k = 0; try { k = parseInt(localStorage.getItem('keys_claimed')) || 0; } catch (e) {}
       return Math.max(k, (progress.maxStage || 1) - 1); })();   // tổng chìa khóa đã nhận (người chơi cũ tính bù)
     let accLevel = (() => { let v = 0; try { v = parseInt(localStorage.getItem('acc_level')) || 0; } catch (e) {}

@@ -74,6 +74,8 @@
     <div class="card">
       <h2>⚠️ Reset TẤT CẢ tài khoản</h2>
       <div class="warn">Xóa sạch dữ liệu của MỌI người chơi (họ chơi lại từ đầu). Ảnh chụp theo giờ vẫn còn nên vẫn khôi phục được từng người trong 72 giờ (ảnh chụp cũ hơn tự bị dọn).</div>
+      <label>Kiểu reset (áp dụng cho cả "Reset tài khoản này" bên dưới)</label>
+      <select id="rs-mode"><option value="blank">Reset TRẮNG: mọi tướng cấp 1 ★1, cấp acc 1, bang cấp 1, vàng/bạc/gạo = 0</option><option value="default">Reset về mặc định game (tướng cấp 70+, 21 triệu bạc…)</option></select>
       <div class="row" style="margin-top:8px"><input id="ra-conf" placeholder='Gõ đúng: RESET TAT CA'><button class="dng" onclick="resetAll()" style="flex:0 0 auto">Reset tất cả</button></div>
       <div id="ra-msg" class="msg"></div>
     </div>
@@ -133,6 +135,7 @@ const TS_NAMES = { 1:'Tôn Sư Ký', 6:'Bá Vương Kiếm', 7:'Thủy Hoàng Đ
 const EQ_NAMES = { hat:'Mũ', armor:'Áo', sword:'Kiếm', boots:'Giày' };
 const RES = [['gold_val','🪙 Vàng'],['silver_val','🥈 Bạc'],['rice_val','🌾 Gạo'],['thandan_val','💎 Thần Đan'],['tiendan_val','🔮 Tiên Đan'],['keys_bonus','🔑 Chìa khóa tặng'],['acc_level','📈 Cấp acc']];
 
+const resetData = () => ($('rs-mode').value === 'blank' ? { blank_start: '1' } : {});   // cờ blank_start: game đọc để bắt đầu từ cấp 1
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = n => Number(n || 0).toLocaleString('vi-VN');
@@ -267,8 +270,8 @@ async function resetOne() {
   if (!cur || !confirm('RESET tài khoản này về mới tinh? (Vẫn khôi phục được từ mốc giờ trong 72 giờ)')) return;
   try {
     const old = (players.find(x => x.uid === cur) || {}).data || {};
-    await backupNow(cur, old); await writeSave(cur, {});
-    say('d-msg', '✔ Đã reset.'); curData = {}; renderEdit(); renderList(); renderState();
+    await backupNow(cur, old); const rd = resetData(); await writeSave(cur, rd);
+    say('d-msg', '✔ Đã reset.'); curData = Object.assign({}, rd); renderEdit(); renderList(); renderState();
   } catch (e) { say('d-msg', 'Lỗi: ' + (e.code || e.message), false); }
 }
 async function resetAll() {
@@ -276,19 +279,19 @@ async function resetAll() {
   if (!confirm('XÓA DỮ LIỆU CỦA TẤT CẢ ' + players.length + ' NGƯỜI CHƠI?')) return;
   say('ra-msg', 'Đang reset…');
   try {
-    let done = 0;
+    let done = 0; const rd = resetData();
     for (let i = 0; i < players.length; i += 150) {
       const b = db.batch(), now = Date.now();
       players.slice(i, i + 150).forEach(p => {
         const ep = ((ctl[p.uid] || {}).epoch || 0) + 1;
         b.set(db.collection('save_history').doc(p.uid).collection('snaps').doc('pre-' + now), { t: now, data: p.data, tag: 'trước reset tất cả', ep: ep - 1, pw: 0 });
         b.set(db.collection('account_ctl').doc(p.uid), { epoch: ep }, { merge: true });
-        b.set(db.collection('saves').doc(p.uid), { t: now, data: {}, ep: ep });
-        ctl[p.uid] = Object.assign({}, ctl[p.uid], { epoch: ep }); p.data = {}; p.t = now;
+        b.set(db.collection('saves').doc(p.uid), { t: now, data: rd, ep: ep });
+        ctl[p.uid] = Object.assign({}, ctl[p.uid], { epoch: ep }); p.data = Object.assign({}, rd); p.t = now;
       });
       await b.commit(); done = Math.min(players.length, i + 150); say('ra-msg', 'Đã reset ' + done + '/' + players.length + '…');
     }
-    say('ra-msg', '✔ Đã reset ' + players.length + ' tài khoản.'); renderList(); if (cur) { curData = {}; renderEdit(); }
+    say('ra-msg', '✔ Đã reset ' + players.length + ' tài khoản.'); renderList(); if (cur) { curData = Object.assign({}, rd); renderEdit(); }
   } catch (e) { say('ra-msg', 'Lỗi giữa chừng: ' + (e.code || e.message), false); }
 }
 

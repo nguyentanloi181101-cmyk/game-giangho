@@ -20,7 +20,7 @@ function gdSt() {
   Object.keys(s.kho).forEach(k => { if (k.indexOf('Thạch ') === 0) { s.kho['Tử Linh Thạch'] = s.kho['Tử Linh Thạch'] || { ico: '🪨', qty: 0 }; s.kho['Tử Linh Thạch'].qty += s.kho[k].qty; delete s.kho[k]; } });
   (s.lots || []).forEach(l => { if (l.name === 'Quỷ Linh') l.name = 'Dị Linh'; if (l.name === 'Hỏa Tinh') l.name = 'Thú Noãn'; if (l.name.indexOf('Thạch ') === 0) l.name = 'Tử Linh Thạch'; });
   s.beast = Object.assign({ lv: 1, star: 1, name: 'Kỳ Lân' }, s.beast || {});
-  s.uytin = s.uytin === undefined ? 3000 : s.uytin; s.bangLv = s.bangLv || 5;
+  s.uytin = s.uytin === undefined ? (BLANK_START ? 0 : 3000) : s.uytin; s.bangLv = s.bangLv || (BLANK_START ? 1 : 5);
   s.kho = s.kho || {}; s.tt = s.tt || null; s.pts = s.pts || 0; s.lots = s.lots || []; s.ct = s.ct || {}; s.bossCt = s.bossCt || {}; s.dv = s.dv || GD_SKILLS.map(() => 0); s.boss = s.boss || {}; s.left = s.left === undefined ? bbDaily() : s.left;
   return s;
 }

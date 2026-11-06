@@ -36,12 +36,12 @@ const fmtN = n => {
     const loadJSON = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } };
     const saveJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     let statOv = cfgHeroPatch().stat;   // chỉ số tướng do ADMIN chỉnh (không còn chỉnh trong Cài đặt)
-    let gold = (() => { try { const v = parseInt(localStorage.getItem('gold_val')); return isNaN(v) ? 2291 : Math.max(0, v); } catch (e) { return 2291; } })();
+    let gold = (() => { try { const v = parseInt(localStorage.getItem('gold_val')); return isNaN(v) ? (BLANK_START ? 0 : 2291) : Math.max(0, v); } catch (e) { return BLANK_START ? 0 : 2291; } })();
     const updateGold = () => { ['gold-val', 'rc-gold'].forEach(i => { const el = document.getElementById(i); if (el) el.innerText = gold; }); };
     const goldSave = () => { try { localStorage.setItem('gold_val', String(gold)); } catch (e) {} updateGold(); };
     // BẠC 🥈 và GẠO 🌾: nhận khi thắng mỗi Bàn PVE, dùng để tăng cấp tướng. (VÀNG 🪙 ở trên: dùng Chiêu Mộ, nhận quà Hộp Thư mỗi ngày)
     const _numLS = (k, d) => { try { const v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? d : Math.max(0, v); } catch (e) { return d; } };
-    let silver = _numLS('silver_val', 21873054), rice = _numLS('rice_val', 2549836);
+    let silver = _numLS('silver_val', BLANK_START ? 0 : 21873054), rice = _numLS('rice_val', BLANK_START ? 0 : 2549836);
     // THẦN ĐAN 💎 và TIÊN ĐAN 🔮: thưởng khi thắng mỗi Bàn PVE (xem trong Túi Đồ)
     let thanDan = _numLS('thandan_val', 0), tienDan = _numLS('tiendan_val', 0);
     const updateRes = () => { [['silver-val', silver], ['rice-val', rice]].forEach(([i, v]) => { const el = document.getElementById(i); if (el) el.innerText = fmtN(v); }); };
