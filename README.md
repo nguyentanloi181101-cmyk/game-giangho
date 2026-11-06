@@ -245,3 +245,18 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 - `admin-config.html` → tab **👹 Địch PVE** (lưu ở `foe` trong `game_config/main`). Code: `FOE_CFG`, `foeCount` trong `js/modes/pve/pve-enemies.js`; dùng ở `loadWave` (`js/modes/pve/pve-battle.js`).
 - Chỉnh: HP / Công / Thủ / Né nền của tướng địch (mặc định 1000 / 200 / 30 / 0), hệ số nhân HP & Công mỗi Bàn (1.32), hệ số boss Trận 4 (1.2).
 - Số tướng địch mỗi trận mặc định 2 / 3 / 4 / 5 (tối đa 5). Có thêm **luật riêng theo Bàn**: từ Bàn X đến Bàn Y đổi số tướng của từng Trận (Bàn đếm liên tục: Ải 2 Bàn 1 = Bàn 11); ô trống = giữ mặc định.
+
+
+## TRANG ADMIN DUY NHẤT: `admin.html` (thay admin-config / admin-giftcode / admin-players — có thể xóa 3 file cũ)
+Đăng nhập 1 lần, các mục: ⚙️ Thông số game (Tướng, Cấp/Sao, Bảo Vật, Trang bị, Boss & Lò, Địch PVE, Cấp & EXP, Thưởng PVE, Thể lực, Chiêu Mộ, Tỷ Võ, Khác) • 📬 Hộp Thư • 🎯 Nhiệm Vụ • 🎪 Sự Kiện • 🎁 Gift Code • 👥 Người chơi • 🧰 Nâng cao (JSON).
+Mọi mục cấu hình dùng chung nút **Lưu cấu hình** (Firestore `game_config/main`). Quy tắc Firestore không đổi.
+- **Quà** (Hộp Thư / rương Nhiệm Vụ / Sự Kiện / Gift Code / thưởng PVE) dùng chung 1 định dạng `{t,n,id?,name?,ico?}` và hàm `gcGrant`. Hàm tiện ích: `rwList`, `rwInfo`, `rwTextAll`, `rwGrantAll` (`remote-config.js`).
+- **Thêm tham số mới**: trong file dữ liệu dùng `let X = mặcDịnh; cfgOnApply(() => { X = cfgNum('đường.dẫn', mặcĐịnh); });` (hook chạy lại mỗi khi admin đổi số), rồi thêm ô trong admin.html (+ số mặc định trong khối `DEF`).
+- Mới: `mail` (quà hằng ngày + thư riêng), `quest` (sửa nhiệm vụ / rương), `event.list` (thêm sự kiện quà, giới hạn thời gian), `stamina`, `recruit` (thời gian chờ, số mảnh, giá, tỷ lệ rơi từng tướng, số mảnh ghép / mỗi sao), `pvp`, `misc` (số Bàn quét, EXP thần thú, giá bán Túi Đồ, nộ thần thú), `progress` (đã có UI).
+
+## Bổ sung (lần 2): chỉnh nốt các phần còn lại từ admin.html
+- **⚔️ Chiêu thức & chiến đấu** (`skill.<TÊN>`): toàn bộ hằng số trong `js/battle/skill-config.js` (hệ số, số hiệp, số đòn, % của từng tuyệt kỹ) + luật trúng `HIT_GAP` và sát thương tối thiểu `MIN_DMG_PCT` (`engine.js`). Thêm hằng số mới vào skill-config.js (dạng `let X = số;`) rồi thêm vào `SKILL_GROUPS` trong admin.html và danh sách trong khối `SKILL_DEF` cuối file.
+- **🦄 Thần Thú** (`tt.*`, `tt.beasts.<tên>`): công thức cấp / EXP / HP / sao / chi phí tăng sao / tẩy phụ thể / phẩm chất, và từng thần thú (hạng, mảnh cần, hiệu quả phụ thể). Code: `js/social/thanthu.js` (`TT_P`, `TT_BEASTS`).
+- **🏰 Bang Hội & Đại Sảnh** (`guild2.*`): EXP bang, chi phí Lò Luyện Hỏa, bang cấp mở kỹ năng / boss, vàng mở Chí Tôn, vật phẩm rơi, đổi vật phẩm boss (`G2` trong guild-sub.js), Quyên Góp (`DS_DONATE`), Tụ Bảo Bồn (`BASIN`, `BASIN_REW`, quà đầy bồn) trong daisanh.js.
+- **Đổi tên** tướng / tuyệt kỹ: `heroes.<id>.name`, `heroes.<id>.ultName`.
+- **Nhiệm vụ tự thêm** (`quest.custom`): gắn với 1 trong các hành động: pve, pvp, rec, eq, bd, boss, tt, mail, donate, basin, skill, login (`QS_TRIGGERS` trong quests.js). Thêm hành động mới = bọc hàm tương ứng bằng `qsTrig('<tên>')` và thêm vào `QS_TRIG_LABEL` trong admin.html.
