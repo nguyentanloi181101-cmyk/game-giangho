@@ -174,7 +174,8 @@
     // • Trúng: Chuẩn của người đánh ≥ Né của mục tiêu + 200 (Né = 0 vẫn cần Chuẩn 200). Trượt: không mất máu nhưng hiệu ứng của chiêu vẫn dính.
     // • 1 tia gồm 3 loại sát thương riêng: Công − Thủ • (Bạo − Bền) × Bạo Sát • Phá giáp (bỏ qua mọi giáp).
     // • Đỡ đòn (%) giảm sát thương Công và Bạo (không giảm Phá giáp).  Bạo và Phá giáp là sát thương riêng, cố định mỗi tia, không nhân theo Công hay hệ số chiêu.
-    const HIT_GAP = 200, MIN_DMG_PCT = 0.1;   // sát thương Công tối thiểu 10% (tránh đánh vào giáp quá cao mà chỉ còn 1)
+    let HIT_GAP = 200, MIN_DMG_PCT = 0.1;   // admin chỉnh: skill.HIT_GAP / skill.MIN_DMG_PCT
+    cfgOnApply(() => { HIT_GAP = cfgNum('skill.HIT_GAP', 200); MIN_DMG_PCT = cfgNum('skill.MIN_DMG_PCT', 0.1); });   // sát thương Công tối thiểu 10% (tránh đánh vào giáp quá cao mà chỉ còn 1)
     const missed = (u, t) => (u.acc || 0) - (t.dodge || 0) < HIT_GAP;
     const dodgeChance = (t, u) => missed(u, t) ? 100 : 0;   // dùng cho chiêu chỉ né được
     function calcDmg(u, t, raw) {

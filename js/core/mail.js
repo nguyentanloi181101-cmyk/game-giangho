@@ -1,45 +1,74 @@
-/* HỘP THƯ: quà hằng ngày 10.000 vàng
-   (viết mới) */
+/* HỘP THƯ: quà hằng ngày + thư do admin gửi.
+   Admin chỉnh ở admin.html → tab "📬 Hộp Thư" (lưu ở game_config/main → mail):
+     mail.daily   1 = có quà hằng ngày, 0 = tắt           (mặc định 1)
+     mail.days    thư chưa nhận giữ bao nhiêu ngày         (mặc định 7)
+     mail.gifts   danh sách quà mỗi ngày                   (mặc định 10.000 vàng)
+     mail.letters thư riêng: [{ id, title, body, gifts, from, to }]  (from/to = mốc thời gian ms, 0/trống = không giới hạn)
+   Trạng thái người chơi (mail_state, đồng bộ đám mây): first = ngày đầu chơi • claimed = { 'yyyy-mm-dd': true } • letters = { idThư: true } */
 
-    // Mỗi ngày có 1 thư quà 10.000 vàng. Thư chưa nhận được giữ lại tối đa 7 ngày gần nhất.
-    const MAIL_GOLD = 10000, MAIL_DAYS = 7;
-    let mailState = (() => { const s = loadJSON('mail_state'); return { first: typeof s.first === 'string' ? s.first : '', claimed: (s.claimed && typeof s.claimed === 'object') ? s.claimed : {} }; })();
-    const mailSave = () => saveJSON('mail_state', mailState);
-    const mailDayKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    const mailDayText = k => k.split('-').reverse().join('/');
-    // Các ngày có thư (mới nhất trước): từ ngày đầu chơi tới hôm nay, tối đa 7 ngày
-    function mailDays() {
-      const today = new Date(); today.setHours(12, 0, 0, 0);
-      if (!mailState.first) { mailState.first = mailDayKey(today); mailSave(); }
-      const days = [];
-      for (let i = 0; i < MAIL_DAYS; i++) { const d = new Date(today); d.setDate(d.getDate() - i); const k = mailDayKey(d); if (k >= mailState.first) days.push(k); }
-      return days;
-    }
-    const mailUnclaimed = () => mailDays().filter(k => !mailState.claimed[k]);
-    function updateMailBadge() {
-      const el = document.getElementById('mail-badge'); if (!el) return;
-      const n = mailUnclaimed().length; el.innerText = n; el.style.display = n ? 'flex' : 'none';
-    }
-    function mailClaim(k) {
-      if (mailState.claimed[k] || !mailDays().includes(k)) return;
-      mailState.claimed[k] = true; gold += MAIL_GOLD; goldSave(); mailSave();
-      renderMail(); updateMailBadge();
-    }
-    function mailClaimAll() {
-      const list = mailUnclaimed(); if (!list.length) return;
-      list.forEach(k => { mailState.claimed[k] = true; }); gold += MAIL_GOLD * list.length; goldSave(); mailSave();
-      renderMail(); updateMailBadge();
-    }
-    function renderMail() {
-      const days = mailDays(), un = days.filter(k => !mailState.claimed[k]);
-      document.getElementById('mail-note').innerHTML = `Mỗi ngày nhận <b>${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</b> miễn phí. Thư chưa nhận được giữ ${MAIL_DAYS} ngày.` + (un.length > 1 ? ` <button class="btn-attack" style="padding:4px 12px;font-size:12px;margin-left:6px" onclick="mailClaimAll()">Nhận tất cả</button>` : '');
-      document.getElementById('mail-list').innerHTML = days.map(k => {
-        const got = !!mailState.claimed[k];
-        return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '🎁'}</div><div class="bm-info"><b>Quà hằng ngày</b><small>Ngày ${mailDayText(k)} • +${fmtN(MAIL_GOLD)} <img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng</small></div>` +
-          (got ? '<div class="bm-qty">Đã nhận ✔</div>' : `<button class="btn-attack" onclick="mailClaim('${k}')">Nhận</button>`) + '</div>';
-      }).join('');
-    }
-    function openMail() { renderMail(); document.getElementById('mail-modal').style.display = 'flex'; }
-    function closeMail() { document.getElementById('mail-modal').style.display = 'none'; }
-    updateMailBadge();
-    setInterval(updateMailBadge, 60000);   // qua nửa đêm: thư mới của ngày mới hiện chấm đỏ
+const MAIL_DEF_GIFTS = [{ t: 'gold', n: 10000 }];
+let MAIL_GIFTS = MAIL_DEF_GIFTS, MAIL_DAYS = 7, MAIL_DAILY_ON = true;
+cfgOnApply(() => {
+  const g = cfgGet('mail.gifts', null);
+  MAIL_GIFTS = Array.isArray(g) ? rwList(g) : MAIL_DEF_GIFTS;
+  MAIL_DAYS = Math.max(1, Math.min(60, Math.floor(cfgNum('mail.days', 7))));
+  MAIL_DAILY_ON = Number(cfgGet('mail.daily', 1)) !== 0 && MAIL_GIFTS.length > 0;
+});
+let mailState = (() => { const s = loadJSON('mail_state'); return { first: typeof s.first === 'string' ? s.first : '', claimed: (s.claimed && typeof s.claimed === 'object') ? s.claimed : {}, letters: (s.letters && typeof s.letters === 'object') ? s.letters : {} }; })();
+const mailSave = () => saveJSON('mail_state', mailState);
+const mailDayKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const mailDayText = k => k.split('-').reverse().join('/');
+// Các ngày có thư (mới nhất trước): từ ngày đầu chơi tới hôm nay, tối đa MAIL_DAYS ngày
+function mailDays() {
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  if (!mailState.first) { mailState.first = mailDayKey(today); mailSave(); }
+  if (!MAIL_DAILY_ON) return [];
+  const days = [];
+  for (let i = 0; i < MAIL_DAYS; i++) { const d = new Date(today); d.setDate(d.getDate() - i); const k = mailDayKey(d); if (k >= mailState.first) days.push(k); }
+  return days;
+}
+// Thư admin gửi còn trong thời hạn
+function mailLetters() {
+  const now = Date.now(), L = cfgGet('mail.letters', []);
+  return (Array.isArray(L) ? L : []).filter(l => l && l.id && rwList(l.gifts).length && (!l.from || now >= l.from) && (!l.to || now <= l.to));
+}
+const mailLetterOpen = () => mailLetters().filter(l => !mailState.letters[l.id]);
+const mailUnclaimed = () => mailDays().filter(k => !mailState.claimed[k]);
+function updateMailBadge() {
+  const el = document.getElementById('mail-badge'); if (!el) return;
+  const n = mailUnclaimed().length + mailLetterOpen().length; el.innerText = n; el.style.display = n ? 'flex' : 'none';
+}
+function mailDone(got) { mailSave(); renderMail(); updateMailBadge(); if (got && typeof scToast === 'function') scToast('🎁 Nhận: ' + got); if (typeof clPush === 'function') { try { clPush(); } catch (e) {} } }
+function mailClaim(k) {
+  if (mailState.claimed[k] || !mailDays().includes(k)) return;
+  mailState.claimed[k] = true; mailDone(rwGrantAll(MAIL_GIFTS));
+}
+function mailClaimAll() {
+  const list = mailUnclaimed(); if (!list.length) return;
+  const got = []; list.forEach(k => { mailState.claimed[k] = true; got.push(rwGrantAll(MAIL_GIFTS)); });
+  mailDone(got[0] ? got.length + ' ngày quà hằng ngày' : '');
+}
+function mailClaimLetter(id) {
+  const l = mailLetters().find(x => x.id === id); if (!l || mailState.letters[id]) return;
+  mailState.letters[id] = true; mailDone(rwGrantAll(l.gifts));
+}
+const mailEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function renderMail() {
+  const days = mailDays(), un = days.filter(k => !mailState.claimed[k]), letters = mailLetters();
+  document.getElementById('mail-note').innerHTML = (MAIL_DAILY_ON ? `Mỗi ngày nhận <b>${rwTextAll(MAIL_GIFTS)}</b> miễn phí. Thư chưa nhận được giữ ${MAIL_DAYS} ngày.` : 'Hiện không có quà hằng ngày.') + (un.length > 1 ? ` <button class="btn-attack" style="padding:4px 12px;font-size:12px;margin-left:6px" onclick="mailClaimAll()">Nhận tất cả</button>` : '');
+  const L = letters.map(l => {
+    const got = !!mailState.letters[l.id];
+    return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '📩'}</div><div class="bm-info"><b>${mailEsc(l.title || 'Thư từ hệ thống')}</b><small>${l.body ? mailEsc(l.body) + '<br>' : ''}+ ${rwTextAll(l.gifts)}</small></div>` +
+      (got ? '<div class="bm-qty">Đã nhận ✔</div>' : `<button class="btn-attack" onclick="mailClaimLetter('${mailEsc(l.id)}')">Nhận</button>`) + '</div>';
+  }).join('');
+  const D = days.map(k => {
+    const got = !!mailState.claimed[k];
+    return `<div class="bm-row ${got ? 'done' : ''}"><div class="bm-ico">${got ? '📭' : '🎁'}</div><div class="bm-info"><b>Quà hằng ngày</b><small>Ngày ${mailDayText(k)} • +${rwTextAll(MAIL_GIFTS)}</small></div>` +
+      (got ? '<div class="bm-qty">Đã nhận ✔</div>' : `<button class="btn-attack" onclick="mailClaim('${k}')">Nhận</button>`) + '</div>';
+  }).join('');
+  document.getElementById('mail-list').innerHTML = (L + D) || '<div class="set-note" style="text-align:center">Hộp thư trống.</div>';
+}
+function openMail() { renderMail(); document.getElementById('mail-modal').style.display = 'flex'; }
+function closeMail() { document.getElementById('mail-modal').style.display = 'none'; }
+updateMailBadge();
+setInterval(updateMailBadge, 60000);   // qua nửa đêm: thư mới của ngày mới hiện chấm đỏ

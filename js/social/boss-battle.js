@@ -5,7 +5,8 @@
    - Thần thú CỦA ĐỘI MÌNH đứng bệ góc trên trái (không có thần thú địch). Mỗi hiệp tích 20 nộ; đủ 100 nộ thì mượn thân 1 tướng NGẪU NHIÊN
      trong TẤT CẢ tướng của game để tung đúng tuyệt kỹ của tướng đó. Thần thú của mình đứng ngoài trận (không bị đánh).
    BOSS BANG (chính là 1 thần thú) mới là bên MIỄN NHIỄM mọi hiệu ứng bất lợi, có thanh nộ riêng: nộ đầu trận = BOSS_CFG.bossRage (100); đủ 100 nộ thì tung ulti NGẪU NHIÊN của 1 tướng bất kỳ. */
-const BBT_BEAST_RAGE = 20;   // nộ thần thú nhận mỗi hiệp
+let BBT_BEAST_RAGE = 20;   // admin chỉnh: misc.bossBeastRage
+cfgOnApply(() => { BBT_BEAST_RAGE = Math.max(0, cfgNum('misc.bossBeastRage', 20)); });   // nộ thần thú nhận mỗi hiệp
 
 function bbFight() {
   if (bossB) return;

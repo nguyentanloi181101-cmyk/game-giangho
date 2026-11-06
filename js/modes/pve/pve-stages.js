@@ -51,7 +51,8 @@
     }
 
     // ===== QUÉT: đánh nhanh 10 lần 1 Bàn ĐÃ THẮNG, tốn 10 × 4 = 40 thể lực, nhận thưởng x10 (bạc, gạo, viên thể lực) =====
-    const SWEEP_N = 10;
+    let SWEEP_N = 10;   // số Bàn quét 1 lần — admin chỉnh: misc.sweepN
+    cfgOnApply(() => { SWEEP_N = Math.max(1, Math.min(100, Math.floor(cfgNum('misc.sweepN', 10)))); });
     const isCleared = (stage, battle) => stage < progress.maxStage || (stage === progress.maxStage && battle < progress.maxBattle);
     function sweepBattle(stage, battle) {
       if (!isCleared(stage, battle)) return;

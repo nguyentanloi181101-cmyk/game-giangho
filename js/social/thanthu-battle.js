@@ -8,7 +8,7 @@ function ttPtList(cur, slotsArr, star) {
   const b = TT_BEASTS.find(x => x[0] === cur); if (!b) return [];
   const out = (b[4] || []).map(e => ({ n: e[0], v: e[1], pts: !!e[2] }));
   const open = ttSlotsOpen(b, { star: star || 1 });
-  (slotsArr || []).slice(0, open).forEach(sl => { if (sl && sl.n) out.push({ n: sl.n, v: [4, 6, 8, 12, 16][sl.q - 1], pts: false }); });
+  (slotsArr || []).slice(0, open).forEach(sl => { if (sl && sl.n) out.push({ n: sl.n, v: TT_QPCT()[sl.q - 1], pts: false }); });
   return out;
 }
 function ttMine() {

@@ -12,7 +12,15 @@
      pve:      { silverBase, riceBase, growth, thanBase, tienBase, expBase, pillBase, extra: [ {t,n,...} ] }   (extra = thưởng thêm mỗi trận)
      foe:      { hp, atk, def, dodge, growth, bossMult, counts:[t1,t2,t3,t4], rules:[{from,to,c:[..]}] }   (địch PVE)
      boss:     { daily, baseHp, hpMult, ctMult, atkDiv, heroDmgMult, maxRounds, ptsPerDmg, killPts }
-     guild:    { hp1, def1, atk, hp2, def2, pierce, heal, spd, critDmg, boss }     (mỗi cấp Lò Luyện Hỏa) */
+     guild:    { hp1, def1, atk, hp2, def2, pierce, heal, spd, critDmg, boss }     (mỗi cấp Lò Luyện Hỏa)
+     stamina:  { max, regenSec, perWave, waves, pill }            (thể lực: tối đa • giây hồi 1 điểm • tốn/trận • số trận/Bàn • mỗi viên +bao nhiêu)
+     recruit:  { lam|tim|ten: { cdMin, n, cost }, mergeCost, shardPerStar, weights: { "<idTướng>": trọng số } }   (Chiêu Mộ + ghép mảnh)
+     pvp:      { power, hp, atk, def, hpMax, atkMax, defMax, rounds, flameWin, flameLose, flameCost }   (Tỷ Võ)
+     mail:     { daily (1/0), days, gifts: [ {t,n,...} ], letters: [ {id,title,body,gifts,from,to} ] }   (Hộp Thư: quà hằng ngày + thư admin gửi)
+     quest:    { tasks: { "<id>": { name, n, pts, off } }, chests: [ { pts, gifts: [ {t,n,...} ] } ] }    (Nhiệm Vụ / Tích Cực)
+     event:    { list: [ { id, name, ico, kind: 'daily'|'once'|'soon', gifts, from, to, off } ] }        (Sự Kiện)
+     misc:     { sweepN, ttFeed: {"Thú Hồn","Thú Linh"}, bagPrice: {"<vật phẩm>": giá bán}, bossBeastRage }
+   Quà (reward) dùng chung 1 định dạng với Gift Code: { t: 'silver'|'rice'|'gold'|'than'|'tien'|'pill'|'hammer'|'exp'|'shard'|'treasure'|'beast'|'tshard'|'item', n, id?, name?, ico? } */
 
 const CFG_URL = 'https://firestore.googleapis.com/v1/projects/game-118e8/databases/(default)/documents/game_config/main';
 let GAME_CFG = (() => { try { return JSON.parse(localStorage.getItem('game_cfg')) || {}; } catch (e) { return {}; } })();
@@ -24,6 +32,31 @@ function cfgGet(path, def) {
   return (o === undefined || o === null || o === '') ? def : o;
 }
 const cfgNum = (path, def) => { const v = Number(cfgGet(path, def)); return isFinite(v) ? v : def; };
+
+// Các file dữ liệu đăng ký hàm đọc cấu hình: chạy ngay 1 lần khi đăng ký và chạy lại mỗi lần cfgApply (khi admin đổi số).
+const cfgHooks = [];
+function cfgOnApply(fn) { cfgHooks.push(fn); try { fn(); } catch (e) { console.warn('cfgHook', e); } }
+
+// ----- Quà (reward): cùng định dạng với Gift Code. Dùng cho Hộp Thư, Nhiệm Vụ, Sự Kiện. -----
+const RW_GOLD_ICO = '<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng">';
+const rwOk = r => !!(r && r.t && Number(r.n) > 0);
+const rwList = v => (Array.isArray(v) ? v : []).filter(rwOk);
+// Trả { ico (HTML), name, n } để hiển thị 1 phần quà
+function rwInfo(r) {
+  const n = Math.floor(Number(r.n)) || 0;
+  const simple = { silver: ['🥈', 'Bạc'], rice: ['🌾', 'Gạo'], gold: [RW_GOLD_ICO, 'Vàng'], than: ['🔮', 'Thần Đan'], tien: ['🔴', 'Tiên Đan'], pill: ['💊', 'Viên Thể Lực'], hammer: ['🔨', 'Búa'], exp: ['✨', 'EXP'] };
+  if (simple[r.t]) return { ico: simple[r.t][0], name: simple[r.t][1], n };
+  if (r.t === 'shard') { let nm = 'tướng #' + r.id; try { nm = heroById(Number(r.id)).name; } catch (e) {} return { ico: '🧩', name: 'Mảnh ' + nm, n }; }
+  if (r.t === 'treasure') { let nm = 'Bảo Vật'; try { nm = TS_DEFS[r.id].name; } catch (e) {} return { ico: '🏺', name: nm, n }; }
+  if (r.t === 'beast') return { ico: '🦄', name: 'Thần thú ' + (r.name || ''), n: 1 };
+  if (r.t === 'tshard') return { ico: '🧩', name: 'Mảnh ' + (r.name || ''), n };
+  if (r.t === 'item') return { ico: r.ico || '🎁', name: r.name || 'Vật phẩm', n };
+  return { ico: '🎁', name: String(r.t), n };
+}
+const rwText = r => { const i = rwInfo(r); return i.ico + ' ' + (typeof fmtN === 'function' ? fmtN(i.n) : i.n) + ' ' + i.name; };
+const rwTextAll = L => rwList(L).map(rwText).join(' • ');
+// Nhận cả danh sách quà (dùng gcGrant của giftcode.js). Trả chuỗi mô tả những gì đã nhận.
+function rwGrantAll(L) { const got = []; rwList(L).forEach(r => { try { const t = gcGrant(r); if (t) got.push(t); } catch (e) {} }); return got.join(', '); }
 
 // Ghi đè chỉ số cơ bản tướng. Trả { stat, role } cho statOv / roleOv (chỉ phần Nộ khởi đầu & chất tướng đi đường này).
 function cfgHeroPatch() {
@@ -65,7 +98,9 @@ function cfgApply(refresh) {
     if (typeof FOE_CFG !== 'undefined' && cfgBase.foe) Object.assign(FOE_CFG, cfgBase.foe, GAME_CFG.foe || {});
     if (typeof PROG_CFG !== 'undefined' && cfgBase.progress) { Object.assign(PROG_CFG, cfgBase.progress, GAME_CFG.progress || {}); try { progCfgSync(); } catch (e) {} }
     if (typeof EXP_CFG !== 'undefined' && cfgBase.exp) { Object.assign(EXP_CFG, cfgBase.exp, GAME_CFG.exp || {}); try { updateAccExp(); } catch (e) {} }
+    cfgHooks.forEach(fn => { try { fn(); } catch (e) { console.warn('cfgHook', e); } });
     if (refresh) {
+      try { if (typeof updateMailBadge === 'function') updateMailBadge(); } catch (e) {} try { if (typeof staRender === 'function') staRender(); } catch (e) {}
       try { renderHomeTeam(); } catch (e) {} try { updatePower(); } catch (e) {} try { if (typeof renderPvp === 'function') renderPvp(); } catch (e) {}
     }
   } catch (e) { console.warn('cfgApply', e); }

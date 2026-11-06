@@ -4,9 +4,16 @@
     // ================= TỶ VÕ (PVP XẾP HẠNG) =================
     // • Khiêu chiến KHÔNG GIỚI HẠN lượt • Thắng: +10.000 lực chiến, mọi tướng ra trận +10.000 HP / +5.000 Công / +3.000 Thủ (cộng dồn theo số trận thắng)
     // • Hạng = vị trí trong bảng (có 3 người thì hạng 1-2-3), tài khoản mới xếp tiếp xuống cuối; thắng đối thủ hạng cao hơn thì lên đúng hạng của họ • Đối thủ = NGƯỜI CHƠI THẬT (không có NPC / người ảo)
-    const PVP_DAILY = 30, PVP_START_RANK = 1, PVP_POWER = 10000, PVP_HP = 10000, PVP_ATK = 5000, PVP_DEF = 3000, PVP_MAX_ROUNDS = 10, BASE_POWER = 537647;
+    const PVP_DAILY = 30, PVP_START_RANK = 1, BASE_POWER = 537647;
+    // Admin chỉnh ở admin.html → tab Tỷ Võ (pvp.*): lực chiến/HP/Công/Thủ cộng mỗi trận thắng, mức tối đa, số hiệp, đốm lửa
+    let PVP_POWER = 10000, PVP_HP = 10000, PVP_ATK = 5000, PVP_DEF = 3000, PVP_MAX_ROUNDS = 10;
     // Giới hạn tối đa điểm Chiến Tích (cộng dồn theo số trận thắng): HP 1.000.000 • Công 500.000 • Thủ 300.000
-    const PVP_HP_MAX = 1000000, PVP_ATK_MAX = 500000, PVP_DEF_MAX = 300000;
+    let PVP_HP_MAX = 1000000, PVP_ATK_MAX = 500000, PVP_DEF_MAX = 300000;
+    cfgOnApply(() => {
+      const f = (k, d) => Math.max(0, cfgNum('pvp.' + k, d));
+      PVP_POWER = f('power', 10000); PVP_HP = f('hp', 10000); PVP_ATK = f('atk', 5000); PVP_DEF = f('def', 3000); PVP_MAX_ROUNDS = Math.max(1, Math.floor(f('rounds', 10)));
+      PVP_HP_MAX = f('hpMax', 1000000); PVP_ATK_MAX = f('atkMax', 500000); PVP_DEF_MAX = f('defMax', 300000);
+    });
     const pvHp = w => Math.min(PVP_HP * w, PVP_HP_MAX), pvAtk = w => Math.min(PVP_ATK * w, PVP_ATK_MAX), pvDef = w => Math.min(PVP_DEF * w, PVP_DEF_MAX);
     const pvPow = w => Math.min(PVP_POWER * w, PVP_HP_MAX);   // lực chiến dừng cùng mốc với HP
     const PVP_TIERS = [

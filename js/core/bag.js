@@ -3,6 +3,8 @@
 
     const BAG_SELL_PASS = '0000';
     const BAG_PRICE = { 'Viên Thể Lực': 10, 'Thú Noãn': 50, 'Thú Hồn': 100, 'Thú Linh': 500, 'Đá Nữ Oa': 100, 'Dị Linh': 300, 'Đào Tiên': 200, 'Đào Tiên Vương': 1000, 'Tử Linh Thạch': 400, 'Lá Linh': 50, 'Hộp Linh': 200, 'Hộp Tinh': 400, 'Ngọc Tím': 300 };
+    const BAG_PRICE_DEF = Object.assign({}, BAG_PRICE);
+    cfgOnApply(() => { Object.assign(BAG_PRICE, BAG_PRICE_DEF); const o = cfgGet('misc.bagPrice', {}) || {}; Object.keys(o).forEach(k => { const v = Number(o[k]); if (isFinite(v) && v >= 0) BAG_PRICE[k] = v; }); });   // giá bán Túi Đồ — admin chỉnh: misc.bagPrice
     const BAG_DESC = { 'Thú Noãn': 'Nguyên liệu thần thú, rơi từ Boss bang.', 'Thú Hồn': 'Cho thần thú ăn: +100 EXP.', 'Thú Linh': 'Cho thần thú ăn: +500 EXP.', 'Đá Nữ Oa': 'Dùng tăng sao thần thú.', 'Dị Linh': 'Dùng tăng sao thần thú.', 'Đào Tiên': 'Vật phẩm rơi từ Boss bang.', 'Đào Tiên Vương': 'Vật phẩm rơi từ Boss bang.', 'Tử Linh Thạch': 'Vật phẩm rơi từ Boss bang.' };
     const bagStackOf = x => (x.qty > BAG_STACK * 30 || /Đan$/.test(x.name)) ? 1e300 : BAG_STACK;   // số lượng rất lớn (Thần Đan / Tiên Đan...): gộp 1 ô, tránh tách hàng triệu ô làm treo web
     const BAG_STACK = 999;   // mỗi ô tối đa 999, vượt thì tách ô mới (999 / 999 / 999 ...)

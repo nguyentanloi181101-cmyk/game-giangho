@@ -2,7 +2,8 @@
    (tách từ index.html cũ — script) */
 
     // ---- Đổi đốm lửa 🔥 lấy Bảo Vật: thắng +2, thua -1 (không âm); 10 đốm lửa = thêm 1 Bảo Vật GIỐNG HỆT loại đã chọn (cùng tên, cùng thông số) ----
-    const PVP_FLAME_WIN = 2, PVP_FLAME_LOSE = 1, PVP_FLAME_COST = 10;
+    let PVP_FLAME_WIN = 2, PVP_FLAME_LOSE = 1, PVP_FLAME_COST = 10;   // admin chỉnh: pvp.flameWin / flameLose / flameCost
+    cfgOnApply(() => { PVP_FLAME_WIN = Math.max(0, Math.floor(cfgNum('pvp.flameWin', 2))); PVP_FLAME_LOSE = Math.max(0, Math.floor(cfgNum('pvp.flameLose', 1))); PVP_FLAME_COST = Math.max(1, Math.floor(cfgNum('pvp.flameCost', 10))); });
     function pvpExchange() {
       const f = pvpState.flame || 0;
       const rows = TS_KINDS.map(k => {

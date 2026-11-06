@@ -11,7 +11,17 @@ Object.assign(BOSS_CFG, cfgGet('boss', {}));
 const GD_SKILLS = [['Cường Tráng', '🧍', 'Mỗi cấp tăng ' + GD_PER.hp1 + ' điểm HP tối đa'], ['Hộ Thuẫn', '🛡️', 'Mỗi cấp tăng ' + GD_PER.def1 + ' điểm thủ'], ['Lợi Kiếm', '🗡️', 'Mỗi cấp tăng ' + GD_PER.atk + ' điểm công'],
   ['Cường Thân', '💪', 'Mỗi cấp tăng ' + GD_PER.hp2 + ' điểm HP tối đa'], ['Kiên Cố', '🔰', 'Mỗi cấp tăng ' + GD_PER.def2 + ' điểm thủ'], ['Phá Giáp', '🪓', 'Mỗi cấp tăng ' + GD_PER.pierce + ' điểm phá giáp'], ['Hồi Phục', '💚', 'Mỗi cấp hồi ' + GD_PER.heal + ' máu cho tướng sau khi kết thúc lượt đánh của 2 bên'],
   ['Thần Tốc', '⚡', 'Mỗi cấp tăng ' + GD_PER.spd + ' điểm tốc độ'], ['Bạo Kích', '💥', 'Mỗi cấp tăng ' + GD_PER.critDmg + ' điểm bạo sát'], ['Chí Tôn', '👑', 'Mỗi cấp tăng ' + GD_PER.boss + ' sát thương lên boss bang']];
-const GD_SKILL_UNLOCK = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10], GD_SKILL_MAX = [Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity];   // Lò Luyện Hỏa: nâng cấp không giới hạn
+/* ===== Admin chỉnh (admin.html → tab "Bang Hội"): guild2.unlock.<0-9> (bang cấp mở từng kỹ năng), guild2.uyBase/uyGrow/silverBase/silverGrow (chi phí học Lò Luyện Hỏa),
+   guild2.ctCost (vàng mở Boss Chí Tôn), guild2.bossLv.<tên boss>, guild2.buyPer/bidMax/dropQ1/dropQ2/lotMin/lotExtra/endHour (đổi vật phẩm boss), guild2.dropsLow/dropsHigh (vật phẩm rơi) ===== */
+const G2_DEF = { uyBase: 300, uyGrow: 1.02, silverBase: 50000, silverGrow: 1.05, ctCost: 5000, buyPer: 99999, bidMax: 6, dropQ1: 5, dropQ2: 10, lotMin: 4, lotExtra: 2, endHour: 12, resetHour: 3, expBase: 5000, expMult: 2 };
+const G2 = Object.assign({}, G2_DEF);
+const GD_UNLOCK_DEF = [1, 1, 1, 1, 1, 7, 8, 9, 10, 10];
+const GD_DROPS_LOW_DEF = ['Thú Hồn', 'Thú Linh', 'Thú Noãn', 'Đá Nữ Oa', 'Dị Linh', 'Châu {boss}', 'Đào Tiên', 'Tử Linh Thạch'];
+const GD_DROPS_HIGH_DEF = ['Đào Tiên Vương', 'Đá Nữ Oa', 'Châu {boss}', 'Dị Linh', 'Lá Linh', 'Hộp Linh', 'Hộp Tinh', 'Ngọc Tím'];
+const GD_DROP_ICO = { 'Thú Hồn': '🟠', 'Thú Linh': '🔥', 'Thú Noãn': '🔶', 'Đá Nữ Oa': '🔻', 'Dị Linh': '🎭', 'Đào Tiên': '🍑', 'Tử Linh Thạch': '🪨', 'Đào Tiên Vương': '🍑', 'Lá Linh': '🍃', 'Hộp Linh': '📦', 'Hộp Tinh': '🎁', 'Ngọc Tím': '🟣' };
+let G2_RESET_DAYS = [1, 4];   // ngày boss hồi đầy (0 = Chủ nhật … 6 = thứ 7) — admin chỉnh: guild2.resetDays, giờ: guild2.resetHour
+let GD_DROPS_LOW = GD_DROPS_LOW_DEF, GD_DROPS_HIGH = GD_DROPS_HIGH_DEF;
+const GD_SKILL_UNLOCK = GD_UNLOCK_DEF.slice(), GD_SKILL_MAX = [Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity, Infinity];   // Lò Luyện Hỏa: nâng cấp không giới hạn
 const GD_ICO = { 'Thú Noãn': 'thu-noan', 'Thú Hồn': 'thu-hon', 'Thú Linh': 'thu-linh', 'Đá Nữ Oa': 'da-nu-oa', 'Dị Linh': 'di-linh', 'Đào Tiên': 'dao-tien', 'Đào Tiên Vương': 'dao-tien', 'Tử Linh Thạch': 'tu-linh-thach' };
 function gdIco(name, ico) { const f = GD_ICO[name] || (String(name).indexOf('Châu ') === 0 ? 'chau' : ''); return f ? `<img class="gi" src="assets/images/items/${f}.webp" alt="${name}">` : ico; }
 function gdSt() {
@@ -45,8 +55,8 @@ function openDienVo() { renderDienVo(); switchScreen('dienvo'); }
 function dvPick(i) { dvSel = i; renderDienVo(); }
 
 const dvCost = lv => ({
-  uy: Math.ceil(300 * Math.pow(1.02, lv)),
-  silver: Math.ceil(50000 * Math.pow(1.05, lv))
+  uy: Math.ceil(G2.uyBase * Math.pow(G2.uyGrow, lv)),
+  silver: Math.ceil(G2.silverBase * Math.pow(G2.silverGrow, lv))
 });
 
 function dvLearn() {
@@ -84,11 +94,19 @@ const GD_BOSS = [   // [tên, bang cấp, icon, cách đánh, đặc điểm, [4
   ['Báo Tuyết', 7, '🐆', 'Chủ yếu là tấn công đơn', 'Quái vật này có đặc điểm nổi bật là rất xấu và rất mạnh', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Báo Tuyết'],
   ['Hắc Điêu', 8, '🦅', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Hắc Điêu'],
   ['Cuồng Ngưu', 9, '🐂', 'Đơn công', 'Thực lực vượt trội so với BOSS thường', ['Thiết Mã', 'Hạc Minh', 'Tất Sát', 'Mã Đề Tiễn'], 'Chí Tôn Cuồng Ngưu']];
+const GD_BOSS_LV_DEF = GD_BOSS.map(b => b[1]);
+cfgOnApply(() => {
+  Object.keys(G2_DEF).forEach(k => { G2[k] = cfgNum('guild2.' + k, G2_DEF[k]); });
+  G2.dropQ1 = Math.max(1, Math.floor(G2.dropQ1)); G2.dropQ2 = Math.max(1, Math.floor(G2.dropQ2)); G2.lotMin = Math.max(1, Math.floor(G2.lotMin)); G2.lotExtra = Math.max(0, Math.floor(G2.lotExtra)); G2.endHour = Math.max(0, Math.min(23, Math.floor(G2.endHour))); G2.resetHour = Math.max(0, Math.min(23, Math.floor(G2.resetHour)));
+  const rd = cfgGet('guild2.resetDays', null); const rdv = Array.isArray(rd) ? rd.map(Number).filter(x => Number.isInteger(x) && x >= 0 && x <= 6) : []; G2_RESET_DAYS = rdv.length ? rdv : [1, 4];
+  GD_UNLOCK_DEF.forEach((v, i) => { GD_SKILL_UNLOCK[i] = Math.max(1, Math.floor(cfgNum('guild2.unlock.' + i, v))); });
+  GD_BOSS.forEach((b, i) => { b[1] = Math.max(1, Math.floor(cfgNum('guild2.bossLv.' + b[0], GD_BOSS_LV_DEF[i]))); });
+  const lo = cfgGet('guild2.dropsLow', null), hi = cfgGet('guild2.dropsHigh', null);
+  GD_DROPS_LOW = Array.isArray(lo) && lo.length ? lo.map(String) : GD_DROPS_LOW_DEF; GD_DROPS_HIGH = Array.isArray(hi) && hi.length ? hi.map(String) : GD_DROPS_HIGH_DEF;
+});
 const gdBossHp = (k, ct) => BOSS_CFG.baseHp * Math.pow(BOSS_CFG.hpMult, k) * (ct ? BOSS_CFG.ctMult : 1);
 const gdBossAtk = (k, ct) => Math.round(gdBossHp(k, 0) / BOSS_CFG.atkDiv) * (ct ? BOSS_CFG.ctMult : 1);   // sát thương 1 đòn lên 1 tướng
-const gdDrops = k => { const b = GD_BOSS[k][0]; return k < 4
-  ? [['Thú Hồn', '🟠'], ['Thú Linh', '🔥'], ['Thú Noãn', '🔶'], ['Đá Nữ Oa', '🔻'], ['Dị Linh', '🎭'], ['Châu ' + b, '🔮'], ['Đào Tiên', '🍑'], ['Tử Linh Thạch', '🪨']]
-  : [['Đào Tiên Vương', '🍑'], ['Đá Nữ Oa', '🔻'], ['Châu ' + b, '🔮'], ['Dị Linh', '💀'], ['Lá Linh', '🍃'], ['Hộp Linh', '📦'], ['Hộp Tinh', '🎁'], ['Ngọc Tím', '🟣']]; };
+const gdDrops = k => { const b = GD_BOSS[k][0]; return (k < 4 ? GD_DROPS_LOW : GD_DROPS_HIGH).map(n => n.indexOf('{boss}') >= 0 ? [n.replace('{boss}', b), '🔮'] : [n, GD_DROP_ICO[n] || '🎁']); };
 let bbTab = 'thuong', bbCur = null;
 const bbDaily = () => { const v = Math.floor(Number(BOSS_CFG.daily)); return isFinite(v) && v >= 0 ? v : 2; };   // số lượt đánh boss/ngày (admin chỉnh)
 function gdTick() {   // đổi ngày: +lượt; thứ 2 & thứ 5 3h: boss hồi đầy; 12h: kết thúc đấu giá
@@ -96,7 +114,7 @@ function gdTick() {   // đổi ngày: +lượt; thứ 2 & thứ 5 3h: boss hồ
   const dly = bbDaily();
   if (s.day !== dk) { s.day = dk; s.left = dly; s.cap = dly; ch = true; }
   else if (s.cap !== dly) { s.left = Math.max(0, s.left + dly - (s.cap === undefined ? 2 : s.cap)); s.cap = dly; ch = true; }   // admin đổi số lượt giữa ngày -> cộng/trừ phần chênh
-  const r = new Date(now.getTime() - 3 * 3600e3); while (r.getDay() !== 1 && r.getDay() !== 4) r.setDate(r.getDate() - 1);
+  const r = new Date(now.getTime() - G2.resetHour * 3600e3); for (let g = 0; g < 8 && !G2_RESET_DAYS.includes(r.getDay()); g++) r.setDate(r.getDate() - 1);
   const rid = r.toDateString(); if (s.rid !== rid) { s.rid = rid; s.boss = {}; s.bossCt = {}; ch = true; }
   const keep = [];
   s.lots.forEach(l => { if (l.exp > Date.now()) return keep.push(l);
@@ -107,7 +125,7 @@ function gdTick() {   // đổi ngày: +lượt; thứ 2 & thứ 5 3h: boss hồ
 }
 function bbTabSet(t) { bbTab = t; renderBangBoss(); }
 function openBangBoss() { renderBangBoss(); switchScreen('bangboss'); }
-function bbCtUnlock(k) { const s = gdSt(); if (gold < 5000) return scToast('Cần 5000 Vàng'); if (!confirm('Mở khóa Boss Chí Tôn bằng 5000 Vàng?')) return; gold -= 5000; resSave(); s.ct[k] = 1; gdSave(s); renderBangBoss(); }
+function bbCtUnlock(k) { const s = gdSt(); if (gold < G2.ctCost) return scToast('Cần ' + fmtN(G2.ctCost) + ' Vàng'); if (!confirm('Mở khóa Boss Chí Tôn bằng ' + fmtN(G2.ctCost) + ' Vàng?')) return; gold -= G2.ctCost; resSave(); s.ct[k] = 1; gdSave(s); renderBangBoss(); }
 function bbInfo(k, ct) {
   bbCur = [k, ct]; const b = GD_BOSS[k], m = document.getElementById('boss-modal');
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('boss-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">BOSS${ct ? ' CHÍ TÔN' : ''}</div>
@@ -135,8 +153,8 @@ function bbFight() {   // trận tự động mô phỏng bằng chỉ số đ�
   s[key][k] = boss; s.left--; const pts = Math.floor(dmgDone / BOSS_CFG.ptsPerDmg) + (killed ? BOSS_CFG.killPts : 0); s.pts += pts;
   let msg = `Gây ${fmtN(dmgDone)} sát thương • +${pts} Điểm BOSS`;
   if (killed) {   // rơi vật phẩm vào mục Đổi, hết hạn 12h trưa kế tiếp
-    const e = new Date(); e.setHours(12, 0, 0, 0); if (e <= Date.now()) e.setDate(e.getDate() + 1);
-    gdDrops(k).slice(0, 4 + Math.floor(Math.random() * 3)).forEach(d => { const q = [5, 10][Math.floor(Math.random() * 2)]; s.lots.push({ name: d[0], ico: d[1], qty: q, buy: q * 99999 * (ct ? 2 : 1) + (q === 5 ? 0 : 0), bid0: Math.max(10, q * Math.ceil(Math.random() * 6) * (ct ? 2 : 1)), bid: 0, mine: 0, exp: e.getTime() }); });
+    const e = new Date(); e.setHours(G2.endHour, 0, 0, 0); if (e <= Date.now()) e.setDate(e.getDate() + 1);
+    gdDrops(k).slice(0, G2.lotMin + Math.floor(Math.random() * (G2.lotExtra + 1))).forEach(d => { const q = [G2.dropQ1, G2.dropQ2][Math.floor(Math.random() * 2)]; s.lots.push({ name: d[0], ico: d[1], qty: q, buy: q * G2.buyPer * (ct ? 2 : 1), bid0: Math.max(10, q * Math.ceil(Math.random() * G2.bidMax) * (ct ? 2 : 1)), bid: 0, mine: 0, exp: e.getTime() }); });
     msg += ' • BOSS BỊ HẠ! Vật phẩm đã rơi vào mục Đổi'; if (typeof gdNews === 'function') gdNews(`${pvName()} hạ ${GD_BOSS[k][0]}${ct ? ' Chí Tôn' : ''}`);
   }
   gdSave(s); document.getElementById('boss-modal').style.display = 'none'; renderBangBoss(); alert(msg);
@@ -147,11 +165,11 @@ function renderBangBoss() {
   const body = document.getElementById('bb-body');
   if (bbTab === 'doi') return renderBossShop(s, body);
   const ct = bbTab === 'chiton';
-  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn: ${s.left}/${bbDaily()}</span><span>Làm mới vào 3h-4h thứ 2, thứ 5</span></div>` + GD_BOSS.map((b, k) => {
+  body.innerHTML = `<div class="bb-top"><span>Hôm nay còn: ${s.left}/${bbDaily()}</span><span>Làm mới vào ${G2.resetHour}h-${G2.resetHour + 1}h ${G2_RESET_DAYS.slice().sort((a, b) => a - b).map(d => d ? 'thứ ' + (d + 1) : 'Chủ nhật').join(', ')}</span></div>` + GD_BOSS.map((b, k) => {
     const open = ct ? !!s.ct[k] : b[1] <= s.bangLv, mx = gdBossHp(k, ct), h = (ct ? s.bossCt : s.boss)[k], cur = h === undefined ? mx : h, pct = Math.ceil(cur / mx * 100);
     const act = open ? `bbInfo(${k},${ct ? 1 : 0})` : ct ? `bbCtUnlock(${k})` : '';
     return `<div class="bb-card ${open ? '' : 'lock'}"><div class="bb-h"><b>${ct ? b[6] : b[0]}</b><span class="${open ? 'ok' : 'no'}">Bang cấp ${ct ? 10 : b[1]}</span><button onclick="scToast('Bảng xếp hạng sắp ra mắt')">Hạng</button></div>
-    <div class="bb-pic" onclick="${act}"><div class="bb-ico ${open ? 'img' : ''}">${open ? ttImg(b[0], ct) : '⛓️'}</div>${open ? `<div class="bb-hp"><div style="width:${pct}%"></div></div><div class="bb-t">${cur <= 0 ? 'Đã hạ' : 'HP BOSS: ' + pct + '%'}</div>` : `${ct ? '<div class="bb-mid">Mở cần 5000 Vàng</div>' : ''}<div class="bb-t">Chưa mở</div>`}</div></div>`;
+    <div class="bb-pic" onclick="${act}"><div class="bb-ico ${open ? 'img' : ''}">${open ? ttImg(b[0], ct) : '⛓️'}</div>${open ? `<div class="bb-hp"><div style="width:${pct}%"></div></div><div class="bb-t">${cur <= 0 ? 'Đã hạ' : 'HP BOSS: ' + pct + '%'}</div>` : `${ct ? '<div class="bb-mid">Mở cần ${fmtN(G2.ctCost)} Vàng</div>' : ''}<div class="bb-t">Chưa mở</div>`}</div></div>`;
   }).join('');
 }
 function renderBossShop(s, body) {

@@ -49,7 +49,8 @@ const fmtN = n => {
     updateRes();
     let heroShards = loadJSON('hero_shards');   // mảnh tướng: { heroId: số mảnh }
     let recState = loadJSON('rec_state');       // thời điểm được quay miễn phí kế tiếp: { lam, tim, ten }
-    const SHARD_PER_STAR = 10;                  // lên ★N cần N × 10 mảnh của chính tướng đó (★6 = 60 mảnh)
+    let SHARD_PER_STAR = 10;                    // lên ★N cần N × 10 mảnh của chính tướng đó (★6 = 60 mảnh) — admin chỉnh: recruit.shardPerStar
+    cfgOnApply(() => { SHARD_PER_STAR = Math.max(1, Math.floor(cfgNum('recruit.shardPerStar', 10))); });
     const shardsOf = id => Math.max(0, heroShards[id] | 0);
     const starCost = star => star * SHARD_PER_STAR;   // chi phí để đạt ★star
     let heroProg = loadJSON('hero_prog');
@@ -66,7 +67,8 @@ const fmtN = n => {
     })();
     const heroIsOwned = id => !OWN_ON || !!heroOwned[id];
     const ownedHeroes = () => HEROES.filter(h => heroIsOwned(h.id));
-    const MERGE_COST = 10;   // đủ 10 mảnh ghép thành 1 tướng
+    let MERGE_COST = 10;   // đủ 10 mảnh ghép thành 1 tướng — admin chỉnh: recruit.mergeCost
+    cfgOnApply(() => { MERGE_COST = Math.max(1, Math.floor(cfgNum('recruit.mergeCost', 10))); });
     // Ghép mảnh: tốn MERGE_COST mảnh của tướng `id` để có tướng đó (cấp 1 ★1). Trả về true nếu thành công.
     function heroGain(id) {
       if (!OWN_ON || heroOwned[id] || !heroById(id) || shardsOf(id) < MERGE_COST) return false;

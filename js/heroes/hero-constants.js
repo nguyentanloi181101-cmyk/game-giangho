@@ -29,6 +29,9 @@
     const START_PROG = (() => { if (!BLANK_START) return START_PROG_DEF; const o = {}; Object.keys(START_PROG_DEF).forEach(k => { o[k] = { lv: 1, star: 1 }; }); return o; })();
     const HERO_BORDER = { 0:'purple', 2:'purple', 6:'purple', 10:'purple', 12:'purple', 15:'purple', 16:'purple', 17:'purple' };               // còn lại viền cam
     const HERO_ULT_NAME = { 0:'Thất Trảm Ma Đao', 1:'Thanh Liên Hoàn Sinh', 2:'Nguyệt Quang Hộ Thể', 3:'Độc Cô Cửu Kiếm', 4:'Thái Cực Quyền', 5:'Liên Hoa Hồi Xuân', 6:'Hồ Điệp Kim Cầu', 7:'Song Long Hỏa Quyển', 8:'Thủy Thần Hộ Thể', 9:'Thiên Hỏa Chu Võng', 10:'Bạch Cốt Đoạt Mệnh', 11:'Hổ Khẩu Thôn Thiên', 12:'Lăng Ba Vi Bộ', 13:'Thiên Địa Trúc Vũ', 14:'Bích Hải Triều Sinh', 15:'Hà Mô Công', 16:'Nhất Dương Vạn Ấn', 17:'Cửu Chuyển Thái Cực' };
+    // Admin đổi tên tướng / tên tuyệt kỹ: heroes.<id>.name / heroes.<id>.ultName
+    const HERO_NAME_DEF = HEROES.map(h => h.name), HERO_ULT_DEF = Object.assign({}, HERO_ULT_NAME);
+    cfgOnApply(() => HEROES.forEach((h, i) => { const o = cfgGet('heroes.' + h.id, {}) || {}; h.name = (typeof o.name === 'string' && o.name.trim()) ? o.name.trim().slice(0, 40) : HERO_NAME_DEF[i]; HERO_ULT_NAME[h.id] = (typeof o.ultName === 'string' && o.ultName.trim()) ? o.ultName.trim().slice(0, 40) : HERO_ULT_DEF[h.id]; }));
     const STAT_FIELDS = [
       { k:'hp',    label:'HP (Máu)',   min:1, max:99999999 },
       { k:'atk',   label:'Công',       min:0, max:9999999 },

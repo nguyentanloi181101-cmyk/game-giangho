@@ -4,7 +4,13 @@
     // ================= THỂ LỰC & VIÊN THỂ LỰC =================
     // • PvE: mỗi TRẬN tốn 1 thể lực (1 Bàn = 4 trận → tốn 4, trừ ngay khi vào Bàn) • 1 thể lực hồi sau 1 phút, hồi tối đa tới 200
     // • Đánh xong 1 Bàn nhận 10 Viên Thể Lực vào Túi đồ, mỗi viên +30 thể lực • PvP không tốn thể lực, không giới hạn lượt
-    const STA_MAX = 200, STA_REGEN_MS = 60000, STA_PER_WAVE = 1, STA_WAVES = 4, PILL_PER_CLEAR = 10, PILL_STA = 30;
+    // Admin chỉnh ở admin.html → tab Thể lực (stamina.max / regenSec / perWave / waves / pill)
+    let STA_MAX = 200, STA_REGEN_MS = 60000, STA_PER_WAVE = 1, STA_WAVES = 4, PILL_STA = 30;
+    const PILL_PER_CLEAR = 10;
+    cfgOnApply(() => {
+      STA_MAX = Math.max(1, Math.floor(cfgNum('stamina.max', 200))); STA_REGEN_MS = Math.max(1, cfgNum('stamina.regenSec', 60)) * 1000;
+      STA_PER_WAVE = Math.max(0, Math.floor(cfgNum('stamina.perWave', 1))); STA_WAVES = Math.max(1, Math.floor(cfgNum('stamina.waves', 4))); PILL_STA = Math.max(0, Math.floor(cfgNum('stamina.pill', 30)));
+    });
     let staState = (() => {
       const s = loadJSON('sta_state'), now = Date.now();
       return { v: Number.isFinite(s.v) ? Math.max(0, Math.floor(s.v)) : STA_MAX, t: Number(s.t) || now, pills: Math.max(0, Math.floor(s.pills) || 0) };

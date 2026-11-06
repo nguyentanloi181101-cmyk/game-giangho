@@ -4,11 +4,23 @@
     // ================= CHIÊU MỘ =================
     // Phổ Thông: 5 phút miễn phí 1 lần → 1 mảnh • Cao Cấp: 5 giờ miễn phí 1 lần → 10 mảnh • 10 Lần: 1 ngày miễn phí 1 lần → 100 mảnh, quay tiếp tốn 300 vàng
     // Không cộng dồn lượt: chỉ quay xong mới tính lại thời gian chờ. Mỗi mảnh rơi ngẫu nhiên vào 1 tướng bất kỳ.
+    // Admin chỉnh ở admin.html → tab Chiêu Mộ: recruit.<lam|tim|ten>.{cdMin phút chờ, n số mảnh, cost vàng khi quay tiếp} + recruit.weights (tỷ lệ rơi từng tướng)
+    const REC_DEF = { lam: { cd: 5 * 60e3, n: 1, cost: 0 }, tim: { cd: 5 * 3600e3, n: 10, cost: 0 }, ten: { cd: 24 * 3600e3, n: 100, cost: 300 } };
     const REC = {
       lam: { name: 'Phổ Thông', cd: 5 * 60e3, n: 1, art: 0 },
       tim: { name: 'Cao Cấp', cd: 5 * 3600e3, n: 10, art: 1 },
       ten: { name: '10 Lần', cd: 24 * 3600e3, n: 100, art: 2, cost: 300 }
     };
+    cfgOnApply(() => Object.keys(REC).forEach(k => {
+      const d = REC_DEF[k], g = x => cfgNum('recruit.' + k + '.' + x, null);
+      REC[k].cd = Math.max(0, cfgNum('recruit.' + k + '.cdMin', d.cd / 60e3)) * 60e3; REC[k].n = Math.max(1, Math.floor(cfgNum('recruit.' + k + '.n', d.n))); REC[k].cost = Math.max(0, Math.floor(cfgNum('recruit.' + k + '.cost', d.cost)));
+    }));
+    function recPick() {   // chọn tướng theo trọng số admin đặt (mặc định mọi tướng bằng nhau)
+      const w = cfgGet('recruit.weights', {}) || {}, ws = HEROES.map(h => { const v = Number(w[h.id]); return isFinite(v) && v >= 0 ? v : 1; }), tot = ws.reduce((a, b) => a + b, 0);
+      if (tot <= 0) return rand(HEROES);
+      let r = Math.random() * tot; for (let i = 0; i < HEROES.length; i++) { r -= ws[i]; if (r < 0) return HEROES[i]; }
+      return HEROES[HEROES.length - 1];
+    }
     const recLeft = k => Math.max(0, (Number(recState[k]) || 0) - Date.now());
     function openRecruit() { renderRecruit(); switchScreen('chieumo'); const b = document.getElementById('nav-btn-chieumo'); if (b) b.classList.add('active'); }
     function renderRecruit() {
@@ -44,7 +56,7 @@
         gold -= r.cost; goldSave();
       } else return;
       const got = {};
-      for (let i = 0; i < r.n; i++) { const h = rand(HEROES); got[h.id] = (got[h.id] || 0) + 1; heroShards[h.id] = shardsOf(h.id) + 1; }
+      for (let i = 0; i < r.n; i++) { const h = recPick(); got[h.id] = (got[h.id] || 0) + 1; heroShards[h.id] = shardsOf(h.id) + 1; }
       saveJSON('hero_shards', heroShards);
       try { renderHomeTeam(); updatePower(); } catch (e) {}
       const list = Object.keys(got).map(Number).sort((a, b) => got[b] - got[a]).map(id => { const h = heroById(id);

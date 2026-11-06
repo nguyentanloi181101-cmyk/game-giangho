@@ -2,7 +2,7 @@
 function gdBang() {
   const s = gdSt(); s.bang = Object.assign({ name: 'Văn Lang', notice: 'Chạm vào đây để sửa công cáo bang.', exp: 0, news: [], basin: 0 }, s.bang || {}); return s;
 }
-const gdExpMax = lv => 5000 * Math.pow(2, Math.max(0, lv - 1));   // cấp 1 = 5.000 EXP, mỗi cấp sau nhân 2, không giới hạn cấp
+const gdExpMax = lv => G2.expBase * Math.pow(G2.expMult, Math.max(0, lv - 1));   // cấp 1 = 5.000 EXP, mỗi cấp sau nhân 2, không giới hạn cấp
 function gdNews(text) { try { const s = gdBang(); s.bang.news.unshift({ t: Date.now(), x: text }); s.bang.news.length = Math.min(s.bang.news.length, 30); gdSave(s); } catch (e) {} }
 let dsTab = 'bang';
 function openDaiSanh() { renderDaiSanh(); switchScreen('daisanh'); }
@@ -24,6 +24,8 @@ function renderDaiSanh() {
 }
 // [nhãn, tài nguyên đang có, số lượng / 1 lần góp, trừ tài nguyên(n), Uy Tín / lần, EXP Bang / lần]
 const DS_DONATE = [['🥈 bạc', () => silver, 100000, n => { silver -= n; }, 40, 10000], ['🌾 gạo', () => rice, 100000, n => { rice -= n; }, 40, 10000], ['<img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> vàng', () => gold, 100, n => { gold -= n; }, 150, 50000]];
+const DS_DEF = DS_DONATE.map(d => [d[2], d[4], d[5]]);
+cfgOnApply(() => DS_DONATE.forEach((d, i) => { const g = k => cfgNum('guild2.donate.' + i + '.' + k, null); const n = Math.floor(cfgNum('guild2.donate.' + i + '.n', DS_DEF[i][0])), uy = cfgNum('guild2.donate.' + i + '.uy', DS_DEF[i][1]), ex = cfgNum('guild2.donate.' + i + '.exp', DS_DEF[i][2]); d[2] = Math.max(1, n); d[4] = Math.max(0, uy); d[5] = Math.max(0, ex); }));   // admin chỉnh: guild2.donate.<0 bạc|1 gạo|2 vàng>.{n,uy,exp}
 let dsQty = [1, 1, 1];   // số lần góp người chơi đã nhập cho từng dòng (1 lần = DS_DONATE[i][2] tài nguyên)
 const dsMax = i => Math.floor(DS_DONATE[i][1]() / DS_DONATE[i][2]);
 function dsQtyGet(i) { const el = document.getElementById('ds-q' + i); let q = Math.floor(Number(el ? el.value : dsQty[i])); if (!Number.isFinite(q) || q < 1) q = 1; return q; }
@@ -44,19 +46,27 @@ function dsGive(i) {
   s.bang.news.unshift({ t: Date.now(), x: `${pvName()} quyên góp ${fmtN(cost)} ${d[0].replace(/<[^>]+>/g, "").replace(/^\S+\s/, "")}` }); gdSave(s); scToast(`+${uy} Uy Tín`); dsDonate(); renderDaiSanh();
 }
 /* ---- Tụ Bảo Bồn ---- */
-const BASIN_REW = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị Linh', '🎭', 1], ['Đá Nữ Oa', '🔻', 20]];
+const BASIN_REW_DEF = [['Thú Hồn', '🟠', 20], ['Thú Linh', '🔥', 5], ['Dị Linh', '🎭', 1], ['Đá Nữ Oa', '🔻', 20]];
+const BASIN_DEF = { full: 1000, silverCost: 100000, silverAdd: 50, goldCost: 50, goldAdd: 300 };
+const BASIN = Object.assign({}, BASIN_DEF), BASIN_FULL_DEF = [{ t: 'item', name: 'Thú Linh', ico: '🔥', n: 50 }, { t: 'gold', n: 100 }];
+let BASIN_REW = BASIN_REW_DEF, BASIN_FULL = BASIN_FULL_DEF;
+cfgOnApply(() => {   // admin chỉnh: guild2.basin.{full,silverCost,silverAdd,goldCost,goldAdd,rewards:[{name,ico,n}],fullGifts:[quà]}
+  Object.keys(BASIN_DEF).forEach(k => { BASIN[k] = Math.max(1, Math.floor(cfgNum('guild2.basin.' + k, BASIN_DEF[k]))); });
+  const r = cfgGet('guild2.basin.rewards', null); BASIN_REW = Array.isArray(r) && r.filter(x => x && x.name && Number(x.n) > 0).length ? r.filter(x => x && x.name && Number(x.n) > 0).map(x => [String(x.name), x.ico || '🎁', Math.floor(Number(x.n))]) : BASIN_REW_DEF;
+  const f = cfgGet('guild2.basin.fullGifts', null); BASIN_FULL = Array.isArray(f) && rwList(f).length ? rwList(f) : BASIN_FULL_DEF;
+});
 function openBasin() { renderBasin(); document.getElementById('qs-modal').style.display = 'flex'; }
 function renderBasin() {
   const s = gdBang(), v = s.bang.basin, m = document.getElementById('qs-modal');
   m.innerHTML = `<div class="md-box"><button class="md-x" onclick="document.getElementById('qs-modal').style.display='none'">✕</button><div class="hd-name" style="text-align:center;color:#fde047">💰 Tụ Bảo Bồn</div><div class="gd-img bz-pic" style="--a:1.475;width:72%;margin:6px auto"><img src="assets/images/guild/tu-bao-bon.webp?v=28" alt="Tụ Bảo Bồn"></div><div class="set-note">Góp bảo vật vào bồn: mỗi lần góp nhận ngay 1 phần thưởng ngẫu nhiên, đầy bồn nhận thêm quà lớn.</div>
-  <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${v / 10}%"></i></div><div class="dv-uy">${v}/1000</div>
-  <div class="gs-act"><div>🥈 100.000 bạc → +50 bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> 50 vàng → +300 bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
+  <div class="qs-bar" style="position:relative;left:0;right:0;top:0;margin:10px 0"><i style="width:${Math.min(100, v / BASIN.full * 100)}%"></i></div><div class="dv-uy">${v}/${fmtN(BASIN.full)}</div>
+  <div class="gs-act"><div>🥈 ${fmtN(BASIN.silverCost)} bạc → +${fmtN(BASIN.silverAdd)} bồn</div><button onclick="basinPut(0)">Góp</button></div><div class="gs-act"><div><img class="gi-g" src="assets/images/items/thoi-vang.svg" alt="vàng"> ${fmtN(BASIN.goldCost)} vàng → +${fmtN(BASIN.goldAdd)} bồn</div><button onclick="basinPut(1)">Góp</button></div></div>`;
 }
 function basinPut(k) {
-  const cost = k ? 50 : 100000, add = k ? 300 : 50; if ((k ? gold : silver) < cost) return scToast('Không đủ tài nguyên');
+  const cost = k ? BASIN.goldCost : BASIN.silverCost, add = k ? BASIN.goldAdd : BASIN.silverAdd; if ((k ? gold : silver) < cost) return scToast('Không đủ tài nguyên');
   if (k) gold -= cost; else silver -= cost; resSave();
   const s = gdBang(), r = BASIN_REW[Math.floor(Math.random() * BASIN_REW.length)]; (s.kho[r[0]] = s.kho[r[0]] || { ico: r[1], qty: 0 }).qty += r[2]; let msg = `Nhận ${r[2]} ${r[0]}`;
-  s.bang.basin += add; if (s.bang.basin >= 1000) { s.bang.basin -= 1000; s.kho['Thú Linh'] = s.kho['Thú Linh'] || { ico: '🔥', qty: 0 }; s.kho['Thú Linh'].qty += 50; gold += 100; resSave(); msg += ' • BỒN ĐẦY: +50 Thú Linh, +100 vàng'; s.bang.news.unshift({ t: Date.now(), x: pvName() + ' làm đầy Tụ Bảo Bồn' }); }
-  gdSave(s); renderBasin(); scToast(msg);
+  s.bang.basin += add; let full = false; if (s.bang.basin >= BASIN.full) { s.bang.basin -= BASIN.full; full = true; s.bang.news.unshift({ t: Date.now(), x: pvName() + ' làm đầy Tụ Bảo Bồn' }); }
+  gdSave(s); if (full) msg += ' • BỒN ĐẦY: ' + rwGrantAll(BASIN_FULL); renderBasin(); scToast(msg);
 }
 (function () { const sc = document.createElement('div'); sc.className = 'screen'; sc.id = 'screen-daisanh'; sc.innerHTML = `<div class="pve-header"><button class="btn-back" onclick="openGuild()">Trở về</button><h2 class="pve-title">Đại Sảnh</h2></div><div class="gs-tabs" id="ds-tabs"></div><div id="ds-body"></div>`; document.querySelector('.main-content').appendChild(sc); })();
