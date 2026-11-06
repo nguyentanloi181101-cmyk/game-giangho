@@ -16,14 +16,14 @@
       document.getElementById('rc-body').innerHTML =
         `<div class="rc-row">${Object.keys(REC).map(k => { const r = REC[k], h = HEROES[(r.art * 3 + 1) % HEROES.length];
           return `<div class="rc-p ${k}"><div class="rc-ttl">${r.name}</div><div class="rc-art">${heroIcon(h)}</div><div class="rc-info" id="rc-st-${k}"></div><button class="rc-btn" id="rc-btn-${k}" onclick="doRecruit('${k}')"></button></div>`; }).join('')}</div>
-        <div class="set-note" style="margin-top:8px">🧩 Mỗi mảnh rơi ngẫu nhiên vào 1 tướng bất kỳ. Tăng sao cần mảnh của chính tướng đó: lên ★N cần N × ${SHARD_PER_STAR} mảnh (★6 = ${starCost(6)} mảnh). Lượt miễn phí không cộng dồn, quay xong mới tính lại thời gian.</div>
+        <div class="set-note" style="margin-top:8px">🧩 Mỗi mảnh rơi ngẫu nhiên vào 1 tướng bất kỳ. Đủ ${MERGE_COST} mảnh của một tướng thì vào Võ Hiệp → Ghép Mảnh để ghép thành tướng. Tăng sao cần mảnh của chính tướng đó: lên ★N cần N × ${SHARD_PER_STAR} mảnh (★6 = ${starCost(6)} mảnh). Lượt miễn phí không cộng dồn, quay xong mới tính lại thời gian.</div>
         <div class="vm-up-info" style="margin:6px 0 2px"><b>🧩 Kho mảnh tướng</b></div><div class="hero-chips" id="rc-inv" style="flex-wrap:wrap;overflow:visible"></div>`;
       renderRecruitInv(); recTick();
     }
     function renderRecruitInv() {
       const el = document.getElementById('rc-inv'); if (!el) return;
       el.innerHTML = [...HEROES].sort((a, b) => shardsOf(b.id) - shardsOf(a.id)).map(h => { const p = getProg(h.id), n = shardsOf(h.id);
-        return `<div class="hchip ${n ? 'sel' : ''}" style="${n ? '' : 'opacity:.5;'}cursor:default"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="s">${n} mảnh${p.star < starCapOf(p.lv) ? `<br>★${p.star + 1}: ${starCost(p.star + 1)}` : '<br>★ tối đa'}</div></div>`; }).join('');
+        return `<div class="hchip ${n ? 'sel' : ''}" style="${n ? '' : 'opacity:.5;'}cursor:default"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="s">${!heroIsOwned(h.id) ? '🔒 ' + n + '/' + MERGE_COST + ' mảnh' : n + ' mảnh' + (p.star < starCapOf(p.lv) ? `<br>★${p.star + 1}: ${starCost(p.star + 1)}` : '<br>★ tối đa')}</div></div>`; }).join('');
     }
     function recTick() {
       Object.keys(REC).forEach(k => {
@@ -46,6 +46,7 @@
       const got = {};
       for (let i = 0; i < r.n; i++) { const h = rand(HEROES); got[h.id] = (got[h.id] || 0) + 1; heroShards[h.id] = shardsOf(h.id) + 1; }
       saveJSON('hero_shards', heroShards);
+      try { renderHomeTeam(); updatePower(); } catch (e) {}
       const list = Object.keys(got).map(Number).sort((a, b) => got[b] - got[a]).map(id => { const h = heroById(id);
         return `<div class="hchip sel" style="cursor:default"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="s">+${got[id]} mảnh</div></div>`; }).join('');
       pvShow(pvHead(`🎴 Chiêu Mộ ${r.name}`, `Nhận ${r.n} mảnh tướng`) + `<div class="hero-chips" style="flex-wrap:wrap;overflow:visible;justify-content:center">${list}</div>` +

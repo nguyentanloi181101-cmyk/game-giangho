@@ -106,11 +106,12 @@ function tnToggleSort() { tnSortMode = tnSortMode === 'lv' ? 'id' : 'lv'; tnRend
 function tnRenderPick() {
   if (!tnTarget) return;
   const cur = tnCur(tnTarget), P = id => getProg(id);
-  const list = HEROES.slice();
+  const list = ownedHeroes();   // chỉ tướng đã Chiêu Mộ ra
   if (tnSortMode === 'lv') list.sort((a, b) => (P(b.id).star - P(a.id).star) || (P(b.id).lv - P(a.id).lv) || (a.id - b.id));
   document.getElementById('tn-sort').textContent = tnSortMode === 'lv' ? 'Cấp Sao' : 'Mặc Định';
   document.getElementById('tn-pgrid').innerHTML =
     `<div class="tn-pc"><div class="tn-pi rm" onclick="tnPick(null)">Gỡ Ra</div></div>` +
+    (list.length ? '' : '<div class="tn-pc" style="grid-column:1/-1;width:100%;opacity:.8;text-align:center">Chưa có tướng nào — hãy vào Chiêu Mộ để nhận tướng.</div>') +
     list.map(h => {
       const loc = tnLoc(h.id), p = P(h.id);
       const tag = loc ? (loc.kind === 'team' ? 'Đội' : 'Trợ') : '';

@@ -15,7 +15,7 @@
     }
     function openUpg(id) { upgId = id; vmId = id; switchScreen('upg'); renderUpg(); }
     function upgNav(d) {
-      const ids = HEROES.map(h => h.id), i = ids.indexOf(upgId); upgId = vmId = ids[(i + d + ids.length) % ids.length]; renderUpg();
+      const ids = ownedHeroes().map(h => h.id), i = ids.indexOf(upgId); if (!ids.length) return; upgId = vmId = ids[(i + d + ids.length) % ids.length]; renderUpg();
     }
     function renderUpg() {
       const sc = document.getElementById('screen-upg'); if (!sc || !sc.classList.contains('active')) return;

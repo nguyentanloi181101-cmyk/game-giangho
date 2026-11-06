@@ -84,6 +84,7 @@ function clStartFresh(uid) {
   clearTimeout(clTimer); clTimer = null; clDirty = false;
   try {
     SV_KEYS.forEach(k => _lsDel.call(localStorage, k));
+    _lsSet.call(localStorage, 'blank_start', '1');   // tài khoản mới = tài khoản mặc định: mọi thứ về 1, tướng phải Chiêu Mộ mới có
     _lsSet.call(localStorage, 'cloud_local_t', String(Date.now()));
     _lsSet.call(localStorage, 'cloud_ep', String(clEp || 0));
     if (uid) _lsSet.call(localStorage, 'cloud_owner', uid);
@@ -238,7 +239,7 @@ async function clSync() {
     if (owner && owner !== uid) {             // dữ liệu trên máy là của tài khoản khác
       if (cloud) clApplyCloud(cloud, uid); else clStartFresh(uid);
     }
-    else if (!cloud) { clReadyOk(uid); if (has) await clPush(); else clMsg('✔ Đã đăng nhập. Chưa có dữ liệu trên đám mây.'); }
+    else if (!cloud) { if (has) { clReadyOk(uid); await clPush(); } else { clStartFresh(uid); } }   // chưa có dữ liệu ở đâu cả = tài khoản mới -> bắt đầu từ mặc định (tất cả về 1)
     else if (owner !== uid) { clApplyCloud(cloud, uid); }   // máy chưa thuộc ai: ưu tiên dữ liệu đã lưu của tài khoản
     else if (cloud.t === lt) { clReadyOk(uid); clMsg('☁️ Dữ liệu đã đồng bộ.'); }
     else if (!has || cloud.t > lt) { clApplyCloud(cloud, uid); }

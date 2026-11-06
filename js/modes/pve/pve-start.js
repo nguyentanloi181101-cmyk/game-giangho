@@ -2,6 +2,7 @@
    (tách từ index.html cũ — script) */
 
     function startBattleSequence(stage, battle) {
+      if (!team.length) { alert('Chưa có tướng ra trận!\nHãy vào Chiêu Mộ để nhận tướng rồi xếp Đội ngũ.'); return; }
       const staCost = STA_WAVES * STA_PER_WAVE;
       if (!staSpend(staCost)) { alert('⚡ Không đủ thể lực! Cần ' + staCost + ' thể lực (có ' + staState.v + ').\nThể lực hồi 1 mỗi phút, hoặc dùng 💊 Viên Thể Lực trong Túi đồ (bấm vào ô Thể Lực).'); return; }
       battleToken++;

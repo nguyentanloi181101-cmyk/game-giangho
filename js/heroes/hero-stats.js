@@ -10,7 +10,7 @@
     let supIds = (() => {
       let a = []; try { a = JSON.parse(localStorage.getItem('support_ids')) || []; } catch (e) {}
       const out = [];
-      for (let i = 0; i < SUP_SLOTS; i++) { const v = a[i]; out.push(Number.isInteger(v) && HEROES.some(h => h.id === v) && !out.includes(v) && !team.includes(v) ? v : null); }
+      for (let i = 0; i < SUP_SLOTS; i++) { const v = a[i]; out.push(Number.isInteger(v) && HEROES.some(h => h.id === v) && heroIsOwned(v) && !out.includes(v) && !team.includes(v) ? v : null); }
       return out;
     })();
     const supSave = () => { try { localStorage.setItem('support_ids', JSON.stringify(supIds)); } catch (e) {} };

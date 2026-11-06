@@ -3,7 +3,7 @@
 
     function renderVoHiep() {
       const h = heroById(vmId), p = getProg(vmId), st = heroStats(vmId);
-      const chips = HEROES.map(x => { const q = getProg(x.id);
+      const chips = ownedHeroes().map(x => { const q = getProg(x.id);
         return `<div class="hchip ${x.id === vmId ? 'sel' : ''}" onclick="vmSelect(${x.id})"><div class="e">${heroIcon(x)}</div><div class="n">${x.name}</div><div class="s">Lv${q.lv} ★${q.star}</div></div>`; }).join('');
       const up = (title, cur, next, note, btns) => `<div class="vm-up"><div class="vm-up-info"><b>${title}</b><span>${next ? cur + ' → ' + next : cur + ' (tối đa)'}</span><small>${note}</small></div><div class="vm-up-btns">${btns}</div></div>`;
       const lvCap = heroCap(vmId), lvMax = p.lv >= lvCap, lvFull = p.lv >= LV_MAX, starMax = p.star >= starCapOf(p.lv), skMax = p.sk >= SKILL_MAX;

@@ -159,7 +159,8 @@
 
   /* ================= MÀN 1: CHỌN TƯỚNG ================= */
   window.kmOpenPicker = function () {
-    const order = HEROES.slice().sort((a, b) => (team.includes(b.id) - team.includes(a.id)) || (getProg(b.id).lv - getProg(a.id).lv));
+    const order = ownedHeroes().sort((a, b) => (team.includes(b.id) - team.includes(a.id)) || (getProg(b.id).lv - getProg(a.id).lv));
+    if (!order.length) { if (typeof scToast === 'function') scToast('Chưa có tướng nào — hãy Chiêu Mộ trước'); return; }
     document.getElementById('km-grid').innerHTML = order.map(h => {
       const p = getProg(h.id), inTeam = team.includes(h.id);
       return `<div class="pk-card ${(HERO_BORDER[h.id] || 'orange') === 'purple' ? 'purple' : ''}" onclick="kmOpen(${h.id})">${inTeam ? '<div class="pk-tag">Đội</div>' : ''}<div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="st">${'★'.repeat(Math.min(p.star, 5)) || '☆'}</div><div class="lv">${kmCount(h.id)}/${N} mạch</div></div>`;
@@ -169,7 +170,7 @@
 
   /* ================= MÀN 2: BẢN ĐỒ 9 CHẤM MẠCH ================= */
   window.kmOpen = function (id) { kmHero = id; renderMap(); switchScreen('km'); };
-  window.kmNav = function (d) { const ids = HEROES.map(h => h.id), i = ids.indexOf(kmHero); kmHero = ids[(i + d + ids.length) % ids.length]; renderMap(); };
+  window.kmNav = function (d) { const ids = ownedHeroes().map(h => h.id), i = ids.indexOf(kmHero); if (!ids.length) return; kmHero = ids[(i + d + ids.length) % ids.length]; renderMap(); };
   window.kmBackMap = function () { renderMap(); switchScreen('km'); };
 
   function renderMap() {

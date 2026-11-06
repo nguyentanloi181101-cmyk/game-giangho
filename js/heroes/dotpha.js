@@ -240,7 +240,7 @@
     document.getElementById('dpk-title').textContent =
       mode === 'dp' ? 'Chọn Võ Hiệp đột phá' : 'Chọn Võ Hiệp bồi dưỡng';
 
-    const order = HEROES.slice().sort((a, b) =>
+    const order = ownedHeroes().sort((a, b) =>
       (team.includes(b.id) - team.includes(a.id)) ||
       (getProg(b.id).lv - getProg(a.id).lv)
     );

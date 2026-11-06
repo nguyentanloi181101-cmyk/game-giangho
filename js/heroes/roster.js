@@ -67,7 +67,7 @@
     team.sort((a, b) => a - b);
 
     function renderTeam() {
-      document.getElementById('tm-list').innerHTML = HEROES.map(h => {
+      document.getElementById('tm-list').innerHTML = ownedHeroes().map(h => {
         const on = team.includes(h.id);
         return `<div class="tm-card ${on ? 'on' : ''}" onclick="toggleHero(${h.id})"><div class="e">${heroIcon(h)}</div><div class="n">${h.name}</div><div class="s">${on ? 'Ra trận' : 'Dự bị'}</div></div>`;
       }).join('');
@@ -75,7 +75,7 @@
     }
     function toggleHero(id) {
       if (team.includes(id)) { if (team.length === 1) return; team = team.filter(x => x !== id); }
-      else { if (team.length >= 5) return; team.push(id); }
+      else { if (team.length >= 5 || !heroIsOwned(id)) return; team.push(id); }
       team.sort((a, b) => a - b);
       try { localStorage.setItem('team_ids', JSON.stringify(team)); } catch (e) {}
       renderTeam();

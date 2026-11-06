@@ -53,3 +53,29 @@ const fmtN = n => {
     const shardsOf = id => Math.max(0, heroShards[id] | 0);
     const starCost = star => star * SHARD_PER_STAR;   // chi phí để đạt ★star
     let heroProg = loadJSON('hero_prog');
+
+    // ===== SỞ HỮU TƯỚNG: chỉ có tướng khi đủ 10 MẢNH rồi GHÉP MẢNH (Võ Hiệp → Ghép Mảnh). Mảnh lấy từ Chiêu Mộ / Gift Code =====
+    // Áp dụng cho tài khoản kiểu mới "tất cả về 1" (cờ blank_start). Tài khoản kiểu cũ (tướng 70+) vẫn có đủ tướng như trước.
+    const OWN_ON = BLANK_START;
+    let heroOwned = loadJSON('hero_owned');   // { idTướng: 1 }
+    (function () {
+      if (!OWN_ON) return;
+      let raw = null; try { raw = localStorage.getItem('hero_owned'); } catch (e) {}
+      if (raw === null) Object.keys(heroProg).forEach(k => { heroOwned[k] = 1; });   // tài khoản đã reset trắng từ trước: tướng đã có tiến độ thì giữ lại
+      saveJSON('hero_owned', heroOwned);
+    })();
+    const heroIsOwned = id => !OWN_ON || !!heroOwned[id];
+    const ownedHeroes = () => HEROES.filter(h => heroIsOwned(h.id));
+    const MERGE_COST = 10;   // đủ 10 mảnh ghép thành 1 tướng
+    // Ghép mảnh: tốn MERGE_COST mảnh của tướng `id` để có tướng đó (cấp 1 ★1). Trả về true nếu thành công.
+    function heroGain(id) {
+      if (!OWN_ON || heroOwned[id] || !heroById(id) || shardsOf(id) < MERGE_COST) return false;
+      heroShards[id] = shardsOf(id) - MERGE_COST; saveJSON('hero_shards', heroShards);
+      heroOwned[id] = 1; saveJSON('hero_owned', heroOwned);
+      if (team.length < 5 && !team.includes(id)) {   // tướng mới tự vào đội nếu đội chưa đủ 5 (tài khoản mới có đội ngay)
+        team.push(id); team.sort((a, b) => a - b);
+        try { localStorage.setItem('team_ids', JSON.stringify(team)); } catch (e) {}
+      }
+      return true;
+    }
+    if (OWN_ON) team = team.filter(heroIsOwned);   // đội hình chỉ gồm tướng đã sở hữu (có thể trống với tài khoản mới)

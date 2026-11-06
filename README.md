@@ -215,3 +215,12 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 - **Bảo Vật**: tăng sao bằng cách tiêu 1 Bảo Vật CÙNG LOẠI chưa gắn khung (`tsStarUp`). Búa 🔨 vẫn nằm trong Túi Đồ nhưng không dùng để tăng sao.
 - **Lò Luyện Hỏa**: nâng cấp không giới hạn (`GD_SKILL_MAX` = Infinity).
 - **Trang chủ**: thẻ tướng dùng ảnh tĩnh (không chuỗi khung); nút 🎁 Gift Code nằm dưới Túi Đồ. Tỷ Võ: đã bỏ đài sen.
+
+
+## Tài khoản mặc định (tất cả về 1) + Sở hữu tướng + Reset Bang (v54)
+- **Tài khoản mới = tài khoản mặc định**: đăng ký mới (hoặc đăng nhập tài khoản chưa có dữ liệu ở đâu) tự gắn cờ `blank_start` (`cloud.js` → `clStartFresh`):
+  tướng cấp 1 ★1, cấp acc 1, bang cấp 1, vàng/bạc/gạo = 0. Tài khoản cũ không có cờ này vẫn giữ kiểu cũ (tướng 70+).
+- **Sở hữu tướng** (`game-state.js`: `OWN_ON`, `heroOwned`, `heroIsOwned`, `ownedHeroes`, `heroGain`; lưu key `hero_owned`): với tài khoản có cờ `blank_start`, chỉ tướng đã **Ghép Mảnh** (đủ 10 mảnh của tướng đó → Võ Hiệp → Ghép Mảnh, màn `js/heroes/ghep-manh.js`, tốn 10 mảnh) mới dùng được. Mảnh lấy từ Chiêu Mộ / Gift Code. Tướng chưa có không hiện trong chọn đội / hỗ trợ / thăng cấp / tăng sao / kỹ năng / kinh mạch / đột phá.
+  Tướng mới tự vào đội nếu đội chưa đủ 5. Đội trống thì không vào được PVE / Tỷ Võ / Boss bang. `heroGain(id)` = ghép mảnh (kiểm tra đủ `MERGE_COST` và trừ mảnh).
+- **Admin (`admin-players.html`)**: kiểu reset mặc định = "tất cả về 1" (tùy chọn "kiểu cũ" chỉ để test); thêm **Reset BANG riêng** (tất cả hoặc từng người — chỉ ghi lại `guild_state` về bang cấp 1, giữ nguyên mọi thứ khác);
+  mục "Tướng sở hữu" (tick để tặng / bỏ tick để thu hồi tướng của tài khoản kiểu mới).

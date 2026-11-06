@@ -4,10 +4,11 @@
     // ---- Quản lý Võ Hiệp: tăng cấp / tăng sao / tăng cấp kỹ năng ----
     let vmId = 0;
     function openVoHiep(id) {
-      vmId = (id !== undefined && heroById(id)) ? id : (team.length ? team[0] : HEROES[0].id);
+      const _own = ownedHeroes(); if (!_own.length) { if (typeof scToast === 'function') scToast('Chưa có tướng nào — hãy Chiêu Mộ trước'); return; }
+      vmId = (id !== undefined && heroById(id) && heroIsOwned(id)) ? id : (team.length ? team[0] : _own[0].id);
       renderVoHiep(); switchScreen('vohiep');
     }
-    function vmSelect(id) { vmId = id; renderVoHiep(); }
+    function vmSelect(id) { if (!heroIsOwned(id)) return; vmId = id; renderVoHiep(); }
     function upgradeHero(kind, n) {
       const cap = { lv:heroCap(vmId), star:starCapOf(getProg(vmId).lv), sk:SKILL_MAX }[kind], p = getProg(vmId);
       if (p[kind] >= cap) return;
