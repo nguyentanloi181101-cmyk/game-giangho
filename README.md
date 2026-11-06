@@ -240,3 +240,8 @@ Cùng quy cách (1 hàng × 12 khung, 227×201 px) trong `assets/images/seq/`, k
 
 ## Reset (admin-players.html)
 - Chỉ còn 1 kiểu reset: **tất cả về 1** (đã bỏ lựa chọn "kiểu cũ — chỉ để test").
+
+## Địch PVE (admin chỉnh được)
+- `admin-config.html` → tab **👹 Địch PVE** (lưu ở `foe` trong `game_config/main`). Code: `FOE_CFG`, `foeCount` trong `js/modes/pve/pve-enemies.js`; dùng ở `loadWave` (`js/modes/pve/pve-battle.js`).
+- Chỉnh: HP / Công / Thủ / Né nền của tướng địch (mặc định 1000 / 200 / 30 / 0), hệ số nhân HP & Công mỗi Bàn (1.32), hệ số boss Trận 4 (1.2).
+- Số tướng địch mỗi trận mặc định 2 / 3 / 4 / 5 (tối đa 5). Có thêm **luật riêng theo Bàn**: từ Bàn X đến Bàn Y đổi số tướng của từng Trận (Bàn đếm liên tục: Ải 2 Bàn 1 = Bàn 11); ô trống = giữ mặc định.

@@ -12,12 +12,12 @@
       waveUnits.enemies.forEach(e => e.el.remove());
 
       const B = (currentStage - 1) * 10 + currentBattle;
-      mult = Math.pow(1.32, B - 1);
-      const m2 = mult * 1.2;
+      mult = Math.pow(foeNum(FOE_CFG.growth, 1.32), B - 1);
+      const m2 = mult * foeNum(FOE_CFG.bossMult, 1.2);
 
       {
-        // Trận 1: 2 tướng ngẫu nhiên • Trận 2: 3 tướng • Trận 3: 4 tướng • Trận 4 (boss): 5 tướng (chỉ số theo ải)
-        const n = currentWave === 1 ? 2 : currentWave === 2 ? 3 : currentWave === 3 ? 4 : 5;
+        // Số tướng địch mỗi trận mặc định 2/3/4/5 (Trận 4 = boss); admin đổi được theo từng Bàn (foeCount trong pve-enemies.js)
+        const n = foeCount(B, currentWave);
         const r = heroFoes(n, currentWave === 4 ? m2 : mult);
         waveUnits.enemies = r.foes;
         document.getElementById('ui-enemy-name').innerText = (currentWave === 4 ? 'BOSS: ' : '') + r.picks.map(h => h.name.toUpperCase()).join(' • ');
