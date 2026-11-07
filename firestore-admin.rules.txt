@@ -71,3 +71,24 @@ match /save_history/{uid}/snaps/{id} {
     || (request.auth != null && request.auth.uid == uid && notLocked(uid) && epochOk(uid));
   allow delete: if isAdmin() || (request.auth != null && request.auth.uid == uid);
 }
+
+// ===== (MỚI) Hộp thư cá nhân + Tỷ Võ cho admin — THÊM vào cùng chỗ (bên trong `match /databases/{database}/documents { ... }`) =====
+
+// Thư admin gửi cho từng người chơi (trang admin.html → Người chơi → "Gửi quà / thư").
+// Người chơi chỉ ĐỌC thư của mình và chỉ được đổi claimed từ false -> true khi nhận quà (không sửa được nội dung quà).
+match /mail_inbox/{uid}/msgs/{id} {
+  allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+  allow create, delete: if isAdmin();
+  allow update: if isAdmin()
+    || (request.auth != null && request.auth.uid == uid
+        && resource.data.get('claimed', false) == false
+        && request.resource.data.claimed == true
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimed', 'claimedAt']));
+}
+
+// Admin được ghi vào pvp_players để đánh dấu "stale" (vừa reset / khôi phục) hoặc "locked" (khóa acc) —
+// người khác sẽ không đấu Tỷ Võ với số liệu cũ của tài khoản đó. GIỮ NGUYÊN quy tắc pvp_players cũ của người chơi
+// (Firestore cho phép nhiều khối match cùng đường dẫn, chỉ cần 1 khối cho phép là được).
+match /pvp_players/{uid} {
+  allow write: if isAdmin();
+}

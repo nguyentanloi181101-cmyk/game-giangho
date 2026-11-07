@@ -40,12 +40,12 @@
     // Loại của dữ liệu cũ: id 1-5 (5 Tôn Sư Ký) -> loại 1; 6/7/8 giữ nguyên
     const tsKindOf = id => (id >= 1 && id <= 5) ? 1 : id;
     let tsBag = (() => {
-      let b = []; try { b = JSON.parse(localStorage.getItem('ts_bag')) || []; } catch (e) {}
+      let b = [], rawBag = null; try { rawBag = localStorage.getItem('ts_bag'); b = JSON.parse(rawBag) || []; } catch (e) {}
       if (!Array.isArray(b)) b = [];
       b = b.filter(x => x && Number.isInteger(x.id) && TS_KINDS.includes(tsKindOf(x.id)));
       const legacy = b.length > 0 && b.every(x => x.u === undefined);   // dữ liệu cũ: id = mã riêng (1-8)
       const have = new Set(b.map(x => x.u === undefined ? x.id : x.u));
-      if (!b.length || legacy) for (let i = 1; i <= 9; i++) if (!have.has(i)) b.push({ id: i });   // bộ gốc: 5 Tôn Sư Ký + 4 Bảo Vật đặc biệt
+      if ((rawBag === null || legacy) && !BLANK_START) for (let i = 1; i <= 9; i++) if (!have.has(i)) b.push({ id: i });   // bộ gốc: 5 Tôn Sư Ký + 4 Bảo Vật đặc biệt
       const out = [], usedU = new Set(), frame = {};
       b.forEach(o => {
         let u = Number.isInteger(o.u) ? o.u : o.id; while (usedU.has(u)) u++; usedU.add(u);

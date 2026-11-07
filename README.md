@@ -260,3 +260,8 @@ Mọi mục cấu hình dùng chung nút **Lưu cấu hình** (Firestore `game_c
 - **🏰 Bang Hội & Đại Sảnh** (`guild2.*`): EXP bang, chi phí Lò Luyện Hỏa, bang cấp mở kỹ năng / boss, vàng mở Chí Tôn, vật phẩm rơi, đổi vật phẩm boss (`G2` trong guild-sub.js), Quyên Góp (`DS_DONATE`), Tụ Bảo Bồn (`BASIN`, `BASIN_REW`, quà đầy bồn) trong daisanh.js.
 - **Đổi tên** tướng / tuyệt kỹ: `heroes.<id>.name`, `heroes.<id>.ultName`.
 - **Nhiệm vụ tự thêm** (`quest.custom`): gắn với 1 trong các hành động: pve, pvp, rec, eq, bd, boss, tt, mail, donate, basin, skill, login (`QS_TRIGGERS` trong quests.js). Thêm hành động mới = bọc hàm tương ứng bằng `qsTrig('<tên>')` và thêm vào `QS_TRIG_LABEL` trong admin.html.
+
+## Bổ sung (lần 3): Reset Bảo Vật, thư cá nhân, Tỷ Võ thời gian thực
+- **Reset** ghi `{ blank_start:'1', ts_bag:'[]' }` → Bảo Vật = 0 (treasure.js chỉ cấp bộ gốc khi CHƯA từng có `ts_bag`).
+- **Thư cá nhân**: admin.html → Người chơi → "Gửi quà / thư" ghi `mail_inbox/{uid}/msgs/{id}`; game đọc mỗi 30 giây (`mailInboxFetch` trong mail.js), nhận = update `claimed:true` trước rồi mới cộng quà. CẦN dán quy tắc mới trong `firestore-admin.rules.txt` (khối `mail_inbox` và `pvp_players`).
+- **Tỷ Võ**: admin reset / khôi phục / sửa vật phẩm / khóa acc sẽ đặt `stale:true` / `locked:true` trên `pvp_players/{uid}` → người khác không thấy tài khoản đó trong danh sách đối thủ (danh sách tự làm mới 10 giây, và đọc lại dữ liệu đối thủ ngay trước khi đánh). Tài khoản đó đăng nhập lại thì tự đăng đội hình mới và hết `stale`.

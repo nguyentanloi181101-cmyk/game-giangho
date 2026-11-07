@@ -19,7 +19,8 @@ let clEp = 0, clSnapT = 0, clSnapKey = '', clPruned = false, clCtlTimer = null, 
 let clAuth = null, clDb = null, clUser = null, clTimer = null, clDirty = false, clAsk = false, clBusy = false, clInited = false, clFresh = false, clWiping = false, clReady = '';
 const clOwner = () => { try { return _lsGet.call(localStorage, 'cloud_owner') || ''; } catch (e) { return ''; } };
 const clSetOwner = u => { try { _lsSet.call(localStorage, 'cloud_owner', u); } catch (e) {} };
-function clReadyOk(uid) { clReady = uid; clSetOwner(uid); clStartCtlPoll(); if (clDirty && !clTimer) clTimer = setTimeout(clPush, 3000); }
+// Đồng bộ xong -> sau 2,5 giây đăng lại đội hình Tỷ Võ mới (bỏ cờ stale do admin đặt khi reset / khôi phục)
+function clReadyOk(uid) { clReady = uid; clSetOwner(uid); clStartCtlPoll(); setTimeout(() => { try { clPublishPvp().catch(() => {}); } catch (e) {} }, 2500); if (clDirty && !clTimer) clTimer = setTimeout(clPush, 3000); }
 const clCfgOk = () => !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
 const clLocalT = () => Number(_lsGet.call(localStorage, 'cloud_local_t')) || 0;
 const clHasLocal = () => SV_KEYS.some(k => _lsGet.call(localStorage, k) !== null);
@@ -47,7 +48,7 @@ async function clInit() {
     await Promise.all([clLoadScript(CL_SDK + 'firebase-auth-compat.js'), clLoadScript(CL_SDK + 'firebase-firestore-compat.js')]);
     firebase.initializeApp(FIREBASE_CONFIG);
     clAuth = firebase.auth(); clDb = firebase.firestore();
-    clAuth.onAuthStateChanged(u => { clUser = u; clRender(); lgUpdate(u); if (u) clSync(); });
+    clAuth.onAuthStateChanged(u => { clUser = u; clRender(); lgUpdate(u); try { if (typeof updateMailBadge === 'function') updateMailBadge(); } catch (e) {} if (u) clSync(); });
   } catch (e) { clMsg('Không tải được Firebase (mất mạng hoặc bị chặn). Game vẫn chơi bình thường.', false); lgOfflineShow(); }
 }
 
@@ -132,10 +133,10 @@ async function clPublishPvp() {
   const _tt = (typeof ttMine === 'function' && ttMine()) || null, _bn = _tt ? ttBonus(_tt.pt) : {};
   const tm = ids.map(id => { const s = ttApply(Object.assign({}, heroStats(id, true)), _bn); return { id, hp: s.hp, atk: s.atk, def: s.def, spd: s.spd, dodge: s.dodge, acc: s.acc, crit: s.crit, critDmg: s.critDmg, tough: s.tough, pierce: s.pierce, tia: s.tia || 1, block: s.block, heal: s.heal || 0, star: getProg(id).star, sk: skillMult(id) }; });
   const ref = clDb.collection('pvp_players').doc(clUser.uid);
-  const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins,
+  const data = { name: pvName(), lvl: accLevel, wins: pvpState.wins, stale: false, locked: false,
     power: tm.reduce((a, s) => a + unitPower(s), 0), t: Date.now(), team: tm, beast: _tt ? _tt.beast : '', pt: _tt ? _tt.pt : [] };
   const cur = await ref.get();
-  if (!cur.exists) { data.rank = await pvpNewKey(); data.rt = Date.now(); }   // tài khoản mới xếp tiếp xuống cuối bảng; sau đó đổi qua pvpRankCloud
+  if (!cur.exists || typeof (cur.data() || {}).rank !== 'number') { data.rank = await pvpNewKey(); data.rt = Date.now(); }   // tài khoản mới xếp tiếp xuống cuối bảng; sau đó đổi qua pvpRankCloud
   await ref.set(data, { merge: true });
 }
 
