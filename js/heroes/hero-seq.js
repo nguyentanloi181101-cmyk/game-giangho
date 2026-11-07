@@ -44,10 +44,13 @@ const SEQ = {
   hmlGreen:  { src: 'assets/images/seq/hoa-man-lau-buom-green.webp?v=42',   cw: 384, ch: 256, n: 16 },   // Lục
   hmlBlue:   { src: 'assets/images/seq/hoa-man-lau-buom-blue.webp?v=42',    cw: 384, ch: 256, n: 16 },   // Lam
   hmlIndigo: { src: 'assets/images/seq/hoa-man-lau-buom-indigo.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Chàm
-  hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=42',  cw: 384, ch: 256, n: 16 }    // Tím
+  hmlPurple: { src: 'assets/images/seq/hoa-man-lau-buom-purple.webp?v=42',  cw: 384, ch: 256, n: 16 },   // Tím
+  dcIdle:   { src: 'assets/images/seq/doc-co-idle.webp?v=60',  cw: 335, ch: 284, n: 20, drop: .03 },   // Độc Cô Cầu Bại đứng yên cố định 1 chỗ (20 khung, đã căn mặt, lặp)
+  dcCast:   { src: 'assets/images/seq/doc-co-ult.webp?v=60',   cw: 366, ch: 305, n: 15, drop: -.05 },   // tung tuyệt kỹ: từ dưới đất nhảy vọt lên cao (15 khung, cùng tỉ lệ + điểm neo với dcIdle)
+  dcSword:  { src: 'assets/images/seq/doc-co-sword.webp?v=60', cw: 307, ch: 256, n: 20 }                 // kiếm tím từ trên trời cắm chéo xuống địch (20 khung, mũi kiếm hướng xuống-TRÁI)
 };
 // Dáng đứng trong trận: id tướng → { sheet, h = chiều cao hiển thị (px), ms = thời gian 1 vòng }
-const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 }, 10: { sheet: 'tyIdle', h: 124, ms: 1800 }, 9: { sheet: 'dpIdle', h: 138, ms: 1800 }, 12: { sheet: 'ddIdle', h: 128, ms: 1500 } };
+const SEQ_IDLE = { 17: { sheet: 'vtdIdle', h: 92, ms: 1300 }, 15: { sheet: 'tdIdle', h: 104, ms: 1300 }, 14: { sheet: 'dtIdle', h: 104, ms: 1300 }, 13: { sheet: 'bcIdle', h: 104, ms: 1300 }, 16: { sheet: 'ndIdle', h: 104, ms: 1300 }, 4: { sheet: 'ttpIdle', h: 120, ms: 1500 }, 11: { sheet: 'vntIdle', h: 132, ms: 3200 }, 5: { sheet: 'acIdle', h: 104, ms: 1300 }, 6: { sheet: 'hmlIdle', h: 140, ms: 1600 }, 10: { sheet: 'tyIdle', h: 124, ms: 1800 }, 9: { sheet: 'dpIdle', h: 138, ms: 1800 }, 12: { sheet: 'ddIdle', h: 128, ms: 1500 }, 3: { sheet: 'dcIdle', h: 120, ms: 1500 } };
 
 Object.keys(SEQ).forEach(k => { const im = new Image(); im.src = SEQ[k].src; });   // nạp sẵn để lần đầu không giật
 

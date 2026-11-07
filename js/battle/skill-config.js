@@ -25,7 +25,7 @@
       { k: 'indigo', css: '#6366f1' },   // Chàm: choáng 2 địch ngẫu nhiên 1 hiệp
       { k: 'purple', css: '#a855f7' }    // Tím: trúng độc + câm lặng (không dùng được tuyệt kỹ)
     ];   // Hoa Mãn Lâu: 3 bướm, mỗi con rơi gây 100% Công lên TOÀN địch; +50% Công toàn đội
-    let DUCO_TWISTERS = 3, DUCO_MULT = 3.6, DUCO_NOBUFF = 2;   // Độc Cô Cầu Bại: 3 lốc xoáy tím, tổng 360% Công lên toàn địch, xóa tăng phúc & khóa tăng phúc 2 hiệp
+    let DUCO_TWISTERS = 3, DUCO_MULT = 3.6, DUCO_SPD_DOWN = 0.3, DUCO_SPD_UP = 0.3, DUCO_TURNS = 3;   // Độc Cô Cầu Bại — Độc Cô Cửu Kiếm: 3 thanh kiếm (DUCO_TWISTERS) mỗi thanh cắm 1 địch, mỗi kiếm 360% Công; địch trúng -30% Tốc, cả đội ta +30% Tốc trong 3 hiệp
     let MADAO_SLASHES = 7, MADAO_MULT = 3.5, MADAO_GAP = 95;   // Ma Đao Thánh Nữ: 7 nhát chém tím chồng lên nhau, tổng 350% Công lên toàn địch, mỗi nhát cách nhau ~95ms
     let DRAGON_MULT = 3.5, DRAGON_TIERS = 3, BLEED_TURNS = 3, BLEED_PCT = 0.2, TAICHI_BLEED_TURNS = 2, TAICHI_BLEED_PCT = 0.4;
     let LB_TURNS = 3, LB_DODGE_MULT = 3.0, LB_SPD_MULT = 1.5, LB_HEAL_MULT = 3.0, LB_GHOSTS = 18;   // Đoàn Dự: 3 hiệp, +300% Né, +150% Tốc, hồi 300% Máu (theo chỉ số của Đoàn Dự), 18 tàn ảnh
@@ -38,7 +38,7 @@
     let VTD_ALL_UP = 3.0, VTD_TURNS = 2;                                                   // Vương Trùng Dương: đội tăng 300% tất cả thuộc tính (theo thuộc tính của từng người) 2 hiệp
 
 /* ===== Admin chỉnh được: skill.<TÊN> (admin.html → tab "Chiêu thức"). Mỗi tên là 1 hằng số ở trên; để trống = giữ số mặc định. ===== */
-const SKILL_DEF = {"B4_HERO_HP": 1000, "B4_HERO_ATK": 200, "B4_HERO_DEF": 30, "B4_HERO_DODGE": 0, "GO_STONES": 5, "GO_STONE_PCT": 0.06, "SKEL_PCT": 0.5, "EXEC_PCT": 0.1, "MOON_TURNS": 2, "MOON_REFLECT": 0.5, "MOON_TAKE": 0.3, "ULT_HITS": 3, "ULT_MULT": 1.2, "TAICHI_MULT": 1.5, "HEAL_MULT": 1.5, "RAGE_ATK": 34, "HTT_FLAT": 33333, "HTT_LINES": 18, "HTT_HP_PCT": 0.5, "BFLY_HITS": 3, "BFLY_MULT": 1.0, "BFLY_ATK_BUFF": 0.5, "REVIVE_COUNT": 2, "REVIVE_HP_PCT": 0.5, "IMMORTAL_TURNS": 3, "BF_PCT": 0.25, "BF_TURNS": 2, "BF_STUN_TURNS": 1, "BF_STUN_TARGETS": 2, "BF_SILENCE_TARGETS": 2, "BF_POISON_PCT": 0.25, "DUCO_TWISTERS": 3, "DUCO_MULT": 3.6, "DUCO_NOBUFF": 2, "MADAO_SLASHES": 7, "MADAO_MULT": 3.5, "MADAO_GAP": 95, "DRAGON_MULT": 3.5, "DRAGON_TIERS": 3, "BLEED_TURNS": 3, "BLEED_PCT": 0.2, "TAICHI_BLEED_TURNS": 2, "TAICHI_BLEED_PCT": 0.4, "LB_TURNS": 3, "LB_DODGE_MULT": 3.0, "LB_SPD_MULT": 1.5, "LB_HEAL_MULT": 3.0, "LB_GHOSTS": 18, "LLQ_RAGE": 50, "LLQ_DEF_MULT": 3.0, "LLQ_TARGETS": 2, "BC_HITS": 18, "BC_MULT": 3.6, "BC_DEF_DOWN": 0.3, "BC_ATK_UP": 0.3, "BC_TURNS": 1, "DT_HITS": 4, "DT_MULT": 3.6, "DT_CRIT": 0.3, "DT_TURNS": 2, "TD_DEF_DOWN": 0.7, "TD_HP_DOWN": 0.5, "TD_SPD_DOWN": 0.2, "TD_TURNS": 3, "ND_ALL_DOWN": 0.5, "ND_TURNS": 2, "VTD_ALL_UP": 3.0, "VTD_TURNS": 2};
+const SKILL_DEF = {"B4_HERO_HP": 1000, "B4_HERO_ATK": 200, "B4_HERO_DEF": 30, "B4_HERO_DODGE": 0, "GO_STONES": 5, "GO_STONE_PCT": 0.06, "SKEL_PCT": 0.5, "EXEC_PCT": 0.1, "MOON_TURNS": 2, "MOON_REFLECT": 0.5, "MOON_TAKE": 0.3, "ULT_HITS": 3, "ULT_MULT": 1.2, "TAICHI_MULT": 1.5, "HEAL_MULT": 1.5, "RAGE_ATK": 34, "HTT_FLAT": 33333, "HTT_LINES": 18, "HTT_HP_PCT": 0.5, "BFLY_HITS": 3, "BFLY_MULT": 1.0, "BFLY_ATK_BUFF": 0.5, "REVIVE_COUNT": 2, "REVIVE_HP_PCT": 0.5, "IMMORTAL_TURNS": 3, "BF_PCT": 0.25, "BF_TURNS": 2, "BF_STUN_TURNS": 1, "BF_STUN_TARGETS": 2, "BF_SILENCE_TARGETS": 2, "BF_POISON_PCT": 0.25, "DUCO_TWISTERS": 3, "DUCO_MULT": 3.6, "DUCO_SPD_DOWN": 0.3, "DUCO_SPD_UP": 0.3, "DUCO_TURNS": 3, "MADAO_SLASHES": 7, "MADAO_MULT": 3.5, "MADAO_GAP": 95, "DRAGON_MULT": 3.5, "DRAGON_TIERS": 3, "BLEED_TURNS": 3, "BLEED_PCT": 0.2, "TAICHI_BLEED_TURNS": 2, "TAICHI_BLEED_PCT": 0.4, "LB_TURNS": 3, "LB_DODGE_MULT": 3.0, "LB_SPD_MULT": 1.5, "LB_HEAL_MULT": 3.0, "LB_GHOSTS": 18, "LLQ_RAGE": 50, "LLQ_DEF_MULT": 3.0, "LLQ_TARGETS": 2, "BC_HITS": 18, "BC_MULT": 3.6, "BC_DEF_DOWN": 0.3, "BC_ATK_UP": 0.3, "BC_TURNS": 1, "DT_HITS": 4, "DT_MULT": 3.6, "DT_CRIT": 0.3, "DT_TURNS": 2, "TD_DEF_DOWN": 0.7, "TD_HP_DOWN": 0.5, "TD_SPD_DOWN": 0.2, "TD_TURNS": 3, "ND_ALL_DOWN": 0.5, "ND_TURNS": 2, "VTD_ALL_UP": 3.0, "VTD_TURNS": 2};
 cfgOnApply(() => {
   B4_HERO_HP = cfgNum('skill.B4_HERO_HP', SKILL_DEF.B4_HERO_HP);
   B4_HERO_ATK = cfgNum('skill.B4_HERO_ATK', SKILL_DEF.B4_HERO_ATK);
@@ -73,7 +73,9 @@ cfgOnApply(() => {
   BF_POISON_PCT = cfgNum('skill.BF_POISON_PCT', SKILL_DEF.BF_POISON_PCT);
   DUCO_TWISTERS = cfgNum('skill.DUCO_TWISTERS', SKILL_DEF.DUCO_TWISTERS);
   DUCO_MULT = cfgNum('skill.DUCO_MULT', SKILL_DEF.DUCO_MULT);
-  DUCO_NOBUFF = cfgNum('skill.DUCO_NOBUFF', SKILL_DEF.DUCO_NOBUFF);
+  DUCO_SPD_DOWN = cfgNum('skill.DUCO_SPD_DOWN', SKILL_DEF.DUCO_SPD_DOWN);
+  DUCO_SPD_UP = cfgNum('skill.DUCO_SPD_UP', SKILL_DEF.DUCO_SPD_UP);
+  DUCO_TURNS = cfgNum('skill.DUCO_TURNS', SKILL_DEF.DUCO_TURNS);
   MADAO_SLASHES = cfgNum('skill.MADAO_SLASHES', SKILL_DEF.MADAO_SLASHES);
   MADAO_MULT = cfgNum('skill.MADAO_MULT', SKILL_DEF.MADAO_MULT);
   MADAO_GAP = cfgNum('skill.MADAO_GAP', SKILL_DEF.MADAO_GAP);

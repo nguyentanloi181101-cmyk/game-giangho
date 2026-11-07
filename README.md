@@ -265,3 +265,8 @@ Mọi mục cấu hình dùng chung nút **Lưu cấu hình** (Firestore `game_c
 - **Reset** ghi `{ blank_start:'1', ts_bag:'[]' }` → Bảo Vật = 0 (treasure.js chỉ cấp bộ gốc khi CHƯA từng có `ts_bag`).
 - **Thư cá nhân**: admin.html → Người chơi → "Gửi quà / thư" ghi `mail_inbox/{uid}/msgs/{id}`; game đọc mỗi 30 giây (`mailInboxFetch` trong mail.js), nhận = update `claimed:true` trước rồi mới cộng quà. CẦN dán quy tắc mới trong `firestore-admin.rules.txt` (khối `mail_inbox` và `pvp_players`).
 - **Tỷ Võ**: admin reset / khôi phục / sửa vật phẩm / khóa acc sẽ đặt `stale:true` / `locked:true` trên `pvp_players/{uid}` → người khác không thấy tài khoản đó trong danh sách đối thủ (danh sách tự làm mới 10 giây, và đọc lại dữ liệu đối thủ ngay trước khi đánh). Tài khoản đó đăng nhập lại thì tự đăng đội hình mới và hết `stale`.
+
+## Bổ sung (lần 4): Độc Cô Cầu Bại mới — Độc Cô Cửu Kiếm
+- Đã xóa toàn bộ hiệu ứng lốc xoáy cũ (JS + CSS `.bf-tw*`). Code mới: `js/heroes/skills/doc-co-cau-bai.js`, `css/heroes/doc-co-cau-bai.css`.
+- Chuỗi ảnh (đã tách nền trong suốt, căn cố định thân): `assets/images/seq/doc-co-idle.webp` (20 khung đứng yên, SEQ.dcIdle), `doc-co-ult.webp` (15 khung nhảy tung chiêu, SEQ.dcCast), `doc-co-sword.webp` (20 khung kiếm cắm chéo, SEQ.dcSword), `assets/images/fx/doc-co-circle.webp` (trận pháp dưới chân).
+- Tuyệt kỹ: 3 kiếm bay chéo từ chỗ Thần Thú xuống 3 địch (phóng to khi cắm); mỗi kiếm `DUCO_MULT` × Công lên 1 địch; địch trúng −30% Tốc, đội ta +30% Tốc trong `DUCO_TURNS` hiệp. Chỉnh ở admin.html → Chiêu thức & chiến đấu (`DUCO_NOBUFF` đã bỏ; thêm `DUCO_SPD_DOWN`, `DUCO_SPD_UP`, `DUCO_TURNS`).
